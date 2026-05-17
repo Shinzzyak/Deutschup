@@ -28,7 +28,7 @@ export interface Checkpoint {
   requiredScore: number; // 0.70
   questions: QuizQuestion[];
   reviewLessons: string[]; // ids of 3 previous lessons
-  type: 'checkpoint';
+  type?: 'checkpoint';
 }
 
 export interface Lesson {

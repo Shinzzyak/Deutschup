@@ -14,6 +14,8 @@ const VerbTrainer = lazy(() => import('./pages/VerbTrainer'));
 const Koreksi = lazy(() => import('./pages/Koreksi'));
 const Catatan = lazy(() => import('./pages/Catatan'));
 const Simulasi = lazy(() => import('./pages/Simulasi'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Admin = lazy(() => import('./pages/Admin'));
 import ChatWidget from './components/ChatWidget';
 import QuickNoteWidget from './components/QuickNoteWidget';
 
@@ -157,6 +159,8 @@ function AnimatedRoutes() {
         <Route path="/koreksi" element={<PageWrapper><Koreksi /></PageWrapper>} />
         <Route path="/catatan" element={<PageWrapper><Catatan /></PageWrapper>} />
         <Route path="/simulasi" element={<PageWrapper><Simulasi /></PageWrapper>} />
+        <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
+        <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );

@@ -11,10 +11,16 @@ import { Button } from '../components/ui/button';
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+function isLevelLocked(level: string, tier: string) {
+  if (tier === 'free' && level !== 'A1') return true;
+  if (tier === 'pro' && (level === 'B2')) return true;
+  return false;
+}
+
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, xp, vocab } = useProgressStore();
   const { mockTests } = useLearningStore();
-  const { user } = useAuthStore();
+  const { user, tierData } = useAuthStore();
   const [exporting, setExporting] = useState(false);
 
   const levels: { id: Level, title: string, color: string }[] = [
@@ -28,6 +34,10 @@ export default function Dashboard() {
   const userLevelIndex = levelIndexMap[currentLevel];
 
   const exportPDF = async () => {
+    if (tierData.tier === 'free') {
+      alert("Fitur Export PDF hanya tersedia untuk paket Pro dan Master.");
+      return;
+    }
     setExporting(true);
     
     // Simulate slight delay to allow UI to update and ensure dynamic imports (if any later)
@@ -113,7 +123,8 @@ export default function Dashboard() {
 
       <div className="space-y-16">
         {levels.map((lvl, index) => {
-          const isLevelUnlocked = index <= userLevelIndex;
+          const tierLocked = isLevelLocked(lvl.id, tierData.tier);
+          const isLevelUnlocked = index <= userLevelIndex && !tierLocked;
           const levelLessons = courseData.filter(l => l.level === lvl.id);
           const completedInLevel = levelLessons.filter(l => 
             unlockedLessons.includes(l.id) && unlockedLessons.indexOf(l.id) < unlockedLessons.length - 1
@@ -136,7 +147,12 @@ export default function Dashboard() {
                   </div>
                   <div>
                     <h2 className="text-2xl font-bold">{lvl.title}</h2>
-                    {isLevelUnlocked ? (
+                    {tierLocked ? (
+                       <p className="text-amber-500 font-bold flex items-center space-x-1">
+                         <Lock className="w-4 h-4 mr-1" /> Premium Only 
+                         <Link to="/pricing" className="ml-2 underline text-sm text-blue-600 font-semibold">Upgrade</Link>
+                       </p>
+                    ) : isLevelUnlocked ? (
                        <p className="text-slate-500 font-medium">Terbuka • {levelLessons.length} Pelajaran</p>
                     ) : (
                        <p className="text-slate-500 font-medium flex items-center space-x-1"><Lock className="w-4 h-4" /> <span>Terkunci</span></p>
@@ -149,7 +165,7 @@ export default function Dashboard() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {levelLessons.map((lesson, idx) => {
-                  const isUnlocked = unlockedLessons.includes(lesson.id);
+                  const isUnlocked = unlockedLessons.includes(lesson.id) && !tierLocked;
                   const isCompleted = unlockedLessons.indexOf(lesson.id) < unlockedLessons.length - 1 || isLevelCompleted;
                   
                   return (

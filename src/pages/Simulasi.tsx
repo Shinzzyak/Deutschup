@@ -23,8 +23,8 @@ type UserAnswerInfo = {
 };
 
 export default function MockTest() {
-  const { user } = useAuthStore();
-  const { saveMockTest } = useLearningStore();
+  const { user, tierData } = useAuthStore();
+  const { mockTests, saveMockTest } = useLearningStore();
   const { addXp } = useProgressStore();
 
   const [level, setLevel] = useState<'A1'|'A2'|'B1'|'B2'>('A1');
@@ -56,6 +56,16 @@ export default function MockTest() {
   }, [testState, targetTime]);
 
   const startTest = async () => {
+    if (tierData.tier === 'free') {
+      const now = Date.now();
+      const oneWeek = 7 * 24 * 60 * 60 * 1000;
+      const recentTests = mockTests?.filter(t => (now - t.createdAt) < oneWeek) || [];
+      if (recentTests.length >= 1) {
+        alert("Pengguna Free hanya dapat satu kali Simulasi Ujian per minggu. Silakan tingkatkan langganan Anda ke Pro atau Master.");
+        return;
+      }
+    }
+
     setTestState('LOADING');
     try {
       const resp = await fetch('/api/generate-mock-test', {

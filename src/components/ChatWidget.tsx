@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send, Loader2 } from 'lucide-react';
 import { useProgressStore } from '../stores/progressStore';
+import { useAuthStore } from '../stores/authStore';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 
@@ -12,6 +13,7 @@ export default function ChatWidget() {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const { currentLevel } = useProgressStore();
+  const { user } = useAuthStore();
   const endRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,6 +22,10 @@ export default function ChatWidget() {
 
   const handleSend = async () => {
     if (!input.trim() || isTyping) return;
+    if (!user) {
+      alert("Silakan login untuk chatting bersama Herr Gemini.");
+      return;
+    }
     
     const userMsg = input.trim();
     setInput('');
@@ -27,9 +33,13 @@ export default function ChatWidget() {
     setIsTyping(true);
 
     try {
+      const token = await user.getIdToken();
       const resp = await fetch('/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({
            message: userMsg,
            history: messages,
@@ -37,6 +47,11 @@ export default function ChatWidget() {
         })
       });
       const data = await resp.json();
+      
+      if (!resp.ok) {
+         setMessages(prev => [...prev, { role: 'model', text: data.error || "Maaf, terjadi kesalahan." }]);
+         return;
+      }
       
       setMessages(prev => [...prev, { role: 'model', text: data.text || "Maaf, Herr Gemini sedang istirahat." }]);
     } catch(e) {

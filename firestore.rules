@@ -46,6 +46,17 @@ service cloud.firestore {
              data.createdAt is number;
     }
 
+    function isValidUser(data) {
+      return data.keys().hasAll(['tier']) &&
+             data.tier in ['free', 'pro', 'master'];
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming()) && incoming().tier == 'free';
+      allow update: if false; // Tier upgrades handled via server
+    }
+
     // Match progress
     match /users/{userId}/progress/{progressId} {
       allow read: if isSignedIn() && request.auth.uid == userId;
