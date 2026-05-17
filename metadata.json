@@ -1,0 +1,8 @@
+{
+  "name": "DeutschUp",
+  "description": "A comprehensive German language learning web app for Indonesian speakers, from A1 to B2, featuring structured lessons, vocabulary trainer, and verb conjugation.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

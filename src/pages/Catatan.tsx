@@ -1,0 +1,191 @@
+import { useEffect, useState } from 'react';
+import { useLearningStore } from '../stores/learningStore';
+import { useProgressStore } from '../stores/progressStore';
+import { useAuthStore } from '../stores/authStore';
+import { Button } from '../components/ui/button';
+import { BookOpen, CheckCircle2, Circle, Loader2, Plus, Sparkles, Trash2, CalendarCheck2 } from 'lucide-react';
+import { cn } from '../lib/utils';
+
+export default function Catatan() {
+  const { user } = useAuthStore();
+  const { notes, studyPlan, loading, fetchData, addNote, deleteNote, saveStudyPlan, toggleTask } = useLearningStore();
+  const { xp, currentLevel, unlockedLessons } = useProgressStore();
+
+  const [newNote, setNewNote] = useState('');
+  const [newNoteTag, setNewNoteTag] = useState<'Grammar' | 'Kosakata' | 'Pengucapan' | 'Umum'>('Umum');
+  
+  const [generatingPlan, setGeneratingPlan] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      fetchData(user.uid);
+    }
+  }, [user, fetchData]);
+
+  useEffect(() => {
+    // Automatically generate new plan if all current tasks are completed
+    if (studyPlan && studyPlan.tasks.length > 0 && studyPlan.tasks.every(t => t.completed)) {
+      if (!generatingPlan) {
+        handleGeneratePlan();
+      }
+    }
+  }, [studyPlan?.tasks]);
+
+  const handleAddNote = async () => {
+    if (!user || !newNote.trim()) return;
+    await addNote(user.uid, newNote.trim(), newNoteTag);
+    setNewNote('');
+  };
+
+  const handleGeneratePlan = async () => {
+    if (!user) return;
+    setGeneratingPlan(true);
+    try {
+      const resp = await fetch('/api/generate-study-plan', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ level: currentLevel, xp, lessonsCompleted: unlockedLessons })
+      });
+      const data = await resp.json();
+      if (data.tasks && data.tasks.length > 0) {
+        const tasks = data.tasks.map((t: any) => ({ ...t, id: Math.random().toString(36).substring(7), completed: false }));
+        await saveStudyPlan(user.uid, tasks);
+      } else {
+        alert("Gagal membuat rencana belajar. Herr Gemini mungkin sedang sibuk, silakan coba lagi.");
+      }
+    } catch(e) {
+      console.error(e);
+      alert("Terjadi kesalahan jaringan.");
+    } finally {
+      setGeneratingPlan(false);
+    }
+  };
+
+  return (
+    <div className="max-w-5xl mx-auto pb-20">
+      <div className="mb-12">
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 flex items-center space-x-3">
+          <BookOpen className="w-8 h-8 text-blue-600" />
+          <span>Catatan Belajar & Rencana</span>
+        </h1>
+        <p className="text-slate-500 text-lg md:text-xl">Kelola catatan pribadi Anda dan dapatkan rencana belajar AI.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        {/* Kolom 1: Rencana Belajar */}
+        <div className="space-y-6">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold flex items-center">
+                 <CalendarCheck2 className="w-6 h-6 mr-2 text-indigo-500" />
+                 Rencana Belajar AI
+              </h2>
+            </div>
+            
+            {!studyPlan || studyPlan.tasks.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="w-16 h-16 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-8 h-8 text-indigo-500" />
+                </div>
+                <h3 className="text-lg font-bold mb-2">Belum ada rencana!</h3>
+                <p className="text-slate-500 mb-6">Minta Herr Gemini membuatkan daftar fokus belajar berdasarkan level pencapaianmu.</p>
+                <Button 
+                   onClick={handleGeneratePlan} 
+                   disabled={generatingPlan}
+                   className="w-full bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-12"
+                >
+                  {generatingPlan ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Sparkles className="w-5 h-5 mr-2" />}
+                  Buat Rencana Belajar
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center text-sm font-semibold text-slate-500 bg-slate-50 p-4 rounded-xl">
+                   <span>Progres: {studyPlan.tasks.filter(t => t.completed).length}/{studyPlan.tasks.length} Selesai</span>
+                   <Button onClick={handleGeneratePlan} disabled={generatingPlan} variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 h-8">
+                     {generatingPlan ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />} Update
+                   </Button>
+                </div>
+                
+                <ul className="space-y-3 mt-4">
+                  {studyPlan.tasks.map(task => (
+                    <li key={task.id} className="flex items-start space-x-3 p-3 bg-white hover:bg-slate-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-slate-200" onClick={() => user && toggleTask(user.uid, task.id)}>
+                      <button className="flex-shrink-0 mt-0.5">
+                         {task.completed ? <CheckCircle2 className="w-6 h-6 text-green-500" /> : <Circle className="w-6 h-6 text-slate-300" />}
+                      </button>
+                      <span className={cn("text-slate-700 leading-relaxed", task.completed && "line-through text-slate-400")}>
+                        {task.text}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Kolom 2: Catatan Pribadi */}
+        <div className="space-y-6">
+          <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col h-full">
+            <h2 className="text-2xl font-bold mb-6">Catatan Pribadi</h2>
+            
+            <div className="mb-8">
+               <textarea
+                 value={newNote}
+                 onChange={(e) => setNewNote(e.target.value)}
+                 placeholder="Tulis hal penting untuk diingat..."
+                 className="w-full h-24 bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500 transition-all resize-none mb-3"
+               />
+               <div className="flex justify-between items-center">
+                  <div className="flex gap-2">
+                     {(['Umum', 'Grammar', 'Kosakata', 'Pengucapan'] as const).map(tag => (
+                        <button
+                          key={tag}
+                          onClick={() => setNewNoteTag(tag)}
+                          className={cn(
+                            "px-3 py-1.5 rounded-full text-xs font-bold transition-colors",
+                            newNoteTag === tag ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                          )}
+                        >
+                          {tag}
+                        </button>
+                     ))}
+                  </div>
+                  <Button onClick={handleAddNote} disabled={!newNote.trim() || !user} size="sm" className="rounded-xl">
+                    <Plus className="w-4 h-4 mr-1"/> Tambah
+                  </Button>
+               </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-4">
+               {loading && notes.length === 0 && <div className="text-center py-10"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></div>}
+               {!loading && notes.length === 0 && (
+                 <div className="text-center py-10 opacity-70">
+                   <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 grayscale">
+                     <BookOpen className="w-8 h-8 text-slate-400" />
+                   </div>
+                   <h3 className="text-lg font-bold text-slate-600 mb-1">Catatan Kosong</h3>
+                   <p className="text-slate-500 text-sm">Tuliskan pengingat, rule grammar, atau kosa kata baru di sini.</p>
+                 </div>
+               )}
+               
+               {notes.map(note => (
+                 <div key={note.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl relative group">
+                    <div className="flex justify-between items-start mb-2">
+                       <span className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600">{note.tag}</span>
+                       <button onClick={() => user && deleteNote(user.uid, note.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                         <Trash2 className="w-4 h-4" />
+                       </button>
+                    </div>
+                    <p className="text-slate-700 text-sm whitespace-pre-wrap">{note.text}</p>
+                 </div>
+               ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+  )
+}

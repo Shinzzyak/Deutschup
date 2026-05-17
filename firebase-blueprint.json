@@ -1,0 +1,123 @@
+{
+  "entities": {
+    "Progress": {
+      "title": "User Progress",
+      "description": "Stores user learning progression, streaks, and XP",
+      "type": "object",
+      "properties": {
+        "xp": {
+          "type": "number",
+          "description": "Total experience points"
+        },
+        "streak": {
+          "type": "number",
+          "description": "Current daily streak"
+        },
+        "lastPracticeDate": {
+          "type": "string",
+          "description": "Timestamp or date string of last practice"
+        },
+        "currentLevel": {
+          "type": "string",
+          "enum": ["A1", "A2", "B1", "B2"],
+          "description": "Current overall level"
+        },
+        "unlockedLessons": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs of unlocked lessons"
+        },
+        "vocab": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "status": {
+                "type": "string",
+                "enum": ["learning", "known"]
+              },
+              "nextReview": {
+                "type": "number"
+              }
+            }
+          }
+        }
+      },
+      "required": ["xp", "streak"]
+    },
+    "Note": {
+      "title": "User Note",
+      "description": "A personal learning note",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "tag": { "type": "string", "enum": ["Grammar", "Kosakata", "Pengucapan", "Umum"] },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["text", "tag", "createdAt"]
+    },
+    "StudyPlan": {
+      "title": "Study Plan",
+      "description": "AI generated study plan",
+      "type": "object",
+      "properties": {
+        "tasks": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "text": { "type": "string" },
+              "completed": { "type": "boolean" }
+            }
+          }
+        }
+      },
+      "required": ["tasks"]
+    },
+    "QuickNote": {
+      "title": "Quick Note",
+      "description": "Sticky quick note",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "updatedAt": { "type": "number" }
+      },
+      "required": ["text", "updatedAt"]
+    },
+    "MockTest": {
+      "title": "Mock Test",
+      "description": "User mock test history",
+      "type": "object",
+      "properties": {
+        "level": { "type": "string" },
+        "score": { "type": "number" },
+        "total": { "type": "number" },
+        "createdAt": { "type": "number" }
+      },
+      "required": ["level", "score", "total", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}/progress/{progressId}": {
+      "schema": { "$ref": "#/entities/Progress" },
+      "description": "Stores progression data for a specific user"
+    },
+    "users/{userId}/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/Note" },
+      "description": "User notes"
+    },
+    "users/{userId}/studyplan/{planId}": {
+      "schema": { "$ref": "#/entities/StudyPlan" },
+      "description": "User study plans"
+    },
+    "users/{userId}/quicknote/{noteId}": {
+      "schema": { "$ref": "#/entities/QuickNote" },
+      "description": "User quick notes"
+    },
+    "users/{userId}/mocktests/{testId}": {
+      "schema": { "$ref": "#/entities/MockTest" },
+      "description": "User mock tests"
+    }
+  }
+}
