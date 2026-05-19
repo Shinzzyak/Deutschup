@@ -9,7 +9,6 @@ export interface TierData {
   tierExpiry?: number;
 }
 
-
 function formatAuthError(error: any) {
   const code = error?.code || 'unknown';
   const message = error?.message || 'Unknown error';
@@ -25,44 +24,53 @@ interface AuthState {
   logout: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set) => {
-  // Tangkap hasil redirect login (penting untuk browser mobile)
-  getRedirectResult(auth).catch((error) => {
-    const msg = formatAuthError(error);
-    console.error('Google redirect login failed:', error);
-    set({ loading: false, authError: msg });
-    if (typeof window !== 'undefined') window.alert(msg);
-  });
-
-  onAuthStateChanged(auth, async (user) => {
-    let tierData: TierData = { tier: 'free' };
-
+export const useAuthStore = create<AuthState>((set, get) => {
+  const initAuth = async () => {
     try {
-      if (user) {
+      await getRedirectResult(auth);
+    } catch (error: any) {
+      const msg = formatAuthError(error);
+      console.error('Google redirect login failed:', error);
+      set({ loading: false, authError: msg });
+      if (typeof window !== 'undefined') window.alert(msg);
+    }
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        set({ user: null, tierData: { tier: 'free' }, loading: false });
+        return;
+      }
+
+      // Set state login dulu, jangan nunggu Firestore
+      set({ user, loading: false });
+
+      try {
         const docRef = doc(db, 'users', user.uid);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          tierData = {
-            tier: docSnap.data()?.tier || 'free',
-            tierExpiry: docSnap.data()?.tierExpiry,
-          };
+          const data = docSnap.data();
+          set({
+            tierData: {
+              tier: data?.tier || 'free',
+              tierExpiry: data?.tierExpiry,
+            }
+          });
         } else {
           await setDoc(docRef, { tier: 'free' });
+          set({ tierData: { tier: 'free' } });
         }
 
-        // Admin override (UI-level only)
         if (user.email && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
-          tierData.tier = 'pro';
+          set((state) => ({ tierData: { ...state.tierData, tier: 'pro' } }));
         }
+      } catch (error) {
+        console.error('Auth state sync failed:', error);
       }
-    } catch (error) {
-      // Jangan throw di sini supaya loading tidak nyangkut terus
-      console.error('Auth state sync failed:', error);
-    } finally {
-      set({ user, tierData, loading: false });
-    }
-  });
+    });
+  };
+
+  initAuth();
 
   return {
     user: null,
@@ -70,12 +78,14 @@ export const useAuthStore = create<AuthState>((set) => {
     loading: true,
     authError: null,
     loginWithGoogle: async () => {
+      set({ loading: true, authError: null });
+
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
-      try {
-        set({ authError: null });
 
+      try {
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
         if (isMobile) {
           await signInWithRedirect(auth, provider);
           return;
@@ -87,7 +97,6 @@ export const useAuthStore = create<AuthState>((set) => {
         console.error('Google login failed:', error);
         set({ loading: false, authError: msg });
         if (typeof window !== 'undefined') window.alert(msg);
-        throw error;
       }
     },
     logout: async () => {
