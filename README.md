@@ -15,6 +15,28 @@ View your app in AI Studio: https://ai.studio/apps/2606d214-cab6-4242-bdfd-6070c
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+
+2. Set environment variables in `.env.local`:
+   - `GEMINI_API_KEY=...`
+   - `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
+   - `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
+   - `VITE_FIREBASE_API_KEY=...` (wajib, jangan commit key asli ke repo)
 3. Run the app:
    `npm run dev`
+
+
+## Deployment (Vercel)
+
+Aplikasi sudah direfactor untuk model **Vercel Serverless Functions**:
+- Semua backend endpoint berjalan dari file di folder `api/` (mis. `/api/chat`, `/api/admin/*`, `/api/payment/*`).
+- Frontend tetap SPA Vite, dengan rewrite ke `index.html` untuk non-API route.
+
+Pastikan environment variables berikut diset di Vercel Project Settings:
+- `GEMINI_API_KEY`
+- `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
+- `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
+- `IPAYMU_VA`, `IPAYMU_API_KEY`, `IPAYMU_URL`
+- `APP_URL`
+
+
+> Security note: jika API key Firebase pernah ter-publish, segera rotate key di Google Cloud Console lalu update Vercel env variables.

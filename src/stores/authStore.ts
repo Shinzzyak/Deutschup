@@ -39,7 +39,7 @@ export const useAuthStore = create<AuthState>((set) => {
         }
         
         // Admin Override
-        if (user.email === 'abdullahalmughiroh@gmail.com' || user.email === import.meta.env.VITE_ADMIN_EMAIL) {
+        if (user.email && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
           tierData.tier = 'pro';
         }
       } catch (e) {
