@@ -1,9 +1,8 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
-import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
-import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 
 export interface TierData {
   tier: 'free' | 'pro';
@@ -19,34 +18,39 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => {
+  // Tangkap hasil redirect login (penting untuk browser mobile)
+  getRedirectResult(auth).catch((error) => {
+    console.error('Google redirect login failed:', error);
+  });
+
   onAuthStateChanged(auth, async (user) => {
     let tierData: TierData = { tier: 'free' };
-    if (user) {
-      try {
-        const docSnap = await getDoc(doc(db, 'users', user.uid));
+
+    try {
+      if (user) {
+        const docRef = doc(db, 'users', user.uid);
+        const docSnap = await getDoc(docRef);
+
         if (docSnap.exists()) {
-          tierData = { 
-             tier: docSnap.data()?.tier || 'free',
-             tierExpiry: docSnap.data()?.tierExpiry
+          tierData = {
+            tier: docSnap.data()?.tier || 'free',
+            tierExpiry: docSnap.data()?.tierExpiry,
           };
         } else {
-          // Initialize empty user doc
-          try {
-            await setDoc(doc(db, 'users', user.uid), { tier: 'free' });
-          } catch(e) {
-            handleFirestoreError(e, OperationType.CREATE, `users/${user.uid}`);
-          }
+          await setDoc(docRef, { tier: 'free' });
         }
-        
-        // Admin Override
+
+        // Admin override (UI-level only)
         if (user.email && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
           tierData.tier = 'pro';
         }
-      } catch (e) {
-        handleFirestoreError(e, OperationType.GET, `users/${user.uid}`);
       }
+    } catch (error) {
+      // Jangan throw di sini supaya loading tidak nyangkut terus
+      console.error('Auth state sync failed:', error);
+    } finally {
+      set({ user, tierData, loading: false });
     }
-    set({ user, tierData, loading: false });
   });
 
   return {
@@ -54,8 +58,14 @@ export const useAuthStore = create<AuthState>((set) => {
     tierData: { tier: 'free' },
     loading: true,
     loginWithGoogle: async () => {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      try {
+        const provider = new GoogleAuthProvider();
+        await signInWithRedirect(auth, provider);
+      } catch (error) {
+        console.error('Google login failed:', error);
+        set({ loading: false });
+        throw error;
+      }
     },
     logout: async () => {
       await signOut(auth);
