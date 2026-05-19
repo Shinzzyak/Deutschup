@@ -20,7 +20,8 @@ View your app in AI Studio: https://ai.studio/apps/2606d214-cab6-4242-bdfd-6070c
    - `GEMINI_API_KEY=...`
    - `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
    - `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
-   - `VITE_FIREBASE_API_KEY=...` (wajib, jangan commit key asli ke repo)
+codex/analisis-isi-repo-m2hqsg
+   - `VITE_FIREBASE_API_KEY=...` (wajib, jangan commit key asli ke repo)=======>>>>>>> main
 3. Run the app:
    `npm run dev`
 
@@ -36,7 +37,4 @@ Pastikan environment variables berikut diset di Vercel Project Settings:
 - `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
 - `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
 - `IPAYMU_VA`, `IPAYMU_API_KEY`, `IPAYMU_URL`
-- `APP_URL`
-
-
-> Security note: jika API key Firebase pernah ter-publish, segera rotate key di Google Cloud Console lalu update Vercel env variables.
+- `APP_URL`<<<<<<< codex/analisis-isi-repo-m2hqsg> Security note: jika API key Firebase pernah ter-publish, segera rotate key di Google Cloud Console lalu update Vercel env variables.=======>>>>>>> main
