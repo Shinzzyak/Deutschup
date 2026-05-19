@@ -84,19 +84,16 @@ export const useAuthStore = create<AuthState>((set, get) => {
       provider.setCustomParameters({ prompt: 'select_account' });
 
       try {
-        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
-
-        if (isMobile) {
-          await signInWithRedirect(auth, provider);
-          return;
-        }
-
+        // Forced popup mode for debugging on mobile/desktop.
         await signInWithPopup(auth, provider);
       } catch (error: any) {
         const msg = formatAuthError(error);
         console.error('Google login failed:', error);
         set({ loading: false, authError: msg });
-        if (typeof window !== 'undefined') window.alert(msg);
+
+        if (typeof window !== 'undefined') {
+          window.alert(`GAGAL BRE! Error: ${error?.code} | ${error?.message}`);
+        }
       }
     },
     logout: async () => {
