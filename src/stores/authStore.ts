@@ -9,6 +9,13 @@ export interface TierData {
   tierExpiry?: number;
 }
 
+
+function formatAuthError(error: any) {
+  const code = error?.code || 'unknown';
+  const message = error?.message || 'Unknown error';
+  return `Error dari Firebase: ${code} | ${message}`;
+}
+
 interface AuthState {
   user: User | null;
   tierData: TierData;
@@ -21,8 +28,10 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set) => {
   // Tangkap hasil redirect login (penting untuk browser mobile)
   getRedirectResult(auth).catch((error) => {
+    const msg = formatAuthError(error);
     console.error('Google redirect login failed:', error);
-    set({ loading: false, authError: error?.message || 'Redirect login gagal' });
+    set({ loading: false, authError: msg });
+    if (typeof window !== 'undefined') window.alert(msg);
   });
 
   onAuthStateChanged(auth, async (user) => {
@@ -64,7 +73,7 @@ export const useAuthStore = create<AuthState>((set) => {
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
       try {
-        set({ loading: true, authError: null });
+        set({ authError: null });
 
         const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
         if (isMobile) {
@@ -74,8 +83,10 @@ export const useAuthStore = create<AuthState>((set) => {
 
         await signInWithPopup(auth, provider);
       } catch (error: any) {
+        const msg = formatAuthError(error);
         console.error('Google login failed:', error);
-        set({ loading: false, authError: error?.message || 'Login gagal' });
+        set({ loading: false, authError: msg });
+        if (typeof window !== 'undefined') window.alert(msg);
         throw error;
       }
     },
