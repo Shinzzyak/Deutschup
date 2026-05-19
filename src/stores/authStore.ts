@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
-import { User, onAuthStateChanged, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithRedirect, signInWithPopup, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 
@@ -83,17 +83,17 @@ export const useAuthStore = create<AuthState>((set, get) => {
     loading: true,
     authError: null,
     loginWithGoogle: async () => {
-      set({ loading: true, authError: null });
-
+      // Penting: jangan set loading=true sebelum popup dipanggil
+      // agar browser mobile tidak memblokir popup karena jeda re-render.
       const provider = new GoogleAuthProvider();
       provider.setCustomParameters({ prompt: 'select_account' });
 
       try {
-        await signInWithRedirect(auth, provider);
+        await signInWithPopup(auth, provider);
       } catch (error: any) {
         const msg = formatAuthError(error);
-        console.error('Login trigger failed:', error);
-        set({ loading: false, authError: msg });
+        console.error('Google login failed:', error);
+        set({ authError: msg, loading: false });
         if (typeof window !== 'undefined') window.alert(msg);
       }
     },
