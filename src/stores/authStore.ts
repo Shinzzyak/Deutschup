@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
-import { User, onAuthStateChanged, signInWithRedirect, signInWithPopup, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 
@@ -27,7 +27,10 @@ interface AuthState {
 export const useAuthStore = create<AuthState>((set, get) => {
   const initAuth = async () => {
     try {
-      await getRedirectResult(auth);
+      const result = await getRedirectResult(auth);
+      if (result?.user) {
+        set({ user: result.user, loading: true });
+      }
     } catch (error: any) {
       const msg = formatAuthError(error);
       console.error('Google redirect login failed:', error);
@@ -42,7 +45,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
       }
 
       // Set state login dulu, jangan nunggu Firestore
-      set({ user, loading: false });
+      set({ user });
 
       try {
         const docRef = doc(db, 'users', user.uid);
@@ -54,18 +57,20 @@ export const useAuthStore = create<AuthState>((set, get) => {
             tierData: {
               tier: data?.tier || 'free',
               tierExpiry: data?.tierExpiry,
-            }
+            },
+            loading: false,
           });
         } else {
           await setDoc(docRef, { tier: 'free' });
-          set({ tierData: { tier: 'free' } });
+          set({ tierData: { tier: 'free' }, loading: false });
         }
 
         if (user.email && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
-          set((state) => ({ tierData: { ...state.tierData, tier: 'pro' } }));
+          set((state) => ({ tierData: { ...state.tierData, tier: 'pro' }, loading: false }));
         }
       } catch (error) {
         console.error('Auth state sync failed:', error);
+        set({ loading: false });
       }
     });
   };
@@ -84,16 +89,12 @@ export const useAuthStore = create<AuthState>((set, get) => {
       provider.setCustomParameters({ prompt: 'select_account' });
 
       try {
-        // Forced popup mode for debugging on mobile/desktop.
-        await signInWithPopup(auth, provider);
+        await signInWithRedirect(auth, provider);
       } catch (error: any) {
         const msg = formatAuthError(error);
-        console.error('Google login failed:', error);
+        console.error('Login trigger failed:', error);
         set({ loading: false, authError: msg });
-
-        if (typeof window !== 'undefined') {
-          window.alert(`GAGAL BRE! Error: ${error?.code} | ${error?.message}`);
-        }
+        if (typeof window !== 'undefined') window.alert(msg);
       }
     },
     logout: async () => {

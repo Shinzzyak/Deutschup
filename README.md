@@ -40,3 +40,14 @@ Pastikan environment variables berikut diset di Vercel Project Settings:
 
 
 > Security note: jika API key Firebase pernah ter-publish, segera rotate key di Google Cloud Console lalu update Vercel env variables.
+
+
+## Firebase Auth domain checklist
+
+Jika login Google dipakai di custom domain production, tambahkan domain tersebut di Firebase Console:
+Authentication → Settings → Authorized domains.
+
+Contoh untuk production ini:
+- `deutschup.sintec.my.id`
+
+Tanpa ini biasanya muncul error `auth/unauthorized-domain` atau login redirect balik ke awal.
