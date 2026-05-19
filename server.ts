@@ -2,10 +2,8 @@ import express from "express";
 import path from "path";
 import "dotenv/config";
 import { createServer as createViteServer } from "vite";
-import { GoogleGenAI, Type } from "@google/genai";
 import admin from "firebase-admin";
 import { getFirestore } from "firebase-admin/firestore";
-import crypto from "crypto";
 import fs from "fs";
 
 let firebaseConfig: any = {};
@@ -26,67 +24,11 @@ const getDb = () => {
   return getFirestore(admin.app(), firebaseConfig.firestoreDatabaseId || '(default)');
 };
 
-async function getGeminiApiKey() {
-  try {
-    const configDoc = await getDb().collection('config').doc('global').get();
-    if (configDoc.exists && configDoc.data()?.geminiApiKey) {
-      return configDoc.data()!.geminiApiKey;
-    }
-  } catch(e) {}
-  return process.env.GEMINI_API_KEY;
-}
-
-async function getAiClient() {
-  const apiKey = await getGeminiApiKey();
-  return new GoogleGenAI({ 
-    apiKey,
-    httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
-  });
-}
-
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json());
-
-  // iPaymu configuration
-  const IPAYMU_VA = process.env.IPAYMU_VA;
-  const IPAYMU_API_KEY = process.env.IPAYMU_API_KEY;
-  const IPAYMU_URL = process.env.IPAYMU_URL || 'https://sandbox.ipaymu.com';
-  const APP_URL = process.env.APP_URL || `http://localhost:${PORT}`;
-
-  function generateIpaymuSignature(body: object, method: string = "POST") {
-    const stringBody = JSON.stringify(body);
-    const bodyHash = crypto.createHash('sha256').update(stringBody).digest('hex').toLowerCase();
-    const stringToSign = `${method}:${IPAYMU_VA}:${bodyHash}:${IPAYMU_API_KEY}`;
-    return crypto.createHmac('sha256', IPAYMU_API_KEY!).update(stringToSign).digest('hex').toLowerCase();
-  }
-
-  const authMiddleware = async (req: any, res: any, next: any) => {
-    const authHeader = req.headers.authorization;
-    if (!authHeader?.startsWith('Bearer ')) {
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
-    const token = authHeader.split('Bearer ')[1];
-    try {
-      const decodedUser = await admin.auth().verifyIdToken(token);
-      req.user = decodedUser;
-      next();
-    } catch (e) {
-      console.error('Invalid token', e);
-      res.status(401).json({ error: 'Invalid token' });
-    }
-  };
-
-  const adminMiddleware = async (req: any, res: any, next: any) => {
-    if (req.user?.email && req.user.email === process.env.ADMIN_EMAIL) {
-      next();
-    } else {
-      res.status(403).json({ error: 'Forbidden' });
-    }
-  };
-
   // 0a. Admin Endpoints
   app.get('/api/admin/check', async (req, res) => (await import('./api/admin/check')).default(req, res));
   app.get('/api/admin/data', async (req, res) => (await import('./api/admin/data')).default(req, res));

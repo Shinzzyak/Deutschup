@@ -72,8 +72,8 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
 };
 
 export const adminMiddleware = async (req: any, res: any, next: any) => {
-  const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
-  if (req.user?.email && req.user.email === adminEmail) {
+  const adminEmail = process.env.ADMIN_EMAIL;
+  if (adminEmail && req.user?.email && req.user.email === adminEmail) {
     next();
   } else {
     res.status(403).json({ error: 'Forbidden' });

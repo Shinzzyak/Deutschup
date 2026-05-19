@@ -3,11 +3,25 @@ import { useAuthStore } from '../stores/authStore';
 import { Check, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
+type PlanVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
+
+interface Plan {
+  id: 'free' | 'pro';
+  name: string;
+  price: string;
+  period?: string;
+  description: string;
+  features: string[];
+  buttonText: string;
+  buttonVariant: PlanVariant;
+  popular?: boolean;
+}
+
 export default function Pricing() {
   const { user, tierData } = useAuthStore();
   const [loading, setLoading] = useState<string | null>(null);
   
-  const plans = [
+  const plans: Plan[] = [
     {
       id: 'free',
       name: 'Free',
@@ -15,7 +29,7 @@ export default function Pricing() {
       description: 'Mulai belajar bahasa Jerman',
       features: ['Akses materi A1', '10 Pesan Herr Deutsch / hari', '1 Simulasi Ujian / minggu'],
       buttonText: tierData?.tier === 'free' ? 'Sedang Aktif' : 'Gratis',
-      buttonVariant: 'outline' as const,
+      buttonVariant: 'outline',
     },
     {
       id: 'pro',
@@ -25,7 +39,7 @@ export default function Pricing() {
       description: 'Akses penuh ke semua materi',
       features: ['Akses semua materi A1 - B2', 'Pesan Herr Deutsch sepuasnya', 'Simulasi Ujian tak terbatas', 'Unduh laporan PDF'],
       buttonText: tierData?.tier === 'pro' ? 'Sedang Aktif' : 'Pilih Pro',
-      buttonVariant: tierData?.tier === 'pro' ? 'outline' : 'default' as const,
+      buttonVariant: tierData?.tier === 'pro' ? 'outline' : 'default',
       popular: tierData?.tier !== 'pro'
     }
   ];
