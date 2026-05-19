@@ -159,14 +159,14 @@ export default function MockTest() {
              Waktu pengerjaan: 30 menit.
            </p>
 
-           <div className="flex flex-wrap justify-center gap-4 mb-8">
+           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               {(['A1', 'A2', 'B1', 'B2'] as const).map(l => (
                  <button 
                    key={l}
                    onClick={() => setLevel(l)}
                    className={cn(
-                      "px-6 py-3 rounded-2xl text-xl font-bold border-2 transition-all",
-                      level === l ? "border-blue-600 bg-blue-50 text-blue-700" : "border-slate-200 text-slate-500 hover:border-slate-300"
+                      "w-full py-4 rounded-2xl text-2xl font-bold border-2 transition-all",
+                      level === l ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm" : "border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-slate-50"
                    )}
                  >
                    {l}
@@ -187,7 +187,7 @@ export default function MockTest() {
        <div className="max-w-2xl mx-auto text-center py-20 px-6">
          <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />
          <h2 className="text-3xl font-bold mb-4">Merakit Ujian...</h2>
-         <p className="text-slate-500">Herr Gemini sedang menyiapkan pertanyaan berstandar untuk tingkat {level}.</p>
+         <p className="text-slate-500">Herr Deutsch sedang menyiapkan pertanyaan berstandar untuk tingkat {level}.</p>
        </div>
     );
   }

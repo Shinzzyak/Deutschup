@@ -4,7 +4,7 @@ import { Check, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 export default function Pricing() {
-  const { user } = useAuthStore();
+  const { user, tierData } = useAuthStore();
   const [loading, setLoading] = useState<string | null>(null);
   
   const plans = [
@@ -13,8 +13,8 @@ export default function Pricing() {
       name: 'Free',
       price: 'Rp 0',
       description: 'Mulai belajar bahasa Jerman',
-      features: ['Akses materi A1', '10 Pesan Herr Gemini / hari', '1 Simulasi Ujian / minggu'],
-      buttonText: 'Sedang Aktif',
+      features: ['Akses materi A1', '10 Pesan Herr Deutsch / hari', '1 Simulasi Ujian / minggu'],
+      buttonText: tierData?.tier === 'free' ? 'Sedang Aktif' : 'Gratis',
       buttonVariant: 'outline' as const,
     },
     {
@@ -22,21 +22,11 @@ export default function Pricing() {
       name: 'Pro',
       price: 'Rp 49.000',
       period: '/ bulan',
-      description: 'Lanjutkan ke tingkat menengah',
-      features: ['Akses materi A1 - B1', 'Pesan Herr Gemini sepuasnya', 'Simulasi Ujian tak terbatas', 'Unduh laporan PDF'],
-      buttonText: 'Pilih Pro',
-      buttonVariant: 'default' as const,
-    },
-    {
-      id: 'master',
-      name: 'Master',
-      price: 'Rp 99.000',
-      period: '/ bulan',
-      description: 'Lulus ujian B2 dengan mudah',
-      features: ['Akses semua materi A1 - B2', 'Pesan Herr Gemini sepuasnya', 'Simulasi Ujian tak terbatas', 'Unduh laporan PDF', 'Sertifikat kelulusan digital'],
-      buttonText: 'Pilih Master',
-      buttonVariant: 'default' as const,
-      popular: true
+      description: 'Akses penuh ke semua materi',
+      features: ['Akses semua materi A1 - B2', 'Pesan Herr Deutsch sepuasnya', 'Simulasi Ujian tak terbatas', 'Unduh laporan PDF'],
+      buttonText: tierData?.tier === 'pro' ? 'Sedang Aktif' : 'Pilih Pro',
+      buttonVariant: tierData?.tier === 'pro' ? 'outline' : 'default' as const,
+      popular: tierData?.tier !== 'pro'
     }
   ];
 
@@ -72,7 +62,7 @@ export default function Pricing() {
          <p className="text-lg text-slate-600">Investasi terbaik untuk masa depan bahasamu. Mulai gratis, upgrade kapan saja.</p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
           <div key={plan.id} className={`relative bg-white rounded-3xl p-8 border ${plan.popular ? 'border-blue-500 shadow-xl scale-105 z-10' : 'border-slate-200 shadow-sm'} flex flex-col`}>
             {plan.popular && (
@@ -102,7 +92,7 @@ export default function Pricing() {
             
             <Button 
               onClick={() => handleUpgrade(plan.id)}
-              disabled={loading !== null || plan.id === 'free'}
+              disabled={loading !== null || plan.id === 'free' || tierData?.tier === plan.id}
               variant={plan.buttonVariant} 
               className={`w-full rounded-2xl py-6 text-lg font-bold shadow-md ${plan.popular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
             >

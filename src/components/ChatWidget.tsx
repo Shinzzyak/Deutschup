@@ -8,7 +8,7 @@ import ReactMarkdown from 'react-markdown';
 export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
-    { role: 'model', text: 'Guten Tag! Saya Herr Gemini, tutor bahasa Jerman Anda. Ada yang bisa saya bantu hari ini?' }
+    { role: 'model', text: 'Guten Tag! Saya Herr Deutsch, tutor bahasa Jerman Anda. Ada yang bisa saya bantu hari ini?' }
   ]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -23,7 +23,7 @@ export default function ChatWidget() {
   const handleSend = async () => {
     if (!input.trim() || isTyping) return;
     if (!user) {
-      alert("Silakan login untuk chatting bersama Herr Gemini.");
+      alert("Silakan login untuk chatting bersama Herr Deutsch.");
       return;
     }
     
@@ -53,7 +53,7 @@ export default function ChatWidget() {
          return;
       }
       
-      setMessages(prev => [...prev, { role: 'model', text: data.text || "Maaf, Herr Gemini sedang istirahat." }]);
+      setMessages(prev => [...prev, { role: 'model', text: data.text || "Maaf, Herr Deutsch sedang istirahat." }]);
     } catch(e) {
       setMessages(prev => [...prev, { role: 'model', text: "Maaf, terjadi kesalahan koneksi." }]);
     } finally {
@@ -83,7 +83,7 @@ export default function ChatWidget() {
               <Bot className="w-6 h-6 text-yellow-400" />
             </div>
             <div>
-              <h3 className="font-bold">Herr Gemini</h3>
+              <h3 className="font-bold">Herr Deutsch</h3>
               <p className="text-xs text-slate-400">Tutor Bahasa Jerman</p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export default function ChatWidget() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && handleSend()}
-              placeholder="Tanya Herr Gemini..."
+              placeholder="Tanya Herr Deutsch..."
               className="flex-1 bg-slate-100 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
             />
             <button 

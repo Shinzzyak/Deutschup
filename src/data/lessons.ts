@@ -6,20 +6,49 @@ export const courseData: Lesson[] = [
     "level": "A1",
     "title": "Perkenalan & Salam (Hallo, Guten Morgen, dst)",
     "grammarDescription": "Pada pelajaran ini, kita akan mempelajari frasa dasar untuk menyapa dan memperkenalkan diri dalam bahasa Jerman. Penting untuk memahami perbedaan antara sapaan formal dan informal, serta bagaimana merespons pertanyaan tentang kabar. Struktur kalimat dasar yang digunakan adalah Subjek + Verb + Objek/Pelengkap.",
+    "canDoGoals": [
+      "Memperkenalkan diri dalam bahasa Jerman (Sich vorstellen)",
+      "Mengeja nama dengan Alfabet Jerman (Buchstabieren)",
+      "Mengucapkan salam dan berpamitan yang sesuai waktu",
+      "Menanyakan dan menjawab kabar dengan benar",
+      "Membedakan kapan harus menggunakan formal (Sie) dan informal (du)"
+    ],
+    "indonesianMistakes": "**1. Translasi Kabar Secara Literal**\nPembelajar Indonesia sering menerjemahkan 'Saya baik-baik saja' menjadi *'Ich bin gut'*. Ini SALAH BESAR, karena 'Ich bin gut' artinya 'Saya jago' atau 'Kualitas saya baik'. Yang benar adalah **'Mir geht es gut'** (Kabar saya baik).\n\n**2. Lupa Kapitalisasi (Kata Benda)**\nDalam bahasa Jerman, SETIAP kata benda (Noun) WAJIB diawali huruf besar. Contoh: 'Guten **M**orgen' atau 'Guten **T**ag'. Bukan 'guten morgen'.\n\n**3. Kurang Peka Formal vs Informal**\nOrang Indonesia sering lupa bedanya. Menggunakan 'dir' ke dosen/bos itu tabu (harus 'Ihnen').",
+    "culturalNotes": "Orang Jerman sangat menghargai privasi dan batas kesopanan. Mereka amat jarang menggunakan bahasa informal (du/dir) ke orang yang baru dikenal, kasir bank, penjaga toko, atau rekan kerja yang tidak dekat. Selalu mulai dengan *Sie* (Anda) sampai mereka menawarkan *das Du* (panggilan 'du'). Orang Jerman juga sering berjabat tangan saat pertama kali bertemu.",
+    "listeningSimulation": {
+      "transcript": [
+        {
+          "personA": "Guten Morgen, Herr Müller.",
+          "personB": "Guten Morgen, Frau Klein. Wie geht es Ihnen?",
+          "translation": "A: Selamat pagi, Pak Müller. | B: Selamat pagi, Ibu Klein. Bagaimana kabar Anda?"
+        },
+        {
+          "personA": "Danke, gut. Und Ihnen?",
+          "personB": "Auch gut, danke.",
+          "translation": "A: Baik, terima kasih. Dan Anda? | B: Baik juga, terima kasih."
+        }
+      ],
+      "questions": [
+        {
+          "question": "Apakah percakapan di atas bersifat formal atau informal?",
+          "options": ["Formal", "Informal"],
+          "correctAnswer": 0
+        }
+      ]
+    },
     "sentenceBreakdowns": [
       "Ich (subjek) + heiße (verb) + Anna (objek/nama).",
       "Wie (kata tanya) + geht (verb) + es (subjek) + Ihnen (objek Dativ formal)?",
       "Mir (objek Dativ) + geht (verb) + es (subjek) + gut (kata sifat)."
     ],
     "pronunciationTips": [
-      "Huruf 'ch' memiliki dua suara utama: seperti 'h' dalam 'ich' (palatal) dan seperti 'kh' dalam 'ach' (velar). Untuk A1, fokus pada 'ich'.",
-      "Huruf 'h' di awal kata biasanya diucapkan (misal: 'Hallo'), tetapi di tengah kata setelah vokal seringkali tidak diucapkan dan hanya memanjangkan vokal sebelumnya (misal: 'gehen').",
-      "Vokal ganda 'ei' diucapkan seperti 'ai' dalam 'pantai'.",
-      "Vokal ganda 'ie' diucapkan seperti 'i' panjang dalam 'kopi'."
+      "**Minimal Pairs (Pasangan Kata)**\nOrang Indonesia sering tertukar membaca vokal 'ie' dan 'ei' karena kita terbiasa membaca lurus.\n- **Bier** (dibaca: Beer / i panjang) vs **bei** (dibaca: bai)\n- **schön** (bibir maju membentuk 'o', suarakan 'e') vs **schon** (o biasa)",
+      "**Suara 'ch'**\nHuruf 'ch' memiliki dua suara utama:\n- Seperti desisan kucing 'hsss' di langit-langit mulut pada kata **ich**.\n- Seperti suara orang membuang dahak 'kh' pada kata **ach**.",
+      "**Rhythm Drills (Pemenggalan Kata)**\nBahasa Jerman punya intonasi turun di akhir kalimat pernyataan.\n- *Ich heiße...* (Naik di 'Ich', turun di 'heiße')\n- *Wie geht es Ihnen?* (Naik di 'Wie', perlahan turun di 'Ihnen')"
     ],
     "vocabulary": [
       {
-        "id": "v1-1",
+        "id": "v-gen-1",
         "word": "Hallo",
         "translation": "Halo",
         "exampleSentence": "Hallo, wie geht es dir?",
@@ -27,7 +56,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-2",
+        "id": "v-gen-2",
         "word": "Guten Morgen",
         "translation": "Selamat Pagi",
         "exampleSentence": "Guten Morgen, Herr Müller!",
@@ -35,7 +64,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-3",
+        "id": "v-gen-3",
         "word": "Guten Tag",
         "translation": "Selamat Siang/Sore",
         "exampleSentence": "Guten Tag, Frau Schmidt.",
@@ -43,7 +72,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-4",
+        "id": "v-gen-4",
         "word": "Guten Abend",
         "translation": "Selamat Malam",
         "exampleSentence": "Guten Abend, alle zusammen.",
@@ -51,7 +80,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-5",
+        "id": "v-gen-5",
         "word": "Gute Nacht",
         "translation": "Selamat Tidur",
         "exampleSentence": "Gute Nacht, schlaf gut!",
@@ -59,7 +88,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-6",
+        "id": "v-gen-6",
         "word": "Wie geht es Ihnen?",
         "translation": "Bagaimana kabar Anda? (formal)",
         "exampleSentence": "Guten Tag, Herr Meier. Wie geht es Ihnen?",
@@ -67,7 +96,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-7",
+        "id": "v-gen-7",
         "word": "Wie geht es dir?",
         "translation": "Bagaimana kabarmu? (informal)",
         "exampleSentence": "Hallo, Anna. Wie geht es dir?",
@@ -75,7 +104,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-8",
+        "id": "v-gen-8",
         "word": "Mir geht es gut",
         "translation": "Kabar saya baik",
         "exampleSentence": "Danke, mir geht es gut.",
@@ -83,7 +112,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-9",
+        "id": "v-gen-9",
         "word": "Ich heiße...",
         "translation": "Nama saya...",
         "exampleSentence": "Ich heiße Max.",
@@ -91,7 +120,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-10",
+        "id": "v-gen-10",
         "word": "Mein Name ist...",
         "translation": "Nama saya adalah...",
         "exampleSentence": "Mein Name ist Lisa.",
@@ -99,7 +128,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-11",
+        "id": "v-gen-11",
         "word": "Freut mich",
         "translation": "Senang bertemu Anda",
         "exampleSentence": "Freut mich, Sie kennenzulernen.",
@@ -107,7 +136,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-12",
+        "id": "v-gen-12",
         "word": "Auf Wiedersehen",
         "translation": "Sampai jumpa (formal)",
         "exampleSentence": "Auf Wiedersehen, Frau Weber.",
@@ -115,7 +144,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-13",
+        "id": "v-gen-13",
         "word": "Tschüss",
         "translation": "Sampai jumpa (informal)",
         "exampleSentence": "Tschüss, bis morgen!",
@@ -123,7 +152,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-14",
+        "id": "v-gen-14",
         "word": "Ja",
         "translation": "Ya",
         "exampleSentence": "Ja, das stimmt.",
@@ -131,7 +160,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-15",
+        "id": "v-gen-15",
         "word": "Nein",
         "translation": "Tidak",
         "exampleSentence": "Nein, das ist falsch.",
@@ -139,7 +168,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-16",
+        "id": "v-gen-16",
         "word": "Danke",
         "translation": "Terima kasih",
         "exampleSentence": "Danke für Ihre Hilfe.",
@@ -147,7 +176,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v1-17",
+        "id": "v-gen-17",
         "word": "Bitte",
         "translation": "Tolong / Sama-sama",
         "exampleSentence": "Bitte schön.",
@@ -255,14 +284,41 @@ export const courseData: Lesson[] = [
         "personB": "Tschüss, Max! Gute Nacht!",
         "translation": "A: Sampai jumpa, sampai besok!\nB: Sampai jumpa, Max! Selamat tidur!"
       }
-    ],
-    "culturalNotes": "Di Jerman, sapaan 'Guten Tag' bisa digunakan sepanjang hari hingga sore. 'Guten Morgen' hanya di pagi hari, dan 'Guten Abend' di malam hari. 'Gute Nacht' hanya digunakan saat akan tidur. Penting untuk membedakan antara sapaan formal (menggunakan 'Sie' dan 'Ihnen') dan informal (menggunakan 'du' dan 'dir'). Jabat tangan adalah bentuk sapaan umum dalam situasi formal."
+    ]
   },
   {
     "id": "a1-2",
     "level": "A1",
     "title": "Artikel: Der, Die, Das",
     "grammarDescription": "Dalam bahasa Jerman, setiap kata benda memiliki gender gramatikal: maskulin (der), feminin (die), atau netral (das). Artikel ini sangat penting karena memengaruhi bentuk kata sifat dan kata ganti. Tidak ada aturan pasti untuk menentukan gender, jadi penting untuk menghafal kata benda beserta artikelnya. Artikel 'der', 'die', 'das' adalah artikel tentu (definite articles).",
+    "canDoGoals": [
+      "Mengidentifikasi gender kata benda (Maskulin, Feminin, Netral)",
+      "Membedakan artikel pasti (Bestimmte Artikel: der, die, das)",
+      "Membedakan artikel tidak pasti (Unbestimmte Artikel: ein, eine)",
+      "Mencocokkan kata benda dengan kata ganti orang (er, sie, es)"
+    ],
+    "indonesianMistakes": "**Menebak Gender Secara Asal (Random Der/Die/Das)**\nDi Indonesia, benda tidak punya jenis kelamin. Kursi ya kursi. Di Jerman: Kursi itu maskulin (*der Stuhl*), tas itu feminin (*die Tasche*), buku itu netral (*das Buch*).\n\n❌ *Das ist der Tasche* (Salah artikel)\n✅ **Das ist die Tasche**\n\n**TIPS EMAS:** Jangan pernah belajar kata benda tanpa artikelnya! Otak kita sering asal tebak karena menganggap benda tidak bernyawa = *das*. Kenyataannya gender bahasa Jerman itu GRAMATIKAL, bukan logis (Buktinya: Anak perempuan = *das Mädchen* / Netral!). Wajib dihafal sebagai satu kesatuan.",
+    "listeningSimulation": {
+      "transcript": [
+        {
+          "personA": "Ist das ein Auto?",
+          "personB": "Ja, das ist das Auto von Thomas.",
+          "translation": "A: Apakah itu sebuah mobil? | B: Ya, itu mobilnya Thomas."
+        },
+        {
+          "personA": "Und wer ist das?",
+          "personB": "Das ist die Frau von Thomas.",
+          "translation": "A: Dan siapa itu? | B: Itu istri/wanitanya Thomas."
+        }
+      ],
+      "questions": [
+        {
+          "question": "Mengapa person B menggunakan kata 'die Frau'?",
+          "options": ["Karena semua orang menggunakan 'die'", "Karena 'Frau' adalah kata benda feminin", "Karena itu adalah subjek pertama"],
+          "correctAnswer": 1
+        }
+      ]
+    },
     "sentenceBreakdowns": [
       "Das (artikel netral) + ist (verb) + der (artikel maskulin) + Mann (kata benda maskulin).",
       "Das (artikel netral) + ist (verb) + die (artikel feminin) + Frau (kata benda feminin).",
@@ -275,7 +331,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v2-1",
+        "id": "v-gen-18",
         "word": "der Mann",
         "translation": "pria",
         "article": "der",
@@ -284,7 +340,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-2",
+        "id": "v-gen-19",
         "word": "die Frau",
         "translation": "wanita",
         "article": "die",
@@ -293,7 +349,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-3",
+        "id": "v-gen-20",
         "word": "das Kind",
         "translation": "anak",
         "article": "das",
@@ -302,7 +358,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-4",
+        "id": "v-gen-21",
         "word": "der Tisch",
         "translation": "meja",
         "article": "der",
@@ -311,7 +367,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-5",
+        "id": "v-gen-22",
         "word": "der Stuhl",
         "translation": "kursi",
         "article": "der",
@@ -320,7 +376,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-6",
+        "id": "v-gen-23",
         "word": "das Buch",
         "translation": "buku",
         "article": "das",
@@ -329,7 +385,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-7",
+        "id": "v-gen-24",
         "word": "das Haus",
         "translation": "rumah",
         "article": "das",
@@ -338,7 +394,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-8",
+        "id": "v-gen-25",
         "word": "das Auto",
         "translation": "mobil",
         "article": "das",
@@ -347,7 +403,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-9",
+        "id": "v-gen-26",
         "word": "der Apfel",
         "translation": "apel",
         "article": "der",
@@ -356,7 +412,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-10",
+        "id": "v-gen-27",
         "word": "die Banane",
         "translation": "pisang",
         "article": "die",
@@ -365,7 +421,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-11",
+        "id": "v-gen-28",
         "word": "das Wasser",
         "translation": "air",
         "article": "das",
@@ -374,7 +430,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-12",
+        "id": "v-gen-29",
         "word": "das Brot",
         "translation": "roti",
         "article": "das",
@@ -383,7 +439,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-13",
+        "id": "v-gen-30",
         "word": "die Milch",
         "translation": "susu",
         "article": "die",
@@ -392,7 +448,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-14",
+        "id": "v-gen-31",
         "word": "der Kaffee",
         "translation": "kopi",
         "article": "der",
@@ -401,7 +457,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-15",
+        "id": "v-gen-32",
         "word": "der Tee",
         "translation": "teh",
         "article": "der",
@@ -410,7 +466,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-16",
+        "id": "v-gen-33",
         "word": "die Tür",
         "translation": "pintu",
         "article": "die",
@@ -419,7 +475,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v2-17",
+        "id": "v-gen-34",
         "word": "das Fenster",
         "translation": "jendela",
         "article": "das",
@@ -533,6 +589,12 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-3",
+    "canDoGoals": [
+      "Membaca dan berhitung angka 1-100 (Zahlen)",
+      "Menyatakan dan menanyakan umur dengan benar",
+      "Menyebutkan nomor telepon",
+      "Memeriksa dan menyebutkan harga barang dalam Euro"
+    ],
     "level": "A1",
     "title": "Angka 1-100 & Umur",
     "grammarDescription": "Pelajaran ini mencakup angka dari 1 hingga 100 dan cara menanyakan serta menyatakan umur. Dalam bahasa Jerman, angka dua digit (21-99) dibentuk dengan menyebutkan satuan terlebih dahulu, diikuti 'und' (dan), lalu puluhan (misal: 'einundzwanzig' untuk 21). Untuk umur, kita menggunakan struktur 'Ich bin [angka] Jahre alt'.",
@@ -548,7 +610,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v3-1",
+        "id": "v-gen-35",
         "word": "eins",
         "translation": "satu",
         "exampleSentence": "Ich habe eins Buch.",
@@ -556,7 +618,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-2",
+        "id": "v-gen-36",
         "word": "zwei",
         "translation": "dua",
         "exampleSentence": "Wir sind zwei Personen.",
@@ -564,7 +626,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-3",
+        "id": "v-gen-37",
         "word": "drei",
         "translation": "tiga",
         "exampleSentence": "Drei Äpfel, bitte.",
@@ -572,7 +634,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-4",
+        "id": "v-gen-38",
         "word": "vier",
         "translation": "empat",
         "exampleSentence": "Ich habe vier Stifte.",
@@ -580,7 +642,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-5",
+        "id": "v-gen-39",
         "word": "fünf",
         "translation": "lima",
         "exampleSentence": "Fünf Euro, bitte.",
@@ -588,7 +650,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-6",
+        "id": "v-gen-40",
         "word": "sechs",
         "translation": "enam",
         "exampleSentence": "Sechs Uhr ist es.",
@@ -596,7 +658,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-7",
+        "id": "v-gen-41",
         "word": "sieben",
         "translation": "tujuh",
         "exampleSentence": "Sieben Tage hat die Woche.",
@@ -604,7 +666,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-8",
+        "id": "v-gen-42",
         "word": "acht",
         "translation": "delapan",
         "exampleSentence": "Acht Stunden Schlaf.",
@@ -612,7 +674,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-9",
+        "id": "v-gen-43",
         "word": "neun",
         "translation": "sembilan",
         "exampleSentence": "Neun ist meine Glückszahl.",
@@ -620,7 +682,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-10",
+        "id": "v-gen-44",
         "word": "zehn",
         "translation": "sepuluh",
         "exampleSentence": "Zehn Finger habe ich.",
@@ -628,7 +690,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-11",
+        "id": "v-gen-45",
         "word": "zwanzig",
         "translation": "dua puluh",
         "exampleSentence": "Ich bin zwanzig Jahre alt.",
@@ -636,7 +698,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-12",
+        "id": "v-gen-46",
         "word": "dreißig",
         "translation": "tiga puluh",
         "exampleSentence": "Sie ist dreißig Jahre alt.",
@@ -644,7 +706,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-13",
+        "id": "v-gen-47",
         "word": "hundert",
         "translation": "seratus",
         "exampleSentence": "Das kostet hundert Euro.",
@@ -652,7 +714,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-14",
+        "id": "v-gen-48",
         "word": "Jahre alt",
         "translation": "tahun",
         "exampleSentence": "Er ist fünfzehn Jahre alt.",
@@ -660,7 +722,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-15",
+        "id": "v-gen-49",
         "word": "Wie alt bist du?",
         "translation": "Berapa umurmu? (informal)",
         "exampleSentence": "Wie alt bist du, Max?",
@@ -668,7 +730,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-16",
+        "id": "v-gen-50",
         "word": "die Nummer",
         "translation": "nomor",
         "article": "die",
@@ -677,7 +739,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v3-17",
+        "id": "v-gen-51",
         "word": "der Geburtstag",
         "translation": "ulang tahun",
         "article": "der",
@@ -791,6 +853,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-checkpoint-1",
+    "canDoGoals": [
+      "Mengevaluasi penguasaan salam dan perkenalan",
+      "Menguji kemampuan membedakan artikel Der, Die, Das",
+      "Menguji kelancaran menghitung angka 1-100 dan menyatakan umur"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -903,6 +970,12 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-4",
+    "canDoGoals": [
+      "Menyebutkan nama-nama hari (Montag, Dienstag...)",
+      "Menyebutkan nama-nama bulan dalam bahasa Jerman",
+      "Mendeskripsikan warna benda (Farben)",
+      "Mampu merespons pertanyaan dengan 'Wann?' (Kapan?)"
+    ],
     "level": "A1",
     "title": "Warna, Hari, Bulan",
     "grammarDescription": "Pelajaran ini memperkenalkan kosakata untuk warna, hari dalam seminggu, dan bulan dalam setahun. Warna biasanya berfungsi sebagai kata sifat dan diletakkan sebelum kata benda yang dijelaskan. Hari dan bulan adalah kata benda dan selalu diawali dengan huruf kapital. Hari dalam seminggu umumnya maskulin (der), sedangkan bulan juga maskulin (der).",
@@ -918,7 +991,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v4-1",
+        "id": "v-gen-52",
         "word": "rot",
         "translation": "merah",
         "exampleSentence": "Der Apfel ist rot.",
@@ -926,7 +999,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-2",
+        "id": "v-gen-53",
         "word": "blau",
         "translation": "biru",
         "exampleSentence": "Der Himmel ist blau.",
@@ -934,7 +1007,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-3",
+        "id": "v-gen-54",
         "word": "grün",
         "translation": "hijau",
         "exampleSentence": "Das Gras ist grün.",
@@ -942,7 +1015,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-4",
+        "id": "v-gen-55",
         "word": "gelb",
         "translation": "kuning",
         "exampleSentence": "Die Sonne ist gelb.",
@@ -950,7 +1023,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-5",
+        "id": "v-gen-56",
         "word": "schwarz",
         "translation": "hitam",
         "exampleSentence": "Die Katze ist schwarz.",
@@ -958,7 +1031,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-6",
+        "id": "v-gen-57",
         "word": "weiß",
         "translation": "putih",
         "exampleSentence": "Der Schnee ist weiß.",
@@ -966,7 +1039,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-7",
+        "id": "v-gen-58",
         "word": "der Montag",
         "translation": "Senin",
         "article": "der",
@@ -975,7 +1048,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-8",
+        "id": "v-gen-59",
         "word": "der Dienstag",
         "translation": "Selasa",
         "article": "der",
@@ -984,7 +1057,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-9",
+        "id": "v-gen-60",
         "word": "der Mittwoch",
         "translation": "Rabu",
         "article": "der",
@@ -993,7 +1066,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-10",
+        "id": "v-gen-61",
         "word": "der Donnerstag",
         "translation": "Kamis",
         "article": "der",
@@ -1002,7 +1075,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-11",
+        "id": "v-gen-62",
         "word": "der Freitag",
         "translation": "Jumat",
         "article": "der",
@@ -1011,7 +1084,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-12",
+        "id": "v-gen-63",
         "word": "der Samstag",
         "translation": "Sabtu",
         "article": "der",
@@ -1020,7 +1093,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-13",
+        "id": "v-gen-64",
         "word": "der Sonntag",
         "translation": "Minggu",
         "article": "der",
@@ -1029,7 +1102,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-14",
+        "id": "v-gen-65",
         "word": "der Januar",
         "translation": "Januari",
         "article": "der",
@@ -1038,7 +1111,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-15",
+        "id": "v-gen-66",
         "word": "der Februar",
         "translation": "Februari",
         "article": "der",
@@ -1047,7 +1120,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-16",
+        "id": "v-gen-67",
         "word": "der März",
         "translation": "Maret",
         "article": "der",
@@ -1056,7 +1129,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-17",
+        "id": "v-gen-68",
         "word": "der April",
         "translation": "April",
         "article": "der",
@@ -1065,7 +1138,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-18",
+        "id": "v-gen-69",
         "word": "der Mai",
         "translation": "Mei",
         "article": "der",
@@ -1074,7 +1147,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-19",
+        "id": "v-gen-70",
         "word": "der Juni",
         "translation": "Juni",
         "article": "der",
@@ -1083,7 +1156,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-20",
+        "id": "v-gen-71",
         "word": "der Juli",
         "translation": "Juli",
         "article": "der",
@@ -1092,7 +1165,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-21",
+        "id": "v-gen-72",
         "word": "der August",
         "translation": "Agustus",
         "article": "der",
@@ -1101,7 +1174,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-22",
+        "id": "v-gen-73",
         "word": "der September",
         "translation": "September",
         "article": "der",
@@ -1110,7 +1183,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-23",
+        "id": "v-gen-74",
         "word": "der Oktober",
         "translation": "Oktober",
         "article": "der",
@@ -1119,7 +1192,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-24",
+        "id": "v-gen-75",
         "word": "der November",
         "translation": "November",
         "article": "der",
@@ -1128,7 +1201,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v4-25",
+        "id": "v-gen-76",
         "word": "der Dezember",
         "translation": "Desember",
         "article": "der",
@@ -1242,6 +1315,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-5",
+    "canDoGoals": [
+      "Membedakan Kata Ganti Orang (Personalpronomen) untuk subjek (ich, du, er, sie, es, wir, ihr, sie, Sie)",
+      "Mampu menyebutkan orang ketiga (menunjuk orang lain)",
+      "Mengerti kapan menggunakan 'Ihr' vs 'Sie'"
+    ],
     "level": "A1",
     "title": "Kata Ganti Orang (ich, du, er, sie, wir...)",
     "grammarDescription": "Kata ganti orang (Personalpronomen) menggantikan kata benda dan sangat penting untuk membentuk kalimat. Dalam bahasa Jerman, kata ganti orang berubah bentuk tergantung pada kasusnya (nominatif, akusatif, datif, genitif). Untuk level A1, kita akan fokus pada kasus nominatif, yang digunakan sebagai subjek kalimat. Penting untuk memahami perbedaan antara 'du' (informal tunggal), 'ihr' (informal jamak), 'sie' (formal tunggal/jamak, atau 'mereka' informal jamak).",
@@ -1257,7 +1335,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v5-1",
+        "id": "v-gen-77",
         "word": "ich",
         "translation": "saya",
         "exampleSentence": "Ich bin Student.",
@@ -1265,7 +1343,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-2",
+        "id": "v-gen-78",
         "word": "du",
         "translation": "kamu (informal, tunggal)",
         "exampleSentence": "Du sprichst gut Deutsch.",
@@ -1273,7 +1351,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-3",
+        "id": "v-gen-79",
         "word": "er",
         "translation": "dia (laki-laki)",
         "exampleSentence": "Er kommt aus Deutschland.",
@@ -1281,7 +1359,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-4",
+        "id": "v-gen-80",
         "word": "sie",
         "translation": "dia (perempuan) / mereka",
         "exampleSentence": "Sie ist Lehrerin. Sie lernen Deutsch.",
@@ -1289,7 +1367,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-5",
+        "id": "v-gen-81",
         "word": "es",
         "translation": "itu (netral)",
         "exampleSentence": "Es ist ein Buch.",
@@ -1297,7 +1375,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-6",
+        "id": "v-gen-82",
         "word": "wir",
         "translation": "kami/kita",
         "exampleSentence": "Wir gehen zusammen.",
@@ -1305,7 +1383,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-7",
+        "id": "v-gen-83",
         "word": "ihr",
         "translation": "kalian (informal, jamak)",
         "exampleSentence": "Ihr seid Freunde.",
@@ -1313,7 +1391,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-8",
+        "id": "v-gen-84",
         "word": "Sie",
         "translation": "Anda (formal, tunggal/jamak)",
         "exampleSentence": "Sprechen Sie Englisch?",
@@ -1321,7 +1399,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-9",
+        "id": "v-gen-85",
         "word": "sprechen",
         "translation": "berbicara",
         "exampleSentence": "Ich spreche Deutsch.",
@@ -1329,7 +1407,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-10",
+        "id": "v-gen-86",
         "word": "lernen",
         "translation": "belajar",
         "exampleSentence": "Wir lernen Deutsch.",
@@ -1337,7 +1415,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-11",
+        "id": "v-gen-87",
         "word": "verstehen",
         "translation": "mengerti",
         "exampleSentence": "Ich verstehe Sie nicht.",
@@ -1345,7 +1423,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-12",
+        "id": "v-gen-88",
         "word": "kommen",
         "translation": "datang",
         "exampleSentence": "Woher kommen Sie?",
@@ -1353,7 +1431,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-13",
+        "id": "v-gen-89",
         "word": "gehen",
         "translation": "pergi",
         "exampleSentence": "Wir gehen nach Hause.",
@@ -1361,7 +1439,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-14",
+        "id": "v-gen-90",
         "word": "wohnen",
         "translation": "tinggal",
         "exampleSentence": "Ich wohne in Jakarta.",
@@ -1369,7 +1447,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-15",
+        "id": "v-gen-91",
         "word": "arbeiten",
         "translation": "bekerja",
         "exampleSentence": "Er arbeitet als Arzt.",
@@ -1377,7 +1455,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-16",
+        "id": "v-gen-92",
         "word": "lesen",
         "translation": "membaca",
         "exampleSentence": "Sie liest ein Buch.",
@@ -1385,7 +1463,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v5-17",
+        "id": "v-gen-93",
         "word": "schreiben",
         "translation": "menulis",
         "exampleSentence": "Ich schreibe einen Brief.",
@@ -1501,6 +1579,33 @@ export const courseData: Lesson[] = [
     "level": "A1",
     "title": "Konjugasi sein & haben",
     "grammarDescription": "Kata kerja 'sein' (to be) dan 'haben' (to have) adalah dua kata kerja paling penting dan paling sering digunakan dalam bahasa Jerman. Keduanya adalah kata kerja tidak beraturan, yang berarti konjugasinya tidak mengikuti pola standar dan harus dihafal. 'Sein' digunakan untuk menyatakan identitas, kondisi, lokasi, dan umur. 'Haben' digunakan untuk menyatakan kepemilikan. Keduanya juga berfungsi sebagai kata kerja bantu untuk membentuk kala lampau (Perfekt), yang akan dipelajari di level selanjutnya.",
+    "canDoGoals": [
+      "Melakukan konjugasi kata kerja 'sein' (adalah) di waktu sekarang",
+      "Melakukan konjugasi kata kerja 'haben' (memiliki) di waktu sekarang",
+      "Membentuk kalimat deskripsi sederhana diri dan kepemilikan"
+    ],
+    "indonesianMistakes": "**1. Umur dan Lapar: Sein vs Haben**\nBahasa Indonesia agak rancu tentang verb. Bahasa Jerman sangat jelas: Anda *menjadi* (sein) umur, tapi Anda *memiliki* (haben) rasa lapar.\n\n❌ *Ich habe 20 Jahre alt.* (Saya memiliki 20 tahun - SALAH)\n✅ **Ich bin 20 Jahre alt.** (Saya berumur 20 tahun - BENAR)\n\n❌ *Ich bin Hunger.* (Artinya: Saya adalah sosok kelaparan itu sendiri - SALAH)\n✅ **Ich habe Hunger.** (Saya memiliki rasa lapar - BENAR)\nBegitu juga dengan haus: **Ich habe Durst**.",
+    "listeningSimulation": {
+      "transcript": [
+        {
+          "personA": "Wie alt bist du?",
+          "personB": "Ich bin zwanzig Jahre alt. Und du?",
+          "translation": "A: Berapa umurmu? | B: Saya berumur dua puluh tahun. Dan kamu?"
+        },
+        {
+          "personA": "Ich bin zweiundzwanzig. Hast du Hunger?",
+          "personB": "Ja, ich habe großen Hunger!",
+          "translation": "A: Saya berumur 22. Apakah kamu lapar? | B: Ya, saya sangat lapar!"
+        }
+      ],
+      "questions": [
+        {
+          "question": "Kata kerja apa yang digunakan untuk menyatakan lapar?",
+          "options": ["sein", "haben"],
+          "correctAnswer": 1
+        }
+      ]
+    },
     "sentenceBreakdowns": [
       "Ich (subjek) + bin (konjugasi 'sein') + müde (kata sifat).",
       "Er (subjek) + hat (konjugasi 'haben') + ein (artikel tak tentu) + Buch (kata benda).",
@@ -1513,7 +1618,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v6-1",
+        "id": "v-gen-94",
         "word": "sein",
         "translation": "adalah/berada",
         "exampleSentence": "Ich bin Student.",
@@ -1521,7 +1626,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-2",
+        "id": "v-gen-95",
         "word": "haben",
         "translation": "memiliki",
         "exampleSentence": "Ich habe ein Auto.",
@@ -1529,7 +1634,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-3",
+        "id": "v-gen-96",
         "word": "bin",
         "translation": "adalah (ich)",
         "exampleSentence": "Ich bin glücklich.",
@@ -1537,7 +1642,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-4",
+        "id": "v-gen-97",
         "word": "bist",
         "translation": "adalah (du)",
         "exampleSentence": "Du bist nett.",
@@ -1545,7 +1650,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-5",
+        "id": "v-gen-98",
         "word": "ist",
         "translation": "adalah (er/sie/es)",
         "exampleSentence": "Er ist Arzt.",
@@ -1553,7 +1658,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-6",
+        "id": "v-gen-99",
         "word": "sind",
         "translation": "adalah (wir/sie/Sie)",
         "exampleSentence": "Wir sind Freunde.",
@@ -1561,7 +1666,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-7",
+        "id": "v-gen-100",
         "word": "seid",
         "translation": "adalah (ihr)",
         "exampleSentence": "Ihr seid müde.",
@@ -1569,7 +1674,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-8",
+        "id": "v-gen-101",
         "word": "habe",
         "translation": "memiliki (ich)",
         "exampleSentence": "Ich habe Hunger.",
@@ -1577,7 +1682,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-9",
+        "id": "v-gen-102",
         "word": "hast",
         "translation": "memiliki (du)",
         "exampleSentence": "Hast du Zeit?",
@@ -1585,7 +1690,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-10",
+        "id": "v-gen-103",
         "word": "hat",
         "translation": "memiliki (er/sie/es)",
         "exampleSentence": "Sie hat Durst.",
@@ -1593,7 +1698,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-11",
+        "id": "v-gen-104",
         "word": "haben",
         "translation": "memiliki (wir/sie/Sie)",
         "exampleSentence": "Wir haben ein Problem.",
@@ -1601,7 +1706,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-12",
+        "id": "v-gen-105",
         "word": "müde",
         "translation": "lelah",
         "exampleSentence": "Ich bin müde.",
@@ -1609,7 +1714,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-13",
+        "id": "v-gen-106",
         "word": "der Hunger",
         "translation": "lapar",
         "article": "der",
@@ -1618,7 +1723,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-14",
+        "id": "v-gen-107",
         "word": "der Durst",
         "translation": "haus",
         "article": "der",
@@ -1627,7 +1732,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-15",
+        "id": "v-gen-108",
         "word": "die Zeit",
         "translation": "waktu",
         "article": "die",
@@ -1636,7 +1741,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-16",
+        "id": "v-gen-109",
         "word": "das Geld",
         "translation": "uang",
         "article": "das",
@@ -1645,7 +1750,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-17",
+        "id": "v-gen-110",
         "word": "der Freund",
         "translation": "teman (laki-laki)",
         "article": "der",
@@ -1654,7 +1759,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v6-18",
+        "id": "v-gen-111",
         "word": "die Freundin",
         "translation": "teman (perempuan)",
         "article": "die",
@@ -1768,6 +1873,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-checkpoint-2",
+    "canDoGoals": [
+      "Mengevaluasi penguasaan kata ganti orang",
+      "Menguji konjugasi kata kerja dasar (sein & haben)",
+      "Mengevaluasi memori nama-nama hari, bulan, dan warna"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -1883,7 +1993,34 @@ export const courseData: Lesson[] = [
     "level": "A1",
     "title": "Kalimat Sederhana (Subjek + Verb + Objek)",
     "grammarDescription": "Dalam bahasa Jerman, struktur kalimat dasar adalah Subjek + Verb + Objek (SVO), mirip dengan bahasa Indonesia. Namun, ada aturan penting yang disebut 'Verb-Zweit-Stellung' (aturan kata kerja kedua), yang berarti kata kerja yang dikonjugasikan selalu berada di posisi kedua dalam kalimat deklaratif. Objek dalam kalimat ini akan sering berada dalam kasus Akkusativ, yang merupakan kasus untuk objek langsung. Artikel maskulin berubah dari 'der' menjadi 'den' di Akkusativ, sedangkan 'die' dan 'das' tetap.",
-    "sentenceBreakdowns": [
+    "canDoGoals": [
+      "Menyusun kalimat pernyataan sederhana (Aussagesätze)",
+      "Menyusun kalimat pertanyaan dengan kata tanya (W-Fragen)",
+      "Menyusun kalimat interogatif sederhana (Ja/Nein-Fragen)",
+      "Menempatkan struktur kata kerja pada posisi kedua (Position 2)"
+    ],
+    "indonesianMistakes": "**Aturan Harga Mati: Verb POSISI KEDUA**\nIni adalah kesalahan paling klasik orang Indonesia! Di bahasa Indonesia, kita bisa menggeser-geser kata suka-suka (*Hari ini saya makan roti* / *Saya makan roti hari ini*).\nDi Jerman, *verb* yang dikonjugasikan adalah RAJA yang tak bisa digeser dari TAHTA KEDUA.\n\n❌ *Heute ich **trinke** Wasser* (Subjek - Kata - Verb = Verb posisi ke-3 = SALAH!)\n✅ **Heute trinke ich Wasser** (Keterangan - Verb - Subjek = Verb posisi ke-2 = BENAR!).\n✅ **Ich trinke heute Wasser** (Subjek - Verb = Verb posisi ke-2 = BENAR!).\nYang dihitung adalah 'blok makna', bukan jumlah kata. 'Heute' dihitung sebagai satu blok.",
+    "listeningSimulation": {
+      "transcript": [
+        {
+          "personA": "Was isst du heute?",
+          "personB": "Heute esse ich einen Apfel. Und du?",
+          "translation": "A: Apa yang kamu makan hari ini? | B: Hari ini aku makan apel. Dan kamu?"
+        },
+        {
+          "personA": "Ich esse eine Pizza.",
+          "personB": "Oh, lecker!",
+          "translation": "A: Aku makan pizza. | B: Oh, enak!"
+        }
+      ],
+      "questions": [
+        {
+          "question": "Mengapa kalimat person B berkata 'Heute esse ich', bukannya 'Heute ich esse'?",
+          "options": ["Karena ia bertanya", "Karena aturan Verb harus ada di posisi ke-2", "Karena Apel adalah maskulin"],
+          "correctAnswer": 1
+        }
+      ]
+    },    "sentenceBreakdowns": [
       "Ich (subjek) + trinke (verb) + Wasser (objek Akkusativ).",
       "Du (subjek) + liest (verb) + ein (artikel tak tentu Akkusativ) + Buch (objek Akkusativ).",
       "Er (subjek) + isst (verb) + den (artikel Akkusativ maskulin) + Apfel (kata benda maskulin)."
@@ -1895,7 +2032,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v7-1",
+        "id": "v-gen-112",
         "word": "essen",
         "translation": "makan",
         "exampleSentence": "Ich esse einen Apfel.",
@@ -1903,7 +2040,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-2",
+        "id": "v-gen-113",
         "word": "trinken",
         "translation": "minum",
         "exampleSentence": "Wir trinken Wasser.",
@@ -1911,7 +2048,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-3",
+        "id": "v-gen-114",
         "word": "lesen",
         "translation": "membaca",
         "exampleSentence": "Sie liest ein Buch.",
@@ -1919,7 +2056,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-4",
+        "id": "v-gen-115",
         "word": "schreiben",
         "translation": "menulis",
         "exampleSentence": "Ich schreibe einen Brief.",
@@ -1927,7 +2064,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-5",
+        "id": "v-gen-116",
         "word": "kaufen",
         "translation": "membeli",
         "exampleSentence": "Er kauft ein Auto.",
@@ -1935,7 +2072,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-6",
+        "id": "v-gen-117",
         "word": "sehen",
         "translation": "melihat",
         "exampleSentence": "Ich sehe den Film.",
@@ -1943,7 +2080,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-7",
+        "id": "v-gen-118",
         "word": "hören",
         "translation": "mendengar",
         "exampleSentence": "Wir hören Musik.",
@@ -1951,7 +2088,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-8",
+        "id": "v-gen-119",
         "word": "mögen",
         "translation": "menyukai",
         "exampleSentence": "Ich mag Kaffee.",
@@ -1959,7 +2096,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-9",
+        "id": "v-gen-120",
         "word": "machen",
         "translation": "melakukan/membuat",
         "exampleSentence": "Was machst du?",
@@ -1967,7 +2104,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-10",
+        "id": "v-gen-121",
         "word": "spielen",
         "translation": "bermain",
         "exampleSentence": "Die Kinder spielen im Garten.",
@@ -1975,7 +2112,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-11",
+        "id": "v-gen-122",
         "word": "die Musik",
         "translation": "musik",
         "article": "die",
@@ -1984,7 +2121,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-12",
+        "id": "v-gen-123",
         "word": "der Film",
         "translation": "film",
         "article": "der",
@@ -1993,7 +2130,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-13",
+        "id": "v-gen-124",
         "word": "das Essen",
         "translation": "makanan",
         "article": "das",
@@ -2002,7 +2139,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-14",
+        "id": "v-gen-125",
         "word": "das Getränk",
         "translation": "minuman",
         "article": "das",
@@ -2011,7 +2148,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-15",
+        "id": "v-gen-126",
         "word": "der Brief",
         "translation": "surat",
         "article": "der",
@@ -2020,7 +2157,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v7-16",
+        "id": "v-gen-127",
         "word": "die Zeitung",
         "translation": "koran",
         "article": "die",
@@ -2134,6 +2271,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-8",
+    "canDoGoals": [
+      "Memahami konsep preposisi tempat dasar (in, auf, an, unter)",
+      "Bisa menjelaskan posisi suatu benda yang diam",
+      "Menyusun kalimat lokasi menggunakan preposisi dan Dativ/Akkusativ (dasar)"
+    ],
     "level": "A1",
     "title": "Preposisi Dasar (in, auf, an, unter)",
     "grammarDescription": "Preposisi adalah kata yang menunjukkan hubungan antara kata benda atau kata ganti dengan kata lain dalam kalimat, seringkali menunjukkan lokasi atau arah. Dalam bahasa Jerman, preposisi sangat penting karena mereka memengaruhi kasus kata benda atau kata ganti yang mengikutinya. Untuk A1, kita akan fokus pada preposisi lokasi yang diikuti oleh kasus Dativ (menjawab pertanyaan 'Wo?' - di mana?). Artikel berubah di Dativ: 'der' menjadi 'dem', 'die' menjadi 'der', 'das' menjadi 'dem'.",
@@ -2149,7 +2291,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v8-1",
+        "id": "v-gen-128",
         "word": "in",
         "translation": "di dalam / di",
         "exampleSentence": "Ich bin in der Schule.",
@@ -2157,7 +2299,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-2",
+        "id": "v-gen-129",
         "word": "auf",
         "translation": "di atas (menyentuh permukaan)",
         "exampleSentence": "Das Buch ist auf dem Tisch.",
@@ -2165,7 +2307,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-3",
+        "id": "v-gen-130",
         "word": "an",
         "translation": "di / di samping (menyentuh vertikal)",
         "exampleSentence": "Das Bild hängt an der Wand.",
@@ -2173,7 +2315,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-4",
+        "id": "v-gen-131",
         "word": "unter",
         "translation": "di bawah",
         "exampleSentence": "Die Katze ist unter dem Bett.",
@@ -2181,7 +2323,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-5",
+        "id": "v-gen-132",
         "word": "über",
         "translation": "di atas (tidak menyentuh)",
         "exampleSentence": "Die Lampe hängt über dem Tisch.",
@@ -2189,7 +2331,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-6",
+        "id": "v-gen-133",
         "word": "neben",
         "translation": "di samping",
         "exampleSentence": "Der Stuhl steht neben dem Tisch.",
@@ -2197,7 +2339,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-7",
+        "id": "v-gen-134",
         "word": "vor",
         "translation": "di depan",
         "exampleSentence": "Das Auto steht vor dem Haus.",
@@ -2205,7 +2347,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-8",
+        "id": "v-gen-135",
         "word": "hinter",
         "translation": "di belakang",
         "exampleSentence": "Der Garten ist hinter dem Haus.",
@@ -2213,7 +2355,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-9",
+        "id": "v-gen-136",
         "word": "zwischen",
         "translation": "di antara",
         "exampleSentence": "Die Bank ist zwischen den Bäumen.",
@@ -2221,7 +2363,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-10",
+        "id": "v-gen-137",
         "word": "der Tisch",
         "translation": "meja",
         "article": "der",
@@ -2230,7 +2372,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-11",
+        "id": "v-gen-138",
         "word": "der Stuhl",
         "translation": "kursi",
         "article": "der",
@@ -2239,7 +2381,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-12",
+        "id": "v-gen-139",
         "word": "das Bett",
         "translation": "tempat tidur",
         "article": "das",
@@ -2248,7 +2390,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-13",
+        "id": "v-gen-140",
         "word": "die Wand",
         "translation": "dinding",
         "article": "die",
@@ -2257,7 +2399,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-14",
+        "id": "v-gen-141",
         "word": "die Tür",
         "translation": "pintu",
         "article": "die",
@@ -2266,7 +2408,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-15",
+        "id": "v-gen-142",
         "word": "das Fenster",
         "translation": "jendela",
         "article": "das",
@@ -2275,7 +2417,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-16",
+        "id": "v-gen-143",
         "word": "die Schule",
         "translation": "sekolah",
         "article": "die",
@@ -2284,7 +2426,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v8-17",
+        "id": "v-gen-144",
         "word": "der Garten",
         "translation": "taman",
         "article": "der",
@@ -2398,6 +2540,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-9",
+    "canDoGoals": [
+      "Menyebutkan anggota keluarga terdekat (Vater, Mutter, Geschwister)",
+      "Menceritakan siapa anggota keluarga dan apa profesinya (Berufe)",
+      "Menggunakan dasar Possessivartikel (mein, dein)"
+    ],
     "level": "A1",
     "title": "Keluarga & Pekerjaan",
     "grammarDescription": "Pelajaran ini memperkenalkan kosakata untuk anggota keluarga dan berbagai jenis pekerjaan. Kita akan belajar bagaimana memperkenalkan anggota keluarga dan menanyakan serta menyatakan profesi seseorang. Kata benda untuk pekerjaan seringkali memiliki bentuk maskulin dan feminin (misal: 'der Lehrer' dan 'die Lehrerin'). Kata ganti posesif ('mein', 'dein', dll.) juga akan digunakan untuk menunjukkan kepemilikan dalam keluarga.",
@@ -2413,7 +2560,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v9-1",
+        "id": "v-gen-145",
         "word": "die Familie",
         "translation": "keluarga",
         "article": "die",
@@ -2422,7 +2569,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-2",
+        "id": "v-gen-146",
         "word": "der Vater",
         "translation": "ayah",
         "article": "der",
@@ -2431,7 +2578,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-3",
+        "id": "v-gen-147",
         "word": "die Mutter",
         "translation": "ibu",
         "article": "die",
@@ -2440,7 +2587,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-4",
+        "id": "v-gen-148",
         "word": "der Bruder",
         "translation": "saudara laki-laki",
         "article": "der",
@@ -2449,7 +2596,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-5",
+        "id": "v-gen-149",
         "word": "die Schwester",
         "translation": "saudara perempuan",
         "article": "die",
@@ -2458,7 +2605,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-6",
+        "id": "v-gen-150",
         "word": "der Sohn",
         "translation": "anak laki-laki",
         "article": "der",
@@ -2467,7 +2614,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-7",
+        "id": "v-gen-151",
         "word": "die Tochter",
         "translation": "anak perempuan",
         "article": "die",
@@ -2476,7 +2623,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-8",
+        "id": "v-gen-152",
         "word": "die Großeltern",
         "translation": "kakek-nenek",
         "article": "die (plural)",
@@ -2485,7 +2632,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-9",
+        "id": "v-gen-153",
         "word": "der Opa",
         "translation": "kakek (informal)",
         "article": "der",
@@ -2494,7 +2641,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-10",
+        "id": "v-gen-154",
         "word": "die Oma",
         "translation": "nenek (informal)",
         "article": "die",
@@ -2503,7 +2650,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-11",
+        "id": "v-gen-155",
         "word": "der Beruf",
         "translation": "profesi/pekerjaan",
         "article": "der",
@@ -2512,7 +2659,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-12",
+        "id": "v-gen-156",
         "word": "der Lehrer",
         "translation": "guru (laki-laki)",
         "article": "der",
@@ -2521,7 +2668,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-13",
+        "id": "v-gen-157",
         "word": "die Lehrerin",
         "translation": "guru (perempuan)",
         "article": "die",
@@ -2530,7 +2677,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-14",
+        "id": "v-gen-158",
         "word": "der Student",
         "translation": "mahasiswa",
         "article": "der",
@@ -2539,7 +2686,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-15",
+        "id": "v-gen-159",
         "word": "die Studentin",
         "translation": "mahasiswi",
         "article": "die",
@@ -2548,7 +2695,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-16",
+        "id": "v-gen-160",
         "word": "der Arzt",
         "translation": "dokter (laki-laki)",
         "article": "der",
@@ -2557,7 +2704,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-17",
+        "id": "v-gen-161",
         "word": "die Ärztin",
         "translation": "dokter (perempuan)",
         "article": "die",
@@ -2566,7 +2713,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-18",
+        "id": "v-gen-162",
         "word": "was",
         "translation": "apa",
         "exampleSentence": "Was machst du?",
@@ -2574,7 +2721,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v9-19",
+        "id": "v-gen-163",
         "word": "wer",
         "translation": "siapa",
         "exampleSentence": "Wer ist das?",
@@ -2687,6 +2834,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-checkpoint-3",
+    "canDoGoals": [
+      "Mengevaluasi kemampuan menyusun kalimat dengan struktur yang benar",
+      "Menguji pemahaman preposisi dasar dan kata penunjuk posisi",
+      "Mengevaluasi kosakata anggota keluarga dan nama pekerjaan"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -2799,6 +2951,12 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a1-10",
+    "canDoGoals": [
+      "Menyebutkan jenis-jenis makanan dan minuman (Essen und Trinken)",
+      "Memesan makanan dan minuman di kafe atau restoran",
+      "Memahami percakapan sederhana saat berbelanja di supermarket",
+      "Menanyakan makanan spesifik dan menyatakan kelaparan / kehausan"
+    ],
     "level": "A1",
     "title": "Makanan, Minuman & Belanja",
     "grammarDescription": "Pelajaran ini berfokus pada kosakata makanan, minuman, dan frasa yang digunakan saat berbelanja. Kita akan belajar bagaimana menanyakan harga, memesan makanan atau minuman, dan memahami nama-nama produk umum. Kasus Akkusativ akan sering digunakan saat membeli atau memesan sesuatu (objek langsung). Kata kerja modal 'möchten' (ingin) juga sangat berguna dalam konteks ini.",
@@ -2814,7 +2972,7 @@ export const courseData: Lesson[] = [
     ],
     "vocabulary": [
       {
-        "id": "v10-1",
+        "id": "v-gen-164",
         "word": "das Essen",
         "translation": "makanan",
         "article": "das",
@@ -2823,7 +2981,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-2",
+        "id": "v-gen-165",
         "word": "das Getränk",
         "translation": "minuman",
         "article": "das",
@@ -2832,7 +2990,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-3",
+        "id": "v-gen-166",
         "word": "der Apfel",
         "translation": "apel",
         "article": "der",
@@ -2841,7 +2999,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-4",
+        "id": "v-gen-167",
         "word": "die Banane",
         "translation": "pisang",
         "article": "die",
@@ -2850,7 +3008,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-5",
+        "id": "v-gen-168",
         "word": "das Brot",
         "translation": "roti",
         "article": "das",
@@ -2859,7 +3017,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-6",
+        "id": "v-gen-169",
         "word": "die Milch",
         "translation": "susu",
         "article": "die",
@@ -2868,7 +3026,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-7",
+        "id": "v-gen-170",
         "word": "der Käse",
         "translation": "keju",
         "article": "der",
@@ -2877,7 +3035,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-8",
+        "id": "v-gen-171",
         "word": "das Wasser",
         "translation": "air",
         "article": "das",
@@ -2886,7 +3044,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-9",
+        "id": "v-gen-172",
         "word": "der Saft",
         "translation": "jus",
         "article": "der",
@@ -2895,7 +3053,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-10",
+        "id": "v-gen-173",
         "word": "der Kaffee",
         "translation": "kopi",
         "article": "der",
@@ -2904,7 +3062,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-11",
+        "id": "v-gen-174",
         "word": "der Tee",
         "translation": "teh",
         "article": "der",
@@ -2913,7 +3071,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-12",
+        "id": "v-gen-175",
         "word": "kaufen",
         "translation": "membeli",
         "exampleSentence": "Ich kaufe im Supermarkt ein.",
@@ -2921,7 +3079,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-13",
+        "id": "v-gen-176",
         "word": "kosten",
         "translation": "berharga/berbiaya",
         "exampleSentence": "Wie viel kostet das?",
@@ -2929,7 +3087,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-14",
+        "id": "v-gen-177",
         "word": "der Supermarkt",
         "translation": "supermarket",
         "article": "der",
@@ -2938,7 +3096,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-15",
+        "id": "v-gen-178",
         "word": "der Preis",
         "translation": "harga",
         "article": "der",
@@ -2947,7 +3105,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-16",
+        "id": "v-gen-179",
         "word": "wie viel",
         "translation": "berapa banyak",
         "exampleSentence": "Wie viel kostet das Brot?",
@@ -2955,7 +3113,7 @@ export const courseData: Lesson[] = [
         "level": "A1"
       },
       {
-        "id": "v10-17",
+        "id": "v-gen-180",
         "word": "möchten",
         "translation": "ingin (sopan)",
         "exampleSentence": "Ich möchte einen Tee.",
@@ -3067,7 +3225,233 @@ export const courseData: Lesson[] = [
     "culturalNotes": "Di Jerman, saat berbelanja atau memesan makanan/minuman, kesopanan sangat dihargai. Menggunakan 'bitte' (tolong) dan 'danke' (terima kasih) adalah hal yang umum. Saat menanyakan harga, frasa 'Wie viel kostet das?' (Berapa harga ini?) adalah standar. Banyak toko kelontong di Jerman mengharuskan Anda membayar untuk kantong belanja, jadi membawa tas belanja sendiri adalah kebiasaan yang baik."
   },
   {
+    "id": "a1-11",
+    "canDoGoals": [
+      "Mampu menyebutkan jam/pukul (Die Uhrzeit) secara formal maupun informal",
+      "Mampu membuat atau mengusulkan sebuah janji temu (Termin machen)",
+      "Mampu menyampaikan kapan mereka sibuk atau punya waktu luang"
+    ],
+    "level": "A1",
+    "title": "Waktu dan Jam (Die Uhrzeit)",
+    "grammarDescription": "Untuk menanyakan jam, gunakan 'Wie spät ist es?' atau 'Wie viel Uhr ist es?'. Dalam bahasa Jerman, ada dua cara membaca jam: cara formal (24 jam) yang digunakan di televisi/stasiun, dan cara informal (12 jam) yang digunakan sehari-hari. Pada cara informal, kita menggunakan 'vor' (kurang) dan 'nach' (lebih). 'Viertel' berarti seperempat (15 menit) dan 'halb' berarti setengah (30 menit, menunjuk ke jam BERIKUTNYA).",
+    "sentenceBreakdowns": [
+      "Es ist (Sekarang jam) + zehn (sepuluh) + Uhr (pas).",
+      "Es ist (Sekarang jam) + viertel (seperempat) + nach (lebih) + zwei (dua).",
+      "Es ist (Sekarang jam) + halb (setengah) + drei (tiga => 2:30)."
+    ],
+    "pronunciationTips": [
+      "Kata 'Uhr' diucapkan dengan 'u' panjang dan 'r' di akhir terdengar samar hampir seperti 'a'. (OO-a)",
+      "Kata 'halb' ingat bahwa 'l' tetap terdengar jelas."
+    ],
+    "vocabulary": [
+      {
+        "id": "v-gen-181",
+        "word": "die Uhr",
+        "translation": "jam",
+        "article": "die",
+        "exampleSentence": "Es ist acht Uhr.",
+        "phonetic": "OOR",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-182",
+        "word": "vor",
+        "translation": "kurang (waktu)",
+        "exampleSentence": "Es ist zehn vor acht.",
+        "phonetic": "FOR",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-183",
+        "word": "nach",
+        "translation": "lebih (waktu)",
+        "exampleSentence": "Es ist zehn nach acht.",
+        "phonetic": "NAKH",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-184",
+        "word": "Viertel",
+        "translation": "seperempat (15 menit)",
+        "exampleSentence": "Es ist Viertel nach drei.",
+        "phonetic": "FEER-tel",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-185",
+        "word": "halb",
+        "translation": "setengah (30 menit)",
+        "exampleSentence": "Es ist halb vier.",
+        "phonetic": "HALP",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Jika waktu menunjukkan 03:15, bagaimana mengucapkannya secara informal?",
+        "options": [
+          "viertel vor drei",
+          "viertel nach drei",
+          "halb drei",
+          "drei Uhr fünfzehn"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Apa arti 'Es ist halb fünf'?",
+        "options": [
+          "Jam 5:30",
+          "Jam 4:30",
+          "Jam 05:00",
+          "Jam 04:00"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "miniQuiz": [
+      {
+        "question": "Bagaimana menanyakan 'Jam berapa sekarang?' dalam bahasa Jerman?",
+        "options": [
+          "Wie spät ist es?",
+          "Was ist Uhr?",
+          "Wo ist Uhr?",
+          "Wann ist es?"
+        ],
+        "correctAnswer": 0
+      }
+    ],
+    "dialogues": [
+      {
+        "personA": "Entschuldigung, wie spät ist es?",
+        "personB": "Es ist Viertel vor neun.",
+        "translation": "A: Permisi, jam berapa sekarang?\nB: Sekarang jam sembilan kurang seperempat."
+      }
+    ],
+    "culturalNotes": "Masyarakat Jerman sangat menghargai ketepatan waktu. Datang terlambat lebih dari 5 menit tanpa memberi kabar dianggap kurang sopan."
+  },
+  {
+    "id": "a1-12",
+    "canDoGoals": [
+      "Menceritakan aktivitas masa luang dan hobi (Freizeit und Hobbys)",
+      "Menggunakan kata 'gern' untuk menyatakan suatu kegiatan yang disenangi",
+      "Bertanya mengenai hobi lawan bicara"
+    ],
+    "level": "A1",
+    "title": "Hobi & Waktu Luang (Hobbys)",
+    "grammarDescription": "Untuk menyatakan hobi, sering digunakan kata kata kerja ditambah dengan kata 'gern' (suka/dengan senang hati). Contohnya 'Ich lese gern' (Saya suka membaca).",
+    "vocabulary": [
+      {
+        "id": "v-gen-186",
+        "word": "das Hobby",
+        "translation": "hobi",
+        "article": "das",
+        "exampleSentence": "Was sind deine Hobbys?",
+        "phonetic": "HOB-bee",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-187",
+        "word": "spielen",
+        "translation": "bermain",
+        "exampleSentence": "Ich spiele Fußball.",
+        "phonetic": "SHPEE-len",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-188",
+        "word": "gern",
+        "translation": "dengan senang hati (suka)",
+        "exampleSentence": "Ich koche gern.",
+        "phonetic": "GERN",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Pilih ungkapan yang benar untuk 'Saya suka membaca':",
+        "options": [
+          "Ich lese gern",
+          "Ich liebe lesen",
+          "Ich lesen mögen",
+          "Ich bin lesen"
+        ],
+        "correctAnswer": 0
+      }
+    ]
+  },
+  {
+    "id": "a1-13",
+    "canDoGoals": [
+      "Mendeskripsikan kondisi cuaca saat ini (Das Wetter)",
+      "Menyebutkan empat musim yang ada di belahan dunia Eropa (Jahreszeiten)",
+      "Mendiskusikan cuaca kesukaan beserta alasannya secara sederhana"
+    ],
+    "level": "A1",
+    "title": "Cuaca dan Musim (Das Wetter und die Jahreszeiten)",
+    "grammarDescription": "Untuk menjelaskan tentang cuaca, kita menggunakan konstruksi 'Es ist...' (Itu adalah...) diikuti oleh kata sifat, atau menggunakan kata kerja yang sesuai seperti 'es regnet' (hujan), 'es schneit' (salju). Ini digunakan bersamaan dengan 'es' yang berfungsi sebagai subjek impersonal.",
+    "vocabulary": [
+      {
+        "id": "v-gen-189",
+        "word": "das Wetter",
+        "translation": "cuaca",
+        "article": "das",
+        "exampleSentence": "Wie ist das Wetter heute?",
+        "phonetic": "VET-ter",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-190",
+        "word": "sonnig",
+        "translation": "cerah (banyak matahari)",
+        "exampleSentence": "Heute ist es sonnig.",
+        "phonetic": "ZON-nikh",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-191",
+        "word": "regnen",
+        "translation": "hujan",
+        "exampleSentence": "Es regnet.",
+        "phonetic": "REG-nen",
+        "level": "A1"
+      },
+      {
+        "id": "v-gen-192",
+        "word": "der Sommer",
+        "translation": "musim panas",
+        "article": "der",
+        "exampleSentence": "Im Sommer ist es heiß.",
+        "phonetic": "ZOM-mer",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Bagaimana cara mengatakan 'Hari ini hujan'?",
+        "options": [
+          "Heute ist regnen",
+          "Heute regnet es",
+          "Es ist Regen",
+          "Regnen heute"
+        ],
+        "correctAnswer": 1
+      }
+    ],
+    "dialogues": [
+      {
+        "personA": "Wie ist das Wetter heute?",
+        "personB": "Es ist warm und sonnig.",
+        "translation": "A: Bagaimana cuaca hari ini?\nB: Hangat dan cerah."
+      }
+    ]
+  },
+  {
     "id": "a2-1",
+    "canDoGoals": [
+      "Mengetahui perbedaan peran Subjek (Nominativ) dan Objek Langsung (Akkusativ)",
+      "Mendeklinasikan artikel tertentu (den, die, das) di objek Akkusativ",
+      "Menggunakan verba yang mewajibkan objek Akkusativ (haben, brauchen...)"
+    ],
     "level": "A2",
     "title": "Kasus Nominativ vs Akkusativ",
     "grammarDescription": "Dalam bahasa Jerman, kata benda dan kata ganti berubah bentuk tergantung pada fungsinya dalam kalimat. Ini disebut 'Kasus' atau 'Kasus'. Ada empat kasus utama, dan di pelajaran ini kita akan fokus pada Nominativ dan Akkusativ.\n\n**Nominativ (Subjek):** Ini adalah kasus untuk subjek kalimat, yaitu pelaku tindakan. Kata benda dalam kasus Nominativ menjawab pertanyaan 'Wer?' (Siapa?) atau 'Was?' (Apa?). Artikel definitif (der, die, das) dan indefinitif (ein, eine, ein) tidak berubah dalam Nominativ.\n\nContoh: **Der Mann** liest ein Buch. (Pria itu membaca sebuah buku. 'Der Mann' adalah subjek)\n\n**Akkusativ (Objek Langsung):** Ini adalah kasus untuk objek langsung dari sebuah kata kerja, yaitu yang menerima tindakan. Kata benda dalam kasus Akkusativ menjawab pertanyaan 'Wen?' (Siapa? - untuk orang) atau 'Was?' (Apa? - untuk benda). Perubahan paling signifikan terjadi pada artikel maskulin: 'der' menjadi 'den' dan 'ein' menjadi 'einen'. Artikel feminin, netral, dan plural tidak berubah.\n\nPerubahan Artikel Akkusativ:\n- Maskulin: der -> den, ein -> einen\n- Feminin: die -> die, eine -> eine\n- Netral: das -> das, ein -> ein\n- Plural: die -> die, (kein artikel indefinitif)\n\nContoh: Ich sehe **den Hund**. (Saya melihat anjing itu. 'den Hund' adalah objek langsung)",
@@ -3082,7 +3466,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan perbedaan pelafalan 'ch'. Ada dua jenis: 'ich-Laut' (seperti di 'ich', 'nicht', 'Mädchen') yang lembut di bagian depan mulut, dan 'ach-Laut' (seperti di 'Buch', 'machen', 'acht') yang lebih keras di bagian belakang tenggorokan. Latih keduanya untuk membedakan kata-kata.",
     "vocabulary": [
       {
-        "id": "v1-1",
+        "id": "v-gen-193",
         "word": "der Mann",
         "translation": "pria",
         "exampleSentence": "Der Mann liest die Zeitung.",
@@ -3091,7 +3475,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v1-2",
+        "id": "v-gen-194",
         "word": "die Frau",
         "translation": "wanita",
         "exampleSentence": "Die Frau kocht das Essen.",
@@ -3100,7 +3484,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v1-3",
+        "id": "v-gen-195",
         "word": "das Kind",
         "translation": "anak",
         "exampleSentence": "Das Kind spielt im Garten.",
@@ -3109,7 +3493,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v1-4",
+        "id": "v-gen-196",
         "word": "der Hund",
         "translation": "anjing",
         "exampleSentence": "Ich sehe den Hund.",
@@ -3118,7 +3502,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v1-5",
+        "id": "v-gen-197",
         "word": "die Katze",
         "translation": "kucing",
         "exampleSentence": "Die Katze schläft auf dem Sofa.",
@@ -3127,7 +3511,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v1-6",
+        "id": "v-gen-198",
         "word": "das Buch",
         "translation": "buku",
         "exampleSentence": "Er liest ein interessantes Buch.",
@@ -3136,7 +3520,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v1-7",
+        "id": "v-gen-199",
         "word": "der Apfel",
         "translation": "apel",
         "exampleSentence": "Ich esse einen Apfel.",
@@ -3145,7 +3529,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v1-8",
+        "id": "v-gen-200",
         "word": "die Banane",
         "translation": "pisang",
         "exampleSentence": "Sie kauft eine Banane.",
@@ -3154,7 +3538,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v1-9",
+        "id": "v-gen-201",
         "word": "das Wasser",
         "translation": "air",
         "exampleSentence": "Trinkst du das Wasser?",
@@ -3163,7 +3547,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v1-10",
+        "id": "v-gen-202",
         "word": "sehen",
         "translation": "melihat",
         "exampleSentence": "Ich sehe den Film.",
@@ -3171,7 +3555,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v1-11",
+        "id": "v-gen-203",
         "word": "kaufen",
         "translation": "membeli",
         "exampleSentence": "Wir kaufen ein neues Auto.",
@@ -3179,7 +3563,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v1-12",
+        "id": "v-gen-204",
         "word": "essen",
         "translation": "makan",
         "exampleSentence": "Was isst du gern?",
@@ -3187,7 +3571,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v1-13",
+        "id": "v-gen-205",
         "word": "trinken",
         "translation": "minum",
         "exampleSentence": "Ich trinke Kaffee.",
@@ -3195,7 +3579,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v1-14",
+        "id": "v-gen-206",
         "word": "lesen",
         "translation": "membaca",
         "exampleSentence": "Er liest ein Buch.",
@@ -3203,7 +3587,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v1-15",
+        "id": "v-gen-207",
         "word": "haben",
         "translation": "memiliki",
         "exampleSentence": "Ich habe einen Bruder.",
@@ -3316,6 +3700,12 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a2-2",
+    "canDoGoals": [
+      "Memahami fungsi Objek Tidak Langsung (Dativ)",
+      "Mendeklinasikan artikel tertentu (dem, der, dem) di posisi Dativ",
+      "Mendeklinasikan artikel tidak tentu (einem, einer, einem) di posisi Dativ",
+      "Mengenali kumpulan verba yang selalu diiringi objek Dativ (helfen, danken...)"
+    ],
     "level": "A2",
     "title": "Kasus Dativ",
     "grammarDescription": "Setelah memahami Nominativ dan Akkusativ, sekarang kita akan mempelajari Kasus Dativ. Dativ sering disebut sebagai kasus objek tidak langsung, yang menunjukkan kepada siapa atau untuk siapa suatu tindakan dilakukan. Kata benda dalam kasus Dativ menjawab pertanyaan 'Wem?' (Kepada siapa?).\n\n**Penggunaan Dativ:**\n1.  **Sebagai Objek Tidak Langsung:** Banyak kata kerja yang membutuhkan objek tidak langsung dalam Dativ. Contoh: geben (memberi), helfen (membantu), danken (berterima kasih), gehören (milik).\n    *   Ich gebe **dem Mann** ein Buch. (Saya memberi sebuah buku kepada pria itu.)\n2.  **Setelah Preposisi Tertentu:** Beberapa preposisi selalu diikuti oleh Dativ. Contoh: mit (dengan), nach (setelah/ke), von (dari), zu (ke), bei (di/pada), aus (dari), gegenüber (di seberang), seit (sejak).\n    *   Ich fahre **mit dem Auto**. (Saya pergi dengan mobil.)\n    *   Sie kommt **aus Deutschland**. (Dia berasal dari Jerman.)\n\n**Perubahan Artikel Dativ:**\n-   Maskulin: der -> dem, ein -> einem\n-   Feminin: die -> der, eine -> einer\n-   Netral: das -> dem, ein -> einem\n-   Plural: die -> den (+ -n pada kata benda jika belum ada, contoh: Kinder -> Kindern, Freunde -> Freunden)\n\nPerhatikan bahwa untuk kata benda plural dalam Dativ, seringkali ditambahkan akhiran '-n' jika kata benda tersebut tidak berakhir dengan '-s' atau '-n' secara alami.",
@@ -3330,7 +3720,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan perbedaan antara 'ei' (dibaca seperti 'ai' dalam 'pantai') dan 'ie' (dibaca seperti 'i' panjang dalam 'biru'). Contoh: 'mein' (milikku) vs 'Miene' (ekspresi wajah), 'Zeit' (waktu) vs 'Ziel' (tujuan). Latih untuk membedakan dan melafalkannya dengan benar.",
     "vocabulary": [
       {
-        "id": "v2-1",
+        "id": "v-gen-208",
         "word": "helfen",
         "translation": "membantu",
         "exampleSentence": "Ich helfe dir gern.",
@@ -3338,7 +3728,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-2",
+        "id": "v-gen-209",
         "word": "geben",
         "translation": "memberi",
         "exampleSentence": "Kannst du mir das Buch geben?",
@@ -3346,7 +3736,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-3",
+        "id": "v-gen-210",
         "word": "danken",
         "translation": "berterima kasih",
         "exampleSentence": "Ich danke Ihnen für die Hilfe.",
@@ -3354,7 +3744,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-4",
+        "id": "v-gen-211",
         "word": "gehören",
         "translation": "milik",
         "exampleSentence": "Das Auto gehört meinem Vater.",
@@ -3362,7 +3752,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-5",
+        "id": "v-gen-212",
         "word": "mit",
         "translation": "dengan",
         "exampleSentence": "Ich fahre mit dem Zug.",
@@ -3370,7 +3760,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-6",
+        "id": "v-gen-213",
         "word": "nach",
         "translation": "setelah/ke",
         "exampleSentence": "Nach der Arbeit gehe ich nach Hause.",
@@ -3378,7 +3768,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-7",
+        "id": "v-gen-214",
         "word": "von",
         "translation": "dari",
         "exampleSentence": "Das Geschenk ist von meiner Schwester.",
@@ -3386,7 +3776,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-8",
+        "id": "v-gen-215",
         "word": "zu",
         "translation": "ke",
         "exampleSentence": "Ich gehe zum Arzt.",
@@ -3394,7 +3784,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-9",
+        "id": "v-gen-216",
         "word": "bei",
         "translation": "di/pada",
         "exampleSentence": "Ich wohne bei meinen Eltern.",
@@ -3402,7 +3792,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-10",
+        "id": "v-gen-217",
         "word": "aus",
         "translation": "dari",
         "exampleSentence": "Er kommt aus Spanien.",
@@ -3410,7 +3800,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v2-11",
+        "id": "v-gen-218",
         "word": "der Bus",
         "translation": "bus",
         "exampleSentence": "Wir fahren mit dem Bus.",
@@ -3419,7 +3809,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v2-12",
+        "id": "v-gen-219",
         "word": "die Schweiz",
         "translation": "Swiss",
         "exampleSentence": "Sie kommt aus der Schweiz.",
@@ -3428,7 +3818,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v2-13",
+        "id": "v-gen-220",
         "word": "der Freund",
         "translation": "teman (laki-laki)",
         "exampleSentence": "Ich spreche mit meinem Freund.",
@@ -3437,7 +3827,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v2-14",
+        "id": "v-gen-221",
         "word": "die Eltern (plural)",
         "translation": "orang tua",
         "exampleSentence": "Ich wohne bei meinen Eltern.",
@@ -3446,7 +3836,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v2-15",
+        "id": "v-gen-222",
         "word": "das Geschenk",
         "translation": "hadiah",
         "exampleSentence": "Das Geschenk ist für dich.",
@@ -3560,6 +3950,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a2-3",
+    "canDoGoals": [
+      "Menggunakan Modal Verben (können, müssen, wollen, dürfen) untuk mengekspresikan kemampuan, kewajiban, dan izin",
+      "Memahami struktur 'Satzklammer', memposisikan verba infinitif di akhir kalimat",
+      "Konjugasi Modal Verben di semua subjek (ich, du, er/sie/es, wir, ihr, sie/Sie)"
+    ],
     "level": "A2",
     "title": "Modal Verben (können, müssen, wollen, dürfen)",
     "grammarDescription": "Kata kerja modal (Modalverben) adalah kata kerja yang mengubah makna kata kerja utama dalam sebuah kalimat, menunjukkan kemampuan, keharusan, keinginan, atau izin. Dalam bahasa Jerman, kata kerja modal sangat umum dan memiliki struktur kalimat yang khas.\n\n**Struktur Kalimat:**\nDalam kalimat utama, kata kerja modal terkonjugasi berada di posisi kedua, sedangkan kata kerja utama (dalam bentuk infinitif) diletakkan di akhir kalimat.\n\nContoh: Ich **kann** Deutsch **sprechen**. (Saya bisa berbicara bahasa Jerman.)\n\n**Modal Verben Utama:**\n1.  **können (bisa/mampu):** Mengungkapkan kemampuan atau kemungkinan.\n    *   Ich kann schwimmen. (Saya bisa berenang.)\n    *   Kannst du mir helfen? (Bisakah kamu membantuku?)\n2.  **müssen (harus):** Mengungkapkan keharusan atau kewajiban.\n    *   Wir müssen arbeiten. (Kita harus bekerja.)\n    *   Ich muss zum Arzt gehen. (Saya harus pergi ke dokter.)\n3.  **wollen (ingin):** Mengungkapkan keinginan atau niat.\n    *   Sie will Deutsch lernen. (Dia ingin belajar bahasa Jerman.)\n    *   Was wollt ihr essen? (Kalian ingin makan apa?)\n4.  **dürfen (boleh/diizinkan):** Mengungkapkan izin atau larangan.\n    *   Hier darf man nicht rauchen. (Di sini tidak boleh merokok.)\n    *   Darf ich reinkommen? (Bolehkah saya masuk?)\n\n**Konjugasi (Perhatikan perubahan vokal pada ich/er/sie/es):**\n| Pronomen | können | müssen | wollen | dürfen |\n|----------|--------|--------|-------|--------|\n| ich      | kann   | muss   | will  | darf   |\n| du       | kannst | musst  | willst| darfst |\n| er/sie/es| kann   | muss   | will  | darf   |\n| wir      | können | müssen | wollen | dürfen |\n| ihr      | könnt  | müsst  | wollt | dürft  |\n| sie/Sie  | können | müssen | wollen | dürfen |\n\nPerhatikan bahwa konjugasi untuk 'ich' dan 'er/sie/es' seringkali sama dan vokal pada akar kata sering berubah.",
@@ -3574,7 +3969,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Umlaut (ä, ö, ü) adalah vokal yang diucapkan dengan membulatkan bibir seperti vokal lain tetapi dengan posisi lidah yang berbeda. \n- 'ä' seperti 'e' dalam 'bed' (Inggris) atau 'e' dalam 'enak' (Indonesia).\n- 'ö' seperti 'eu' dalam 'deux' (Prancis) atau 'e' dalam 'pergi' dengan bibir membulat.\n- 'ü' seperti 'u' dalam 'tu' (Prancis) atau 'i' dalam 'biru' dengan bibir membulat.\nLatih untuk membedakan dan melafalkannya dengan benar, karena ini mengubah makna kata.",
     "vocabulary": [
       {
-        "id": "v3-1",
+        "id": "v-gen-223",
         "word": "können",
         "translation": "bisa/mampu",
         "exampleSentence": "Ich kann gut Deutsch sprechen.",
@@ -3582,7 +3977,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-2",
+        "id": "v-gen-224",
         "word": "müssen",
         "translation": "harus",
         "exampleSentence": "Wir müssen jetzt gehen.",
@@ -3590,7 +3985,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-3",
+        "id": "v-gen-225",
         "word": "wollen",
         "translation": "ingin",
         "exampleSentence": "Was willst du essen?",
@@ -3598,7 +3993,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-4",
+        "id": "v-gen-226",
         "word": "dürfen",
         "translation": "boleh/diizinkan",
         "exampleSentence": "Darf ich hier parken?",
@@ -3606,7 +4001,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-5",
+        "id": "v-gen-227",
         "word": "sprechen",
         "translation": "berbicara",
         "exampleSentence": "Er spricht drei Sprachen.",
@@ -3614,7 +4009,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-6",
+        "id": "v-gen-228",
         "word": "lernen",
         "translation": "belajar",
         "exampleSentence": "Sie lernt Deutsch.",
@@ -3622,7 +4017,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-7",
+        "id": "v-gen-229",
         "word": "gehen",
         "translation": "pergi",
         "exampleSentence": "Ich muss jetzt gehen.",
@@ -3630,7 +4025,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-8",
+        "id": "v-gen-230",
         "word": "arbeiten",
         "translation": "bekerja",
         "exampleSentence": "Wir müssen morgen arbeiten.",
@@ -3638,7 +4033,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-9",
+        "id": "v-gen-231",
         "word": "reisen",
         "translation": "bepergian",
         "exampleSentence": "Sie will nach Italien reisen.",
@@ -3646,7 +4041,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-10",
+        "id": "v-gen-232",
         "word": "rauchen",
         "translation": "merokok",
         "exampleSentence": "Hier darf man nicht rauchen.",
@@ -3654,7 +4049,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-11",
+        "id": "v-gen-233",
         "word": "parken",
         "translation": "parkir",
         "exampleSentence": "Wo kann ich parken?",
@@ -3662,7 +4057,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-12",
+        "id": "v-gen-234",
         "word": "kochen",
         "translation": "memasak",
         "exampleSentence": "Kannst du kochen?",
@@ -3670,7 +4065,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v3-13",
+        "id": "v-gen-235",
         "word": "die Hausaufgaben (plural)",
         "translation": "pekerjaan rumah",
         "exampleSentence": "Ich muss meine Hausaufgaben machen.",
@@ -3679,7 +4074,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v3-14",
+        "id": "v-gen-236",
         "word": "der Arzt",
         "translation": "dokter",
         "exampleSentence": "Ich muss zum Arzt gehen.",
@@ -3688,7 +4083,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v3-15",
+        "id": "v-gen-237",
         "word": "reinkommen",
         "translation": "masuk",
         "exampleSentence": "Darf ich reinkommen?",
@@ -3913,6 +4308,11 @@ export const courseData: Lesson[] = [
       ]
     },
     "id": "a2-4",
+    "canDoGoals": [
+      "Bercerita kejadian masa lalu (spoken past/Perfekt)",
+      "Memilih antara Hilfsverben 'haben' dan 'sein' sebagai verba pendukung",
+      "Membentuk Partizip II dari verba beraturan dan tidak beraturan"
+    ],
     "level": "A2",
     "title": "Waktu Lampau: Perfekt",
     "grammarDescription": "Perfekt adalah bentuk waktu lampau yang paling umum digunakan dalam percakapan sehari-hari di bahasa Jerman. Ini dibentuk dengan menggunakan kata kerja bantu (Hilfsverb) 'haben' atau 'sein' yang terkonjugasi, diikuti oleh Partizip II (past participle) dari kata kerja utama di akhir kalimat.\n\n**Struktur Umum:**\nSubjek + haben/sein (terkonjugasi) + ... + Partizip II\n\n**Kapan Menggunakan 'haben' atau 'sein'?**\n1.  **Menggunakan 'haben':** Sebagian besar kata kerja menggunakan 'haben' sebagai kata kerja bantu. Ini termasuk:\n    *   Kata kerja transitif (yang membutuhkan objek Akkusativ): Ich habe den Film gesehen. (Saya telah menonton film itu.)\n    *   Kata kerja refleksif: Ich habe mich gewaschen. (Saya telah mencuci diri.)\n    *   Kata kerja modal (dalam Perfekt): Ich habe arbeiten müssen. (Saya harus bekerja.)\n    *   Kata kerja yang tidak menunjukkan perubahan lokasi atau kondisi: Ich habe geschlafen. (Saya telah tidur.)\n\n2.  **Menggunakan 'sein':** Digunakan untuk:\n    *   Kata kerja yang menunjukkan pergerakan dari satu tempat ke tempat lain: gehen (pergi), fahren (mengemudi), fliegen (terbang), kommen (datang).\n        *   Ich bin nach Berlin gefahren. (Saya telah pergi ke Berlin.)\n    *   Kata kerja yang menunjukkan perubahan kondisi: werden (menjadi), einschlafen (tertidur), sterben (meninggal).\n        *   Er ist eingeschlafen. (Dia telah tertidur.)\n    *   Kata kerja 'sein' itu sendiri: Ich bin gewesen. (Saya telah ada/pernah.)\n\n**Pembentukan Partizip II:**\n*   **Kata kerja reguler (lemah):** ge- + akar kata + -t\n    *   machen -> gemacht, spielen -> gespielt\n*   **Kata kerja ireguler (kuat):** ge- + perubahan akar kata + -en\n    *   sehen -> gesehen, trinken -> getrunken, gehen -> gegangen\n*   **Kata kerja dengan awalan tidak terpisah (untrennbare Verben):** Tidak ada 'ge-'\n    *   besuchen -> besucht, verstehen -> verstanden\n*   **Kata kerja berakhiran -ieren:** Tidak ada 'ge-', hanya -t\n    *   studieren -> studiert, fotografieren -> fotografiert",
@@ -3927,7 +4327,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan pelafalan huruf 'r' dalam bahasa Jerman. Ada dua variasi utama: 'r' yang diucapkan di bagian belakang tenggorokan (seperti 'r' Prancis atau 'gh' Arab) dan 'r' yang diucapkan di ujung lidah (seperti 'r' Spanyol). Di akhir suku kata atau kata, 'r' seringkali menjadi vokal 'a' yang samar (misalnya 'Lehrer' terdengar seperti 'LE-ra'). Latih untuk mendengar dan menirunya.",
     "vocabulary": [
       {
-        "id": "v4-1",
+        "id": "v-gen-238",
         "word": "gesehen",
         "translation": "telah melihat (Partizip II dari sehen)",
         "exampleSentence": "Ich habe den Film gesehen.",
@@ -3935,7 +4335,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-2",
+        "id": "v-gen-239",
         "word": "gegangen",
         "translation": "telah pergi (Partizip II dari gehen)",
         "exampleSentence": "Sie ist nach Hause gegangen.",
@@ -3943,7 +4343,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-3",
+        "id": "v-gen-240",
         "word": "gelacht",
         "translation": "telah tertawa (Partizip II dari lachen)",
         "exampleSentence": "Wir haben viel gelacht.",
@@ -3951,7 +4351,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-4",
+        "id": "v-gen-241",
         "word": "eingeschlafen",
         "translation": "telah tertidur (Partizip II dari einschlafen)",
         "exampleSentence": "Er ist schnell eingeschlafen.",
@@ -3959,7 +4359,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-5",
+        "id": "v-gen-242",
         "word": "gelesen",
         "translation": "telah membaca (Partizip II dari lesen)",
         "exampleSentence": "Hast du das Buch gelesen?",
@@ -3967,7 +4367,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-6",
+        "id": "v-gen-243",
         "word": "gefahren",
         "translation": "telah mengemudi/pergi (Partizip II dari fahren)",
         "exampleSentence": "Sie sind in den Urlaub gefahren.",
@@ -3975,7 +4375,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-7",
+        "id": "v-gen-244",
         "word": "gekocht",
         "translation": "telah memasak (Partizip II dari kochen)",
         "exampleSentence": "Ich habe gestern gekocht.",
@@ -3983,7 +4383,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-8",
+        "id": "v-gen-245",
         "word": "gekauft",
         "translation": "telah membeli (Partizip II dari kaufen)",
         "exampleSentence": "Wir haben ein neues Auto gekauft.",
@@ -3991,7 +4391,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-9",
+        "id": "v-gen-246",
         "word": "getrunken",
         "translation": "telah minum (Partizip II dari trinken)",
         "exampleSentence": "Hast du genug Wasser getrunken?",
@@ -3999,7 +4399,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-10",
+        "id": "v-gen-247",
         "word": "geschrieben",
         "translation": "telah menulis (Partizip II dari schreiben)",
         "exampleSentence": "Ich habe einen Brief geschrieben.",
@@ -4007,7 +4407,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-11",
+        "id": "v-gen-248",
         "word": "gewesen",
         "translation": "telah ada/pernah (Partizip II dari sein)",
         "exampleSentence": "Ich bin in Berlin gewesen.",
@@ -4015,7 +4415,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v4-12",
+        "id": "v-gen-249",
         "word": "der Film",
         "translation": "film",
         "exampleSentence": "Ich habe einen interessanten Film gesehen.",
@@ -4024,7 +4424,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v4-13",
+        "id": "v-gen-250",
         "word": "die Hausaufgaben (plural)",
         "translation": "pekerjaan rumah",
         "exampleSentence": "Ich habe meine Hausaufgaben gemacht.",
@@ -4033,7 +4433,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v4-14",
+        "id": "v-gen-251",
         "word": "der Urlaub",
         "translation": "liburan",
         "exampleSentence": "Wir sind in den Urlaub gefahren.",
@@ -4042,7 +4442,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v4-15",
+        "id": "v-gen-252",
         "word": "gestern",
         "translation": "kemarin",
         "exampleSentence": "Gestern habe ich meine Freunde getroffen.",
@@ -4155,6 +4555,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a2-5",
+    "canDoGoals": [
+      "Bercerita kejadian lampau (written past/Präteritum) untuk sein & haben",
+      "Menggunakan Präteritum untuk Modal Verben (konnte, musste...)",
+      "Mengetahui perbedaan penggunaan Perfekt dan Präteritum"
+    ],
     "level": "A2",
     "title": "Waktu Lampau: Präteritum (sein/haben/modals)",
     "grammarDescription": "Präteritum (juga dikenal sebagai Imperfekt) adalah bentuk waktu lampau lain dalam bahasa Jerman. Meskipun Perfekt lebih sering digunakan dalam percakapan sehari-hari, Präteritum sangat penting untuk:\n1.  **Narasi tertulis:** Digunakan dalam buku, cerita, berita, dan laporan.\n2.  **Kata kerja tertentu dalam percakapan:** Terutama untuk kata kerja 'sein' (to be), 'haben' (to have), dan kata kerja modal (können, müssen, wollen, dürfen, sollen, mögen).\n\n**Konjugasi Präteritum untuk 'sein', 'haben', dan Modal Verben:**\nIni adalah bentuk yang paling penting untuk dihafal karena sering muncul dalam percakapan.\n\n**sein (to be):**\n| Pronomen | Präteritum |\n|----------|------------|\n| ich      | war        |\n| du       | warst      |\n| er/sie/es| war        |\n| wir      | waren      |\n| ihr      | wart       |\n| sie/Sie  | waren      |\n\nContoh: Ich **war** gestern müde. (Saya kemarin lelah.)\n\n**haben (to have):**\n| Pronomen | Präteritum |\n|----------|------------|\n| ich      | hatte      |\n| du       | hattest    |\n| er/sie/es| hatte      |\n| wir      | hatten     |\n| ihr      | hattet     |\n| sie/Sie  | hatten     |\n\nContoh: Er **hatte** viel Arbeit. (Dia punya banyak pekerjaan.)\n\n**Modal Verben (können, müssen, wollen, dürfen):**\nModal verben dalam Präteritum juga sering digunakan. Perhatikan bahwa umlaut (ä, ö, ü) seringkali hilang dalam bentuk Präteritum.\n\n| Pronomen | können (konnte) | müssen (musste) | wollen (wollte) | dürfen (durfte) |\n|----------|-----------------|-----------------|-----------------|-----------------|\n| ich      | konnte          | musste          | wollte          | durfte          |\n| du       | konntest        | musstest        | wolltest        | durftest        |\n| er/sie/es| konnte          | musste          | wollte          | durfte          |\n| wir      | konnten        | mussten         | wollten         | durften         |\n| ihr      | konntet         | musstet         | wolltet         | durftet         |\n| sie/Sie  | konnten        | mussten         | wollten         | durften         |\n\nContoh: Ich **konnte** nicht kommen. (Saya tidak bisa datang.)\nContoh: Sie **wollte** nach Hause gehen. (Dia ingin pulang ke rumah.)\n\nUntuk kata kerja reguler dan ireguler lainnya, Präteritum biasanya hanya digunakan dalam tulisan. Pembentukannya berbeda-beda dan perlu dihafal untuk kata kerja ireguler.",
@@ -4169,7 +4574,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan pelafalan huruf 's'. Di awal kata atau suku kata, 's' sering diucapkan seperti 'z' dalam 'zebra' (voiced), contoh: 'sehen', 'Sonne'. Di akhir kata atau sebelum konsonan, 's' diucapkan seperti 's' dalam 'susu' (unvoiced), contoh: 'Haus', 'ist'. Kombinasi 'sp' dan 'st' di awal kata diucapkan 'shp' dan 'sht', contoh: 'sprechen', 'Straße'.",
     "vocabulary": [
       {
-        "id": "v5-1",
+        "id": "v-gen-253",
         "word": "war",
         "translation": "dulu (Präteritum dari sein)",
         "exampleSentence": "Ich war gestern im Park.",
@@ -4177,7 +4582,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-2",
+        "id": "v-gen-254",
         "word": "hatte",
         "translation": "dulu punya (Präteritum dari haben)",
         "exampleSentence": "Er hatte viel Glück.",
@@ -4185,7 +4590,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-3",
+        "id": "v-gen-255",
         "word": "konnte",
         "translation": "dulu bisa (Präteritum dari können)",
         "exampleSentence": "Ich konnte nicht schlafen.",
@@ -4193,7 +4598,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-4",
+        "id": "v-gen-256",
         "word": "musste",
         "translation": "dulu harus (Präteritum dari müssen)",
         "exampleSentence": "Sie musste arbeiten.",
@@ -4201,7 +4606,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-5",
+        "id": "v-gen-257",
         "word": "wollte",
         "translation": "dulu ingin (Präteritum dari wollen)",
         "exampleSentence": "Er wollte ein Eis.",
@@ -4209,7 +4614,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-6",
+        "id": "v-gen-258",
         "word": "durfte",
         "translation": "dulu boleh (Präteritum dari dürfen)",
         "exampleSentence": "Wir durften nicht spielen.",
@@ -4217,7 +4622,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-7",
+        "id": "v-gen-259",
         "word": "gestern",
         "translation": "kemarin",
         "exampleSentence": "Gestern war ich krank.",
@@ -4225,7 +4630,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-8",
+        "id": "v-gen-260",
         "word": "müde",
         "translation": "lelah",
         "exampleSentence": "Ich war sehr müde.",
@@ -4233,7 +4638,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-9",
+        "id": "v-gen-261",
         "word": "keine Zeit",
         "translation": "tidak ada waktu",
         "exampleSentence": "Ich hatte leider keine Zeit.",
@@ -4241,7 +4646,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-10",
+        "id": "v-gen-262",
         "word": "das Kleid",
         "translation": "gaun",
         "exampleSentence": "Sie wollte ein neues Kleid kaufen.",
@@ -4250,7 +4655,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v5-11",
+        "id": "v-gen-263",
         "word": "früh",
         "translation": "pagi",
         "exampleSentence": "Wir mussten früh aufstehen.",
@@ -4258,7 +4663,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v5-12",
+        "id": "v-gen-264",
         "word": "das Bett",
         "translation": "tempat tidur",
         "exampleSentence": "Die Kinder mussten ins Bett gehen.",
@@ -4267,7 +4672,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v5-13",
+        "id": "v-gen-265",
         "word": "der Park",
         "translation": "taman",
         "exampleSentence": "Ich war gestern im Park.",
@@ -4276,7 +4681,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v5-14",
+        "id": "v-gen-266",
         "word": "das Glück",
         "translation": "keberuntungan",
         "exampleSentence": "Er hatte viel Glück.",
@@ -4285,7 +4690,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v5-15",
+        "id": "v-gen-267",
         "word": "schlafen",
         "translation": "tidur",
         "exampleSentence": "Ich konnte nicht schlafen.",
@@ -4398,6 +4803,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a2-6",
+    "canDoGoals": [
+      "Mengenali 9 Wechselpräpositionen (in, an, auf, über, unter, vor, hinter, neben, zwischen)",
+      "Menggunakan kasus Dativ untuk menunjukkan lokasi statis (Wo?)",
+      "Menggunakan kasus Akkusativ untuk menunjukkan perpindahan terarah (Wohin?)"
+    ],
     "level": "A2",
     "title": "Wechselpräpositionen (in/an/auf + Dat vs Akk)",
     "grammarDescription": "Wechselpräpositionen (preposisi dua arah) adalah preposisi yang bisa diikuti oleh kasus Dativ atau Akkusativ, tergantung pada konteksnya. Ada sembilan preposisi dua arah: in (di/ke dalam), an (di/ke samping), auf (di/ke atas), hinter (di/ke belakang), neben (di/ke samping), über (di/ke atas/melintasi), unter (di/ke bawah), vor (di/ke depan), zwischen (di/ke antara).\n\n**Aturan Umum:**\n1.  **Dativ (Lokasi/Keberadaan):** Digunakan ketika ada pertanyaan 'Wo?' (Di mana?). Ini menunjukkan posisi statis atau tidak ada pergerakan menuju suatu tempat.\n    *   Contoh: Ich bin **im** Haus. (Saya di dalam rumah.)\n    *   'im' adalah singkatan dari 'in dem' (in + Dativ maskulin/netral)\n\n2.  **Akkusativ (Arah/Pergerakan):** Digunakan ketika ada pertanyaan 'Wohin?' (Ke mana?). Ini menunjukkan pergerakan menuju suatu tempat atau perubahan lokasi.\n    *   Contoh: Ich gehe **ins** Haus. (Saya pergi ke dalam rumah.)\n    *   'ins' adalah singkatan dari 'in das' (in + Akkusativ netral)\n\n**Singkatan Umum:**\n*   **in + dem = im** (Dativ maskulin/netral)\n*   **in + das = ins** (Akkusativ netral)\n*   **an + dem = am** (Dativ maskulin/netral)\n*   **an + das = ans** (Akkusativ netral)\n*   **auf + das = aufs** (Akkusativ netral)\n\n**Contoh dengan Preposisi Lain:**\n*   **an:**\n    *   Wo? (Dativ): Das Bild hängt **an der** Wand. (Gambar itu tergantung di dinding.)\n    *   Wohin? (Akkusativ): Ich hänge das Bild **an die** Wand. (Saya menggantung gambar itu ke dinding.)\n*   **auf:**\n    *   Wo? (Dativ): Die Katze sitzt **auf dem** Stuhl. (Kucing itu duduk di atas kursi.)\n    *   Wohin? (Akkusativ): Die Katze springt **auf den** Stuhl. (Kucing itu melompat ke atas kursi.)\n\nKunci untuk memahami Wechselpräpositionen adalah membedakan antara 'lokasi' (Dativ) dan 'arah' (Akkusativ).",
@@ -4412,7 +4822,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan perbedaan pelafalan 'v' dan 'w'.\n- 'v' dalam bahasa Jerman sering diucapkan seperti 'f' dalam 'foto' (misalnya 'Vater', 'viel'). Namun, dalam kata serapan, bisa juga seperti 'v' dalam 'video' (misalnya 'Vase').\n- 'w' dalam bahasa Jerman selalu diucapkan seperti 'v' dalam 'video' (misalnya 'Wasser', 'was', 'wo').\nLatih untuk membedakan keduanya, terutama 'v' yang bisa bervariasi.",
     "vocabulary": [
       {
-        "id": "v6-1",
+        "id": "v-gen-268",
         "word": "in",
         "translation": "di/ke dalam",
         "exampleSentence": "Ich bin im Haus. Ich gehe ins Haus.",
@@ -4420,7 +4830,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-2",
+        "id": "v-gen-269",
         "word": "an",
         "translation": "di/ke samping",
         "exampleSentence": "Das Bild hängt an der Wand. Ich hänge das Bild an die Wand.",
@@ -4428,7 +4838,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-3",
+        "id": "v-gen-270",
         "word": "auf",
         "translation": "di/ke atas",
         "exampleSentence": "Die Katze sitzt auf dem Stuhl. Sie springt auf den Stuhl.",
@@ -4436,7 +4846,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-4",
+        "id": "v-gen-271",
         "word": "hinter",
         "translation": "di/ke belakang",
         "exampleSentence": "Der Ball ist hinter dem Baum. Ich werfe den Ball hinter den Baum.",
@@ -4444,7 +4854,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-5",
+        "id": "v-gen-272",
         "word": "neben",
         "translation": "di/ke samping",
         "exampleSentence": "Das Auto steht neben dem Haus. Ich parke das Auto neben das Haus.",
@@ -4452,7 +4862,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-6",
+        "id": "v-gen-273",
         "word": "über",
         "translation": "di/ke atas/melintasi",
         "exampleSentence": "Die Lampe hängt über dem Tisch. Ich hänge die Lampe über den Tisch.",
@@ -4460,7 +4870,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-7",
+        "id": "v-gen-274",
         "word": "unter",
         "translation": "di/ke bawah",
         "exampleSentence": "Der Hund liegt unter dem Tisch. Er kriecht unter den Tisch.",
@@ -4468,7 +4878,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-8",
+        "id": "v-gen-275",
         "word": "vor",
         "translation": "di/ke depan",
         "exampleSentence": "Das Fahrrad steht vor der Tür. Ich stelle das Fahrrad vor die Tür.",
@@ -4476,7 +4886,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-9",
+        "id": "v-gen-276",
         "word": "zwischen",
         "translation": "di/ke antara",
         "exampleSentence": "Der Stuhl steht zwischen den Tischen. Ich stelle den Stuhl zwischen die Tische.",
@@ -4484,7 +4894,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v6-10",
+        "id": "v-gen-277",
         "word": "der Garten",
         "translation": "taman",
         "exampleSentence": "Ich bin im Garten.",
@@ -4493,7 +4903,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v6-11",
+        "id": "v-gen-278",
         "word": "der Park",
         "translation": "taman",
         "exampleSentence": "Wir gehen in den Park.",
@@ -4502,7 +4912,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v6-12",
+        "id": "v-gen-279",
         "word": "der Tisch",
         "translation": "meja",
         "exampleSentence": "Das Buch liegt auf dem Tisch.",
@@ -4511,7 +4921,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v6-13",
+        "id": "v-gen-280",
         "word": "die Wand",
         "translation": "dinding",
         "exampleSentence": "Das Bild hängt an der Wand.",
@@ -4520,7 +4930,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v6-14",
+        "id": "v-gen-281",
         "word": "der Stuhl",
         "translation": "kursi",
         "exampleSentence": "Die Katze sitzt auf dem Stuhl.",
@@ -4529,7 +4939,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v6-15",
+        "id": "v-gen-282",
         "word": "liegen",
         "translation": "terletak/berbaring (statis)",
         "exampleSentence": "Das Handy liegt auf dem Tisch.",
@@ -4754,6 +5164,11 @@ export const courseData: Lesson[] = [
       ]
     },
     "id": "a2-7",
+    "canDoGoals": [
+      "Membandingkan sifat benda menggunakan Komparativ (... + -er als)",
+      "Menggambarkan tingkatan tertinggi dengan Superlativ (am ... + -sten)",
+      "Memahami bentuk irregular dari Adjektiv (gut, viel, gern)"
+    ],
     "level": "A2",
     "title": "Komparativ & Superlativ",
     "grammarDescription": "Komparativ dan Superlativ digunakan untuk membandingkan kualitas atau karakteristik benda, orang, atau tindakan. Ini adalah bentuk perbandingan dari kata sifat (Adjektive) dan kata keterangan (Adverbien).\n\n**1. Komparativ (Perbandingan Lebih):**\nDigunakan untuk membandingkan dua hal dan menunjukkan bahwa satu lebih dari yang lain. Dibentuk dengan menambahkan akhiran '-er' pada kata sifat/keterangan.\n\n*   **Struktur:** Adjektiv/Adverb + -er + als (daripada)\n*   Contoh: schnell -> schneller (lebih cepat)\n    *   Mein Auto ist **schneller als** deins. (Mobil saya lebih cepat daripada milikmu.)\n*   Beberapa kata sifat dengan vokal 'a', 'o', 'u' mendapatkan umlaut (ä, ö, ü) di Komparativ.\n    *   alt -> älter (lebih tua), jung -> jünger (lebih muda), groß -> größer (lebih besar)\n\n**2. Superlativ (Perbandingan Paling):**\nDigunakan untuk membandingkan tiga atau lebih hal dan menunjukkan bahwa satu adalah yang paling dari semuanya. Ada dua bentuk Superlativ:\n\na.  **Bentuk Predikatif (dengan 'am'):** Digunakan ketika kata sifat/keterangan berfungsi sebagai predikat (setelah kata kerja).\n    *   **Struktur:** am + Adjektiv/Adverb + -sten\n    *   Contoh: schnell -> am schnellsten (paling cepat)\n        *   Mein Auto fährt **am schnellsten**. (Mobil saya melaju paling cepat.)\n    *   Jika kata sifat berakhir dengan -d, -t, -s, -ß, -x, -z, ditambahkan -esten.\n        *   breit -> am breitesten (paling lebar)\n\nb.  **Bentuk Atributif (dengan artikel):** Digunakan ketika kata sifat/keterangan berfungsi sebagai atribut (sebelum kata benda).\n    *   **Struktur:** der/die/das + Adjektiv/Adverb + -ste + kata benda\n    *   Contoh: schnell -> der schnellste (yang paling cepat)\n        *   Das ist **das schnellste Auto**, das ich kenne. (Itu adalah mobil tercepat yang saya tahu.)\n\n**Bentuk Ireguler:**\nBeberapa kata sifat memiliki bentuk Komparativ dan Superlativ yang ireguler dan harus dihafal:\n*   gut -> besser -> am besten (baik -> lebih baik -> terbaik)\n*   gern -> lieber -> am liebsten (suka -> lebih suka -> paling suka)\n*   viel -> mehr -> am meisten (banyak -> lebih banyak -> paling banyak)\n*   hoch -> höher -> am höchsten (tinggi -> lebih tinggi -> tertinggi)\n*   nah -> näher -> am nächsten (dekat -> lebih dekat -> terdekat)",
@@ -4768,7 +5183,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan pelafalan huruf 'z'. Dalam bahasa Jerman, 'z' selalu diucapkan seperti 'ts' dalam 'tsunami' atau 'cats' (Inggris). Contoh: 'Zeit' (waktu), 'zahlen' (membayar), 'Herz' (hati). Latih untuk mengucapkan 'ts' dengan cepat dan jelas.",
     "vocabulary": [
       {
-        "id": "v7-1",
+        "id": "v-gen-283",
         "word": "schnell",
         "translation": "cepat",
         "exampleSentence": "Mein Auto ist schnell. Es fährt am schnellsten.",
@@ -4776,7 +5191,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-2",
+        "id": "v-gen-284",
         "word": "alt",
         "translation": "tua",
         "exampleSentence": "Er ist älter als ich.",
@@ -4784,7 +5199,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-3",
+        "id": "v-gen-285",
         "word": "jung",
         "translation": "muda",
         "exampleSentence": "Sie ist jünger als ihr Bruder.",
@@ -4792,7 +5207,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-4",
+        "id": "v-gen-286",
         "word": "groß",
         "translation": "besar/tinggi",
         "exampleSentence": "Das ist der größte Baum.",
@@ -4800,7 +5215,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-5",
+        "id": "v-gen-287",
         "word": "gut",
         "translation": "baik",
         "exampleSentence": "Er ist besser als ich.",
@@ -4808,7 +5223,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-6",
+        "id": "v-gen-288",
         "word": "gern",
         "translation": "suka",
         "exampleSentence": "Ich esse gern Pizza. Am liebsten esse ich Pizza.",
@@ -4816,7 +5231,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-7",
+        "id": "v-gen-289",
         "word": "viel",
         "translation": "banyak",
         "exampleSentence": "Er hat mehr Geld als ich.",
@@ -4824,7 +5239,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-8",
+        "id": "v-gen-290",
         "word": "hoch",
         "translation": "tinggi",
         "exampleSentence": "Der Berg ist höher als der Hügel.",
@@ -4832,7 +5247,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-9",
+        "id": "v-gen-291",
         "word": "nah",
         "translation": "dekat",
         "exampleSentence": "Der Supermarkt ist näher als das Kino.",
@@ -4840,7 +5255,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-10",
+        "id": "v-gen-292",
         "word": "interessant",
         "translation": "menarik",
         "exampleSentence": "Dieses Buch ist interessanter.",
@@ -4848,7 +5263,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-11",
+        "id": "v-gen-293",
         "word": "schön",
         "translation": "indah/cantik",
         "exampleSentence": "Das ist die schönste Blume.",
@@ -4856,7 +5271,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-12",
+        "id": "v-gen-294",
         "word": "klein",
         "translation": "kecil",
         "exampleSentence": "Mein Zimmer ist kleiner als deins.",
@@ -4864,7 +5279,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v7-13",
+        "id": "v-gen-295",
         "word": "der Baum",
         "translation": "pohon",
         "exampleSentence": "Das ist der größte Baum im Wald.",
@@ -4873,7 +5288,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v7-14",
+        "id": "v-gen-296",
         "word": "das Auto",
         "translation": "mobil",
         "exampleSentence": "Mein Auto ist schneller als deins.",
@@ -4882,7 +5297,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v7-15",
+        "id": "v-gen-297",
         "word": "der Freund",
         "translation": "teman (laki-laki)",
         "exampleSentence": "Er ist mein bester Freund.",
@@ -4996,6 +5411,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a2-8",
+    "canDoGoals": [
+      "Mengenali prefix yang memisahkan verba (auf-, an-, ein-, aus-, dst) yaitu Trennbare Verben",
+      "Memposisikan prefix di posisi paling akhir dalam sebuah kalimat utama",
+      "Menceritakan aktivitas sehari-hari menggunakan trennbare verben (aufstehen, anziehen...)"
+    ],
     "level": "A2",
     "title": "Trennbare Verben (aufmachen, anrufen, dst)",
     "grammarDescription": "Trennbare Verben (kata kerja terpisah) adalah kata kerja dalam bahasa Jerman yang terdiri dari sebuah awalan (Präfix) dan sebuah kata kerja dasar. Awalan ini dapat terpisah dari kata kerja dasar dalam kalimat tertentu, terutama dalam kalimat utama (Hauptsatz).\n\n**Struktur dalam Kalimat Utama (Präsens):**\nDalam kalimat utama, awalan terpisah dari kata kerja dan diletakkan di akhir kalimat, sedangkan kata kerja dasar terkonjugasi berada di posisi kedua.\n\n*   Contoh: **aufmachen** (membuka)\n    *   Ich **mache** das Fenster **auf**. (Saya membuka jendela itu.)\n*   Contoh: **anrufen** (menelepon)\n    *   Rufst du mich **an**? (Apakah kamu meneleponku?)\n\n**Struktur dalam Kalimat Subordinat (Nebensatz) atau Infinitif dengan 'zu':**\nDalam kalimat subordinat atau ketika kata kerja digunakan dalam bentuk infinitif dengan 'zu', awalan tetap menyatu dengan kata kerja dasar.\n\n*   Contoh: Ich weiß, dass er das Fenster **aufmacht**. (Saya tahu bahwa dia membuka jendela itu.)\n*   Contoh: Es ist wichtig, das Fenster **aufzumachen**. (Penting untuk membuka jendela itu.)\n    *   Perhatikan 'zu' diletakkan di antara awalan dan kata kerja dasar.\n\n**Beberapa Awalan Trennbar yang Umum:**\n*   ab- (abfahren - berangkat)\n*   an- (anrufen - menelepon)\n*   auf- (aufstehen - bangun)\n*   aus- (ausgehen - keluar)\n*   ein- (einkaufen - berbelanja)\n*   mit- (mitkommen - ikut datang)\n*   nach- (nachdenken - merenungkan)\n*   vor- (vorstellen - memperkenalkan)\n*   zu- (zumachen - menutup)\n\n**Perbedaan dengan Untrennbare Verben (Kata Kerja Tidak Terpisah):**\nAda juga kata kerja dengan awalan yang tidak pernah terpisah. Awalan ini tidak memiliki tekanan dan kata kerja tidak mendapatkan 'ge-' di Partizip II. Contoh awalan tidak terpisah: be-, ge-, emp-, ent-, er-, miss-, ver-, zer-.\n\n*   Contoh: **besuchen** (mengunjungi)\n    *   Ich **besuche** meine Oma. (Saya mengunjungi nenek saya.) (Tidak terpisah)\n    *   Partizip II: besucht (tanpa 'ge-')",
@@ -5010,7 +5430,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan tekanan pada Trennbare Verben. Awalan (Präfix) dari kata kerja terpisah selalu mendapat tekanan. Contoh: **AN**rufen, **AUF**machen, **EIN**kaufen. Ini membantu membedakannya dari kata kerja yang memiliki awalan yang sama tetapi tidak terpisah (misalnya 'umfahren' dengan tekanan pada 'um' berarti 'menabrak', sedangkan 'umfahren' dengan tekanan pada 'fahren' berarti 'mengemudi berkeliling').",
     "vocabulary": [
       {
-        "id": "v8-1",
+        "id": "v-gen-298",
         "word": "aufmachen",
         "translation": "membuka",
         "exampleSentence": "Ich mache das Fenster auf.",
@@ -5018,7 +5438,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-2",
+        "id": "v-gen-299",
         "word": "anrufen",
         "translation": "menelepon",
         "exampleSentence": "Rufst du mich an?",
@@ -5026,7 +5446,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-3",
+        "id": "v-gen-300",
         "word": "aufstehen",
         "translation": "bangun",
         "exampleSentence": "Ich stehe früh auf.",
@@ -5034,7 +5454,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-4",
+        "id": "v-gen-301",
         "word": "einkaufen",
         "translation": "berbelanja",
         "exampleSentence": "Wir kaufen im Supermarkt ein.",
@@ -5042,7 +5462,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-5",
+        "id": "v-gen-302",
         "word": "mitkommen",
         "translation": "ikut datang",
         "exampleSentence": "Kommst du mit?",
@@ -5050,7 +5470,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-6",
+        "id": "v-gen-303",
         "word": "zumachen",
         "translation": "menutup",
         "exampleSentence": "Machst du bitte die Tür zu?",
@@ -5058,7 +5478,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-7",
+        "id": "v-gen-304",
         "word": "abfahren",
         "translation": "berangkat",
         "exampleSentence": "Der Zug fährt um 10 Uhr ab.",
@@ -5066,7 +5486,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-8",
+        "id": "v-gen-305",
         "word": "ausgehen",
         "translation": "keluar (untuk bersenang-senang)",
         "exampleSentence": "Wir gehen heute Abend aus.",
@@ -5074,7 +5494,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-9",
+        "id": "v-gen-306",
         "word": "vorstellen",
         "translation": "memperkenalkan",
         "exampleSentence": "Ich stelle mich vor.",
@@ -5082,7 +5502,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-10",
+        "id": "v-gen-307",
         "word": "fernsehen",
         "translation": "menonton TV",
         "exampleSentence": "Ich sehe abends fern.",
@@ -5090,7 +5510,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-11",
+        "id": "v-gen-308",
         "word": "einladen",
         "translation": "mengundang",
         "exampleSentence": "Ich lade dich zum Essen ein.",
@@ -5098,7 +5518,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-12",
+        "id": "v-gen-309",
         "word": "mitbringen",
         "translation": "membawa serta",
         "exampleSentence": "Bringst du etwas mit?",
@@ -5106,7 +5526,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v8-13",
+        "id": "v-gen-310",
         "word": "das Fenster",
         "translation": "jendela",
         "exampleSentence": "Machst du bitte das Fenster auf?",
@@ -5115,7 +5535,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v8-14",
+        "id": "v-gen-311",
         "word": "die Tür",
         "translation": "pintu",
         "exampleSentence": "Mach die Tür zu!",
@@ -5124,7 +5544,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v8-15",
+        "id": "v-gen-312",
         "word": "der Supermarkt",
         "translation": "supermarket",
         "exampleSentence": "Wir kaufen im Supermarkt ein.",
@@ -5238,6 +5658,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "a2-9",
+    "canDoGoals": [
+      "Melanjutkan kemampuan menggunakan W-Fragen yang lebih spesifik",
+      "Membentuk kalimat pertanyaan yang relevan dengan kasus (Wer vs Wen vs Wem)",
+      "Menggunakan W-Fragen untuk lokasi dan arah (Wo vs Wohin vs Woher)"
+    ],
     "level": "A2",
     "title": "Kalimat Tanya W-Fragen",
     "grammarDescription": "W-Fragen (pertanyaan W) adalah jenis kalimat tanya dalam bahasa Jerman yang dimulai dengan kata tanya yang diawali huruf 'W'. Kata tanya ini digunakan untuk meminta informasi spesifik. Struktur kalimat untuk W-Fragen adalah: Kata Tanya + Kata Kerja Terkonjugasi + Subjek + ...\n\n**Kata Tanya W-Fragen yang Umum:**\n1.  **Wer? (Siapa? - Nominativ):** Bertanya tentang subjek (orang).\n    *   **Wer** kommt heute? (Siapa yang datang hari ini?)\n2.  **Wen? (Siapa? - Akkusativ):** Bertanya tentang objek langsung (orang).\n    *   **Wen** siehst du? (Siapa yang kamu lihat?)\n3.  **Wem? (Kepada siapa? - Dativ):** Bertanya tentang objek tidak langsung (orang).\n    *   **Wem** hilfst du? (Kepada siapa kamu membantu?)\n4.  **Was? (Apa? - Nominativ/Akkusativ):** Bertanya tentang subjek atau objek (benda/hal).\n    *   **Was** ist das? (Apa itu? - Nominativ)\n    *   **Was** machst du? (Apa yang kamu lakukan? - Akkusativ)\n5.  **Wo? (Di mana?):** Bertanya tentang lokasi statis (Dativ).\n    *   **Wo** wohnst du? (Di mana kamu tinggal?)\n6.  **Wohin? (Ke mana?):** Bertanya tentang arah/tujuan (Akkusativ).\n    *   **Wohin** gehst du? (Ke mana kamu pergi?)\n7.  **Woher? (Dari mana?):** Bertanya tentang asal.\n    *   **Woher** kommst du? (Dari mana kamu berasal?)\n8.  **Wann? (Kapan?):** Bertanya tentang waktu.\n    *   **Wann** beginnt der Film? (Kapan filmnya dimulai?)\n9.  **Warum? (Mengapa?):** Bertanya tentang alasan.\n    *   **Warum** lernst du Deutsch? (Mengapa kamu belajar bahasa Jerman?)\n10. **Wie? (Bagaimana?):** Bertanya tentang cara atau kondisi.\n    *   **Wie** geht es dir? (Bagaimana kabarmu?)\n    *   **Wie** alt bist du? (Berapa umurmu?)\n11. **Welche/r/s? (Yang mana?):** Bertanya tentang pilihan dari sekelompok benda. Diikuti oleh kata benda dan beradaptasi dengan kasus dan gender.\n    *   **Welches** Buch möchtest du? (Buku yang mana yang kamu inginkan?)\n\nPerhatikan bahwa kata kerja terkonjugasi selalu berada di posisi kedua dalam W-Fragen.",
@@ -5252,7 +5677,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan intonasi dalam kalimat tanya. Untuk W-Fragen, intonasi biasanya menurun di akhir kalimat, menunjukkan bahwa Anda mengharapkan jawaban informatif. Latih untuk mengucapkan pertanyaan dengan intonasi yang tepat agar terdengar alami.",
     "vocabulary": [
       {
-        "id": "v9-1",
+        "id": "v-gen-313",
         "word": "wer",
         "translation": "siapa (Nominativ)",
         "exampleSentence": "Wer kommt heute?",
@@ -5260,7 +5685,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-2",
+        "id": "v-gen-314",
         "word": "wen",
         "translation": "siapa (Akkusativ)",
         "exampleSentence": "Wen siehst du?",
@@ -5268,7 +5693,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-3",
+        "id": "v-gen-315",
         "word": "wem",
         "translation": "kepada siapa (Dativ)",
         "exampleSentence": "Wem hilfst du?",
@@ -5276,7 +5701,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-4",
+        "id": "v-gen-316",
         "word": "was",
         "translation": "apa",
         "exampleSentence": "Was machst du?",
@@ -5284,7 +5709,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-5",
+        "id": "v-gen-317",
         "word": "wo",
         "translation": "di mana",
         "exampleSentence": "Wo wohnst du?",
@@ -5292,7 +5717,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-6",
+        "id": "v-gen-318",
         "word": "wohin",
         "translation": "ke mana",
         "exampleSentence": "Wohin gehst du?",
@@ -5300,7 +5725,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-7",
+        "id": "v-gen-319",
         "word": "woher",
         "translation": "dari mana",
         "exampleSentence": "Woher kommst du?",
@@ -5308,7 +5733,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-8",
+        "id": "v-gen-320",
         "word": "wann",
         "translation": "kapan",
         "exampleSentence": "Wann beginnt der Film?",
@@ -5316,7 +5741,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-9",
+        "id": "v-gen-321",
         "word": "warum",
         "translation": "mengapa",
         "exampleSentence": "Warum lernst du Deutsch?",
@@ -5324,7 +5749,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-10",
+        "id": "v-gen-322",
         "word": "wie",
         "translation": "bagaimana",
         "exampleSentence": "Wie geht es dir?",
@@ -5332,7 +5757,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-11",
+        "id": "v-gen-323",
         "word": "welche/r/s",
         "translation": "yang mana",
         "exampleSentence": "Welches Buch möchtest du?",
@@ -5340,7 +5765,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-12",
+        "id": "v-gen-324",
         "word": "kommen",
         "translation": "datang",
         "exampleSentence": "Wer kommt heute?",
@@ -5348,7 +5773,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-13",
+        "id": "v-gen-325",
         "word": "wohnen",
         "translation": "tinggal",
         "exampleSentence": "Wo wohnst du?",
@@ -5356,7 +5781,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-14",
+        "id": "v-gen-326",
         "word": "lernen",
         "translation": "belajar",
         "exampleSentence": "Warum lernst du Deutsch?",
@@ -5364,7 +5789,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v9-15",
+        "id": "v-gen-327",
         "word": "der Film",
         "translation": "film",
         "exampleSentence": "Wann beginnt der Film?",
@@ -5593,6 +6018,33 @@ export const courseData: Lesson[] = [
     "level": "A2",
     "title": "Negasi: nicht vs kein",
     "grammarDescription": "Dalam bahasa Jerman, ada dua cara utama untuk menyatakan negasi (penolakan atau penyangkalan): menggunakan 'nicht' atau 'kein'. Pilihan antara keduanya tergantung pada jenis kata yang ingin dinegasikan.\n\n**1. Nicht (Tidak):**\nDigunakan untuk menegasika:\n*   **Kata kerja:** Diletakkan di akhir kalimat atau sebelum Partizip II/infinitif.\n    *   Ich spreche **nicht** Deutsch. (Saya tidak berbicara bahasa Jerman.)\n    *   Ich kann **nicht** kommen. (Saya tidak bisa datang.)\n*   **Kata sifat (Adjektive) dan Kata keterangan (Adverbien):** Diletakkan sebelum kata sifat/keterangan yang dinegasikan.\n    *   Das ist **nicht** gut. (Itu tidak baik.)\n    *   Er fährt **nicht** schnell. (Dia tidak mengemudi dengan cepat.)\n*   **Kata benda dengan artikel definitif (der, die, das):** Diletakkan sebelum artikel definitif atau kata benda.\n    *   Ich habe **nicht** den Schlüssel. (Saya tidak punya kunci itu.)\n*   **Nama diri (Proper Nouns):** Diletakkan sebelum nama diri.\n    *   Das ist **nicht** Peter. (Itu bukan Peter.)\n*   **Preposisi:** Diletakkan sebelum preposisi.\n    *   Ich komme **nicht** aus Deutschland. (Saya tidak berasal dari Jerman.)\n\n**2. Kein (Tidak ada/Bukan sebuah):**\nDigunakan untuk menegasika:\n*   **Kata benda tanpa artikel (Nomen ohne Artikel):** 'Kein' berfungsi seperti artikel indefinitif 'ein/eine' tetapi dalam bentuk negatif. Ini harus disesuaikan dengan kasus dan gender kata benda.\n    *   Ich habe **keine** Zeit. (Saya tidak punya waktu.)\n    *   Er hat **keinen** Hund. (Dia tidak punya anjing.)\n*   **Kata benda dengan artikel indefinitif (ein, eine, ein):** 'Kein' menggantikan artikel indefinitif.\n    *   Das ist **kein** Problem. (Itu bukan masalah.)\n\n**Konjugasi 'kein' (seperti 'ein'):**\n| Kasus      | Maskulin | Feminin | Netral | Plural |\n|------------|----------|---------|--------|--------|\n| Nominativ  | kein     | keine   | kein   | keine  |\n| Akkusativ  | keinen   | keine   | kein   | keine  |\n| Dativ      | keinem   | keiner  | keinem | keinen |\n\n**Ringkasan:**\n*   Gunakan **nicht** untuk menegasika kata kerja, kata sifat, kata keterangan, nama diri, preposisi, dan kata benda dengan artikel definitif.\n*   Gunakan **kein** untuk menegasika kata benda tanpa artikel atau dengan artikel indefinitif.",
+    "canDoGoals": [
+      "Cara memosisikan negasi 'nicht' secara benar dalam kalimat",
+      "Cara menggunakan negasi 'kein/keine' khusus untuk membantah/meniadakan kata benda yang tak memiliki instrumen tertentu",
+      "Mengenali perbedaan penekanan kalimat menggunakan 'nicht'"
+    ],
+    "indonesianMistakes": "**Mimpi Buruk 'Kein' vs 'Nicht' untuk Orang Indonesia**\nDi Indonesia, segalanya dinegasikan dengan kata 'tidak' atau 'bukan'. Di Jerman, strukturnya lebih tegas.\n\n❌ *Ich habe nicht Auto* (Saya tidak punya mobil).\n✅ **Ich habe kein Auto.** (Karena mobil adalah kata benda tanpa penunjuk spesifik, harus pakai 'kein').\n\nPokoknya ingat ini: Kalau Anda mau bilang 'Saya ngga punya [Benda]', selalu pakai **kein/keine/keinen**.\n'Nicht' dipakai untuk Verb (kata kerja) dan Adjektiv (kata sifat).\n❌ *Das ist kein schön.* (Ini bukan cantik)\n✅ **Das ist nicht schön.**",
+    "listeningSimulation": {
+      "transcript": [
+        {
+          "personA": "Hast du ein Auto?",
+          "personB": "Nein, ich habe kein Auto. Ich fahre mit dem Bus.",
+          "translation": "A: Apa kamu punya mobil? | B: Tidak, aku tidak punya mobil. Aku pergi naik bus."
+        },
+        {
+          "personA": "Oh, fährst du nicht gern Auto?",
+          "personB": "Doch, aber ein Auto ist zu teuer.",
+          "translation": "A: Oh, kamu tidak suka menyetir? | B: Sila, tapi mobil terlalu mahal."
+        }
+      ],
+      "questions": [
+        {
+          "question": "Mengapa person B menggunakan 'kein Auto'?",
+          "options": ["Karena Auto adalah kata sifat", "Karena Auto adalah kata benda indefinit", "Karena dia tidak bisa menyetir"],
+          "correctAnswer": 1
+        }
+      ]
+    },
     "sentenceBreakdowns": [
       "Ich (subjek) + spreche (kata kerja) + nicht (negasi kata kerja) + Deutsch (objek Akkusativ).",
       "Das (subjek) + ist (kata kerja sein) + nicht (negasi kata sifat) + gut (kata sifat).",
@@ -5604,7 +6056,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan pelafalan 'ch' dan 'ng'.\n- 'ch' sudah dibahas (ich-Laut dan ach-Laut). Pastikan Anda melafalkannya dengan benar, karena 'nicht' menggunakan ich-Laut.\n- 'ng' dalam bahasa Jerman diucapkan seperti 'ng' dalam 'sing' (Inggris) atau 'mengapa' (Indonesia), bukan 'n' + 'g' terpisah. Contoh: 'singen' (menyanyi), 'lang' (panjang).",
     "vocabulary": [
       {
-        "id": "v10-1",
+        "id": "v-gen-328",
         "word": "nicht",
         "translation": "tidak",
         "exampleSentence": "Ich spreche nicht Französisch.",
@@ -5612,7 +6064,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-2",
+        "id": "v-gen-329",
         "word": "kein",
         "translation": "tidak ada/bukan sebuah",
         "exampleSentence": "Ich habe kein Auto.",
@@ -5620,7 +6072,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-3",
+        "id": "v-gen-330",
         "word": "gut",
         "translation": "baik",
         "exampleSentence": "Das ist nicht gut.",
@@ -5628,7 +6080,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-4",
+        "id": "v-gen-331",
         "word": "schnell",
         "translation": "cepat",
         "exampleSentence": "Er fährt nicht schnell.",
@@ -5636,7 +6088,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-5",
+        "id": "v-gen-332",
         "word": "der Schlüssel",
         "translation": "kunci",
         "exampleSentence": "Ich habe den Schlüssel nicht.",
@@ -5645,7 +6097,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v10-6",
+        "id": "v-gen-333",
         "word": "der Hund",
         "translation": "anjing",
         "exampleSentence": "Er hat keinen Hund.",
@@ -5654,7 +6106,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v10-7",
+        "id": "v-gen-334",
         "word": "die Zeit",
         "translation": "waktu",
         "exampleSentence": "Wir haben keine Zeit.",
@@ -5663,7 +6115,7 @@ export const courseData: Lesson[] = [
         "article": "die"
       },
       {
-        "id": "v10-8",
+        "id": "v-gen-335",
         "word": "das Problem",
         "translation": "masalah",
         "exampleSentence": "Das ist kein Problem.",
@@ -5672,7 +6124,7 @@ export const courseData: Lesson[] = [
         "article": "das"
       },
       {
-        "id": "v10-9",
+        "id": "v-gen-336",
         "word": "sprechen",
         "translation": "berbicara",
         "exampleSentence": "Ich spreche nicht Spanisch.",
@@ -5680,7 +6132,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-10",
+        "id": "v-gen-337",
         "word": "kommen",
         "translation": "datang",
         "exampleSentence": "Ich kann nicht kommen.",
@@ -5688,7 +6140,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-11",
+        "id": "v-gen-338",
         "word": "schlafen",
         "translation": "tidur",
         "exampleSentence": "Ich kann nicht schlafen.",
@@ -5696,7 +6148,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-12",
+        "id": "v-gen-339",
         "word": "Französisch",
         "translation": "bahasa Prancis",
         "exampleSentence": "Ich spreche nicht Französisch.",
@@ -5704,7 +6156,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-13",
+        "id": "v-gen-340",
         "word": "Spanisch",
         "translation": "bahasa Spanyol",
         "exampleSentence": "Sprichst du Spanisch?",
@@ -5712,7 +6164,7 @@ export const courseData: Lesson[] = [
         "level": "A2"
       },
       {
-        "id": "v10-14",
+        "id": "v-gen-341",
         "word": "der Kaffee",
         "translation": "kopi",
         "exampleSentence": "Ich trinke keinen Kaffee.",
@@ -5721,7 +6173,7 @@ export const courseData: Lesson[] = [
         "article": "der"
       },
       {
-        "id": "v10-15",
+        "id": "v-gen-342",
         "word": "die Milch",
         "translation": "susu",
         "exampleSentence": "Ich habe keine Milch mehr.",
@@ -5834,7 +6286,144 @@ export const courseData: Lesson[] = [
     "culturalNotes": "Orang Jerman cenderung sangat langsung dalam menyatakan negasi. Menggunakan 'nicht' atau 'kein' dengan benar adalah bagian penting dari komunikasi yang jelas dan lugas. Ini juga mencerminkan budaya yang menghargai ketepatan dalam bahasa."
   },
   {
+    "id": "a2-11",
+    "canDoGoals": [
+      "Mengetahui daftar verba tindakan terhadap diri sendiri (Reflexivverben)",
+      "Penggunaan Reflexivpronomen (mich, dich, sich) untuk Accusative atau Dativ",
+      "Bercerita rutinitas membersihkan diri (sich waschen, sich duschen, sich bedanken)"
+    ],
+    "level": "A2",
+    "title": "Verba Refleksif (Reflexivverben)",
+    "grammarDescription": "Verba refleksif adalah kata kerja di mana subjek dan objek adalah orang (atau benda) yang sama. Kata kerja ini digunakan dengan kata ganti refleksif (Reflexivpronomen) seperti mich, dich, sich, uns, euch. Contohnya 'sich waschen' (mencuci diri sendiri), 'sich freuen' (bersorak/gembira).\n\nPosisi Reflexivpronomen biasanya ada tepat setelah kata kerja yang dikonjugasikan.",
+    "vocabulary": [
+      {
+        "id": "v-a211-1",
+        "word": "sich freuen",
+        "translation": "merasa gembira",
+        "exampleSentence": "Ich freue mich über das Geschenk.",
+        "phonetic": "zikh FROY-en",
+        "level": "A2"
+      },
+      {
+        "id": "v-a211-2",
+        "word": "sich waschen",
+        "translation": "mencuci diri sendiri",
+        "exampleSentence": "Du wäschst dich.",
+        "phonetic": "zikh VASH-en",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Kata ganti refleksif untuk 'er/sie/es' dan 'sie/Sie' (mereka/Anda) adalah:",
+        "options": [
+          "mich",
+          "uns",
+          "sich",
+          "dich"
+        ],
+        "correctAnswer": 2
+      }
+    ]
+  },
+  {
+    "id": "a2-12",
+    "canDoGoals": [
+      "Menghafal preposisi yang terkunci untuk suatu verba (Verben mit festen Präpositionen)",
+      "Mampu merespons singkat menggunakan Pronominaladverbien (dafür, daran, womit, worauf)",
+      "Membicarakan sebuah minat/memori terhadap suatu subjek tertentu yang relevan dengan preposition"
+    ],
+    "level": "A2",
+    "title": "Verba dengan Preposisi Tetap & Pronominaladverbien",
+    "grammarDescription": "Beberapa kata kerja selalu dipasangkan dengan preposisi tertentu, dan preposisi tersebut menentukan kasus apa yang harus dipakai (Akkusativ atau Dativ). Contoh: 'warten auf' (+ Akkusativ) = menunggu, 'träumen von' (+ Dativ) = bermimpi tentang.\n\nJika objeknya adalah BENDA (bukan orang), kita menggunakan Pronominaladverbien seperti 'darauf', 'davon', 'damit'. Misalnya: 'Ich warte auf den Bus' (Saya menunggu bus) -> 'Ich warte darauf' (Saya menunggunya).",
+    "vocabulary": [
+      {
+        "id": "v-a212-1",
+        "word": "warten auf",
+        "translation": "menunggu sesuatu/seseorang",
+        "exampleSentence": "Ich warte auf dich.",
+        "phonetic": "VAR-ten owf",
+        "level": "A2"
+      },
+      {
+        "id": "v-a212-2",
+        "word": "träumen von",
+        "translation": "bermimpi tentang",
+        "exampleSentence": "Er träumt von einem Haus.",
+        "phonetic": "TROY-men fon",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Apa bentuk Pronominaladverb untuk benda pada frasa 'warten auf'?",
+        "options": [
+          "daran",
+          "darüber",
+          "dafür",
+          "darauf"
+        ],
+        "correctAnswer": 3
+      }
+    ]
+  },
+  {
+    "id": "a2-13",
+    "canDoGoals": [
+      "Mengetahui dasar-dasar klausa anak (Nebensätze)",
+      "Menceritakan alasan / sebab akibat menggunakan konjungsi 'weil'",
+      "Menceritakan waktu terjadinya suatu hal dengan konjungsi 'wenn'",
+      "Membangun pengandaian dengan 'dass'"
+    ],
+    "level": "A2",
+    "title": "Nebensätze (dass, weil, wenn)",
+    "grammarDescription": "Dalam kalimat subordinat (Nebensatz), kata kerja yang dikonjugasikan selalu berpindah ke akhir kalimat. Tiga konjungsi subordinatif yang penting di tingkat A2 adalah: 'dass' (bahwa), 'weil' (karena), dan 'wenn' (jika/ketika).\n\nContoh:\nIch weiß, dass du kommst. (Saya tahu bahwa kamu datang).\nIch bleibe zu Hause, weil es regnet. (Saya tinggal di rumah karena hujan).\nWenn ich Zeit habe, komme ich. (Jika saya punya waktu, saya datang.)",
+    "vocabulary": [
+      {
+        "id": "v-a213-1",
+        "word": "dass",
+        "translation": "bahwa",
+        "exampleSentence": "Ich hoffe, dass er kommt.",
+        "phonetic": "das",
+        "level": "A2"
+      },
+      {
+        "id": "v-a213-2",
+        "word": "weil",
+        "translation": "karena",
+        "exampleSentence": "Ich lerne Deutsch, weil ich in Berlin studieren will.",
+        "phonetic": "vayl",
+        "level": "A2"
+      },
+      {
+        "id": "v-a213-3",
+        "word": "wenn",
+        "translation": "jika / kalau",
+        "exampleSentence": "Wenn das Wetter schön ist, gehen wir spazieren.",
+        "phonetic": "ven",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Di mana letak kata kerja terkonjugasi dalam Nebensatz (kalimat subordinat)?",
+        "options": [
+          "Posisi pertama",
+          "Posisi kedua",
+          "Posisi terakhir",
+          "Sebelum subjek"
+        ],
+        "correctAnswer": 2
+      }
+    ]
+  },
+  {
     "id": "b1-1",
+    "canDoGoals": [
+      "Menerapkan kasus Genitiv untuk menyatakan kepemilikan formal",
+      "Deklinasi artikel (des, der) lengkap dengan sufiks kata benda maskulin dan netral (-s, -es)",
+      "Menggunakan preposisi yang memerlukan Genitiv (wegen, trotz, während, innerhalb)"
+    ],
     "level": "B1",
     "title": "Kasus Genitiv",
     "grammarDescription": "Kasus Genitiv dalam bahasa Jerman digunakan untuk menunjukkan kepemilikan atau hubungan. Ini sering disebut sebagai 'kasus kepemilikan'. Kata benda yang berada dalam Genitiv akan mengalami perubahan bentuk artikel dan terkadang juga akhiran pada kata bendanya. Untuk kata benda maskulin dan netral, biasanya ditambahkan akhiran '-s' atau '-es'. Untuk kata benda feminin dan jamak, bentuknya tidak berubah, tetapi artikelnya yang berubah. Genitiv juga digunakan setelah beberapa preposisi tertentu (misalnya: wegen, während, trotz, anstatt).",
@@ -6081,6 +6670,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-2",
+    "canDoGoals": [
+      "Mengidentifikasi dan membangun anak kalimat relatif (Relativsätze)",
+      "Penggunaan kata ganti relatif sesuai dengan kasusnya (der, die, das, den, dem...)",
+      "Membedakan kasus di dalam anak kalimat agar kata ganti relatif tidak keliru"
+    ],
     "level": "B1",
     "title": "Relativsätze (Kalimat Relatif)",
     "grammarDescription": "Relativsätze (kalimat relatif) digunakan untuk memberikan informasi tambahan tentang kata benda atau kata ganti di kalimat utama. Kalimat relatif selalu dimulai dengan kata ganti relatif (Relativpronomen) yang merujuk kembali ke kata benda di kalimat utama (disebut 'antecedent'). Kata ganti relatif harus sesuai dalam gender dan jumlah dengan antecedent-nya, tetapi kasusnya ditentukan oleh fungsinya dalam kalimat relatif itu sendiri. Kata kerja di kalimat relatif selalu berada di akhir kalimat.",
@@ -6332,6 +6926,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-3",
+    "canDoGoals": [
+      "Menggambarkan pengandaian atau kondisi khayal yang tak realistis saat ini (Konjunktiv II)",
+      "Membentuk Konjunktiv II dengan (würde + Infinitiv) khusus untuk sebagian besar verba",
+      "Mampu meminta tolong dengan intensi kesopanan paling tinggi secara tertulis dan lisan (könnte/dürfte ich...)"
+    ],
     "level": "B1",
     "title": "Konjunktiv II (würde, könnte, müsste)",
     "grammarDescription": "Konjunktiv II digunakan untuk menyatakan keinginan, kemungkinan, saran, atau situasi hipotetis yang tidak nyata atau tidak mungkin terjadi di masa sekarang atau masa depan. Bentuk yang paling umum adalah dengan 'würde' + Infinitiv (misalnya 'Ich würde gehen' - saya akan pergi). Untuk kata kerja modal (können, müssen, sollen, dürfen, mögen) dan beberapa kata kerja kuat (sein, haben, wissen), sering digunakan bentuk Konjunktiv II khusus mereka (misalnya 'Ich könnte' - saya bisa, 'Ich hätte' - saya punya).",
@@ -6572,6 +7171,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-checkpoint-1",
+    "canDoGoals": [
+      "Mengevaluasi penguasaan aturan kasus Genitiv (Kepemilikan Lanjut)",
+      "Mengevaluasi penggunaan kata ganti Relatif dalam menyambung anak kalimat",
+      "Mengevaluasi kesopanan level tinggi (Konjunktiv II)"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -6684,6 +7288,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-4",
+    "canDoGoals": [
+      "Memfokuskan subjek pada sebuah tindakan daripada pelakunya dengan konstruksi Passiv",
+      "Latihan men-transformasikan kalimat aktif menjadi kalimat Passiv",
+      "Membangun konjugasi kalimat pasif baik di tensa Präsens (werden + Partizip II) maupun Präteritum (wurden...)"
+    ],
     "level": "B1",
     "title": "Passiv Präsens & Präteritum",
     "grammarDescription": "Passiv (kalimat pasif) digunakan ketika fokusnya adalah pada tindakan atau apa yang terjadi, bukan pada siapa yang melakukan tindakan tersebut. Dalam bahasa Jerman, kalimat pasif dibentuk dengan kata kerja bantu 'werden' dan Partizip II (past participle) dari kata kerja utama. Untuk Passiv Präsens, kita menggunakan 'werden' dalam bentuk Präsens. Untuk Passiv Präteritum, kita menggunakan 'werden' dalam bentuk Präteritum ('wurde'). Pelaku tindakan (jika disebutkan) diperkenalkan dengan preposisi 'von' (untuk orang) atau 'durch' (untuk penyebab/sarana) + Dativ.",
@@ -6924,6 +7533,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-5",
+    "canDoGoals": [
+      "Mengerti penggunaan Konjungsi ganda (Zweiteilige Konjunktionen)",
+      "Mengekspresikan pilihan alternatif (entweder... oder), atau tambahan yang menguatkan (nicht nur... sondern auch)",
+      "Mengekspresikan perlawan argumen / pengecualian ganda (zwar... aber, weder... noch)"
+    ],
     "level": "B1",
     "title": "Zweiteilige Konjunktionen",
     "grammarDescription": "Zweiteilige Konjunktionen (konjungsi dua bagian) adalah pasangan kata yang digunakan untuk menghubungkan dua bagian kalimat atau dua elemen yang setara. Mereka membantu dalam menyusun kalimat yang lebih kompleks dan bervariasi. Contoh umum termasuk 'entweder...oder' (baik...atau), 'weder...noch' (tidak...maupun), 'sowohl...als auch' (baik...maupun), 'nicht nur...sondern auch' (tidak hanya...tetapi juga), dan 'je...desto' (semakin...semakin).",
@@ -7166,6 +7780,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-6",
+    "canDoGoals": [
+      "Membedakan tutur langsung dan tidak langsung (Indirekte Rede level dasar)",
+      "Menyalin ucapan sumber langsung tanpa tanda kutip dengan kata ganti dan preposisi waktu yang sesuai",
+      "Mengalihkan persepsi (Er sagte, dass...)"
+    ],
     "level": "B1",
     "title": "Indirekte Rede",
     "grammarDescription": "Indirekte Rede (kalimat tidak langsung) digunakan untuk melaporkan apa yang dikatakan atau dipikirkan seseorang tanpa mengutipnya secara langsung. Dalam bahasa Jerman, ini sering dibentuk dengan Konjunktiv I. Jika bentuk Konjunktiv I sama dengan Indikativ (terutama pada 'ich' dan 'wir'), maka Konjunktiv II digunakan untuk menghindari ambiguitas. Kata kerja di kalimat tidak langsung selalu berada di akhir. Perubahan waktu dan kata ganti juga perlu diperhatikan.",
@@ -7409,6 +8028,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-checkpoint-2",
+    "canDoGoals": [
+      "Berlatih mengubah pola aktif, pasif dan pasif bertensa lampau",
+      "Mengevaluasi kefasihan menyambung argumen dengan konjungsi ganda",
+      "Mengevaluasi pelaporan dari kutipan sumber"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -7521,6 +8145,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-7",
+    "canDoGoals": [
+      "Penguasaan Infinitivkonstruktionen (zu + Infinitiv)",
+      "Membangun struktur (um... zu, ohne... zu, anstatt... zu)",
+      "Mengekspresikan tujuan dari suatu pekerjaan tanpa modal verb"
+    ],
     "level": "B1",
     "title": "Infinitivkonstruktionen (zu + Infinitiv)",
     "grammarDescription": "Infinitivkonstruktionen dengan 'zu + Infinitiv' digunakan untuk menyatakan tujuan, niat, atau sebagai pelengkap setelah kata kerja, kata sifat, atau kata benda tertentu. Struktur ini sering muncul setelah kata kerja seperti 'versuchen' (mencoba), 'vergessen' (lupa), 'beginnen' (memulai), atau setelah kata sifat seperti 'schön' (indah), 'wichtig' (penting), 'schwierig' (sulit). Ada juga konstruksi khusus seperti 'um...zu' (untuk tujuan), 'ohne...zu' (tanpa), dan 'anstatt...zu' (alih-alih).",
@@ -7765,6 +8394,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-8",
+    "canDoGoals": [
+      "Membungkus dan mendeklinasikan kata sifat/adjektiva dari awal di struktur apa pun",
+      "Latihan menggunakan schwache Deklination (setelah artikel definitif)",
+      "Latihan menggunakan gemischte dan starke Deklination untuk benda (tidak memiliki artikel spesifik)"
+    ],
     "level": "B1",
     "title": "Adjektivdeklination lengkap",
     "grammarDescription": "Deklinasi adjektiva (perubahan akhiran kata sifat) dalam bahasa Jerman adalah salah satu topik yang paling menantang. Akhiran adjektiva bergantung pada tiga faktor: kasus (Nominativ, Akkusativ, Dativ, Genitiv), gender (maskulin, feminin, netral), dan jumlah (singular, plural), serta jenis artikel yang mendahuluinya (artikel tertentu, artikel tidak tertentu, atau tanpa artikel). Ada tiga jenis deklinasi: kuat (tanpa artikel), lemah (setelah artikel tertentu), dan campuran (setelah artikel tidak tertentu atau kata ganti posesif).",
@@ -8002,6 +8636,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-9",
+    "canDoGoals": [
+      "Menjelaskan prediksi atau intensi di masa depan dengan (Futur I: werden + Infinitiv)",
+      "Memprediksi bahwa sesuatu AKAN SUDAH SELESAI di masa depan (Futur II: werden + Partizip II + haben/sein)",
+      "Menyadari frekuensi dan tingkat natural penutur bahasa Jerman dengan bentuk kalimat ini"
+    ],
     "level": "B1",
     "title": "Futur I & Futur II",
     "grammarDescription": "Futur I digunakan untuk menyatakan tindakan atau peristiwa yang akan terjadi di masa depan, atau untuk membuat prediksi dan asumsi tentang masa depan. Dibentuk dengan kata kerja bantu 'werden' + Infinitiv dari kata kerja utama. Futur II digunakan untuk menyatakan tindakan yang akan selesai pada titik waktu tertentu di masa depan, atau untuk membuat asumsi tentang sesuatu yang sudah terjadi di masa lalu (dengan tingkat kepastian yang tinggi). Dibentuk dengan 'werden' + Partizip II dari kata kerja utama + 'haben' atau 'sein'.",
@@ -8245,6 +8884,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-checkpoint-3",
+    "canDoGoals": [
+      "Evaluasi final untuk Infinitive dengan 'Zu'",
+      "Evaluasi final kompleksitas adjektiva bersufiks",
+      "Latihan membuat intensi tertulis dengan metode prediktif"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -8357,6 +9001,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b1-10",
+    "canDoGoals": [
+      "Membangun ketahanan kata melalui menebak arti kata baru secara konseptual (Wortbildung)",
+      "Merakit atau mengungkap arti dari Komposita (gabungan Noun+Noun)",
+      "Identifikasi makna dari Präfixe dan Suffixe khusus"
+    ],
     "level": "B1",
     "title": "Wortbildung (Komposita, Präfixe)",
     "grammarDescription": "Wortbildung (pembentukan kata) adalah proses penting dalam bahasa Jerman. Ini memungkinkan pembentukan kata-kata baru dari kata-kata yang sudah ada. Dua metode utama adalah Komposita (kata majemuk) dan penggunaan Präfixe (prefiks). Komposita adalah penggabungan dua atau lebih kata untuk membentuk kata baru, di mana kata terakhir menentukan gender dan makna utama (misalnya 'Haus' + 'Tür' = 'Haustür'). Präfixe adalah imbuhan yang ditambahkan di awal kata kerja untuk mengubah maknanya, dan bisa berupa Präfixe trennbar (dapat dipisah) atau untrennbar (tidak dapat dipisah).",
@@ -8600,10 +9249,100 @@ export const courseData: Lesson[] = [
     "culturalNotes": "Wortbildung adalah salah satu aspek yang membuat bahasa Jerman begitu ekspresif dan efisien. Kemampuan untuk membentuk kata majemuk yang panjang memungkinkan deskripsi yang sangat spesifik. Memahami Präfixe sangat penting karena mereka dapat mengubah makna kata kerja secara drastis dan sering digunakan dalam percakapan sehari-hari."
   },
   {
+    "id": "b1-11",
+    "canDoGoals": [
+      "Menerangkan sesuatu di masa lalu (Plusquamperfekt = Past Perfect Tense)",
+      "Menggunakan 'hatten' atau 'waren' sebelum peristiwa masa lampau lainnya (mengiringi 'nachdem')",
+      "Penggunaan kronologis lampau lebih runtut"
+    ],
+    "level": "B1",
+    "title": "Plusquamperfekt (Waktu Lampau Selesai)",
+    "grammarDescription": "Plusquamperfekt (Past Perfect) digunakan untuk menceritakan suatu kejadian di masa lalu yang terjadi *sebelum* kejadian masa lalu yang lain. Konstruksinya hampir sama dengan Perfekt, tetapi kata kerja bantunya ('haben' atau 'sein') dikonjugasikan dalam bentuk Präteritum ('hatte' atau 'war').\n\nContoh: \n(1) Ich hatte das Buch gelesen. (Saya TELAH membaca buku itu [di masa lampau].)\n(2) Als ich ankam, war er schon gegangen. (Ketika saya tiba [Präteritum], dia sudah pergi [Plusquamperfekt]).",
+    "vocabulary": [
+      {
+        "id": "v-b111-1",
+        "word": "hatte",
+        "translation": "telah (dari haben)",
+        "exampleSentence": "Ich hatte gegessen.",
+        "phonetic": "HAT-te",
+        "level": "B1"
+      },
+      {
+        "id": "v-b111-2",
+        "word": "war",
+        "translation": "telah (dari sein)",
+        "exampleSentence": "Er war schon gegangen.",
+        "phonetic": "var",
+        "level": "B1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Kata kerja bantu mana yang dipakai untuk Plusquamperfekt dari kata 'gehen'?",
+        "options": [
+          "hatte",
+          "war",
+          "wurde",
+          "ist"
+        ],
+        "correctAnswer": 1
+      }
+    ]
+  },
+  {
+    "id": "b1-12",
+    "canDoGoals": [
+      "Penguasaan N-Deklination (Melihat maskulina yang selalu menerima sufiks 'n/en')",
+      "Membedakan jamak reguler versus struktur n-Deklination pada Akkusativ, Dativ, dan Genitiv",
+      "Dapat mengenali kata benda internasional berakhiran '-ent, -ist' dan penggunaanya"
+    ],
+    "level": "B1",
+    "title": "n-Deklination",
+    "grammarDescription": "n-Deklination adalah aturan khusus untuk beberapa kata benda Maskulin di mana kata benda tersebut mendapat tambahan akhiran '-n' atau '-en' di SEMUA kasus KECUALI Nominativ Singular. Kelompok yang termasuk n-Deklination biasanya adalah kata benda maskulin yang berakhiran -e (der Junge -> den Jungen), profesi berakhiran -ent atau -ist (der Student -> den Studenten), dan beberapa perkecualian (der Herr -> den Herrn, der Bär -> den Bären).",
+    "vocabulary": [
+      {
+        "id": "v-b112-1",
+        "word": "der Herr",
+        "translation": "Bapak / Tuan",
+        "article": "der",
+        "exampleSentence": "Ich frage den Herrn.",
+        "phonetic": "der HER",
+        "level": "B1"
+      },
+      {
+        "id": "v-b112-2",
+        "word": "der Student",
+        "translation": "Mahasiswa",
+        "article": "der",
+        "exampleSentence": "Das ist das Buch des Studenten.",
+        "phonetic": "der shtu-DENT",
+        "level": "B1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Apa bentuk Akkusativ dari 'der Student'?",
+        "options": [
+          "den Student",
+          "den Studenten",
+          "den Studentes",
+          "den Students"
+        ],
+        "correctAnswer": 1
+      }
+    ]
+  },
+  {
     "id": "b2-1",
+    "canDoGoals": [
+      "Mampu mengubah klausa relatif panjang menjadi atribut padat bergaya akademik",
+      "Menulis dan menggunakan Partizip I untuk menandakan hal yang sedang terjadi aktif sebagai adjektif",
+      "Menulis dan menggunakan Partizip II untuk menunjukkan pasif/rampung sebagai adjektif"
+    ],
     "level": "B2",
     "title": "Partizipalkonstruktionen",
     "grammarDescription": "Partizipialkonstruktionen adalah cara yang ringkas dan elegan untuk menyampaikan informasi tambahan dalam sebuah kalimat, seringkali menggantikan anak kalimat (Nebensatz) atau klausa relatif. Ada dua jenis utama: Partizip I (Partizip Präsens) dan Partizip II (Partizip Perfekt).\n\n**Partizip I (Partizip Präsens)**\nDibentuk dari infinitif + -d (misalnya: 'lachend' - tertawa, 'singend' - bernyanyi). Ini menggambarkan tindakan yang sedang berlangsung secara bersamaan dengan tindakan utama kalimat, atau tindakan yang aktif. Fungsinya mirip dengan klausa relatif aktif atau klausa adverbial temporal/kausal.\nContoh: 'Der lachende Mann' (Pria yang tertawa) - menggantikan 'Der Mann, der lacht'.\n\n**Partizip II (Partizip Perfekt)**\nDibentuk seperti Partizip II untuk waktu Perfekt (misalnya: 'gesehen' - terlihat, 'geschrieben' - ditulis). Ini menggambarkan tindakan yang telah selesai sebelum tindakan utama, atau tindakan yang pasif. Fungsinya mirip dengan klausa relatif pasif atau klausa adverbial temporal/kausal.\nContoh: 'Das gelesene Buch' (Buku yang sudah dibaca) - menggantikan 'Das Buch, das gelesen wurde'.\n\nKedua partizip ini dapat digunakan sebagai atribut (seperti adjektiva), adverbial (menggambarkan cara, waktu, alasan), atau predikatif. Deklinasi partizip sebagai atribut mengikuti aturan deklinasi adjektiva.",
+    "registerNotes": "**Level B2: Membaca Nuansa Sosial Bahasa Jerman (Register Notes)**\nDi Level B2, bahasa bukan lagi soal 'benar gramatikal' – namun kapan dan di mana digunakan. Bahasa Jerman punya banyak wording yang *technically benar tapi socially aneh* jika dipakai salah tempat.\n\n*   **[Akademik/Formal Written]** *Partizipialkonstruktionen*: Konstruksi seperti *\"das zu lösende Problem\"* atau *\"der laut sprechende Mann\"* sangat elegan di teks surat kabar (FAZ) Universitas, atau laporan kerja. Namun **terdengar kaku dan pretensius (sombong)** jika diucapkan spontan di kantin dengan teman.\n*   **[Colloquial/Spoken]** Di percakapan sehari-hari, ganti *Partizip* berat ini dengan klausa relatif biasa: *\"Der Mann, der laut spricht\"*.\n*   **[Formal Spoken]** Dalam presentasi kerja atau ke klien, menggunakan *Partizipialkonstruktionen* ringan akan memancarkan kompetensi bahasa tingkat tinggi.",
     "sentenceBreakdowns": [
       "Der (artikel) + lachende (Partizip I sebagai adjektiva) + Mann (subjek) + betrat (verb) + den Raum (objek Akkusativ).",
       "Die (artikel) + von ihr (preposisi + pronomina) + geschriebene (Partizip II sebagai adjektiva) + E-Mail (subjek) + war (verb) + sehr (adverb) + informativ (adjektiva).",
@@ -8614,7 +9353,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Perhatikan pelafalan akhiran '-end' pada Partizip I, yang seringkali terdengar seperti 'ent'. Contoh: 'lachend' [LACH-ent]. Untuk Partizip II, pastikan untuk mengucapkan awalan 'ge-' dengan jelas dan tekanan pada suku kata pertama kata dasar. Contoh: 'geschrieben' [ge-SHREE-ben].",
     "vocabulary": [
       {
-        "id": "v1-1",
+        "id": "v-gen-343",
         "word": "lachend",
         "translation": "tertawa (Partizip I)",
         "exampleSentence": "Das lachende Kind spielte im Garten.",
@@ -8622,7 +9361,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-2",
+        "id": "v-gen-344",
         "word": "schreibend",
         "translation": "menulis (Partizip I)",
         "exampleSentence": "Schreibend verbrachte er den ganzen Abend.",
@@ -8630,7 +9369,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-3",
+        "id": "v-gen-345",
         "word": "gesehen",
         "translation": "terlihat (Partizip II)",
         "exampleSentence": "Der gesehene Film war sehr spannend.",
@@ -8638,7 +9377,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-4",
+        "id": "v-gen-346",
         "word": "geschrieben",
         "translation": "tertulis (Partizip II)",
         "exampleSentence": "Die geschriebene Nachricht war kurz und prägnant.",
@@ -8646,7 +9385,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-5",
+        "id": "v-gen-347",
         "word": "sprechend",
         "translation": "berbicara (Partizip I)",
         "exampleSentence": "Sprechend über seine Erfahrungen, wurde er emotional.",
@@ -8654,7 +9393,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-6",
+        "id": "v-gen-348",
         "word": "gehört",
         "translation": "terdengar (Partizip II)",
         "exampleSentence": "Das gehörte Lied war sehr eingängig.",
@@ -8662,7 +9401,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-7",
+        "id": "v-gen-349",
         "word": "lesend",
         "translation": "membaca (Partizip I)",
         "exampleSentence": "Lesend saß sie am Fenster.",
@@ -8670,7 +9409,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-8",
+        "id": "v-gen-350",
         "word": "gelesen",
         "translation": "terbaca (Partizip II)",
         "exampleSentence": "Die gelesene Geschichte war sehr berührend.",
@@ -8678,7 +9417,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-9",
+        "id": "v-gen-351",
         "word": "singend",
         "translation": "bernyanyi (Partizip I)",
         "exampleSentence": "Singend ging er durch den Wald.",
@@ -8686,7 +9425,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-10",
+        "id": "v-gen-352",
         "word": "gesungen",
         "translation": "dinyanyikan (Partizip II)",
         "exampleSentence": "Das gesungene Lied war wunderschön.",
@@ -8694,7 +9433,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-11",
+        "id": "v-gen-353",
         "word": "rennend",
         "translation": "berlari (Partizip I)",
         "exampleSentence": "Rennend erreichte er den Zug noch pünktlich.",
@@ -8702,7 +9441,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-12",
+        "id": "v-gen-354",
         "word": "geöffnet",
         "translation": "terbuka (Partizip II)",
         "exampleSentence": "Die geöffnete Tür führte in den Garten.",
@@ -8710,7 +9449,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-13",
+        "id": "v-gen-355",
         "word": "schlafend",
         "translation": "tidur (Partizip I)",
         "exampleSentence": "Das schlafende Baby sah so friedlich aus.",
@@ -8718,7 +9457,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-14",
+        "id": "v-gen-356",
         "word": "verloren",
         "translation": "hilang (Partizip II)",
         "exampleSentence": "Der verlorene Schlüssel wurde nie gefunden.",
@@ -8726,7 +9465,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-15",
+        "id": "v-gen-357",
         "word": "wartend",
         "translation": "menunggu (Partizip I)",
         "exampleSentence": "Wartend stand sie am Bahnhof.",
@@ -8734,7 +9473,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-16",
+        "id": "v-gen-358",
         "word": "der Bericht",
         "translation": "laporan",
         "article": "der",
@@ -8743,7 +9482,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v1-17",
+        "id": "v-gen-359",
         "word": "die Entscheidung",
         "translation": "keputusan",
         "article": "die",
@@ -8857,6 +9596,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-2",
+    "canDoGoals": [
+      "Memahami konstruksi kalimat nominal / kalimat partizipial di posisi terentang / pre-nominal",
+      "Menjabarkan struktur Partisipial (Erweiterte Relativsätze) dari kiri ke kanan sebelum masuk ranah membaca artikel resmi",
+      "Menguraikan susunan sintaksis formal"
+    ],
     "level": "B2",
     "title": "Erweiterte Relativsätze",
     "grammarDescription": "Erweiterte Relativsätze (klausa relatif yang diperluas) adalah bentuk klausa relatif yang lebih kompleks dan sering digunakan dalam bahasa Jerman tingkat lanjut, terutama dalam tulisan formal. Mereka memungkinkan kita untuk memberikan informasi tambahan tentang sebuah kata benda atau pronomina secara lebih ringkas dibandingkan klausa relatif tradisional.\n\n**Struktur Dasar:**\nSebuah erweiterter Relativsatz biasanya terdiri dari:\n`Artikel (der/die/das) + Partizip I atau Partizip II + Kata Benda`\n\nContoh: `der spielende Junge` (anak laki-laki yang sedang bermain) - menggantikan `der Junge, der spielt`.\n`das gelesene Buch` (buku yang sudah dibaca) - menggantikan `das Buch, das gelesen wurde`.\n\n**Perluasan dengan Adverbial atau Objek:**\nKlausa relatif ini dapat diperluas dengan menambahkan adverbial (keterangan waktu, tempat, cara) atau objek (Dativ, Akkusativ) di antara artikel dan partizip.\n\nContoh:\n- `der gestern spielende Junge` (anak laki-laki yang bermain kemarin)\n- `die von ihm geschriebene E-Mail` (email yang ditulis olehnya)\n- `das in der Ecke stehende Fahrrad` (sepeda yang berdiri di sudut)\n\n**Deklinasi:**\nPartizip dalam erweiterter Relativsatz berfungsi sebagai adjektiva dan dideklinasikan sesuai dengan kasus, gender, dan jumlah kata benda yang dijelaskannya. Artikel di depannya juga dideklinasikan sesuai kasus.",
@@ -8870,7 +9614,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Dalam 'erweiterte Relativsätze', perhatikan intonasi yang menurun pada partizip yang berfungsi sebagai adjektiva, dan kemudian naik lagi pada kata benda yang dijelaskan. Contoh: 'der gestern angekommene Gast' [der GES-tern an-ge-KOM-me-ne GAST]. Latih pengucapan partizip dengan akhiran yang benar sesuai deklinasi.",
     "vocabulary": [
       {
-        "id": "v2-1",
+        "id": "v-gen-360",
         "word": "angekommen",
         "translation": "tiba (Partizip II)",
         "exampleSentence": "Der gestern angekommene Gast ist schon wieder abgereist.",
@@ -8878,7 +9622,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-2",
+        "id": "v-gen-361",
         "word": "angeboten",
         "translation": "ditawarkan (Partizip II)",
         "exampleSentence": "Die angebotenen Produkte sind von hoher Qualität.",
@@ -8886,7 +9630,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-3",
+        "id": "v-gen-362",
         "word": "liegend",
         "translation": "terletak (Partizip I)",
         "exampleSentence": "Das auf dem Tisch liegende Buch gehört mir.",
@@ -8894,7 +9638,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-4",
+        "id": "v-gen-363",
         "word": "wachsend",
         "translation": "tumbuh (Partizip I)",
         "exampleSentence": "Die schnell wachsende Wirtschaft schafft neue Arbeitsplätze.",
@@ -8902,7 +9646,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-5",
+        "id": "v-gen-364",
         "word": "gelobt",
         "translation": "dipuji (Partizip II)",
         "exampleSentence": "Der von vielen gelobte Film hat einen Preis gewonnen.",
@@ -8910,7 +9654,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-6",
+        "id": "v-gen-365",
         "word": "diskutiert",
         "translation": "didiskusikan (Partizip II)",
         "exampleSentence": "Das viel diskutierte Thema wurde endlich entschieden.",
@@ -8918,7 +9662,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-7",
+        "id": "v-gen-366",
         "word": "erwartet",
         "translation": "diharapkan (Partizip II)",
         "exampleSentence": "Die erwartete Antwort kam leider nicht.",
@@ -8926,7 +9670,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-8",
+        "id": "v-gen-367",
         "word": "verstanden",
         "translation": "dimengerti (Partizip II)",
         "exampleSentence": "Die von ihm verstandene Aufgabe war komplex.",
@@ -8934,7 +9678,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-9",
+        "id": "v-gen-368",
         "word": "bevorstehend",
         "translation": "mendatang (Partizip I)",
         "exampleSentence": "Die bevorstehende Prüfung bereitet mir Sorgen.",
@@ -8942,7 +9686,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-10",
+        "id": "v-gen-369",
         "word": "entstanden",
         "translation": "terbentuk (Partizip II)",
         "exampleSentence": "Die neu entstandene Situation erfordert schnelle Maßnahmen.",
@@ -8950,7 +9694,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-11",
+        "id": "v-gen-370",
         "word": "die Wirtschaft",
         "translation": "ekonomi",
         "article": "die",
@@ -8959,7 +9703,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-12",
+        "id": "v-gen-371",
         "word": "der Arbeitsplatz",
         "translation": "tempat kerja",
         "article": "der",
@@ -8968,7 +9712,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-13",
+        "id": "v-gen-372",
         "word": "die Qualität",
         "translation": "kualitas",
         "article": "die",
@@ -8977,7 +9721,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-14",
+        "id": "v-gen-373",
         "word": "die Maßnahme",
         "translation": "tindakan",
         "article": "die",
@@ -8986,7 +9730,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-15",
+        "id": "v-gen-374",
         "word": "die Prüfung",
         "translation": "ujian",
         "article": "die",
@@ -8995,7 +9739,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v2-16",
+        "id": "v-gen-375",
         "word": "die Situation",
         "translation": "situasi",
         "article": "die",
@@ -9109,6 +9853,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-3",
+    "canDoGoals": [
+      "Menghidupkan argumen oral/lisan dengan Modalpartikeln",
+      "Dapat merepresentasikan rasa marah / meremehkan / keyakinan diri dengan kata seperti 'halt', 'eben', 'doch', atau 'mal'",
+      "Meningkatkan aksen natural lisan bagaikan native speaker"
+    ],
     "level": "B2",
     "title": "Modalpartikeln (doch, mal, ja, eben)",
     "grammarDescription": "Modalpartikeln (partikel modal) adalah kata-kata kecil yang tidak memiliki makna leksikal sendiri tetapi memberikan nuansa emosional, sikap, atau penekanan pada sebuah kalimat. Mereka sangat umum dalam percakapan sehari-hari bahasa Jerman dan penting untuk dipahami agar komunikasi terdengar alami. Posisi mereka biasanya setelah kata kerja terkonjugasi atau setelah subjek.\n\n**1. Doch**\n- **Kontradiksi/Koreksi:** Menekankan bahwa sesuatu itu benar, meskipun ada keraguan atau pernyataan yang berlawanan. (Contoh: 'Es regnet doch!' - Padahal hujan!)\n- **Permintaan Ramah/Saran:** Melembutkan permintaan atau saran. (Contoh: 'Komm doch mal vorbei!' - Mampirlah sebentar!)\n- **Keterkejutan/Ketidakpercayaan:** Menyatakan kejutan atau ketidakpercayaan. (Contoh: 'Du bist doch verrückt!' - Kamu gila, kan?)\n\n**2. Mal**\n- **Permintaan Singkat/Tidak Penting:** Melembutkan permintaan, membuatnya terdengar lebih santai atau tidak mendesak. (Contoh: 'Warte mal!' - Tunggu sebentar!)\n- **Ajakan/Saran:** Mengajak seseorang melakukan sesuatu. (Contoh: 'Probier mal!' - Cobalah!)\n- **Penekanan pada Durasi Singkat:** Menunjukkan bahwa tindakan akan berlangsung sebentar. (Contoh: 'Ich schaue mal.' - Saya lihat sebentar.)\n\n**3. Ja**\n- **Penegasan/Pernyataan yang Jelas:** Menekankan bahwa sesuatu itu sudah diketahui atau jelas. (Contoh: 'Das weißt du ja!' - Kamu kan tahu itu!)\n- **Keterkejutan/Kekaguman:** Menyatakan kejutan atau kekaguman. (Contoh: 'Das ist ja toll!' - Itu kan hebat!)\n- **Peringatan/Ancaman:** Memberikan peringatan. (Contoh: 'Pass ja auf!' - Hati-hati ya!)\n\n**4. Eben / Halt**\n- **Penerimaan/Konfirmasi:** Menunjukkan penerimaan terhadap suatu fakta atau situasi yang tidak dapat diubah, seringkali dengan sedikit nada pasrah atau 'begitulah adanya'. (Contoh: 'Es ist eben so.' - Ya memang begitu adanya.)\n- **Penjelasan Sederhana:** Memberikan penjelasan yang dianggap sudah jelas atau tidak perlu diperdebatkan. (Contoh: 'Er ist eben müde.' - Dia kan memang lelah.)",
@@ -9122,7 +9871,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Modalpartikeln seringkali tidak ditekankan dalam kalimat, tetapi intonasi keseluruhan kalimat dapat berubah secara signifikan tergantung pada partikel yang digunakan. Misalnya, 'doch' yang menyatakan kontradiksi sering diucapkan dengan penekanan dan intonasi naik, sementara 'eben' yang menyatakan penerimaan sering diucapkan dengan intonasi datar atau sedikit menurun.",
     "vocabulary": [
       {
-        "id": "v3-1",
+        "id": "v-gen-376",
         "word": "doch",
         "translation": "padahal, kan (Modalpartikel)",
         "exampleSentence": "Du weißt doch, dass ich Recht habe.",
@@ -9130,7 +9879,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-2",
+        "id": "v-gen-377",
         "word": "mal",
         "translation": "sebentar, coba (Modalpartikel)",
         "exampleSentence": "Gib mir mal das Salz.",
@@ -9138,7 +9887,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-3",
+        "id": "v-gen-378",
         "word": "ja",
         "translation": "kan, memang (Modalpartikel)",
         "exampleSentence": "Das ist ja eine Überraschung!",
@@ -9146,7 +9895,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-4",
+        "id": "v-gen-379",
         "word": "eben",
         "translation": "memang begitu, ya sudah (Modalpartikel)",
         "exampleSentence": "Es ist eben so, da kann man nichts machen.",
@@ -9154,7 +9903,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-5",
+        "id": "v-gen-380",
         "word": "halt",
         "translation": "memang begitu, ya sudah (Modalpartikel, sinonim 'eben')",
         "exampleSentence": "Er ist halt so.",
@@ -9162,7 +9911,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-6",
+        "id": "v-gen-381",
         "word": "schon",
         "translation": "sudah, memang (Modalpartikel)",
         "exampleSentence": "Das wird schon klappen.",
@@ -9170,7 +9919,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-7",
+        "id": "v-gen-382",
         "word": "wohl",
         "translation": "mungkin, sepertinya (Modalpartikel)",
         "exampleSentence": "Er wird wohl zu Hause sein.",
@@ -9178,7 +9927,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-8",
+        "id": "v-gen-383",
         "word": "eigentlich",
         "translation": "sebenarnya (Modalpartikel)",
         "exampleSentence": "Was wolltest du eigentlich sagen?",
@@ -9186,7 +9935,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-9",
+        "id": "v-gen-384",
         "word": "einfach",
         "translation": "saja, mudah (Modalpartikel)",
         "exampleSentence": "Komm einfach mit!",
@@ -9194,7 +9943,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-10",
+        "id": "v-gen-385",
         "word": "ruhig",
         "translation": "saja, tenang (Modalpartikel)",
         "exampleSentence": "Du kannst ruhig fragen.",
@@ -9202,7 +9951,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-11",
+        "id": "v-gen-386",
         "word": "bloß",
         "translation": "hanya, saja (Modalpartikel)",
         "exampleSentence": "Sag bloß nichts Falsches!",
@@ -9210,7 +9959,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-12",
+        "id": "v-gen-387",
         "word": "denn",
         "translation": "gerangan (Modalpartikel)",
         "exampleSentence": "Was machst du denn hier?",
@@ -9218,7 +9967,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-13",
+        "id": "v-gen-388",
         "word": "die Überraschung",
         "translation": "kejutan",
         "article": "die",
@@ -9227,7 +9976,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-14",
+        "id": "v-gen-389",
         "word": "die Geduld",
         "translation": "kesabaran",
         "article": "die",
@@ -9236,7 +9985,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v3-15",
+        "id": "v-gen-390",
         "word": "die Wahrheit",
         "translation": "kebenaran",
         "article": "die",
@@ -9350,6 +10099,10 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-checkpoint-1",
+    "canDoGoals": [
+      "Tes mengkonversikan klausa relasional pasif/aktif ke format tertulis panjang akademik Partizip",
+      "Tes penggunaan partikel nada bicara di konteks diskusi dan berdebat"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -9462,6 +10215,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-4",
+    "canDoGoals": [
+      "Menguasai karakteristik Wissenschaftlicher Schreibstil (gaya tulisan ilmiah dan objektif)",
+      "Mengecoh perspektif pelaku dan menggantinya dengan gaya passiversatz / impersonal (man, es, sich lassen)",
+      "Langkah pertama persiapan menulis argumen saintifik/logis di ujian B2 atau tes DaF"
+    ],
     "level": "B2",
     "title": "Wissenschaftlicher Schreibstil",
     "grammarDescription": "Gaya penulisan ilmiah (wissenschaftlicher Schreibstil) dalam bahasa Jerman memiliki karakteristik khusus yang membedakannya dari bahasa sehari-hari. Tujuannya adalah untuk menyampaikan informasi secara objektif, presisi, dan logis. Ini sangat penting dalam konteks akademik, laporan, atau publikasi ilmiah.\n\n**Ciri-ciri Utama:**\n1.  **Objektivitas dan Impersonalitas:** Penulis sering menghindari penggunaan 'ich' atau 'wir'. Sebagai gantinya, digunakan konstruksi impersonal atau pasif.\n    *   Contoh: 'Es wird angenommen, dass...' (Diperkirakan bahwa...) daripada 'Ich nehme an, dass...'\n2.  **Nominalisierung (Nominalization):** Penggunaan kata benda (Nomen) alih-alih kata kerja (Verben) atau adjektiva (Adjektive) untuk mengekspresikan tindakan atau proses. Ini membuat kalimat lebih padat dan formal.\n    *   Contoh: 'Die Analyse der Daten' (Analisis data) daripada 'Man analysiert die Daten'.\n3.  **Passiv (Passive Voice):** Sering digunakan untuk menekankan tindakan atau hasil, bukan pelaku tindakan.\n    *   Contoh: 'Die Ergebnisse wurden präsentiert.' (Hasil-hasil dipresentasikan.)\n4.  **Komplexe Satzstrukturen:** Penggunaan kalimat majemuk dengan banyak anak kalimat (Nebensätze) dan konjungsi yang tepat untuk menunjukkan hubungan logis antar ide.\n    *   Contoh: 'Obwohl die Studie umfangreich war, konnten nicht alle Fragen beantwortet werden.'\n5.  **Fachvokabular (Technical Vocabulary):** Penggunaan istilah-istilah khusus dari bidang ilmu tertentu.\n6.  **Präzision und Klarheit:** Menghindari ambiguitas dan memastikan setiap pernyataan didukung oleh bukti atau argumen yang jelas.\n\n**Contoh Transformasi:**\n*   **Informal:** 'Man hat die Daten analysiert.'\n*   **Formal/Wissenschaftlich:** 'Die Analyse der Daten wurde durchgeführt.' (Nominalisierung + Passiv)",
@@ -9475,7 +10233,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Saat membaca teks ilmiah, perhatikan intonasi yang lebih datar dan kecepatan yang lebih lambat untuk memastikan kejelasan. Kata-kata panjang yang terbentuk dari nominalisasi atau gabungan kata harus diucapkan dengan jelas, misalnya 'Forschungsergebnisse' [FOR-shungs-er-geb-nis-se].",
     "vocabulary": [
       {
-        "id": "v4-1",
+        "id": "v-gen-391",
         "word": "die Analyse",
         "translation": "analisis",
         "article": "die",
@@ -9484,7 +10242,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-2",
+        "id": "v-gen-392",
         "word": "die Durchführung",
         "translation": "pelaksanaan",
         "article": "die",
@@ -9493,7 +10251,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-3",
+        "id": "v-gen-393",
         "word": "die Erkenntnis",
         "translation": "penemuan, wawasan",
         "article": "die",
@@ -9502,7 +10260,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-4",
+        "id": "v-gen-394",
         "word": "die Hypothese",
         "translation": "hipotesis",
         "article": "die",
@@ -9511,7 +10269,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-5",
+        "id": "v-gen-395",
         "word": "die Relevanz",
         "translation": "relevansi",
         "article": "die",
@@ -9520,7 +10278,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-6",
+        "id": "v-gen-396",
         "word": "die Schlussfolgerung",
         "translation": "kesimpulan",
         "article": "die",
@@ -9529,7 +10287,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-7",
+        "id": "v-gen-397",
         "word": "die Untersuchung",
         "translation": "penelitian, penyelidikan",
         "article": "die",
@@ -9538,7 +10296,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-8",
+        "id": "v-gen-398",
         "word": "validieren",
         "translation": "memvalidasi",
         "exampleSentence": "Die Ergebnisse müssen noch validiert werden.",
@@ -9546,7 +10304,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-9",
+        "id": "v-gen-399",
         "word": "belegen",
         "translation": "membuktikan, mendokumentasikan",
         "exampleSentence": "Die Theorie konnte durch Experimente belegt werden.",
@@ -9554,7 +10312,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-10",
+        "id": "v-gen-400",
         "word": "erörtern",
         "translation": "membahas, mendiskusikan",
         "exampleSentence": "Im folgenden Kapitel wird die Problematik erörtert.",
@@ -9562,7 +10320,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-11",
+        "id": "v-gen-401",
         "word": "darstellen",
         "translation": "menyajikan, menggambarkan",
         "exampleSentence": "Die Grafik stellt die Entwicklung der Zahlen dar.",
@@ -9570,7 +10328,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-12",
+        "id": "v-gen-402",
         "word": "hervorheben",
         "translation": "menyoroti, menekankan",
         "exampleSentence": "Es ist wichtig, die Hauptpunkte hervorzuheben.",
@@ -9578,7 +10336,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-13",
+        "id": "v-gen-403",
         "word": "die Fragestellung",
         "translation": "rumusan masalah",
         "article": "die",
@@ -9587,7 +10345,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-14",
+        "id": "v-gen-404",
         "word": "die Methodik",
         "translation": "metodologi",
         "article": "die",
@@ -9596,7 +10354,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-15",
+        "id": "v-gen-405",
         "word": "die Datenbasis",
         "translation": "basis data",
         "article": "die",
@@ -9605,7 +10363,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v4-16",
+        "id": "v-gen-406",
         "word": "die Kausalität",
         "translation": "kausalitas",
         "article": "die",
@@ -9719,6 +10477,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-5",
+    "canDoGoals": [
+      "Konjugasi lanjutan Konjunktiv I, sering dibaca di struktur koran dan surat kabar aktual",
+      "Cara melaporkan berita dengan netral/apriori menjaga klaim kutipan secara objektif",
+      "Ubah reportase dengan benar jika Konjunktiv I serupa dengan Präsens dengan lari ke Konjunktiv II"
+    ],
     "level": "B2",
     "title": "Konjunktiv I (Indirekte Rede formal)",
     "grammarDescription": "Konjunktiv I (Subjunctive I) digunakan terutama untuk melaporkan ucapan atau pikiran orang lain secara tidak langsung (indirekte Rede), terutama dalam konteks formal seperti berita, laporan, atau artikel ilmiah. Tujuannya adalah untuk menjaga jarak dari pernyataan yang dilaporkan, menunjukkan bahwa itu adalah pernyataan orang lain dan bukan fakta yang dijamin oleh penulis.\n\n**Pembentukan Konjunktiv I:**\nKonjunktiv I dibentuk dari akar infinitif kata kerja. Untuk sebagian besar kata kerja, bentuk Konjunktiv I sama dengan bentuk Indikativ Präsens, kecuali untuk orang ketiga tunggal (er/sie/es) dan beberapa kata kerja kuat.\n\n*   **Regelmäßige Verben (Kata Kerja Beraturan):**\n    *   `ich mache` -> `ich mache`\n    *   `du machst` -> `du machest`\n    *   `er/sie/es macht` -> `er/sie/es mache` (Perbedaan utama!)\n    *   `wir machen` -> `wir machen`\n    *   `ihr macht` -> `ihr machet`\n    *   `sie/Sie machen` -> `sie/Sie machen`\n\n*   **Unregelmäßige Verben (Kata Kerja Tidak Beraturan):**\n    *   `sein`: `ich sei, du seiest, er/sie/es sei, wir seien, ihr seiet, sie/Sie seien`\n    *   `haben`: `ich habe, du habest, er/sie/es habe, wir haben, ihr habet, sie/Sie haben`\n    *   `werden`: `ich werde, du werdest, er/sie/es werde, wir werden, ihr werdet, sie/Sie werden`\n\n**Kapan Menggunakan Konjunktiv I?**\n1.  **Indirekte Rede (Laporan Tidak Langsung):** Ketika melaporkan apa yang dikatakan, dipikirkan, atau diyakini orang lain.\n    *   Contoh: `Er sagt, er sei müde.` (Dia bilang dia lelah.)\n    *   Contoh: `Die Regierung erklärte, die Maßnahmen seien notwendig.` (Pemerintah menyatakan bahwa langkah-langkah itu diperlukan.)\n\n**Penggantian dengan Konjunktiv II:**\nJika bentuk Konjunktiv I identik dengan bentuk Indikativ Präsens (terutama untuk 'wir' dan 'sie/Sie', dan seringkali 'ich'), maka Konjunktiv II digunakan sebagai pengganti untuk menghindari ambiguitas. Ini sering terjadi pada kata kerja beraturan.\n\n*   Contoh: `Sie sagen, sie kommen.` (Indikativ) -> `Sie sagen, sie kämen.` (Konjunktiv II sebagai pengganti Konjunktiv I yang identik) atau `Sie sagen, sie würden kommen.` (Konjunktiv II dengan 'würden').\n\n**Penting:** Konjunktiv I tidak menyatakan keraguan terhadap kebenaran pernyataan, melainkan hanya menunjukkan bahwa itu adalah laporan dari pihak ketiga.",
@@ -9732,7 +10495,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Bentuk Konjunktiv I seringkali terdengar sangat mirip dengan Indikativ. Perhatikan konteks kalimat dan intonasi yang lebih netral saat melaporkan. Untuk bentuk 'er/sie/es' yang berakhiran '-e' (misalnya 'mache', 'komme'), pastikan untuk mengucapkan '-e' dengan jelas, tidak seperti akhiran '-e' yang sering dihilangkan dalam bahasa lisan.",
     "vocabulary": [
       {
-        "id": "v5-1",
+        "id": "v-gen-407",
         "word": "sei",
         "translation": "adalah (Konjunktiv I dari 'sein')",
         "exampleSentence": "Er sagte, er sei müde.",
@@ -9740,7 +10503,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-2",
+        "id": "v-gen-408",
         "word": "habe",
         "translation": "memiliki (Konjunktiv I dari 'haben')",
         "exampleSentence": "Sie meinte, sie habe keine Zeit.",
@@ -9748,7 +10511,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-3",
+        "id": "v-gen-409",
         "word": "werde",
         "translation": "akan (Konjunktiv I dari 'werden')",
         "exampleSentence": "Er versprach, er werde pünktlich sein.",
@@ -9756,7 +10519,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-4",
+        "id": "v-gen-410",
         "word": "komme",
         "translation": "datang (Konjunktiv I dari 'kommen')",
         "exampleSentence": "Sie sagte, sie komme morgen.",
@@ -9764,7 +10527,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-5",
+        "id": "v-gen-411",
         "word": "gehe",
         "translation": "pergi (Konjunktiv I dari 'gehen')",
         "exampleSentence": "Er erklärte, er gehe jetzt nach Hause.",
@@ -9772,7 +10535,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-6",
+        "id": "v-gen-412",
         "word": "mache",
         "translation": "melakukan (Konjunktiv I dari 'machen')",
         "exampleSentence": "Sie betonte, sie mache ihre Arbeit sorgfältig.",
@@ -9780,7 +10543,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-7",
+        "id": "v-gen-413",
         "word": "solle",
         "translation": "seharusnya (Konjunktiv I dari 'sollen')",
         "exampleSentence": "Der Arzt riet, man solle sich ausruhen.",
@@ -9788,7 +10551,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-8",
+        "id": "v-gen-414",
         "word": "wolle",
         "translation": "ingin (Konjunktiv I dari 'wollen')",
         "exampleSentence": "Er sagte, er wolle das Projekt beenden.",
@@ -9796,7 +10559,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-9",
+        "id": "v-gen-415",
         "word": "könne",
         "translation": "bisa (Konjunktiv I dari 'können')",
         "exampleSentence": "Sie meinte, sie könne ihm helfen.",
@@ -9804,7 +10567,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-10",
+        "id": "v-gen-416",
         "word": "müsse",
         "translation": "harus (Konjunktiv I dari 'müssen')",
         "exampleSentence": "Er erklärte, er müsse jetzt gehen.",
@@ -9812,7 +10575,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-11",
+        "id": "v-gen-417",
         "word": "dürfe",
         "translation": "boleh (Konjunktiv I dari 'dürfen')",
         "exampleSentence": "Sie fragte, ob sie dürfe.",
@@ -9820,7 +10583,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-12",
+        "id": "v-gen-418",
         "word": "die Meldung",
         "translation": "berita, laporan",
         "article": "die",
@@ -9829,7 +10592,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-13",
+        "id": "v-gen-419",
         "word": "die Erklärung",
         "translation": "pernyataan, penjelasan",
         "article": "die",
@@ -9838,7 +10601,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-14",
+        "id": "v-gen-420",
         "word": "die Behauptung",
         "translation": "klaim, pernyataan",
         "article": "die",
@@ -9847,7 +10610,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v5-15",
+        "id": "v-gen-421",
         "word": "berichten",
         "translation": "melaporkan",
         "exampleSentence": "Die Medien berichten, dass die Situation sich verbessere.",
@@ -9960,6 +10723,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-6",
+    "canDoGoals": [
+      "Mengurai labirin anak kalimat dalam jerman, alias 'Schachtelsätze' (Struktur Kalimat Boks)",
+      "Menavigasi artikel yang menggabungkan banyak Nebensätze dengan konjungsi berlapis-lapis",
+      "Meningkatkan reading comprehension pada struktur bahasa Jerman kelas literasi korporat"
+    ],
     "level": "B2",
     "title": "Komplexe Satzstrukturen",
     "grammarDescription": "Komplexe Satzstrukturen (struktur kalimat kompleks) adalah inti dari kemampuan berbahasa tingkat B2 dan lebih tinggi. Ini melibatkan penggabungan beberapa klausa (Hauptsätze dan Nebensätze) untuk mengekspresikan ide-ide yang rumit, hubungan logis, dan nuansa makna. Menguasai ini memungkinkan Anda untuk berbicara dan menulis dengan lebih presisi dan koheren.\n\n**Jenis Klausa yang Sering Digunakan:**\n1.  **Nebensätze (Anak Kalimat):** Klausa yang tidak bisa berdiri sendiri dan biasanya diawali oleh konjungsi subordinatif atau pronomina relatif. Kata kerja terkonjugasi berada di akhir anak kalimat.\n    *   **Temporalsätze (Waktu):** `als, wenn, während, seit, bevor, nachdem, sobald, bis`\n        *   Contoh: `Nachdem er gegessen hatte, ging er spazieren.`\n    *   **Kausalsätze (Sebab):** `weil, da, zumal`\n        *   Contoh: `Er blieb zu Hause, weil er krank war.`\n    *   **Konzessivsätze (Konsesi/Meskipun):** `obwohl, obgleich, wenngleich`\n        *   Contoh: `Obwohl es regnete, gingen wir spazieren.`\n    *   **Konditionalsätze (Syarat):** `wenn, falls, sofern`\n        *   Contoh: `Wenn du Zeit hast, besuchen wir das Museum.`\n    *   **Finalsätze (Tujuan):** `damit, um...zu`\n        *   Contoh: `Ich lerne Deutsch, damit ich in Deutschland studieren kann.`\n    *   **Konsekutivsätze (Akibat):** `sodass, so...dass`\n        *   Contoh: `Er war so müde, dass er sofort einschlief.`\n    *   **Modalsätze (Cara):** `indem, ohne dass, anstatt dass`\n        *   Contoh: `Man lernt, indem man übt.`\n\n2.  **Konjunktionen Koordinatif (Kata Sambung Koordinatif):** Menghubungkan klausa utama atau bagian kalimat yang setara. Kata kerja tetap pada posisi kedua.\n    *   `und, aber, oder, denn, sondern`\n\n3.  **Konjunktionaladverbien (Adverbial Konjungtif):** Menghubungkan dua kalimat utama atau klausa utama, menunjukkan hubungan logis. Kata kerja tetap pada posisi kedua setelah adverbial.\n    *   `deshalb, darum, deswegen, trotzdem, außerdem, folglich, demnach, einerseits...andererseits`\n        *   Contoh: `Es regnete stark; trotzdem gingen wir hinaus.`\n\n**Penting:** Perhatikan posisi kata kerja di setiap jenis klausa. Dalam Nebensatz, kata kerja terkonjugasi selalu di akhir. Dalam Hauptsatz, kata kerja terkonjugasi selalu di posisi kedua.",
@@ -9973,7 +10741,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Dalam kalimat kompleks, intonasi seringkali naik di akhir anak kalimat dan kemudian turun di akhir kalimat utama. Latih jeda yang tepat di antara klausa untuk membantu pemahaman. Contoh: 'Obwohl es regnete, (jeda) gingen wir spazieren.'",
     "vocabulary": [
       {
-        "id": "v6-1",
+        "id": "v-gen-422",
         "word": "obwohl",
         "translation": "meskipun",
         "exampleSentence": "Obwohl es regnete, gingen wir spazieren.",
@@ -9981,7 +10749,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-2",
+        "id": "v-gen-423",
         "word": "nachdem",
         "translation": "setelah",
         "exampleSentence": "Nachdem er gegessen hatte, ging er ins Bett.",
@@ -9989,7 +10757,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-3",
+        "id": "v-gen-424",
         "word": "damit",
         "translation": "agar, supaya",
         "exampleSentence": "Ich lerne Deutsch, damit ich in Deutschland studieren kann.",
@@ -9997,7 +10765,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-4",
+        "id": "v-gen-425",
         "word": "sodass",
         "translation": "sehingga",
         "exampleSentence": "Er war so müde, sodass er sofort einschlief.",
@@ -10005,7 +10773,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-5",
+        "id": "v-gen-426",
         "word": "indem",
         "translation": "dengan cara",
         "exampleSentence": "Man lernt, indem man übt.",
@@ -10013,7 +10781,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-6",
+        "id": "v-gen-427",
         "word": "deshalb",
         "translation": "oleh karena itu",
         "exampleSentence": "Es regnete stark, deshalb blieben wir zu Hause.",
@@ -10021,7 +10789,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-7",
+        "id": "v-gen-428",
         "word": "trotzdem",
         "translation": "meskipun demikian",
         "exampleSentence": "Er war krank, trotzdem ging er zur Arbeit.",
@@ -10029,7 +10797,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-8",
+        "id": "v-gen-429",
         "word": "außerdem",
         "translation": "selain itu",
         "exampleSentence": "Ich mag Kaffee, außerdem trinke ich gerne Tee.",
@@ -10037,7 +10805,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-9",
+        "id": "v-gen-430",
         "word": "einerseits...andererseits",
         "translation": "di satu sisi...di sisi lain",
         "exampleSentence": "Einerseits ist es teuer, andererseits ist es sehr gut.",
@@ -10045,7 +10813,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-10",
+        "id": "v-gen-431",
         "word": "während",
         "translation": "selama, sementara",
         "exampleSentence": "Während sie kochte, las er ein Buch.",
@@ -10053,7 +10821,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-11",
+        "id": "v-gen-432",
         "word": "bevor",
         "translation": "sebelum",
         "exampleSentence": "Bevor er ging, verabschiedete er sich.",
@@ -10061,7 +10829,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-12",
+        "id": "v-gen-433",
         "word": "falls",
         "translation": "jika, seandainya",
         "exampleSentence": "Falls du Fragen hast, ruf mich an.",
@@ -10069,7 +10837,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-13",
+        "id": "v-gen-434",
         "word": "die Besprechung",
         "translation": "rapat, pertemuan",
         "article": "die",
@@ -10078,7 +10846,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-14",
+        "id": "v-gen-435",
         "word": "der Ausflug",
         "translation": "piknik, tamasya",
         "article": "der",
@@ -10087,7 +10855,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v6-15",
+        "id": "v-gen-436",
         "word": "das Risiko",
         "translation": "risiko",
         "article": "das",
@@ -10201,6 +10969,10 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-checkpoint-2",
+    "canDoGoals": [
+      "Replik jurnalistik untuk konjunktiv I / reportase murni tak bias",
+      "Latihan menelaah artikel bacaan / komprehensi kalimat tak menentu (Schachtelsätze)"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -10313,6 +11085,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-7",
+    "canDoGoals": [
+      "Pengenalan dan latihan Idiome dan Redewendungen populer dalam kehidupan kantor atau kultural Eropa di Jerman",
+      "Ubah pengucapan harfiah menjadi kiasan bermakna setara native speaker",
+      "Terhindar dari kebingungan terjemahan harfiah"
+    ],
     "level": "B2",
     "title": "Idiome & Redewendungen",
     "grammarDescription": "Idiome (Idioms) dan Redewendungen (Frasa idiomatik) adalah ekspresi yang maknanya tidak dapat dipahami hanya dari arti harfiah kata-kata individualnya. Mereka adalah bagian integral dari bahasa sehari-hari dan seringkali mencerminkan budaya serta cara berpikir penutur asli. Menguasai idiome akan membuat bahasa Jerman Anda terdengar lebih alami dan fasih.\n\n**Karakteristik Idiome:**\n1.  **Makna Non-Literal:** Arti keseluruhan frasa berbeda dari arti harfiah setiap kata.\n    *   Contoh: 'jemandem die Daumen drücken' (menekan jempol seseorang) sebenarnya berarti 'mendoakan keberuntungan'.\n2.  **Tetap dan Tidak Berubah:** Struktur idiome biasanya tetap dan tidak dapat diubah-ubah (misalnya, tidak bisa mengganti kata atau urutan kata).\n3.  **Konteks Penting:** Pemahaman idiome sangat bergantung pada konteks penggunaannya.\n\n**Beberapa Kategori Idiome Umum:**\n*   **Tentang Perasaan:** 'die Nase voll haben' (muak), 'auf Wolke sieben schweben' (melayang di awan ketujuh - sangat bahagia).\n*   **Tentang Situasi:** 'ins kalte Wasser springen' (melompat ke air dingin - memulai sesuatu tanpa persiapan), 'den Faden verlieren' (kehilangan benang - lupa apa yang ingin dikatakan).\n*   **Tentang Orang:** 'zwei linke Hände haben' (memiliki dua tangan kiri - canggung), 'ein offenes Ohr haben' (memiliki telinga terbuka - bersedia mendengarkan).\n\n**Tips Belajar Idiome:**\n*   Jangan mencoba menerjemahkan kata per kata. Pelajari idiome sebagai satu kesatuan makna.\n*   Perhatikan konteks penggunaannya. Cari contoh kalimat.\n*   Gunakan kartu flash atau aplikasi khusus idiome.\n*   Dengarkan penutur asli dan perhatikan bagaimana mereka menggunakan idiome.",
@@ -10326,7 +11103,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Idiome sering diucapkan dengan aliran yang natural dan penekanan pada kata-kata kunci dalam frasa. Latih pengucapan seluruh frasa, bukan kata per kata, untuk mendapatkan intonasi yang benar. Contoh: 'die Nase voll haben' [dee NA-ze fol HA-ben], bukan [dee NA-ze FOL ha-ben].",
     "vocabulary": [
       {
-        "id": "v7-1",
+        "id": "v-gen-437",
         "word": "jemandem die Daumen drücken",
         "translation": "mendoakan keberuntungan",
         "exampleSentence": "Ich drücke dir die Daumen für deine Prüfung!",
@@ -10334,7 +11111,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-2",
+        "id": "v-gen-438",
         "word": "die Nase voll haben",
         "translation": "muak, bosan",
         "exampleSentence": "Ich habe die Nase voll von dieser ewigen Diskussion.",
@@ -10342,7 +11119,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-3",
+        "id": "v-gen-439",
         "word": "ins kalte Wasser springen",
         "translation": "memulai sesuatu tanpa persiapan",
         "exampleSentence": "Er musste ins kalte Wasser springen, als er den Job bekam.",
@@ -10350,7 +11127,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-4",
+        "id": "v-gen-440",
         "word": "den Faden verlieren",
         "translation": "kehilangan jejak pembicaraan",
         "exampleSentence": "Entschuldigung, ich habe den Faden verloren.",
@@ -10358,7 +11135,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-5",
+        "id": "v-gen-441",
         "word": "ein offenes Ohr haben",
         "translation": "bersedia mendengarkan",
         "exampleSentence": "Du kannst immer zu mir kommen, ich habe ein offenes Ohr für dich.",
@@ -10366,7 +11143,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-6",
+        "id": "v-gen-442",
         "word": "zwei linke Hände haben",
         "translation": "canggung, tidak terampil",
         "exampleSentence": "Ich habe zwei linke Hände, wenn es ums Reparieren geht.",
@@ -10374,7 +11151,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-7",
+        "id": "v-gen-443",
         "word": "auf Wolke sieben schweben",
         "translation": "sangat bahagia, jatuh cinta",
         "exampleSentence": "Seit sie verliebt ist, schwebt sie auf Wolke sieben.",
@@ -10382,7 +11159,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-8",
+        "id": "v-gen-444",
         "word": "etwas auf die lange Bank schieben",
         "translation": "menunda sesuatu",
         "exampleSentence": "Er schiebt die Arbeit immer auf die lange Bank.",
@@ -10390,7 +11167,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-9",
+        "id": "v-gen-445",
         "word": "den Nagel auf den Kopf treffen",
         "translation": "tepat sasaran, mengatakan hal yang benar",
         "exampleSentence": "Mit dieser Aussage hast du den Nagel auf den Kopf getroffen.",
@@ -10398,7 +11175,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-10",
+        "id": "v-gen-446",
         "word": "Butter bei die Fische!",
         "translation": "Langsung ke intinya! (informal)",
         "exampleSentence": "Komm, Butter bei die Fische! Was ist passiert?",
@@ -10406,7 +11183,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-11",
+        "id": "v-gen-447",
         "word": "ein Stein vom Herzen fallen",
         "translation": "lega sekali (batu jatuh dari hati)",
         "exampleSentence": "Als ich die Nachricht hörte, fiel mir ein Stein vom Herzen.",
@@ -10414,7 +11191,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-12",
+        "id": "v-gen-448",
         "word": "jemandem einen Bären aufbinden",
         "translation": "membual, berbohong",
         "exampleSentence": "Glaub ihm nicht, er will dir nur einen Bären aufbinden.",
@@ -10422,7 +11199,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-13",
+        "id": "v-gen-449",
         "word": "die Prüfung",
         "translation": "ujian",
         "article": "die",
@@ -10431,7 +11208,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-14",
+        "id": "v-gen-450",
         "word": "die Diskussion",
         "translation": "diskusi",
         "article": "die",
@@ -10440,7 +11217,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-15",
+        "id": "v-gen-451",
         "word": "der Job",
         "translation": "pekerjaan",
         "article": "der",
@@ -10449,7 +11226,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v7-16",
+        "id": "v-gen-452",
         "word": "die Aussage",
         "translation": "pernyataan",
         "article": "die",
@@ -10563,6 +11340,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-8",
+    "canDoGoals": [
+      "Latihan terminologi karier (Fachvokabular) dari kedokteran, ekonomi, bisnis / hukum",
+      "Berlatih membuat resume terminologi fungsional spesifik sesuai target studi",
+      "Cara menginvestigasi leksikon khusus secara mandiri"
+    ],
     "level": "B2",
     "title": "Fachvokabular (Medizin, Hukum, Bisnis)",
     "grammarDescription": "Menguasai Fachvokabular (kosakata khusus) dari berbagai bidang adalah keterampilan penting di tingkat B2, terutama jika Anda berencana untuk belajar atau bekerja di negara berbahasa Jerman. Kosakata ini memungkinkan komunikasi yang presisi dan profesional dalam konteks spesifik. Meskipun tata bahasa dasar tetap sama, penggunaan istilah-istilah ini sangat berbeda dari bahasa sehari-hari.\n\n**1. Medizin (Kedokteran)**\n*   Fokus pada istilah-istilah umum yang berkaitan dengan tubuh manusia, penyakit, diagnosis, dan perawatan. Banyak istilah medis berasal dari bahasa Latin atau Yunani.\n*   Contoh: `die Diagnose` (diagnosis), `die Therapie` (terapi), `der Patient` (pasien), `die Operation` (operasi).\n\n**2. Jura / Recht (Hukum)**\n*   Fokus pada istilah-istilah yang berkaitan dengan sistem hukum, kejahatan, pengadilan, dan hak-hak. Bahasa hukum seringkali sangat formal dan presisi.\n*   Contoh: `das Gesetz` (undang-undang), `der Anwalt` (pengacara), `das Gericht` (pengadilan), `die Verhandlung` (persidangan).\n\n**3. Wirtschaft / Business (Bisnis)**\n*   Fokus pada istilah-istilah yang berkaitan dengan ekonomi, perusahaan, keuangan, dan perdagangan. Bahasa bisnis seringkali lugas dan berorientasi pada hasil.\n*   Contoh: `das Unternehmen` (perusahaan), `der Gewinn` (keuntungan), `der Umsatz` (omset), `die Aktie` (saham).\n\n**Tips Belajar Fachvokabular:**\n*   Kelompokkan kata-kata berdasarkan bidangnya.\n*   Pelajari kata benda dengan artikelnya (`der, die, das`).\n*   Cari contoh kalimat yang relevan dengan konteks bidang tersebut.\n*   Gunakan kamus khusus bidang (Fachwörterbuch) jika memungkinkan.\n*   Baca teks-teks (artikel berita, laporan) dari bidang yang diminati.",
@@ -10576,7 +11358,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Banyak istilah teknis, terutama di bidang kedokteran dan hukum, berasal dari bahasa Latin atau Yunani. Perhatikan pelafalan yang seringkali mengikuti aturan bahasa asalnya atau memiliki penekanan yang berbeda dari kata-kata Jerman biasa. Contoh: 'Diagnose' [dee-ag-NO-ze], 'Therapie' [te-ra-PEE].",
     "vocabulary": [
       {
-        "id": "v8-1",
+        "id": "v-gen-453",
         "word": "die Diagnose",
         "translation": "diagnosis",
         "article": "die",
@@ -10585,7 +11367,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-2",
+        "id": "v-gen-454",
         "word": "die Therapie",
         "translation": "terapi",
         "article": "die",
@@ -10594,7 +11376,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-3",
+        "id": "v-gen-455",
         "word": "der Patient",
         "translation": "pasien",
         "article": "der",
@@ -10603,7 +11385,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-4",
+        "id": "v-gen-456",
         "word": "die Operation",
         "translation": "operasi",
         "article": "die",
@@ -10612,7 +11394,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-5",
+        "id": "v-gen-457",
         "word": "das Medikament",
         "translation": "obat",
         "article": "das",
@@ -10621,7 +11403,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-6",
+        "id": "v-gen-458",
         "word": "das Gesetz",
         "translation": "undang-undang",
         "article": "das",
@@ -10630,7 +11412,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-7",
+        "id": "v-gen-459",
         "word": "der Anwalt",
         "translation": "pengacara",
         "article": "der",
@@ -10639,7 +11421,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-8",
+        "id": "v-gen-460",
         "word": "das Gericht",
         "translation": "pengadilan",
         "article": "das",
@@ -10648,7 +11430,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-9",
+        "id": "v-gen-461",
         "word": "die Verhandlung",
         "translation": "persidangan",
         "article": "die",
@@ -10657,7 +11439,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-10",
+        "id": "v-gen-462",
         "word": "das Urteil",
         "translation": "putusan, vonis",
         "article": "das",
@@ -10666,7 +11448,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-11",
+        "id": "v-gen-463",
         "word": "das Unternehmen",
         "translation": "perusahaan",
         "article": "das",
@@ -10675,7 +11457,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-12",
+        "id": "v-gen-464",
         "word": "der Gewinn",
         "translation": "keuntungan",
         "article": "der",
@@ -10684,7 +11466,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-13",
+        "id": "v-gen-465",
         "word": "der Umsatz",
         "translation": "omset",
         "article": "der",
@@ -10693,7 +11475,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-14",
+        "id": "v-gen-466",
         "word": "die Aktie",
         "translation": "saham",
         "article": "die",
@@ -10702,7 +11484,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-15",
+        "id": "v-gen-467",
         "word": "die Bilanz",
         "translation": "neraca keuangan",
         "article": "die",
@@ -10711,7 +11493,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v8-16",
+        "id": "v-gen-468",
         "word": "der Vertrag",
         "translation": "kontrak",
         "article": "der",
@@ -10825,6 +11607,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-9",
+    "canDoGoals": [
+      "Membangun taktik Textanalyse dan Argumentation level debat formal",
+      "Menghargai, menyangkal, merangkum, dan bernegosiasi secara rasional dari perspektif (Dafür/Dagegen)",
+      "Memulai opini tajam tanpa mengkompromikan keformalan bahasa verbal"
+    ],
     "level": "B2",
     "title": "Textanalyse & Argumentation",
     "grammarDescription": "Textanalyse (analisis teks) dan Argumentation (argumentasi) adalah keterampilan krusial di tingkat B2, terutama dalam konteks akademik dan profesional. Ini melibatkan kemampuan untuk memahami teks secara mendalam, mengidentifikasi struktur, tujuan, dan argumen penulis, serta kemampuan untuk membangun argumen Anda sendiri secara logis dan persuasif.\n\n**1. Textanalyse (Analisis Teks):**\n*   **Tujuan:** Memahami isi, struktur, gaya, dan maksud penulis dari sebuah teks.\n*   **Langkah-langkah:**\n    *   **Erster Überblick (Gambaran Umum):** Baca cepat untuk mendapatkan ide utama. Identifikasi jenis teks (artikel berita, esai, komentar, dll.) dan topik.\n    *   **Hauptaussage/These (Pernyataan Utama/Tesis):** Temukan argumen sentral atau pesan utama yang ingin disampaikan penulis.\n    *   **Argumentationsstruktur (Struktur Argumentasi):** Bagaimana penulis membangun argumennya? Apakah ada pendahuluan, poin-poin pendukung, contoh, kontra-argumen, dan kesimpulan?\n    *   **Sprachliche Mittel (Sarana Linguistik):** Perhatikan pilihan kata, gaya bahasa (formal/informal), penggunaan retorika, modalpartikeln, atau struktur kalimat kompleks.\n    *   **Intention des Autors (Niat Penulis):** Apa yang ingin dicapai penulis dengan teks ini? Menginformasikan, meyakinkan, mengkritik, menghibur?\n\n**2. Argumentation (Argumentasi):**\n*   **Tujuan:** Menyajikan pandangan Anda sendiri secara logis dan meyakinkan, didukung oleh bukti dan alasan.\n*   **Struktur Argumen yang Baik:**\n    *   **These (Tesis):** Pernyataan utama yang ingin Anda buktikan atau pertahankan.\n    *   **Argumente (Argumen):** Poin-poin pendukung yang menjelaskan mengapa tesis Anda benar.\n    *   **Beispiele/Belege (Contoh/Bukti):** Data, fakta, statistik, kutipan, atau ilustrasi yang mendukung argumen Anda.\n    *   **Gegenargumente (Kontra-argumen):** Mengantisipasi dan menyanggah argumen yang berlawanan untuk memperkuat posisi Anda.\n    *   **Schlussfolgerung (Kesimpulan):** Merangkum argumen dan menegaskan kembali tesis Anda.\n\n**Frasa Penting untuk Argumentasi:**\n*   `Meiner Meinung nach...` (Menurut pendapat saya...)\n*   `Ich bin der Ansicht, dass...` (Saya berpendapat bahwa...)\n*   `Ein wichtiges Argument dafür ist...` (Argumen penting untuk ini adalah...)\n*   `Dafür spricht, dass...` (Yang mendukung ini adalah...)\n*   `Dagegen spricht, dass...` (Yang menentang ini adalah...)\n*   `Man könnte einwenden, dass...` (Orang bisa berargumen bahwa...)\n*   `Zusammenfassend lässt sich sagen...` (Sebagai kesimpulan dapat dikatakan...)",
@@ -10838,7 +11625,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Saat berargumentasi, gunakan intonasi yang bervariasi untuk menekankan poin-poin penting dan menunjukkan keyakinan. Jeda yang tepat setelah frasa pengantar argumen (misalnya 'Meiner Meinung nach...') dapat membantu struktur argumen Anda terdengar lebih jelas. Latih pengucapan frasa-frasa penghubung argumen dengan lancar.",
     "vocabulary": [
       {
-        "id": "v9-1",
+        "id": "v-gen-469",
         "word": "die Hauptaussage",
         "translation": "pernyataan utama",
         "article": "die",
@@ -10847,7 +11634,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-2",
+        "id": "v-gen-470",
         "word": "die These",
         "translation": "tesis",
         "article": "die",
@@ -10856,7 +11643,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-3",
+        "id": "v-gen-471",
         "word": "das Argument",
         "translation": "argumen",
         "article": "das",
@@ -10865,7 +11652,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-4",
+        "id": "v-gen-472",
         "word": "das Gegenargument",
         "translation": "kontra-argumen",
         "article": "das",
@@ -10874,7 +11661,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-5",
+        "id": "v-gen-473",
         "word": "die Schlussfolgerung",
         "translation": "kesimpulan",
         "article": "die",
@@ -10883,7 +11670,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-6",
+        "id": "v-gen-474",
         "word": "analysieren",
         "translation": "menganalisis",
         "exampleSentence": "Wir müssen den Text genau analysieren.",
@@ -10891,7 +11678,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-7",
+        "id": "v-gen-475",
         "word": "begründen",
         "translation": "memberi alasan, membenarkan",
         "exampleSentence": "Sie konnte ihre Meinung gut begründen.",
@@ -10899,7 +11686,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-8",
+        "id": "v-gen-476",
         "word": "belegen",
         "translation": "membuktikan, mendokumentasikan",
         "exampleSentence": "Die Behauptung muss mit Fakten belegt werden.",
@@ -10907,7 +11694,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-9",
+        "id": "v-gen-477",
         "word": "widerlegen",
         "translation": "membantah, menyanggah",
         "exampleSentence": "Es ist schwer, dieses Argument zu widerlegen.",
@@ -10915,7 +11702,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-10",
+        "id": "v-gen-478",
         "word": "überzeugen",
         "translation": "meyakinkan",
         "exampleSentence": "Er konnte das Publikum von seiner Idee überzeugen.",
@@ -10923,7 +11710,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-11",
+        "id": "v-gen-479",
         "word": "die Intention",
         "translation": "niat, maksud",
         "article": "die",
@@ -10932,7 +11719,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-12",
+        "id": "v-gen-480",
         "word": "die Perspektive",
         "translation": "perspektif",
         "article": "die",
@@ -10941,7 +11728,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-13",
+        "id": "v-gen-481",
         "word": "die Quelle",
         "translation": "sumber",
         "article": "die",
@@ -10950,7 +11737,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-14",
+        "id": "v-gen-482",
         "word": "die Gliederung",
         "translation": "struktur, kerangka",
         "article": "die",
@@ -10959,7 +11746,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v9-15",
+        "id": "v-gen-483",
         "word": "die Rhetorik",
         "translation": "retorika",
         "article": "die",
@@ -11073,6 +11860,10 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-checkpoint-3",
+    "canDoGoals": [
+      "Evaluasi debat asinkron dan ekspresi kiasan idiomatik",
+      "Asesmen Vokabular teknikal dari industri khusus"
+    ],
     "title": "Review Konten Sebelumnya",
     "requiredScore": 0.7,
     "questions": [
@@ -11185,6 +11976,11 @@ export const courseData: Lesson[] = [
   },
   {
     "id": "b2-10",
+    "canDoGoals": [
+      "Meringkas taktik menaklukkan Modul Ujian Goethe-Zertifikat B2",
+      "Membedah apa yang dianalisa pemeriksa pada sesi (Lesen, Hören, Schreiben, Sprechen)",
+      "Tip menghemat waktu saat berhadapan dengan soal menjebak"
+    ],
     "level": "B2",
     "title": "Persiapan Ujian Goethe B2",
     "grammarDescription": "Ujian Goethe-Zertifikat B2 menguji kemampuan Anda dalam menggunakan bahasa Jerman secara mandiri dan lancar dalam berbagai situasi. Ujian ini terdiri dari empat modul: Lesen (Membaca), Hören (Mendengar), Schreiben (Menulis), dan Sprechen (Berbicara). Persiapan yang efektif melibatkan pemahaman format ujian, strategi untuk setiap bagian, dan latihan intensif.\n\n**1. Lesen (Membaca):**\n*   **Format:** 4 bagian dengan berbagai jenis teks (artikel koran, komentar, iklan, laporan). Tugas meliputi pemahaman detail, ide utama, dan menemukan informasi spesifik.\n*   **Strategi:** Latih 'Skimming' (membaca cepat untuk ide utama) dan 'Scanning' (mencari informasi spesifik). Perhatikan kata kunci dan struktur teks. Jangan panik jika ada kata yang tidak dikenal; coba pahami konteksnya.\n\n**2. Hören (Mendengar):**\n*   **Format:** 4 bagian dengan berbagai jenis audio (percakapan, wawancara, diskusi, pengumuman). Tugas meliputi pemahaman ide utama, detail, dan inferensi.\n*   **Strategi:** Dengarkan secara aktif. Perhatikan intonasi dan penekanan. Catat poin-poin penting. Latih mendengarkan berbagai aksen dan kecepatan bicara. Baca pertanyaan sebelum mendengarkan.\n\n**3. Schreiben (Menulis):**\n*   **Format:** 2 tugas. Bagian 1: Menulis komentar atau opini tentang suatu topik. Bagian 2: Menulis pesan formal (misalnya, email keluhan, permohonan).\n*   **Strategi:** Strukturkan tulisan Anda dengan jelas (pendahuluan, argumen dengan contoh, kesimpulan). Gunakan kosakata B2 dan struktur kalimat kompleks. Perhatikan tata bahasa, ejaan, dan tanda baca. Latih manajemen waktu.\n\n**4. Sprechen (Berbicara):**\n*   **Format:** 2 bagian. Bagian 1: Presentasi singkat tentang topik tertentu. Bagian 2: Diskusi dengan partner ujian tentang topik yang sama atau terkait.\n*   **Strategi:** Latih berbicara secara lancar dan koheren. Gunakan frasa untuk memulai, mengembangkan, dan menyimpulkan argumen. Berinteraksi dengan partner. Perhatikan pelafalan dan intonasi. Jangan takut membuat kesalahan; yang penting adalah komunikasi.\n\n**Tips Umum:**\n*   Gunakan materi persiapan resmi Goethe-Institut.\n*   Lakukan ujian simulasi (Modellsatz) secara teratur.\n*   Identifikasi kelemahan Anda dan fokus pada area tersebut.\n*   Tingkatkan kosakata secara aktif, terutama Fachvokabular dan idiome.\n*   Biasakan diri dengan tekanan waktu.",
@@ -11198,7 +11994,7 @@ export const courseData: Lesson[] = [
     "pronunciationTips": "Untuk bagian Sprechen, fokus pada kejelasan artikulasi, intonasi yang alami, dan kecepatan bicara yang moderat. Latih pengucapan kata-kata panjang dan kompleks. Pastikan untuk mengucapkan akhiran kata dengan jelas, terutama pada kata kerja dan adjektiva yang dideklinasikan.",
     "vocabulary": [
       {
-        "id": "v10-1",
+        "id": "v-gen-484",
         "word": "die Prüfung",
         "translation": "ujian",
         "article": "die",
@@ -11207,7 +12003,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-2",
+        "id": "v-gen-485",
         "word": "der Modul",
         "translation": "modul",
         "article": "der",
@@ -11216,7 +12012,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-3",
+        "id": "v-gen-486",
         "word": "die Aufgabenstellung",
         "translation": "instruksi tugas",
         "article": "die",
@@ -11225,7 +12021,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-4",
+        "id": "v-gen-487",
         "word": "die Strategie",
         "translation": "strategi",
         "article": "die",
@@ -11234,7 +12030,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-5",
+        "id": "v-gen-488",
         "word": "skimming",
         "translation": "membaca cepat (untuk ide utama)",
         "exampleSentence": "Beim Skimming erfasst man die Hauptaussagen.",
@@ -11242,7 +12038,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-6",
+        "id": "v-gen-489",
         "word": "scanning",
         "translation": "membaca cepat (untuk informasi spesifik)",
         "exampleSentence": "Beim Scanning sucht man gezielt nach Informationen.",
@@ -11250,7 +12046,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-7",
+        "id": "v-gen-490",
         "word": "die Hauptinformation",
         "translation": "informasi utama",
         "article": "die",
@@ -11259,7 +12055,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-8",
+        "id": "v-gen-491",
         "word": "die Gliederung",
         "translation": "struktur, kerangka",
         "article": "die",
@@ -11268,7 +12064,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-9",
+        "id": "v-gen-492",
         "word": "flüssig",
         "translation": "lancar",
         "exampleSentence": "Man sollte flüssig und verständlich sprechen.",
@@ -11276,7 +12072,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-10",
+        "id": "v-gen-493",
         "word": "interagieren",
         "translation": "berinteraksi",
         "exampleSentence": "Im Sprechteil muss man mit dem Partner interagieren.",
@@ -11284,7 +12080,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-11",
+        "id": "v-gen-494",
         "word": "die Zeitmanagement",
         "translation": "manajemen waktu",
         "article": "das",
@@ -11293,7 +12089,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-12",
+        "id": "v-gen-495",
         "word": "der Wortschatz",
         "translation": "kosakata",
         "article": "der",
@@ -11302,7 +12098,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-13",
+        "id": "v-gen-496",
         "word": "die Grammatik",
         "translation": "tata bahasa",
         "article": "die",
@@ -11311,7 +12107,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-14",
+        "id": "v-gen-497",
         "word": "die Aussprache",
         "translation": "pelafalan",
         "article": "die",
@@ -11320,7 +12116,7 @@ export const courseData: Lesson[] = [
         "level": "B2"
       },
       {
-        "id": "v10-15",
+        "id": "v-gen-498",
         "word": "der Prüfungssimulation",
         "translation": "simulasi ujian",
         "article": "die",
@@ -11431,6 +12227,88 @@ export const courseData: Lesson[] = [
       }
     ],
     "culturalNotes": "Goethe-Zertifikat B2 adalah sertifikasi yang diakui secara internasional dan seringkali menjadi syarat untuk studi di universitas Jerman atau untuk pekerjaan tertentu. Persiapan yang serius dan terstruktur menunjukkan dedikasi Anda terhadap bahasa dan budaya Jerman. Ujian ini tidak hanya menguji pengetahuan tata bahasa dan kosakata, tetapi juga kemampuan Anda untuk berkomunikasi secara efektif dalam situasi kehidupan nyata."
+  },
+  {
+    "id": "b2-11",
+    "canDoGoals": [
+      "Menguasai Nomen-Verb-Verbindungen tingkat lanjut (Kombinasi Paten Noun-Verba)",
+      "Mengganti verba sederhana dengan frase tinggi. Contoh: mengganti 'fragen' menjadi 'eine Frage stellen'",
+      "Ekspektasi birokrasi dan korespondensi bisnis formal Jerman di ranah akademik."
+    ],
+    "level": "B2",
+    "title": "Nomen-Verb-Verbindungen",
+    "grammarDescription": "Nomen-Verb-Verbindungen (juga disebut Funktionsverbgefüge) adalah kombinasi kata benda dan kata kerja yang memiliki makna tunggal, seringkali sama dengan satu kata kerja. Struktur ini sangat khas dalam bahasa Jerman formal (tulisan akademis, institusi, kantor). Contohnya: 'eine Entscheidung treffen' (mengambil keputusan) = entscheiden; 'in Erfüllung gehen' (terwujud) = sich erfüllen.\n\nMemahami kombinasi ini penting karena sering muncul di teks ujian B2 dan C1.",
+    "vocabulary": [
+      {
+        "id": "v-b211-1",
+        "word": "eine Entscheidung treffen",
+        "translation": "membuat keputusan",
+        "exampleSentence": "Wir müssen bald eine Entscheidung treffen.",
+        "phonetic": "ai-ne ent-SHAI-dung TRE-fen",
+        "level": "B2"
+      },
+      {
+        "id": "v-b211-2",
+        "word": "Abschied nehmen von",
+        "translation": "berpamitan dari",
+        "exampleSentence": "Er nahm Abschied von seinen Freunden.",
+        "phonetic": "AB-sheet NE-men fon",
+        "level": "B2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Kata kerja apa yang memiliki arti sama dengan 'eine Entscheidung treffen'?",
+        "options": [
+          "treffen",
+          "entscheiden",
+          "scheiden",
+          "urteilen"
+        ],
+        "correctAnswer": 1
+      }
+    ]
+  },
+  {
+    "id": "b2-12",
+    "canDoGoals": [
+      "Meningkatkan struktur Passiv dengan padanan moderen Passiversatzformen",
+      "Penggunaan refleksi 'sich lassen + Infinitiv', adjektif tambahan (-bar, -lich), dan frasa pengibaratan 'sein + zu + infinitive'",
+      "Fleksibilitas dan kealamian cara mengekspresikan kalimat fasih"
+    ],
+    "level": "B2",
+    "title": "Passiversatzformen",
+    "grammarDescription": "Dalam bahasa Jerman, alih-alih selalu memakai Passiv yang kaku, ada cara elegan untuk mengungkapkannya, disebut Passiversatzformen (Bentuk Pengganti Pasif). Bentuk-bentuk utama:\n1. 'Sich lassen' + Infinitiv: Das Problem lässt sich lösen. (Masalah itu bisa diselesaikan.)\n2. 'Sein' + 'zu' + Infinitiv: Die Aufgabe ist zu erledigen. (Tugas harus diselesaikan.)\n3. Adjektiva berakhiran '-bar', '-lich': Die Schrift ist lesbar. (Tulisan itu bisa dibaca.)\n\nBentuk-bentuk ini sering muncul di artikel dan bahasa profesional tingkat B2/C1.",
+    "vocabulary": [
+      {
+        "id": "v-b212-1",
+        "word": "sich lassen + Infinitiv",
+        "translation": "dapat dilakukan (pasif)",
+        "exampleSentence": "Das Auto lässt sich reparieren.",
+        "phonetic": "zikh LASS-en",
+        "level": "B2"
+      },
+      {
+        "id": "v-b212-2",
+        "word": "lesbar",
+        "translation": "dapat dibaca",
+        "exampleSentence": "Die Schrift ist nicht lesbar.",
+        "phonetic": "LEES-bar",
+        "level": "B2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Bentuk Passiversatz manakah yang bermakna sama dengan 'Das kann repariert werden'?",
+        "options": [
+          "Das lässt sich reparieren.",
+          "Das ist repariert.",
+          "Das wird reparieren.",
+          "Das hat repariert."
+        ],
+        "correctAnswer": 0
+      }
+    ]
   }
 ];
 export const allVocab: VocabWord[] = courseData.flatMap(lesson => lesson.vocabulary || []);

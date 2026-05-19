@@ -43,6 +43,13 @@ export interface Lesson {
   miniQuiz?: QuizQuestion[];
   dialogues?: Dialogue[];
   culturalNotes?: string;
+  registerNotes?: string;
+  indonesianMistakes?: string;
+  canDoGoals?: string[];
+  listeningSimulation?: {
+    transcript: Dialogue[];
+    questions: QuizQuestion[];
+  };
   checkpoint?: Checkpoint;
   requiredScore?: number; // In case AI put it directly on Lesson
   questions?: QuizQuestion[];

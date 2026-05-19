@@ -2,7 +2,7 @@ import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router';
 import { useEffect, Suspense, lazy } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { useProgressStore } from './stores/progressStore';
-import { BookOpen, BrainCircuit, Search, LogOut, Loader2, Trophy, Flame, Sparkles } from 'lucide-react';
+import { BookOpen, BrainCircuit, Search, LogOut, Loader2, Trophy, Flame, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { AnimatePresence, motion } from 'motion/react';
 
@@ -20,7 +20,7 @@ import ChatWidget from './components/ChatWidget';
 import QuickNoteWidget from './components/QuickNoteWidget';
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { user, loading: authLoading, loginWithGoogle } = useAuthStore();
+  const { user, loading: authLoading } = useAuthStore();
   const { loadProgress, initialized, loading: progressLoading } = useProgressStore();
 
   useEffect(() => {
@@ -37,30 +37,12 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-4">
-        <div className="max-w-md w-full bg-white p-8 rounded-3xl shadow-xl space-y-8 text-center ring-1 ring-slate-100">
-          <div className="flex justify-center space-x-1">
-            <div className="w-8 h-8 rounded-full bg-black"></div>
-            <div className="w-8 h-8 rounded-full bg-red-600"></div>
-            <div className="w-8 h-8 rounded-full bg-yellow-400"></div>
-          </div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">DeutschUp</h1>
-          <p className="text-slate-500 text-lg">Platform belajar bahasa Jerman dari A1 hingga B2.</p>
-          <Button onClick={loginWithGoogle} size="lg" className="w-full font-bold text-lg h-14 bg-red-600 hover:bg-red-700 text-white rounded-2xl shadow-lg shadow-red-200">
-            Masuk dengan Google
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
+  // Not blocking login anymore, guest mode is allowed
   return <>{children}</>;
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuthStore();
+  const { user, loginWithGoogle, logout } = useAuthStore();
   const { xp, streak } = useProgressStore();
 
   return (
@@ -103,7 +85,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           <li>
             <Link to="/verbs" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
               <Search className="w-5 h-5 flex-shrink-0" />
-              <span className="hidden md:inline">Kamus Konjugasi</span>
+              <span className="hidden md:inline">Kamus Mini</span>
             </Link>
           </li>
           <li>
@@ -124,19 +106,45 @@ function Layout({ children }: { children: React.ReactNode }) {
               <span className="hidden md:inline">Simulasi Ujian</span>
             </Link>
           </li>
+          <li>
+            <Link to="/pricing" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+              <CreditCard className="w-5 h-5 flex-shrink-0 text-indigo-500" />
+              <span className="hidden md:inline">Langganan</span>
+            </Link>
+          </li>
+          {user?.email === 'abdullahalmughiroh@gmail.com' && (
+            <li>
+              <Link to="/admin" className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl transition-colors font-medium focus:bg-red-50">
+                <ShieldCheck className="w-5 h-5 flex-shrink-0" />
+                <span className="hidden md:inline">Admin Panel</span>
+              </Link>
+            </li>
+          )}
         </ul>
 
-        <div className="mt-auto hidden md:flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
-          <div className="flex items-center space-x-3 overflow-hidden">
-            <img src={user?.photoURL || ''} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" />
-            <div className="truncate">
-              <p className="text-sm font-bold truncate">{user?.displayName}</p>
-              <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+        <div className="mt-auto flex flex-col space-y-2 p-4 bg-slate-50 rounded-2xl md:bg-transparent md:p-0 lg:p-4 lg:bg-slate-50">
+          {!user ? (
+            <Button onClick={loginWithGoogle} className="w-full bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md">
+              Masuk (Login)
+            </Button>
+          ) : (
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center space-x-3 overflow-hidden">
+                <img src={user?.photoURL || ''} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" />
+                <div className="truncate hidden md:block lg:block">
+                  <p className="text-sm font-bold truncate">{user?.displayName}</p>
+                  <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+                </div>
+                {/* Show on mobile */}
+                <div className="truncate md:hidden">
+                  <p className="text-sm font-bold truncate">{user?.displayName}</p>
+                </div>
+              </div>
+              <button onClick={logout} className="text-slate-400 hover:text-red-500 focus:outline-none p-2" title="Keluar">
+                <LogOut className="w-5 h-5" />
+              </button>
             </div>
-          </div>
-          <button onClick={logout} className="text-slate-400 hover:text-red-500 focus:outline-none p-2" title="Keluar">
-            <LogOut className="w-5 h-5" />
-          </button>
+          )}
         </div>
       </nav>
 

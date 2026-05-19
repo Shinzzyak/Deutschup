@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { db } from '../lib/firebase';
 import { collection, doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
+import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 
 export type Note = {
   id: string;
@@ -71,6 +72,8 @@ export const useLearningStore = create<LearningState>((set, get) => ({
       const notes = snap.docs.map(D => ({ id: D.id, ...D.data() } as Note));
       notes.sort((a,b) => b.createdAt - a.createdAt);
       set({ notes });
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, `users/${userId}/notes`);
     });
 
     // Study Plan snapshot
@@ -81,6 +84,8 @@ export const useLearningStore = create<LearningState>((set, get) => ({
       } else {
         set({ studyPlan: null });
       }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, `users/${userId}/studyplan/main`);
     });
 
     // Quick Note snapshot
@@ -91,6 +96,8 @@ export const useLearningStore = create<LearningState>((set, get) => ({
       } else {
         set({ quickNote: null });
       }
+    }, (error) => {
+      handleFirestoreError(error, OperationType.GET, `users/${userId}/quicknote/main`);
     });
 
     // Mock Tests snapshot
@@ -99,41 +106,68 @@ export const useLearningStore = create<LearningState>((set, get) => ({
       const mockTests = snap.docs.map(D => ({ id: D.id, ...D.data() } as MockTestResult));
       mockTests.sort((a,b) => b.createdAt - a.createdAt);
       set({ mockTests });
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, `users/${userId}/mocktests`);
     });
 
     set({ loading: false });
   },
 
   addNote: async (userId, text, tag) => {
-    const newNoteRef = doc(collection(db, `users/${userId}/notes`));
-    await setDoc(newNoteRef, {
-      text,
-      tag,
-      createdAt: Date.now()
-    });
+    try {
+      const newNoteRef = doc(collection(db, `users/${userId}/notes`));
+      await setDoc(newNoteRef, {
+        text,
+        tag,
+        createdAt: Date.now()
+      });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, `users/${userId}/notes`);
+    }
   },
 
   deleteNote: async (userId, noteId) => {
-    await deleteDoc(doc(db, `users/${userId}/notes/${noteId}`));
+    try {
+      await deleteDoc(doc(db, `users/${userId}/notes/${noteId}`));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `users/${userId}/notes/${noteId}`);
+    }
   },
 
   saveStudyPlan: async (userId, tasks) => {
-    await setDoc(doc(db, `users/${userId}/studyplan/main`), { tasks });
+    try {
+      await setDoc(doc(db, `users/${userId}/studyplan/main`), { tasks });
+    } catch (error) {
+       handleFirestoreError(error, OperationType.CREATE, `users/${userId}/studyplan/main`);
+    }
   },
 
   toggleTask: async (userId, taskId) => {
     const { studyPlan } = get();
     if (!studyPlan) return;
     const updatedTasks = studyPlan.tasks.map((t: StudyTask) => t.id === taskId ? { ...t, completed: !t.completed } : t);
-    await setDoc(doc(db, `users/${userId}/studyplan/main`), { tasks: updatedTasks });
+    try {
+      await setDoc(doc(db, `users/${userId}/studyplan/main`), { tasks: updatedTasks });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.UPDATE, `users/${userId}/studyplan/main`);
+    }
   },
 
   saveQuickNote: async (userId, text) => {
-    await setDoc(doc(db, `users/${userId}/quicknote/main`), { text, updatedAt: Date.now() });
+    try {
+      await setDoc(doc(db, `users/${userId}/quicknote/main`), { text, updatedAt: Date.now() });
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, `users/${userId}/quicknote/main`);
+    }
   },
 
   saveMockTest: async (userId, result) => {
-    const newTestRef = doc(collection(db, `users/${userId}/mocktests`));
-    await setDoc(newTestRef, result);
+    try {
+      const newTestRef = doc(collection(db, `users/${userId}/mocktests`));
+      await setDoc(newTestRef, result);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, `users/${userId}/mocktests`);
+    }
   }
 }));
+

@@ -51,7 +51,7 @@ export default function Catatan() {
         const tasks = data.tasks.map((t: any) => ({ ...t, id: Math.random().toString(36).substring(7), completed: false }));
         await saveStudyPlan(user.uid, tasks);
       } else {
-        alert("Gagal membuat rencana belajar. Herr Gemini mungkin sedang sibuk, silakan coba lagi.");
+        alert("Gagal membuat rencana belajar. Herr Deutsch mungkin sedang sibuk, silakan coba lagi.");
       }
     } catch(e) {
       console.error(e);
@@ -89,7 +89,7 @@ export default function Catatan() {
                   <Sparkles className="w-8 h-8 text-indigo-500" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Belum ada rencana!</h3>
-                <p className="text-slate-500 mb-6">Minta Herr Gemini membuatkan daftar fokus belajar berdasarkan level pencapaianmu.</p>
+                <p className="text-slate-500 mb-6">Minta Herr Deutsch membuatkan daftar fokus belajar berdasarkan level pencapaianmu.</p>
                 <Button 
                    onClick={handleGeneratePlan} 
                    disabled={generatingPlan}

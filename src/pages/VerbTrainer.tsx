@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { Button } from '../components/ui/button';
+import { allVocab } from '../data/course';
 
 export interface VerbConjugation {
   infinitive: string;
@@ -60,16 +60,25 @@ const verbDictionary: VerbConjugation[] = [
 export default function VerbTrainer() {
   const [searchTerm, setSearchTerm] = useState('');
   
-  const filteredVerbs = verbDictionary.filter(v => 
-    v.infinitive.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    v.translation.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredVerbs = useMemo(() => {
+    return verbDictionary.filter(v => 
+      v.infinitive.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      v.translation.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm]);
+
+  const filteredVocab = useMemo(() => {
+    return allVocab.filter(v => 
+      v.word.toLowerCase().includes(searchTerm.toLowerCase()) || 
+      v.translation.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [searchTerm]);
 
   return (
     <div className="max-w-4xl mx-auto pb-20">
       <div className="mb-12">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Kamus Konjugasi Verba</h1>
-        <p className="text-slate-500 text-lg md:text-xl">Cari kata kerja dan temukan konjugasinya</p>
+        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Kamus Mini (Semua Kata)</h1>
+        <p className="text-slate-500 text-lg md:text-xl">Cari kata sifat, kata benda, maupun kata kerja. Bahasa Indonesia atau Jerman!</p>
       </div>
 
       <div className="relative mb-12">
@@ -78,20 +87,56 @@ export default function VerbTrainer() {
         </div>
         <input 
           type="text" 
-          placeholder="Cari kata kerja (misal: machen)..."
+          placeholder="Cari kata (misal: rumah, gehen, schön)..."
           className="w-full bg-white border-2 border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      <div className="space-y-8">
-        {filteredVerbs.length === 0 ? (
-          <div className="text-center py-12 text-slate-500">
-            Kata kerja tidak ditemukan di kamus Mini kami.
+      {searchTerm && (filteredVerbs.length > 0 || filteredVocab.length > 0) && (
+         <div className="mb-8">
+            <h2 className="text-2xl font-bold mb-6 text-slate-900 border-b border-slate-100 pb-4">Hasil Pencarian ({filteredVerbs.length + filteredVocab.length})</h2>
+            
+            <div className="space-y-4">
+              {filteredVocab.map(v => (
+                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                  <div>
+                    <div className="flex items-center space-x-3 mb-1">
+                      {v.article && (
+                        <span className={cn(
+                          "text-xs font-bold px-2 py-1 rounded-md text-white shadow-sm",
+                          v.article === 'der' ? 'bg-blue-500' : 
+                          v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                        )}>{v.article}</span>
+                      )}
+                      <span className="font-bold text-xl text-slate-900">{v.word}</span>
+                    </div>
+                    <p className="text-slate-500 text-lg mb-2">{v.translation}</p>
+                    <p className="text-slate-400 italic font-medium whitespace-pre-wrap">{v.exampleSentence}</p>
+                  </div>
+                  <div className="mt-3 sm:mt-0 text-left sm:text-right">
+                    <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-xs font-bold uppercase">{v.level}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+         </div>
+      )}
+
+      {searchTerm && filteredVerbs.length > 0 && (
+          <div className="mb-8 mt-12">
+            <h2 className="text-2xl font-bold mb-6 text-slate-900 border-b border-slate-100 pb-4">Tabel Konjugasi Verba Terkait</h2>
           </div>
-        ) : (
-          filteredVerbs.map(verb => (
+      )}
+
+      <div className="space-y-8">
+        {!searchTerm && (
+          <div className="text-center py-12 text-slate-500">
+            Ketik kata di kotak pencarian untuk melihat hasil dari pelajaran A1 sampai B2.
+          </div>
+        )}
+        {(searchTerm && filteredVerbs.map(verb => (
             <div key={verb.infinitive} className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
               <div className="p-6 md:p-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>

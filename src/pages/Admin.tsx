@@ -10,7 +10,7 @@ export default function Admin() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checking, setChecking] = useState(true);
   
-  const [stats, setStats] = useState({ totalUsers: 0, proUsers: 0, masterUsers: 0, revenue: 0 });
+  const [stats, setStats] = useState({ totalUsers: 0, proUsers: 0, revenue: 0 });
   const [users, setUsers] = useState<any[]>([]);
   const [apiKey, setApiKey] = useState('');
   const [loadingKey, setLoadingKey] = useState(false);
@@ -44,12 +44,10 @@ export default function Admin() {
        if (data.users) {
          setUsers(data.users);
          const pro = data.users.filter((u:any) => u.tier === 'pro').length;
-         const master = data.users.filter((u:any) => u.tier === 'master').length;
          setStats({
            totalUsers: data.users.length,
            proUsers: pro,
-           masterUsers: master,
-           revenue: (pro * 49000) + (master * 99000)
+           revenue: pro * 49000
          });
        }
        if (data.apiKeyMasked) {
@@ -100,7 +98,7 @@ export default function Admin() {
     <div className="max-w-6xl mx-auto py-10 px-4">
       <h1 className="text-3xl font-extrabold mb-8">Admin Dashboard</h1>
       
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
           <div className="flex items-center text-slate-500 mb-2"><Users className="w-5 h-5 mr-2" /> Total Pengguna</div>
           <span className="text-3xl font-black text-slate-800">{stats.totalUsers}</span>
@@ -108,10 +106,6 @@ export default function Admin() {
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
           <div className="flex items-center text-blue-500 mb-2"><Activity className="w-5 h-5 mr-2" /> Pro Subs</div>
           <span className="text-3xl font-black text-blue-600">{stats.proUsers}</span>
-        </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
-          <div className="flex items-center text-purple-500 mb-2"><Sparkles className="w-5 h-5 mr-2" /> Master Subs</div>
-          <span className="text-3xl font-black text-purple-600">{stats.masterUsers}</span>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
           <div className="flex items-center text-green-500 mb-2"><CreditCard className="w-5 h-5 mr-2" /> Est. Revenue Monthly</div>
@@ -156,7 +150,6 @@ export default function Admin() {
                    <td className="py-3 px-4">{u.email || 'N/A'}</td>
                    <td className="py-3 px-4">
                      <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                       u.tier === 'master' ? 'bg-purple-100 text-purple-700' :
                        u.tier === 'pro' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'
                      }`}>
                        {u.tier || 'free'}
@@ -173,7 +166,6 @@ export default function Admin() {
                      >
                        <option value="free">Free</option>
                        <option value="pro">Pro</option>
-                       <option value="master">Master</option>
                      </select>
                    </td>
                  </tr>

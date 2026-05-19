@@ -1,10 +1,12 @@
+/// <reference types="vite/client" />
 import { create } from 'zustand';
 import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
+import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
 
 export interface TierData {
-  tier: 'free' | 'pro' | 'master';
+  tier: 'free' | 'pro';
   tierExpiry?: number;
 }
 
@@ -29,10 +31,19 @@ export const useAuthStore = create<AuthState>((set) => {
           };
         } else {
           // Initialize empty user doc
-          await setDoc(doc(db, 'users', user.uid), { tier: 'free' }, { merge: true });
+          try {
+            await setDoc(doc(db, 'users', user.uid), { tier: 'free' });
+          } catch(e) {
+            handleFirestoreError(e, OperationType.CREATE, `users/${user.uid}`);
+          }
+        }
+        
+        // Admin Override
+        if (user.email === 'abdullahalmughiroh@gmail.com' || user.email === import.meta.env.VITE_ADMIN_EMAIL) {
+          tierData.tier = 'pro';
         }
       } catch (e) {
-        console.error("Failed to load tier", e);
+        handleFirestoreError(e, OperationType.GET, `users/${user.uid}`);
       }
     }
     set({ user, tierData, loading: false });

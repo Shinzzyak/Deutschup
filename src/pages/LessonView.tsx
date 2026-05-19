@@ -1,13 +1,78 @@
 import { useState, useEffect } from 'react';
+import React, { isValidElement } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { courseData } from '../data/course';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { CheckCircle2, ChevronRight, Brain, Trophy, Loader2, PlayCircle, Star } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Brain, Trophy, Loader2, PlayCircle, Star, AlertTriangle, Target, Mic, Headphones, Globe, MessageSquare } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../components/ui/tooltip';
+
+const grammarGlossary: Record<string, string> = {
+  'Akkusativ': 'Kasus objek langsung (contoh: mich, dich, den Hund).',
+  'Dativ': 'Kasus objek tidak langsung atau setelah preposisi tertentu (contoh: mir, dir, dem Hund).',
+  'Nominativ': 'Kasus subjek kalimat (contoh: ich, du, der Hund).',
+  'Genitiv': 'Kasus kepemilikan (contoh: des Mannes).',
+  'Präteritum': 'Bentuk lampau tertulis/formal.',
+  'Perfekt': 'Bentuk lampau yang paling sering digunakan dalam percakapan.',
+  'Verb': 'Kata kerja.',
+  'Nomen': 'Kata benda. Selalu diawali huruf kapital di bahasa Jerman.',
+  'Adjektiv': 'Kata sifat.',
+  'Pronomen': 'Kata ganti.',
+  'Präposition': 'Kata depan. Seringkali menentukan kasus setelahnya.',
+  'Artikel': 'Kata sandang seperti der, die, das.',
+  'Feminin': 'Jenis kelamin kata benda (die).',
+  'Maskulin': 'Jenis kelamin kata benda (der).',
+  'Neutral': 'Jenis kelamin kata benda (das).',
+  'Plural': 'Bentuk jamak.',
+};
+
+function processTextNodeWithGlossary(text: string): React.ReactNode[] {
+  const keys = Object.keys(grammarGlossary).join('|');
+  const regex = new RegExp(`\\b(${keys})\\b`, 'gi');
+  
+  const parts = text.split(regex);
+  if (parts.length === 1) return [text];
+
+  return parts.map((part, i) => {
+    // Check if the part is a whole word match (case-insensitive)
+    const term = Object.keys(grammarGlossary).find(k => k.toLowerCase() === part.toLowerCase());
+    if (term) {
+      return (
+        <Tooltip key={i}>
+          <TooltipTrigger>
+            <span className="underline decoration-indigo-300 decoration-dashed cursor-help font-semibold text-indigo-700">
+              {part}
+            </span>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs text-sm bg-slate-900 text-white z-50">
+            <p className="font-bold mb-1">{term}</p>
+            <p>{grammarGlossary[term]}</p>
+          </TooltipContent>
+        </Tooltip>
+      );
+    }
+    return <React.Fragment key={i}>{part}</React.Fragment>;
+  });
+}
+
+function renderChildrenWithGlossary(children: React.ReactNode): React.ReactNode {
+  return React.Children.map(children, child => {
+    if (typeof child === 'string') {
+      return processTextNodeWithGlossary(child);
+    }
+    if (isValidElement(child) && (child.props as any).children) {
+      return React.cloneElement(child as React.ReactElement<any>, {
+        ...(child.props as any),
+        children: renderChildrenWithGlossary((child.props as any).children)
+      });
+    }
+    return child;
+  });
+}
 
 type DynamicExercise = {
   question: string;
@@ -21,7 +86,7 @@ export default function LessonView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  const { addXp, unlockLesson, unlockedLessons } = useProgressStore();
+  const { addXp, unlockLesson, completeLesson, unlockedLessons, completedLessons } = useProgressStore();
   
   const lesson = courseData.find(l => l.id === id);
   const lessonIndex = courseData.findIndex(l => l.id === id);
@@ -29,7 +94,7 @@ export default function LessonView() {
   const nextLessonId = isLastLesson ? null : courseData[lessonIndex + 1].id;
   
   const [activeTab, setActiveTab] = useState('materi');
-  const [quizFinished, setQuizFinished] = useState(unlockedLessons.includes(nextLessonId || '') || false);
+  const [quizFinished, setQuizFinished] = useState(completedLessons?.includes(id || '') || false);
   
   // Dynamic exercises state
   const [exercises, setExercises] = useState<DynamicExercise[]>([]);
@@ -50,8 +115,8 @@ export default function LessonView() {
     setIsAnswerChecked(false);
     setCheckResult(null);
     setExercises([]);
-    setQuizFinished(unlockedLessons.includes(nextLessonId || '') || false);
-  }, [id, nextLessonId, unlockedLessons]);
+    setQuizFinished(completedLessons?.includes(id || '') || false);
+  }, [id, completedLessons]);
 
   if (!lesson) {
     return <div>Pelajaran tidak ditemukan.</div>;
@@ -62,7 +127,7 @@ export default function LessonView() {
     if (exercises.length > 0) return;
     
     if (lesson.questions && lesson.questions.length > 0) {
-      setExercises(lesson.questions.map(q => ({
+      setExercises(lesson.questions.slice(0, 3).map(q => ({
         question: q.question,
         type: 'multiple_choice',
         options: q.options,
@@ -72,7 +137,7 @@ export default function LessonView() {
     }
 
     if (lesson.exercises && lesson.exercises.length > 0) {
-      setExercises(lesson.exercises.map(q => ({
+      setExercises(lesson.exercises.slice(0, 3).map(q => ({
         question: q.question,
         type: 'multiple_choice',
         options: q.options,
@@ -156,7 +221,8 @@ export default function LessonView() {
 
   const finishLesson = async () => {
     setQuizFinished(true);
-    if(user) {
+    if(user && lesson) {
+       await completeLesson(user.uid, lesson.id);
        await addXp(user.uid, 50); // Bonus XP
        if (nextLessonId && !unlockedLessons.includes(nextLessonId)) {
          await unlockLesson(user.uid, nextLessonId); 
@@ -194,30 +260,179 @@ export default function LessonView() {
               <span>Tata Bahasa (Grammar)</span>
             </h3>
             <div className="prose prose-slate max-w-none text-lg">
-              <ReactMarkdown>{lesson.grammarDescription}</ReactMarkdown>
+              <ReactMarkdown
+                components={{
+                  p: ({ children }) => <p className="mb-4">{renderChildrenWithGlossary(children)}</p>,
+                  li: ({ children }) => <li>{renderChildrenWithGlossary(children)}</li>
+                }}
+              >
+                {lesson.grammarDescription}
+              </ReactMarkdown>
             </div>
           </div>
 
-          <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
-            <h3 className="text-xl font-bold mb-6">Kosakata Baru</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {lesson.vocabulary?.map((v) => (
-                <div key={v.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100">
-                  <div className="flex items-baseline space-x-2">
-                    {v.article && (
-                      <span className={cn(
-                        "text-xs font-bold px-2 py-1 rounded-md text-white",
-                        v.article === 'der' ? 'bg-blue-500' : 
-                        v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
-                      )}>{v.article}</span>
-                    )}
-                    <span className="font-bold text-lg">{v.word}</span>
-                  </div>
-                  <span className="text-slate-500">{v.translation}</span>
-                </div>
-              ))}
+          {lesson.canDoGoals && lesson.canDoGoals.length > 0 && (
+            <div className="bg-gradient-to-br from-green-50 to-emerald-100 p-6 md:p-8 rounded-3xl shadow-sm border border-green-200">
+              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-emerald-800">
+                <Target className="w-6 h-6" />
+                <span>Setelah pelajaran ini, kamu bisa:</span>
+              </h3>
+              <ul className="space-y-3">
+                {lesson.canDoGoals.map((goal, idx) => (
+                  <li key={idx} className="flex items-start">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-500 mr-3 mt-0.5 shrink-0" />
+                    <span className="text-emerald-900 font-medium text-lg">{goal}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
+
+          {lesson.indonesianMistakes && (
+            <div className="bg-orange-50 p-6 md:p-8 rounded-3xl shadow-sm border border-orange-200">
+              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-orange-800">
+                <AlertTriangle className="w-6 h-6" />
+                <span>⚠️ Kesalahan Umum Pembelajar Indonesia</span>
+              </h3>
+              <div className="prose prose-orange max-w-none text-lg">
+                <ReactMarkdown
+                  components={{
+                    p: ({ children }) => <p className="mb-4 text-orange-900">{children}</p>,
+                    li: ({ children }) => <li className="text-orange-900">{children}</li>
+                  }}
+                >
+                  {lesson.indonesianMistakes}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )}
+
+          {lesson.culturalNotes && (
+            <div className="bg-blue-50 p-6 md:p-8 rounded-3xl shadow-sm border border-blue-200">
+              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-blue-800">
+                <Globe className="w-6 h-6" />
+                <span>Real-Life Germany Notes</span>
+              </h3>
+              <div className="text-blue-900 text-lg">
+                {lesson.culturalNotes}
+              </div>
+            </div>
+          )}
+
+          {lesson.registerNotes && (
+            <div className="bg-indigo-50 p-6 md:p-8 rounded-3xl shadow-sm border border-indigo-200">
+              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-800">
+                <MessageSquare className="w-6 h-6" />
+                <span>Register Notes (Formal/Informal)</span>
+              </h3>
+              <div className="text-indigo-900 text-lg prose prose-indigo max-w-none">
+                <ReactMarkdown>
+                  {lesson.registerNotes}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )}
+
+          {lesson.listeningSimulation && (
+            <div className="bg-slate-50 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
+              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-slate-800">
+                <Headphones className="w-6 h-6" />
+                <span>Listening Simulation Transcript</span>
+              </h3>
+              <div className="space-y-4 mb-6">
+                {lesson.listeningSimulation.transcript.map((line, idx) => (
+                  <div key={idx} className="flex flex-col">
+                    <span className="font-bold text-slate-700">{line.personA ? 'A' : 'B'}: <span className="font-normal text-slate-900">{line.personA || line.personB}</span></span>
+                    <span className="text-sm text-slate-500 italic">{line.translation}</span>
+                  </div>
+                ))}
+              </div>
+              {lesson.listeningSimulation.questions && lesson.listeningSimulation.questions.length > 0 && (
+                <div className="bg-white p-4 rounded-xl border border-slate-200">
+                  <span className="font-bold text-sm uppercase text-slate-500 mb-2 block">Quick Question</span>
+                  <p className="font-medium">{lesson.listeningSimulation.questions[0].question}</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {lesson.vocabulary && lesson.vocabulary.length > 0 && (
+            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
+              <h3 className="text-xl font-bold mb-6 flex items-center space-x-2">
+                <Star className="w-6 h-6 text-yellow-500" />
+                <span>Kosakata Utama</span>
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {lesson.vocabulary?.map((v) => (
+                  <div key={v.id} className="flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors rounded-2xl border border-slate-100">
+                    <div className="flex items-baseline space-x-2 mb-2 sm:mb-0">
+                      {v.article && (
+                        <span className={cn(
+                          "text-xs font-bold px-2 py-1 rounded-md text-white shadow-sm",
+                          v.article === 'der' ? 'bg-blue-500' : 
+                          v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                        )}>{v.article}</span>
+                      )}
+                      <span className="font-bold text-lg">{v.word}</span>
+                    </div>
+                    <span className="text-slate-500 font-medium text-center sm:text-right">{v.translation}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {lesson.pronunciationTips && (
+            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 md:p-8 rounded-3xl shadow-sm border border-indigo-100">
+              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-900">
+                <Mic className="w-6 h-6 text-indigo-500" />
+                <span>Panduan Pengucapan</span>
+              </h3>
+              <div className="text-indigo-800 text-lg space-y-4 prose prose-indigo max-w-none">
+                {Array.isArray(lesson.pronunciationTips) ? (
+                  <ul className="list-disc pl-5 space-y-2">
+                    {lesson.pronunciationTips.map((tip, idx) => (
+                      <li key={idx} className="marker:text-indigo-400">
+                        <ReactMarkdown>{tip}</ReactMarkdown>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <ReactMarkdown>{lesson.pronunciationTips}</ReactMarkdown>
+                )}
+              </div>
+            </div>
+          )}
+
+          {lesson.reviewLessons && lesson.reviewLessons.length > 0 && (
+            <div className="bg-yellow-50 p-6 md:p-8 rounded-3xl shadow-sm border border-yellow-200 fade-in-50 duration-500 animate-in">
+              <h3 className="text-xl font-bold mb-6 flex items-center space-x-2 text-yellow-800">
+                <Brain className="w-6 h-6" />
+                <span>Ulas Kembali (Vocabulary Recycling)</span>
+              </h3>
+              <p className="text-yellow-700 mb-6">Kosakata dari pelajaran sebelumnya yang muncul lagi hari ini agar kamu tidak lupa!</p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {lesson.reviewLessons.flatMap(id => {
+                   const reviewLesson = courseData.find(l => l.id === id);
+                   return reviewLesson?.vocabulary?.slice(0, 2) || [];
+                }).filter((v, i, a) => a.findIndex(t => t.id === v.id) === i).map((v) => (
+                  <div key={`review-${v.id}`} className="flex flex-col sm:flex-row items-center justify-between p-4 bg-white rounded-2xl border border-yellow-100 shadow-sm">
+                    <div className="flex items-baseline space-x-2 mb-2 sm:mb-0">
+                      {v.article && (
+                        <span className={cn(
+                          "text-xs font-bold px-2 py-1 rounded-md text-white shadow-sm",
+                          v.article === 'der' ? 'bg-blue-500' : 
+                          v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                        )}>{v.article}</span>
+                      )}
+                      <span className="font-bold text-lg text-yellow-900">{v.word}</span>
+                    </div>
+                    <span className="text-yellow-700 font-medium text-center sm:text-right">{v.translation}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           <Button 
             onClick={startQuiz} 
@@ -251,7 +466,7 @@ export default function LessonView() {
             <div className="bg-white p-12 rounded-3xl shadow-sm border border-slate-100 flex flex-col items-center justify-center text-center space-y-4 min-h-[400px]">
                <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
                <h2 className="text-2xl font-bold text-slate-900">Meracik Soal Latihan...</h2>
-               <p className="text-slate-500 max-w-sm">Herr Gemini sedang membuat soal spesial untuk materi ini.</p>
+               <p className="text-slate-500 max-w-sm">Herr Deutsch sedang membuat soal spesial untuk materi ini.</p>
             </div>
           ) : currentQuestion ? (
             <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100 min-h-[400px] flex flex-col">
@@ -318,7 +533,10 @@ export default function LessonView() {
                     <p className="font-bold mb-1">{checkResult.isCorrect ? "Benar!" : "Belum Tepat"}</p>
                     <p>{checkResult.feedback}</p>
                     {checkResult.correctedSentence && (
-                       <p className="mt-2 font-medium">✨ Perbaikan: {checkResult.correctedSentence}</p>
+                       <div className="mt-4 p-3 bg-white border border-red-200 rounded-xl shadow-sm">
+                         <span className="text-sm font-semibold text-red-600 block mb-1">Coba gunakan kalimat ini:</span>
+                         <p className="font-bold text-slate-900 text-lg">✨ {checkResult.correctedSentence}</p>
+                       </div>
                     )}
                  </div>
               )}

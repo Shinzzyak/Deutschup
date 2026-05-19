@@ -15,6 +15,7 @@ export interface ProgressData {
   lastPracticeDate: string | null;
   currentLevel: Level;
   unlockedLessons: string[];
+  completedLessons: string[];
   vocab: Record<string, VocabProgress>;
 }
 
@@ -24,6 +25,7 @@ interface ProgressState extends ProgressData {
   loadProgress: (userId: string) => Promise<void>;
   addXp: (userId: string, amount: number) => Promise<void>;
   unlockLesson: (userId: string, lessonId: string) => Promise<void>;
+  completeLesson: (userId: string, lessonId: string) => Promise<void>;
   updateVocab: (userId: string, wordId: string, status: 'learning' | 'known') => Promise<void>;
   updateStreak: (userId: string) => Promise<void>;
 }
@@ -34,6 +36,7 @@ const defaultProgress: ProgressData = {
   lastPracticeDate: null,
   currentLevel: 'A1',
   unlockedLessons: ['a1-1'], // always unlock first lesson
+  completedLessons: [],
   vocab: {}
 };
 
@@ -47,7 +50,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       const docRef = doc(db, 'users', userId, 'progress', 'main');
       const snap = await getDoc(docRef);
       if (snap.exists()) {
-        set({ ...snap.data() as ProgressData, initialized: true, loading: false });
+        const data = snap.data() as ProgressData;
+        set({ ...data, completedLessons: data.completedLessons || [], initialized: true, loading: false });
       } else {
         // Create default
         await setDoc(docRef, defaultProgress);
@@ -87,6 +91,20 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
             unlockedLessons: next,
             currentLevel: newLevel
           });
+        }
+      } catch (e) {
+        handleFirestoreError(e, OperationType.UPDATE, `users/${userId}/progress/main`);
+      }
+    }
+  },
+  completeLesson: async (userId: string, lessonId: string) => {
+    const { completedLessons } = get();
+    if (!completedLessons.includes(lessonId)) {
+      const next = [...completedLessons, lessonId];
+      set({ completedLessons: next });
+      try {
+        if(userId) {
+          await updateDoc(doc(db, 'users', userId, 'progress', 'main'), { completedLessons: next });
         }
       } catch (e) {
         handleFirestoreError(e, OperationType.UPDATE, `users/${userId}/progress/main`);
