@@ -51,3 +51,17 @@ Contoh untuk production ini:
 - `deutschup.sintec.my.id`
 
 Tanpa ini biasanya muncul error `auth/unauthorized-domain` atau login redirect balik ke awal.
+
+
+## Supabase Migration (Auth + User Profile)
+
+1. Install package: `npm install @supabase/supabase-js`
+2. Set env:
+   - `VITE_SUPABASE_URL`
+   - `VITE_SUPABASE_ANON_KEY`
+3. Run SQL in Supabase SQL Editor: `SUPABASE_SETUP.sql`.
+4. Enable Google OAuth provider in Supabase Auth and set redirect URLs:
+   - `http://localhost:5173/`
+   - `https://deutschup.sintec.my.id/`
+
+Note: DELETE policy sengaja tidak dibuat untuk mencegah user menghapus profil sendiri tanpa kontrol tambahan.

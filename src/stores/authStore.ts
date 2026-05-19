@@ -1,77 +1,121 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
-import { User, onAuthStateChanged, signInWithRedirect, signInWithPopup, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../lib/firebase';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
+import { supabase, type DbUserRow } from '../lib/supabase';
 
 export interface TierData {
   tier: 'free' | 'pro';
   tierExpiry?: number;
 }
 
-function formatAuthError(error: any) {
-  const code = error?.code || 'unknown';
-  const message = error?.message || 'Unknown error';
-  return `Error dari Firebase: ${code} | ${message}`;
+export interface ProgressData {
+  xp: number;
+  streak: number;
+}
+
+export interface AppUser {
+  uid: string;
+  email: string | null;
+  displayName: string;
+  photoURL: string;
+  getIdToken: () => Promise<string | undefined>;
 }
 
 interface AuthState {
-  user: User | null;
+  user: AppUser | null;
   tierData: TierData;
+  progressData: ProgressData;
   loading: boolean;
-  loginWithGoogle: () => Promise<void>;
   authError?: string | null;
+  loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>((set, get) => {
+function mapSupabaseUser(user: SupabaseUser): AppUser {
+  return {
+    uid: user.id,
+    email: user.email ?? null,
+    displayName: (user.user_metadata?.full_name as string) || (user.user_metadata?.name as string) || user.email || 'Siswa',
+    photoURL: (user.user_metadata?.avatar_url as string) || '',
+    getIdToken: async () => {
+      const { data } = await supabase.auth.getSession();
+      return data.session?.access_token;
+    },
+  };
+}
+
+function formatAuthError(error: any) {
+  return `Supabase Auth Error: ${error?.message || 'Unknown error'}`;
+}
+
+async function upsertAndLoadUserProfile(user: SupabaseUser): Promise<DbUserRow | null> {
+  const payload = {
+    id: user.id,
+    email: user.email ?? null,
+    tier: 'free',
+    tier_expiry: null,
+    xp: 0,
+    streak: 0,
+  };
+
+  const { error: upsertError } = await supabase
+    .from('users')
+    .upsert(payload, { onConflict: 'id' });
+
+  if (upsertError) {
+    console.error('Profile upsert failed:', upsertError);
+  }
+
+  const { data, error } = await supabase
+    .from('users')
+    .select('id,email,tier,tier_expiry,xp,streak')
+    .eq('id', user.id)
+    .single();
+
+  if (error) {
+    console.error('Profile load failed:', error);
+    return null;
+  }
+
+  return data as DbUserRow;
+}
+
+export const useAuthStore = create<AuthState>((set) => {
   const initAuth = async () => {
-    try {
-      const result = await getRedirectResult(auth);
-      if (result?.user) {
-        set({ user: result.user, loading: true });
-      }
-    } catch (error: any) {
-      const msg = formatAuthError(error);
-      console.error('Google redirect login failed:', error);
-      set({ loading: false, authError: msg });
-      if (typeof window !== 'undefined') window.alert(msg);
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    if (sessionError) {
+      console.error('Session init error:', sessionError);
+      set({ loading: false, authError: formatAuthError(sessionError) });
     }
 
-    onAuthStateChanged(auth, async (user) => {
-      if (!user) {
-        set({ user: null, tierData: { tier: 'free' }, loading: false });
+    if (sessionData.session?.user) {
+      set({ user: mapSupabaseUser(sessionData.session.user), loading: false });
+      upsertAndLoadUserProfile(sessionData.session.user).then((row) => {
+        if (!row) return;
+        set({
+          tierData: { tier: row.tier || 'free', tierExpiry: row.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined },
+          progressData: { xp: row.xp ?? 0, streak: row.streak ?? 0 },
+        });
+      });
+    } else {
+      set({ loading: false });
+    }
+
+    supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (!session?.user) {
+        set({ user: null, tierData: { tier: 'free' }, progressData: { xp: 0, streak: 0 }, loading: false });
         return;
       }
 
-      // Set state login dulu, jangan nunggu Firestore
-      set({ user });
+      set({ user: mapSupabaseUser(session.user), loading: false, authError: null });
 
-      try {
-        const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
+      const row = await upsertAndLoadUserProfile(session.user);
+      if (!row) return;
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          set({
-            tierData: {
-              tier: data?.tier || 'free',
-              tierExpiry: data?.tierExpiry,
-            },
-            loading: false,
-          });
-        } else {
-          await setDoc(docRef, { tier: 'free' });
-          set({ tierData: { tier: 'free' }, loading: false });
-        }
-
-        if (user.email && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
-          set((state) => ({ tierData: { ...state.tierData, tier: 'pro' }, loading: false }));
-        }
-      } catch (error) {
-        console.error('Auth state sync failed:', error);
-        set({ loading: false });
-      }
+      set({
+        tierData: { tier: row.tier || 'free', tierExpiry: row.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined },
+        progressData: { xp: row.xp ?? 0, streak: row.streak ?? 0 },
+      });
     });
   };
 
@@ -80,25 +124,28 @@ export const useAuthStore = create<AuthState>((set, get) => {
   return {
     user: null,
     tierData: { tier: 'free' },
+    progressData: { xp: 0, streak: 0 },
     loading: true,
     authError: null,
     loginWithGoogle: async () => {
-      // Penting: jangan set loading=true sebelum popup dipanggil
-      // agar browser mobile tidak memblokir popup karena jeda re-render.
-      const provider = new GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
+      set({ authError: null });
+      const redirectTo = `${window.location.origin}/`;
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: { redirectTo },
+      });
 
-      try {
-        await signInWithPopup(auth, provider);
-      } catch (error: any) {
-        const msg = formatAuthError(error);
-        console.error('Google login failed:', error);
-        set({ authError: msg, loading: false });
-        if (typeof window !== 'undefined') window.alert(msg);
+      if (error) {
+        console.error('OAuth trigger failed:', error);
+        set({ authError: formatAuthError(error), loading: false });
       }
     },
     logout: async () => {
-      await signOut(auth);
-    }
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        console.error('Logout failed:', error);
+        set({ authError: formatAuthError(error) });
+      }
+    },
   };
 });
