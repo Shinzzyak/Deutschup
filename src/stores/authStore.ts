@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
-import { User, onAuthStateChanged, signInWithRedirect, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
+import { User, onAuthStateChanged, signInWithRedirect, signInWithPopup, getRedirectResult, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../lib/firebase';
 
@@ -14,6 +14,7 @@ interface AuthState {
   tierData: TierData;
   loading: boolean;
   loginWithGoogle: () => Promise<void>;
+  authError?: string | null;
   logout: () => Promise<void>;
 }
 
@@ -21,6 +22,7 @@ export const useAuthStore = create<AuthState>((set) => {
   // Tangkap hasil redirect login (penting untuk browser mobile)
   getRedirectResult(auth).catch((error) => {
     console.error('Google redirect login failed:', error);
+    set({ loading: false, authError: error?.message || 'Redirect login gagal' });
   });
 
   onAuthStateChanged(auth, async (user) => {
@@ -57,13 +59,23 @@ export const useAuthStore = create<AuthState>((set) => {
     user: null,
     tierData: { tier: 'free' },
     loading: true,
+    authError: null,
     loginWithGoogle: async () => {
+      const provider = new GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
       try {
-        const provider = new GoogleAuthProvider();
-        await signInWithRedirect(auth, provider);
-      } catch (error) {
+        set({ loading: true, authError: null });
+
+        const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+        if (isMobile) {
+          await signInWithRedirect(auth, provider);
+          return;
+        }
+
+        await signInWithPopup(auth, provider);
+      } catch (error: any) {
         console.error('Google login failed:', error);
-        set({ loading: false });
+        set({ loading: false, authError: error?.message || 'Login gagal' });
         throw error;
       }
     },
