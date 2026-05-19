@@ -1,10 +1,11 @@
 {
-  "projectId": "qualified-ceiling-p07pf",
-  "appId": "1:63858702524:web:022ea8e59f97151164b8b9",
-  "apiKey": "__SET_VITE_FIREBASE_API_KEY__",
-  "authDomain": "qualified-ceiling-p07pf.firebaseapp.com",
-  "firestoreDatabaseId": "ai-studio-2606d214-cab6-4242-bdfd-6070cb05f75e",
-  "storageBucket": "qualified-ceiling-p07pf.firebasestorage.app",
-  "messagingSenderId": "63858702524",
-  "measurementId": ""
+  "projectId": "deutschup-53264",
+  "appId": "1:791163254908:web:d95a7ef3a3b26aec2d31f9",
+  "apiKey": "AIzaSyBMHkac9Cw0MwduicN0DaBjOgKEF6rOVR4",
+  "authDomain": "deutschup-53264.firebaseapp.com",
+  "databaseURL": "https://deutschup-53264-default-rtdb.firebaseio.com",
+  "firestoreDatabaseId": "(default)",
+  "storageBucket": "deutschup-53264.firebasestorage.app",
+  "messagingSenderId": "791163254908",
+  "measurementId": "G-0E9YW9FFK3"
 }
