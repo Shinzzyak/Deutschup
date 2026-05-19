@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router';
 import { useEffect, Suspense, lazy } from 'react';
-import { useAuthStore } from './stores/authStore';
+import { useAuthStore, initAuth } from './stores/authStore';
 import { useProgressStore } from './stores/progressStore';
 import { BookOpen, BrainCircuit, Search, LogOut, Loader2, Trophy, Flame, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
 import { Button } from './components/ui/button';
@@ -22,6 +22,10 @@ import QuickNoteWidget from './components/QuickNoteWidget';
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuthStore();
   const { loadProgress, initialized, loading: progressLoading } = useProgressStore();
+
+  useEffect(() => {
+    initAuth();
+  }, []);
 
   useEffect(() => {
     if (user && !initialized) {
