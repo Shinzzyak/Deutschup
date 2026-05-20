@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
-import { supabase, type DbUserRow } from '../lib/supabase';
+import { supabase } from '../lib/supabase';
 
 export interface TierData {
   tier: 'free' | 'pro';
@@ -48,23 +48,13 @@ function formatAuthError(error: any) {
   return `Supabase Auth Error: ${error?.message || 'Unknown error'}`;
 }
 
-async function upsertAndLoadUserProfile(user: SupabaseUser): Promise<DbUserRow | null> {
-  const payload = { id: user.id, email: user.email ?? null, tier: 'free', tier_expiry: null, xp: 0, streak: 0 };
-  const { error: upsertError } = await supabase.from('users').upsert(payload, { onConflict: 'id' });
-  if (upsertError) console.error('Profile upsert failed:', upsertError);
-
-  const { data, error } = await supabase.from('users').select('id,email,tier,tier_expiry,xp,streak').eq('id', user.id).single();
-  if (error) {
-    console.error('Profile load failed:', error);
-    return null;
-  }
-  return data as DbUserRow;
-}
+const defaultTier: TierData = { tier: 'free' };
+const defaultProgress: ProgressData = { xp: 0, streak: 0 };
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  tierData: { tier: 'free' },
-  progressData: { xp: 0, streak: 0 },
+  tierData: defaultTier,
+  progressData: defaultProgress,
   loading: true,
   authError: null,
   loginWithGoogle: async () => {
@@ -92,70 +82,71 @@ export const useAuthStore = create<AuthState>((set) => ({
 let authInitialized = false;
 let authSubscription: { unsubscribe: () => void } | null = null;
 
-export const initAuth = () => {
-  if (authInitialized) return;
+async function syncUserData(user: SupabaseUser) {
+  const set = useAuthStore.setState;
 
+  // bypass spinner: let user in immediately
+  set({ user: mapSupabaseUser(user), loading: false, authError: null });
+
+  try {
+    await supabase.from('users').upsert(
+      { id: user.id, email: user.email ?? null },
+      { onConflict: 'id' }
+    );
+
+    const { data } = await supabase
+      .from('users')
+      .select('tier,tier_expiry,xp,streak')
+      .eq('id', user.id)
+      .single();
+
+    if (data) {
+      set({
+        tierData: {
+          tier: data.tier || 'free',
+          tierExpiry: data.tier_expiry ? new Date(data.tier_expiry).getTime() : undefined,
+        },
+        progressData: {
+          xp: data.xp || 0,
+          streak: data.streak || 0,
+        },
+      });
+    }
+  } catch (err) {
+    console.error('Sync gagal:', err);
+  } finally {
+    set({ loading: false });
+  }
+}
+
+export const initAuth = async () => {
+  if (authInitialized) return;
   authInitialized = true;
 
   const set = useAuthStore.setState;
 
-  supabase.auth.getSession().then(async ({ data: { session }, error }) => {
-    if (session?.user) {
-      set({ user: mapSupabaseUser(session.user), loading: false, authError: null });
-      const row = await upsertAndLoadUserProfile(session.user);
-      if (row) {
-        set({
-          tierData: { tier: row.tier || 'free', tierExpiry: row.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined },
-          progressData: { xp: row.xp ?? 0, streak: row.streak ?? 0 },
-          loading: false,
-        });
-      } else {
-        set({ loading: false });
-      }
-    } else {
-      set({ user: null, loading: false });
-    }
-  }).catch((error) => {
-    console.error('Session init error:', error);
-    set({ loading: false, authError: formatAuthError(error) });
-  });
+  // 1) hydrate current session immediately
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
 
-  const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
     if (!session?.user) {
-      set({ user: null, tierData: { tier: 'free' }, progressData: { xp: 0, streak: 0 }, loading: false });
+      set({ user: null, loading: false, tierData: defaultTier, progressData: defaultProgress });
+    } else {
+      await syncUserData(session.user);
+    }
+  } catch {
+    set({ user: null, loading: false, tierData: defaultTier, progressData: defaultProgress });
+  }
+
+  // 2) subscribe to future auth transitions
+  const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'SIGNED_OUT' || !session?.user) {
+      set({ user: null, loading: false, tierData: defaultTier, progressData: defaultProgress });
       return;
     }
 
-    const appUser = mapSupabaseUser(session.user);
-
-    // Bypass utama: jangan tunggu DB, langsung buka UI.
-    set({ user: appUser, loading: false, authError: null });
-
-    try {
-      const { error: upsertError } = await supabase
-        .from('users')
-        .upsert({ id: session.user.id, email: session.user.email ?? null }, { onConflict: 'id' });
-      if (upsertError) throw upsertError;
-
-      const { data: row, error: fetchError } = await supabase
-        .from('users')
-        .select('id,email,tier,tier_expiry,xp,streak')
-        .eq('id', session.user.id)
-        .single();
-      if (fetchError) throw fetchError;
-
-      set({
-        tierData: {
-          tier: row?.tier || 'free',
-          tierExpiry: row?.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined,
-        },
-        progressData: {
-          xp: row?.xp || 0,
-          streak: row?.streak || 0,
-        },
-      });
-    } catch (err) {
-      console.error('Gagal sinkronisasi data dengan database:', err);
+    if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'INITIAL_SESSION') {
+      await syncUserData(session.user);
     }
   });
 
