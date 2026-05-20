@@ -121,20 +121,41 @@ export const initAuth = () => {
   });
 
   const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-    if (session?.user) {
-      set({ user: mapSupabaseUser(session.user), loading: false, authError: null });
-      const row = await upsertAndLoadUserProfile(session.user);
-      if (row) {
-        set({
-          tierData: { tier: row.tier || 'free', tierExpiry: row.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined },
-          progressData: { xp: row.xp ?? 0, streak: row.streak ?? 0 },
-          loading: false,
-        });
-      } else {
-        set({ loading: false });
-      }
-    } else if (event === 'SIGNED_OUT') {
+    if (!session?.user) {
       set({ user: null, tierData: { tier: 'free' }, progressData: { xp: 0, streak: 0 }, loading: false });
+      return;
+    }
+
+    const appUser = mapSupabaseUser(session.user);
+
+    // Bypass utama: jangan tunggu DB, langsung buka UI.
+    set({ user: appUser, loading: false, authError: null });
+
+    try {
+      const { error: upsertError } = await supabase
+        .from('users')
+        .upsert({ id: session.user.id, email: session.user.email ?? null }, { onConflict: 'id' });
+      if (upsertError) throw upsertError;
+
+      const { data: row, error: fetchError } = await supabase
+        .from('users')
+        .select('id,email,tier,tier_expiry,xp,streak')
+        .eq('id', session.user.id)
+        .single();
+      if (fetchError) throw fetchError;
+
+      set({
+        tierData: {
+          tier: row?.tier || 'free',
+          tierExpiry: row?.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined,
+        },
+        progressData: {
+          xp: row?.xp || 0,
+          streak: row?.streak || 0,
+        },
+      });
+    } catch (err) {
+      console.error('Gagal sinkronisasi data dengan database:', err);
     }
   });
 
