@@ -95,24 +95,22 @@ let authSubscription: { unsubscribe: () => void } | null = null;
 export const initAuth = () => {
   if (authInitialized) return;
 
-  if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
-    window.alert('1. Mantap! Token berhasil kebawa dari Google.');
-  }
   authInitialized = true;
 
   const set = useAuthStore.setState;
 
   supabase.auth.getSession().then(async ({ data: { session }, error }) => {
-    if (error) window.alert(`Error getSession: ${error.message}`);
     if (session?.user) {
-      window.alert(`2. Berhasil getSession! Login sukses bre: ${session.user.email}`);
       set({ user: mapSupabaseUser(session.user), loading: false, authError: null });
       const row = await upsertAndLoadUserProfile(session.user);
       if (row) {
         set({
           tierData: { tier: row.tier || 'free', tierExpiry: row.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined },
           progressData: { xp: row.xp ?? 0, streak: row.streak ?? 0 },
+          loading: false,
         });
+      } else {
+        set({ loading: false });
       }
     } else {
       set({ user: null, loading: false });
@@ -123,16 +121,17 @@ export const initAuth = () => {
   });
 
   const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
-    window.alert(`3. Auth Event ke-trigger: ${event}`);
     if (session?.user) {
-      window.alert(`2. Berhasil getSession! Login sukses bre: ${session.user.email}`);
       set({ user: mapSupabaseUser(session.user), loading: false, authError: null });
       const row = await upsertAndLoadUserProfile(session.user);
       if (row) {
         set({
           tierData: { tier: row.tier || 'free', tierExpiry: row.tier_expiry ? new Date(row.tier_expiry).getTime() : undefined },
           progressData: { xp: row.xp ?? 0, streak: row.streak ?? 0 },
+          loading: false,
         });
+      } else {
+        set({ loading: false });
       }
     } else if (event === 'SIGNED_OUT') {
       set({ user: null, tierData: { tier: 'free' }, progressData: { xp: 0, streak: 0 }, loading: false });
