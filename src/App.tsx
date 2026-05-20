@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router';
 import { useEffect, Suspense, lazy } from 'react';
 import { useAuthStore, initAuth } from './stores/authStore';
+import { supabase } from './lib/supabase';
 import { useProgressStore } from './stores/progressStore';
 import { BookOpen, BrainCircuit, Search, LogOut, Loader2, Trophy, Flame, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
 import { Button } from './components/ui/button';
@@ -25,6 +26,31 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     initAuth();
+  }, []);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const errorMsg = urlParams.get('error_description') || urlParams.get('error');
+    if (errorMsg) {
+      window.alert(`Error dari Google pas balik: ${errorMsg}`);
+    }
+
+    if (window.location.hash.includes('access_token')) {
+      supabase.auth.getSession().then(({ data }) => {
+        if (data.session?.user) {
+          useAuthStore.setState({
+            user: {
+              uid: data.session.user.id,
+              email: data.session.user.email ?? null,
+              displayName: (data.session.user.user_metadata?.full_name as string) || (data.session.user.email ?? 'Siswa'),
+              photoURL: (data.session.user.user_metadata?.avatar_url as string) || '',
+              getIdToken: async () => data.session?.access_token,
+            },
+            loading: false,
+          });
+        }
+      });
+    }
   }, []);
 
   useEffect(() => {
