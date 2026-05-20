@@ -94,12 +94,18 @@ let authSubscription: { unsubscribe: () => void } | null = null;
 
 export const initAuth = () => {
   if (authInitialized) return;
+
+  if (typeof window !== 'undefined' && window.location.hash.includes('access_token')) {
+    window.alert('1. Mantap! Token berhasil kebawa dari Google.');
+  }
   authInitialized = true;
 
   const set = useAuthStore.setState;
 
-  supabase.auth.getSession().then(async ({ data: { session } }) => {
+  supabase.auth.getSession().then(async ({ data: { session }, error }) => {
+    if (error) window.alert(`Error getSession: ${error.message}`);
     if (session?.user) {
+      window.alert(`2. Berhasil getSession! Login sukses bre: ${session.user.email}`);
       set({ user: mapSupabaseUser(session.user), loading: false, authError: null });
       const row = await upsertAndLoadUserProfile(session.user);
       if (row) {
@@ -117,7 +123,9 @@ export const initAuth = () => {
   });
 
   const { data } = supabase.auth.onAuthStateChange(async (event, session) => {
+    window.alert(`3. Auth Event ke-trigger: ${event}`);
     if (session?.user) {
+      window.alert(`2. Berhasil getSession! Login sukses bre: ${session.user.email}`);
       set({ user: mapSupabaseUser(session.user), loading: false, authError: null });
       const row = await upsertAndLoadUserProfile(session.user);
       if (row) {
