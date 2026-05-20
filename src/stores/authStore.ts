@@ -136,6 +136,9 @@ export const initAuth = async () => {
     }
   } catch {
     set({ user: null, loading: false, tierData: defaultTier, progressData: defaultProgress });
+  } finally {
+    // Safety net agar authLoading tidak menggantung
+    set((state) => ({ ...state, loading: false }));
   }
 
   // 2) subscribe to future auth transitions

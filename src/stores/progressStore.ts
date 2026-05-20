@@ -59,7 +59,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       }
     } catch (e) {
       handleFirestoreError(e, OperationType.GET, `users/${userId}/progress/main`);
-      set({ loading: false });
+      // Safety net: jangan biarkan UI menunggu selamanya
+      set({ initialized: true, loading: false });
     }
   },
   addXp: async (userId: string, amount: number) => {
