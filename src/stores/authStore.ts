@@ -1,9 +1,7 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
-import { User, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../lib/firebase';
-import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
+import { User } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase';
 
 export interface TierData {
   tier: 'free' | 'pro';
@@ -19,33 +17,37 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set) => {
-  onAuthStateChanged(auth, async (user) => {
+  // Initialize auth state listener
+  supabase.auth.onAuthStateChange(async (event, session) => {
+    const user = session?.user ?? null;
     let tierData: TierData = { tier: 'free' };
+
     if (user) {
       try {
-        const docSnap = await getDoc(doc(db, 'users', user.uid));
-        if (docSnap.exists()) {
-          tierData = { 
-             tier: docSnap.data()?.tier || 'free',
-             tierExpiry: docSnap.data()?.tierExpiry
-          };
+        const { data, error } = await supabase
+          .from('profiles')
+          .select('tier, tierExpiry')
+          .eq('id', user.id)
+          .single();
+
+        if (error || !data) {
+          console.warn('Could not fetch profile tier data:', error);
         } else {
-          // Initialize empty user doc
-          try {
-            await setDoc(doc(db, 'users', user.uid), { tier: 'free' });
-          } catch(e) {
-            handleFirestoreError(e, OperationType.CREATE, `users/${user.uid}`);
-          }
+          tierData = {
+            tier: data.tier || 'free',
+            tierExpiry: data.tierExpiry,
+          };
         }
-        
+
         // Admin Override
         if (user.email && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
           tierData.tier = 'pro';
         }
       } catch (e) {
-        handleFirestoreError(e, OperationType.GET, `users/${user.uid}`);
+        console.error('Error fetching profile tier data:', e);
       }
     }
+    
     set({ user, tierData, loading: false });
   });
 
@@ -54,11 +56,14 @@ export const useAuthStore = create<AuthState>((set) => {
     tierData: { tier: 'free' },
     loading: true,
     loginWithGoogle: async () => {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+      });
+      if (error) throw error;
     },
     logout: async () => {
-      await signOut(auth);
-    }
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+    },
   };
 });

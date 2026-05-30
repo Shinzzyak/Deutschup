@@ -1,7 +1,5 @@
 import { create } from 'zustand';
-import { db } from '../lib/firebase';
-import { collection, doc, setDoc, deleteDoc, onSnapshot } from 'firebase/firestore';
-import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
+import { supabase } from '../lib/supabase';
 
 export type Note = {
   id: string;
@@ -62,83 +60,91 @@ export const useLearningStore = create<LearningState>((set, get) => ({
   loading: false,
   isListening: false,
 
-  fetchData: (userId) => {
+  fetchData: async (userId) => {
     if (get().isListening) return;
     set({ loading: true, isListening: true });
     
-    // Notes snapshot
-    const notesRef = collection(db, `users/${userId}/notes`);
-    onSnapshot(notesRef, (snap) => {
-      const notes = snap.docs.map(D => ({ id: D.id, ...D.data() } as Note));
-      notes.sort((a,b) => b.createdAt - a.createdAt);
-      set({ notes });
-    }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, `users/${userId}/notes`);
-    });
+    try {
+      // Notes
+      const { data: notes, error: notesError } = await supabase
+        .from('notes')
+        .select('*')
+        .eq('user_id', userId)
+        .order('createdAt', { ascending: false });
+      if (notesError) throw notesError;
+      set({ notes: notes as Note[] });
 
-    // Study Plan snapshot
-    const planRef = doc(db, `users/${userId}/studyplan/main`);
-    onSnapshot(planRef, (docSnap) => {
-      if (docSnap.exists()) {
-        set({ studyPlan: { id: docSnap.id, tasks: docSnap.data().tasks } });
-      } else {
-        set({ studyPlan: null });
-      }
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, `users/${userId}/studyplan/main`);
-    });
+      // Study Plan
+      const { data: plan, error: planError } = await supabase
+        .from('study_plans')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      if (planError && planError.code !== 'PGRST116') throw planError;
+      set({ studyPlan: plan ? { id: plan.id, tasks: plan.tasks } : null });
 
-    // Quick Note snapshot
-    const qnRef = doc(db, `users/${userId}/quicknote/main`);
-    onSnapshot(qnRef, (docSnap) => {
-      if (docSnap.exists()) {
-        set({ quickNote: docSnap.data() as QuickNote });
-      } else {
-        set({ quickNote: null });
-      }
-    }, (error) => {
-      handleFirestoreError(error, OperationType.GET, `users/${userId}/quicknote/main`);
-    });
+      // Quick Note
+      const { data: qn, error: qnError } = await supabase
+        .from('quick_notes')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+      if (qnError && qnError.code !== 'PGRST116') throw qnError;
+      set({ quickNote: qn as QuickNote | null });
 
-    // Mock Tests snapshot
-    const mtRef = collection(db, `users/${userId}/mocktests`);
-    onSnapshot(mtRef, (snap) => {
-      const mockTests = snap.docs.map(D => ({ id: D.id, ...D.data() } as MockTestResult));
-      mockTests.sort((a,b) => b.createdAt - a.createdAt);
-      set({ mockTests });
-    }, (error) => {
-      handleFirestoreError(error, OperationType.LIST, `users/${userId}/mocktests`);
-    });
+      // Mock Tests
+      const { data: mockTests, error: mtError } = await supabase
+        .from('mock_tests')
+        .select('*')
+        .eq('user_id', userId)
+        .order('createdAt', { ascending: false });
+      if (mtError) throw mtError;
+      set({ mockTests: mockTests as MockTestResult[] });
 
-    set({ loading: false });
+    } catch (error) {
+      console.error(`Error fetching learning data for ${userId}:`, error);
+    } finally {
+      set({ loading: false, isListening: false });
+    }
   },
 
   addNote: async (userId, text, tag) => {
     try {
-      const newNoteRef = doc(collection(db, `users/${userId}/notes`));
-      await setDoc(newNoteRef, {
-        text,
-        tag,
-        createdAt: Date.now()
-      });
+      const { error } = await supabase
+        .from('notes')
+        .insert({
+          user_id: userId,
+          text,
+          tag,
+          createdAt: Date.now()
+        });
+      if (error) throw error;
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, `users/${userId}/notes`);
+      console.error(`Error adding note for ${userId}:`, error);
     }
   },
 
   deleteNote: async (userId, noteId) => {
     try {
-      await deleteDoc(doc(db, `users/${userId}/notes/${noteId}`));
+      const { error } = await supabase
+        .from('notes')
+        .delete()
+        .eq('id', noteId)
+        .eq('user_id', userId);
+      if (error) throw error;
     } catch (error) {
-      handleFirestoreError(error, OperationType.DELETE, `users/${userId}/notes/${noteId}`);
+      console.error(`Error deleting note ${noteId} for ${userId}:`, error);
     }
   },
 
   saveStudyPlan: async (userId, tasks) => {
     try {
-      await setDoc(doc(db, `users/${userId}/studyplan/main`), { tasks });
+      const { error } = await supabase
+        .from('study_plans')
+        .upsert({ user_id: userId, tasks });
+      if (error) throw error;
     } catch (error) {
-       handleFirestoreError(error, OperationType.CREATE, `users/${userId}/studyplan/main`);
+       console.error(`Error saving study plan for ${userId}:`, error);
     }
   },
 
@@ -147,26 +153,34 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     if (!studyPlan) return;
     const updatedTasks = studyPlan.tasks.map((t: StudyTask) => t.id === taskId ? { ...t, completed: !t.completed } : t);
     try {
-      await setDoc(doc(db, `users/${userId}/studyplan/main`), { tasks: updatedTasks });
+      const { error } = await supabase
+        .from('study_plans')
+        .upsert({ user_id: userId, tasks: updatedTasks });
+      if (error) throw error;
     } catch (error) {
-      handleFirestoreError(error, OperationType.UPDATE, `users/${userId}/studyplan/main`);
+      console.error(`Error toggling task ${taskId} for ${userId}:`, error);
     }
   },
 
   saveQuickNote: async (userId, text) => {
     try {
-      await setDoc(doc(db, `users/${userId}/quicknote/main`), { text, updatedAt: Date.now() });
+      const { error } = await supabase
+        .from('quick_notes')
+        .upsert({ user_id: userId, text, updatedAt: Date.now() });
+      if (error) throw error;
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, `users/${userId}/quicknote/main`);
+      console.error(`Error saving quick note for ${userId}:`, error);
     }
   },
 
   saveMockTest: async (userId, result) => {
     try {
-      const newTestRef = doc(collection(db, `users/${userId}/mocktests`));
-      await setDoc(newTestRef, result);
+      const { error } = await supabase
+        .from('mock_tests')
+        .insert({ user_id: userId, ...result });
+      if (error) throw error;
     } catch (error) {
-      handleFirestoreError(error, OperationType.CREATE, `users/${userId}/mocktests`);
+      console.error(`Error saving mock test for ${userId}:`, error);
     }
   }
 }));

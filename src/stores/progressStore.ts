@@ -1,7 +1,5 @@
 import { create } from 'zustand';
-import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import { handleFirestoreError, OperationType } from '../lib/firestore-errors';
+import { supabase } from '../lib/supabase';
 import { Level } from '../data/course';
 
 export interface VocabProgress {
@@ -47,18 +45,26 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   loadProgress: async (userId: string) => {
     set({ loading: true });
     try {
-      const docRef = doc(db, 'users', userId, 'progress', 'main');
-      const snap = await getDoc(docRef);
-      if (snap.exists()) {
-        const data = snap.data() as ProgressData;
+      const { data, error } = await supabase
+        .from('progress')
+        .select('*')
+        .eq('user_id', userId)
+        .single();
+
+      if (error && error.code !== 'PGRST116') throw error;
+
+      if (data) {
         set({ ...data, completedLessons: data.completedLessons || [], initialized: true, loading: false });
       } else {
         // Create default
-        await setDoc(docRef, defaultProgress);
+        const { error: insertError } = await supabase
+          .from('progress')
+          .insert({ user_id: userId, ...defaultProgress });
+        if (insertError) throw insertError;
         set({ ...defaultProgress, initialized: true, loading: false });
       }
     } catch (e) {
-      handleFirestoreError(e, OperationType.GET, `users/${userId}/progress/main`);
+      console.error(`Error loading progress for ${userId}:`, e);
       set({ loading: false });
     }
   },
@@ -68,10 +74,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ xp: newXp });
     try {
       if(userId) {
-        await updateDoc(doc(db, 'users', userId, 'progress', 'main'), { xp: newXp });
+        const { error } = await supabase
+          .from('progress')
+          .upsert({ user_id: userId, xp: newXp });
+        if (error) throw error;
       }
     } catch (e) {
-      handleFirestoreError(e, OperationType.UPDATE, `users/${userId}/progress/main`);
+      console.error(`Error updating XP for ${userId}:`, e);
     }
   },
   unlockLesson: async (userId: string, lessonId: string) => {
@@ -87,13 +96,17 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       set({ unlockedLessons: next, currentLevel: newLevel });
       try {
         if(userId) {
-          await updateDoc(doc(db, 'users', userId, 'progress', 'main'), { 
-            unlockedLessons: next,
-            currentLevel: newLevel
-          });
+          const { error } = await supabase
+            .from('progress')
+            .upsert({ 
+              user_id: userId,
+              unlockedLessons: next,
+              currentLevel: newLevel
+            });
+          if (error) throw error;
         }
       } catch (e) {
-        handleFirestoreError(e, OperationType.UPDATE, `users/${userId}/progress/main`);
+        console.error(`Error unlocking lesson for ${userId}:`, e);
       }
     }
   },
@@ -104,10 +117,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       set({ completedLessons: next });
       try {
         if(userId) {
-          await updateDoc(doc(db, 'users', userId, 'progress', 'main'), { completedLessons: next });
+          const { error } = await supabase
+            .from('progress')
+            .upsert({ user_id: userId, completedLessons: next });
+          if (error) throw error;
         }
       } catch (e) {
-        handleFirestoreError(e, OperationType.UPDATE, `users/${userId}/progress/main`);
+        console.error(`Error completing lesson for ${userId}:`, e);
       }
     }
   },
@@ -118,10 +134,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ vocab: newVocab });
     try {
       if(userId) {
-        await updateDoc(doc(db, 'users', userId, 'progress', 'main'), { vocab: newVocab });
+        const { error } = await supabase
+          .from('progress')
+          .upsert({ user_id: userId, vocab: newVocab });
+        if (error) throw error;
       }
     } catch (e) {
-      handleFirestoreError(e, OperationType.UPDATE, `users/${userId}/progress/main`);
+      console.error(`Error updating vocab for ${userId}:`, e);
     }
   },
   updateStreak: async (userId: string) => {
@@ -148,10 +167,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ streak: newStreak, lastPracticeDate: today });
     try {
       if(userId) {
-        await updateDoc(doc(db, 'users', userId, 'progress', 'main'), { streak: newStreak, lastPracticeDate: today });
+        const { error } = await supabase
+          .from('progress')
+          .upsert({ user_id: userId, streak: newStreak, lastPracticeDate: today });
+        if (error) throw error;
       }
     } catch (e) {
-      handleFirestoreError(e, OperationType.UPDATE, `users/${userId}/progress/main`);
+      console.error(`Error updating streak for ${userId}:`, e);
     }
   }
 }));

@@ -1,179 +1,251 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { collection, query, getDocs, doc, setDoc, updateDoc } from 'firebase/firestore';
-import { db } from '../lib/firebase';
-import { Users, CreditCard, Activity, Key, Loader2, Save, Sparkles } from 'lucide-react';
+import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 export default function Admin() {
-  const { user } = useAuthStore();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [checking, setChecking] = useState(true);
-  
-  const [stats, setStats] = useState({ totalUsers: 0, proUsers: 0, revenue: 0 });
+  const { user, session } = useAuthStore();
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [apiKey, setApiKey] = useState('');
+  const [loading, setLoading] = useState(false);
   const [loadingKey, setLoadingKey] = useState(false);
 
   useEffect(() => {
-    async function checkAdmin() {
-      if (!user) { setChecking(false); return; }
-      try {
-        const token = await user.getIdToken();
-        const res = await fetch('/api/admin/check', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        if (res.ok) {
-           setIsAdmin(true);
-           fetchAdminData();
-        }
-      } catch(e) {}
-      setChecking(false);
-    }
-    checkAdmin();
-  }, [user]);
+    async function initAdmin() {
+      if (!session) {
+        setIsAdmin(false);
+        return;
+      }
 
-  const fetchAdminData = async () => {
+      try {
+        // Attempt to fetch users as the primary admin check
+        const res = await fetch('/api/admin/users', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          setUsers(data);
+          setIsAdmin(true);
+          fetchConfig();
+        } else if (res.status === 403) {
+          setIsAdmin(false);
+        } else {
+          setIsAdmin(false);
+        }
+      } catch (e) {
+        console.error("Admin check failed", e);
+        setIsAdmin(false);
+      }
+    }
+    initAdmin();
+  }, [session]);
+
+  const fetchConfig = async () => {
     try {
-       const token = await user?.getIdToken();
-       // Fetch users from server (since client rules block listing all users)
-       const res = await fetch('/api/admin/data', {
-         headers: { 'Authorization': `Bearer ${token}` }
-       });
-       const data = await res.json();
-       if (data.users) {
-         setUsers(data.users);
-         const pro = data.users.filter((u:any) => u.tier === 'pro').length;
-         setStats({
-           totalUsers: data.users.length,
-           proUsers: pro,
-           revenue: pro * 49000
-         });
-       }
-       if (data.apiKeyMasked) {
-         setApiKey(data.apiKeyMasked);
-       }
-    } catch(e) {
-       console.error("Failed to fetch admin data", e);
+      const res = await fetch('/api/admin/config', {
+        headers: { 'Authorization': `Bearer ${session?.access_token}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setApiKey(data.geminiApiKey || '');
+      }
+    } catch (e) {
+      console.error("Failed to fetch config", e);
     }
   };
 
   const handleUpdateApiKey = async () => {
-    if (!apiKey || apiKey.includes('*')) return;
+    if (!apiKey) return;
     setLoadingKey(true);
     try {
-      const token = await user?.getIdToken();
-      await fetch('/api/admin/config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+      const res = await fetch('/api/admin/config', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
         body: JSON.stringify({ geminiApiKey: apiKey })
       });
-      alert('API Key updated successfully');
-      fetchAdminData();
-    } catch(e) {
-      alert('Failed to update config');
+      if (res.ok) alert('API Key updated successfully!');
+      else alert('Failed to update API Key');
+    } catch (e) {
+      alert('Error updating config');
     } finally {
       setLoadingKey(false);
     }
   };
 
-  const handleUpdateUserTier = async (userId: string, newTier: string) => {
+  const handleUpdateUser = async (userId: string, updates: any) => {
+    setLoading(true);
     try {
-      const token = await user?.getIdToken();
-      await fetch('/api/admin/users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
-        body: JSON.stringify({ targetUserId: userId, tier: newTier })
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
+        body: JSON.stringify({ targetUserId: userId, ...updates })
       });
-      fetchAdminData();
-    } catch(e) {
-      alert('Failed to update user');
+      if (res.ok) {
+        alert('User updated successfully!');
+        // Refresh list
+        const updatedRes = await fetch('/api/admin/users', {
+          headers: { 'Authorization': `Bearer ${session?.access_token}` }
+        });
+        const data = await updatedRes.json();
+        setUsers(data);
+      } else {
+        alert('Failed to update user');
+      }
+    } catch (e) {
+      alert('Error updating user');
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (checking) return <div className="p-20 text-center"><Loader2 className="w-8 h-8 animate-spin mx-auto text-blue-500" /></div>;
-  if (!isAdmin) return <div className="p-20 text-center text-red-500 font-bold">Akses Ditolak. Anda bukan admin.</div>;
+  if (isAdmin === null) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
+        <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
+        <h1 className="text-2xl font-bold text-slate-800">Akses Ditolak</h1>
+        <p className="text-slate-500">Maaf, bre. Lo nggak punya role admin untuk masuk ke area ini.</p>
+      </div>
+    );
+  }
+
+  const proCount = users.filter(u => u.tier === 'pro').length;
 
   return (
-    <div className="max-w-6xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-extrabold mb-8">Admin Dashboard</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
-          <div className="flex items-center text-slate-500 mb-2"><Users className="w-5 h-5 mr-2" /> Total Pengguna</div>
-          <span className="text-3xl font-black text-slate-800">{stats.totalUsers}</span>
+    <div className="max-w-6xl mx-auto py-12 px-6">
+      <header className="mb-10">
+        <h1 className="text-4xl font-black text-slate-900 mb-2">Admin Cockpit 🧠</h1>
+        <p className="text-slate-500">Manage users, system configuration, and AI settings.</p>
+      </header>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center">
+          <div className="p-3 bg-blue-50 rounded-2xl mr-4"><Users className="w-6 h-6 text-blue-600" /></div>
+          <div>
+            <p className="text-sm text-slate-500 font-medium">Total Users</p>
+            <p className="text-2xl font-bold text-slate-900">{users.length}</p>
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
-          <div className="flex items-center text-blue-500 mb-2"><Activity className="w-5 h-5 mr-2" /> Pro Subs</div>
-          <span className="text-3xl font-black text-blue-600">{stats.proUsers}</span>
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center">
+          <div className="p-3 bg-indigo-50 rounded-2xl mr-4"><Activity className="w-6 h-6 text-indigo-600" /></div>
+          <div>
+            <p className="text-sm text-slate-500 font-medium">Pro Members</p>
+            <p className="text-2xl font-bold text-slate-900">{proCount}</p>
+          </div>
         </div>
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-center">
-          <div className="flex items-center text-green-500 mb-2"><CreditCard className="w-5 h-5 mr-2" /> Est. Revenue Monthly</div>
-          <span className="text-3xl font-black text-green-600">Rp {(stats.revenue).toLocaleString('id-ID')}</span>
+        <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center">
+          <div className="p-3 bg-emerald-50 rounded-2xl mr-4"><CreditCard className="w-6 h-6 text-emerald-600" /></div>
+          <div>
+            <p className="text-sm text-slate-500 font-medium">Conv. Rate</p>
+            <p className="text-2xl font-bold text-slate-900">
+              {users.length > 0 ? ((proCount / users.length) * 100).toFixed(1) : 0}%
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-10">
-        <h2 className="text-xl font-bold flex items-center mb-4"><Key className="w-6 h-6 mr-2 text-amber-500" /> Gemini API Key Config</h2>
-        <div className="flex gap-4">
+      {/* Config Section */}
+      <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-10">
+        <div className="flex items-center mb-6">
+          <Key className="w-6 h-6 text-amber-500 mr-3" />
+          <h2 className="text-xl font-bold text-slate-800">AI Engine Configuration</h2>
+        </div>
+        <div className="flex flex-col md:flex-row gap-4">
           <input 
-             type="text" 
-             value={apiKey} 
-             onChange={(e) => setApiKey(e.target.value)} 
-             className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500" 
-             placeholder="AIzaSy..." 
+            type="password" 
+            value={apiKey} 
+            onChange={(e) => setApiKey(e.target.value)} 
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all" 
+            placeholder="Enter Gemini API Key..." 
           />
-          <Button onClick={handleUpdateApiKey} disabled={loadingKey || apiKey.includes('*')} className="rounded-xl px-8">
-             {loadingKey ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5 mr-2" />}
-             Simpan
+          <Button 
+            onClick={handleUpdateApiKey} 
+            disabled={loadingKey} 
+            className="rounded-2xl px-8 bg-slate-900 hover:bg-slate-800"
+          >
+            {loadingKey ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
+            Update Key
           </Button>
         </div>
-      </div>
+      </section>
 
-      <div className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100">
-         <h2 className="text-xl font-bold mb-6">Manajemen Pengguna</h2>
-         <div className="overflow-x-auto">
-           <table className="w-full text-left border-collapse">
-             <thead>
-               <tr className="border-b border-slate-200">
-                 <th className="py-3 px-4 text-slate-500 font-semibold">User ID</th>
-                 <th className="py-3 px-4 text-slate-500 font-semibold">Email</th>
-                 <th className="py-3 px-4 text-slate-500 font-semibold">Tier</th>
-                 <th className="py-3 px-4 text-slate-500 font-semibold">Valid Until</th>
-                 <th className="py-3 px-4 text-slate-500 font-semibold">Aksi</th>
-               </tr>
-             </thead>
-             <tbody>
-               {users.map(u => (
-                 <tr key={u.id} className="border-b border-slate-100 hover:bg-slate-50">
-                   <td className="py-3 px-4 text-sm font-mono">{u.id.substring(0, 8)}...</td>
-                   <td className="py-3 px-4">{u.email || 'N/A'}</td>
-                   <td className="py-3 px-4">
-                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                       u.tier === 'pro' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'
-                     }`}>
-                       {u.tier || 'free'}
-                     </span>
-                   </td>
-                   <td className="py-3 px-4 text-sm text-slate-500">
-                     {u.tierExpiry ? new Date(u.tierExpiry).toLocaleDateString() : '-'}
-                   </td>
-                   <td className="py-3 px-4 flex gap-2">
-                     <select 
+      {/* User Table */}
+      <section className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div className="p-8 border-b border-slate-100">
+          <h2 className="text-xl font-bold text-slate-800">User Management</h2>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left">
+            <thead>
+              <tr className="bg-slate-50 text-slate-500 text-sm font-semibold">
+                <th className="py-4 px-6">User</th>
+                <th className="py-4 px-6">Tier</th>
+                <th className="py-4 px-6">Role</th>
+                <th className="py-4 px-6 text-right">Action</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {users.map(u => (
+                <tr key={u.id} className="hover:bg-slate-50 transition-colors">
+                  <td className="py-4 px-6">
+                    <div className="font-medium text-slate-900">{u.email || 'Unknown'}</div>
+                    <div className="text-xs text-slate-400 font-mono">{u.id}</div>
+                  </td>
+                  <td className="py-4 px-6">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                      u.tier === 'pro' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {u.tier || 'free'}
+                    </span>
+                  </td>
+                  <td className="py-4 px-6">
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                      u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-slate-100 text-slate-600'
+                    }`}>
+                      {u.role || 'user'}
+                    </span>
+                  </td>
+                  <td className="py-4 px-6 text-right">
+                    <div className="flex justify-end gap-2">
+                      <select 
                         value={u.tier || 'free'} 
-                        onChange={(e) => handleUpdateUserTier(u.id, e.target.value)}
-                        className="bg-slate-100 text-sm rounded-lg px-2 py-1 outline-none border border-slate-200"
-                     >
-                       <option value="free">Free</option>
-                       <option value="pro">Pro</option>
-                     </select>
-                   </td>
-                 </tr>
-               ))}
-             </tbody>
-           </table>
-         </div>
-      </div>
+                        onChange={(e) => handleUpdateUser(u.id, { tier: e.target.value })}
+                        className="bg-slate-100 text-xs rounded-lg px-2 py-1 border border-slate-200 outline-none"
+                      >
+                        <option value="free">Free</option>
+                        <option value="pro">Pro</option>
+                      </select>
+                      <select 
+                        value={u.role || 'user'} 
+                        onChange={(e) => handleUpdateUser(u.id, { role: e.target.value })}
+                        className="bg-slate-100 text-xs rounded-lg px-2 py-1 border border-slate-200 outline-none"
+                      >
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {loading && (
+          <div className="p-4 text-center bg-blue-50 text-blue-600 text-sm font-medium animate-pulse">
+            Updating user data...
+          </div>
+        )}
+      </section>
     </div>
   );
 }

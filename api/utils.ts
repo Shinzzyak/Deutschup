@@ -1,35 +1,33 @@
 import { GoogleGenAI } from "@google/genai";
-import admin from "firebase-admin";
-import { getFirestore } from "firebase-admin/firestore";
-import fs from "fs";
-import path from "path";
+import { createClient } from "@supabase/supabase-js";
 import "dotenv/config";
 
-let firebaseConfig: any = {};
-try {
-  firebaseConfig = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'firebase-applet-config.json'), 'utf-8'));
-} catch (e) {
-  console.log("No firebase-applet-config.json found");
-}
+export const getSupabaseAdminClient = () => {
+  return createClient(
+    process.env.SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+};
 
-if (!admin.apps.length && firebaseConfig.projectId) {
-  admin.initializeApp({
-    projectId: firebaseConfig.projectId
-  });
-}
-
-// Get the specific database for this applet
+// Get the Supabase client for database operations
 export const getDb = () => {
-  return getFirestore(admin.app(), firebaseConfig.firestoreDatabaseId || '(default)');
+  return getSupabaseAdminClient();
 };
 
 export async function getGeminiApiKey() {
   try {
-    const configDoc = await getDb().collection('config').doc('global').get();
-    if (configDoc.exists && configDoc.data()?.geminiApiKey) {
-      return configDoc.data()!.geminiApiKey;
+    const { data, error } = await getDb()
+      .from('config')
+      .select('geminiApiKey')
+      .eq('key', 'global')
+      .single();
+
+    if (!error && data?.geminiApiKey) {
+      return data.geminiApiKey;
     }
-  } catch(e) {}
+  } catch (e) {
+    console.error("Error fetching Gemini API Key from Supabase:", e);
+  }
   return process.env.GEMINI_API_KEY;
 }
 
@@ -62,20 +60,38 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   }
   const token = authHeader.split('Bearer ')[1];
   try {
-    const decodedUser = await admin.auth().verifyIdToken(token);
-    req.user = decodedUser;
+    const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
+    if (error || !user) {
+      throw new Error(error?.message || 'Invalid token');
+    }
+    req.user = user;
     next();
-  } catch (e) {
-    console.error('Invalid token', e);
+  } catch (e: any) {
+    console.error('Auth error:', e.message);
     res.status(401).json({ error: 'Invalid token' });
   }
 };
 
 export const adminMiddleware = async (req: any, res: any, next: any) => {
   const adminEmail = process.env.ADMIN_EMAIL;
+  
   if (adminEmail && req.user?.email && req.user.email === adminEmail) {
-    next();
-  } else {
-    res.status(403).json({ error: 'Forbidden' });
+    return next();
   }
+
+  try {
+    const { data: profile, error } = await getDb()
+      .from('profiles')
+      .select('role')
+      .eq('id', req.user?.id)
+      .single();
+
+    if (!error && profile?.role === 'admin') {
+      return next();
+    }
+  } catch (e) {
+    console.error('Admin check error:', e);
+  }
+
+  res.status(403).json({ error: 'Forbidden' });
 };
