@@ -42,7 +42,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const { user, loginWithGoogle, logout } = useAuthStore();
+  const { user, loginWithGoogle, logout, profileData } = useAuthStore();
   const { xp, streak } = useProgressStore();
 
   return (
@@ -112,7 +112,7 @@ function Layout({ children }: { children: React.ReactNode }) {
               <span className="hidden md:inline">Langganan</span>
             </Link>
           </li>
-          {user?.email === import.meta.env.VITE_ADMIN_EMAIL && (
+          {(user?.email === import.meta.env.VITE_ADMIN_EMAIL || profileData?.role === 'admin') && (
             <li>
               <Link to="/admin" className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl transition-colors font-medium focus:bg-red-50">
                 <ShieldCheck className="w-5 h-5 flex-shrink-0" />
@@ -130,14 +130,14 @@ function Layout({ children }: { children: React.ReactNode }) {
           ) : (
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center space-x-3 overflow-hidden">
-                <img src={user?.photoURL || ''} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" />
+                <img src={profileData?.avatar_url || user?.photoURL || ''} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" />
                 <div className="truncate hidden md:block lg:block">
-                  <p className="text-sm font-bold truncate">{user?.displayName}</p>
+                  <p className="text-sm font-bold truncate">{profileData?.full_name || user?.displayName}</p>
                   <p className="text-xs text-slate-400 truncate">{user?.email}</p>
                 </div>
                 {/* Show on mobile */}
                 <div className="truncate md:hidden">
-                  <p className="text-sm font-bold truncate">{user?.displayName}</p>
+                  <p className="text-sm font-bold truncate">{profileData?.full_name || user?.displayName}</p>
                 </div>
               </div>
               <button onClick={logout} className="text-slate-400 hover:text-red-500 focus:outline-none p-2" title="Keluar">
