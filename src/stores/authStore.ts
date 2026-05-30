@@ -38,13 +38,14 @@ export const useAuthStore = create<AuthState>((set, get) => {
           .single();
 
         if (error) {
-          console.warn('Could not fetch profile data:', error.message);
+          console.error('CRITICAL: Could not fetch profile data:', error.message);
           // If profile doesn't exist, create one
           const { error: createError } = await supabase
             .from('profiles')
             .insert({ id: user.id, tier: 'free', role: 'user' });
-          if (createError) console.error('Error creating default profile:', createError.message);
+          if (createError) console.error('CRITICAL: Error creating default profile:', createError.message);
         } else if (data) {
+          console.log('SUCCESS: Profile data fetched:', data);
           tierData = {
             tier: data.tier || 'free',
             tierExpiry: data.tierExpiry,

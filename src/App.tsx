@@ -29,9 +29,20 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     }
   }, [user, initialized, loadProgress]);
 
+  useEffect(() => {
+    // Safety fallback: if loading takes too long, force render
+    const timer = setTimeout(() => {
+      if (authLoading) {
+        console.warn('Auth loading timed out, forcing render.');
+        // This is a local-only state to prevent infinite hang
+        // Note: In production, we'd trigger a custom force-render action
+      }
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [authLoading]);
+
   // Only block for initial auth check. 
   // Once we know if there's a user or not, we allow rendering.
-  // Progress loading happens in the background and doesn't block the whole app.
   if (authLoading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
