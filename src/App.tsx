@@ -22,6 +22,7 @@ import QuickNoteWidget from './components/QuickNoteWidget';
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, loading: authLoading } = useAuthStore();
   const { loadProgress, initialized, loading: progressLoading } = useProgressStore();
+  const [timeout, setTimeoutState] = useState(false);
 
   useEffect(() => {
     if (user && !initialized) {
@@ -31,17 +32,11 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Safety fallback: if loading takes too long, force render
-    const timer = setTimeout(() => {
-      console.warn('Auth loading timed out, forcing render.');
-    }, 5000);
+    const timer = setTimeout(() => setTimeoutState(true), 5000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Only block for initial auth check. 
-  // Once we know if there's a user or not, we allow rendering.
-  if (authLoading) {
-    // We allow a small timeout before showing loader or just rendering children
-    // But for now, we use the basic loading state.
+  if (authLoading && !timeout) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-red-600" />
