@@ -118,7 +118,7 @@ function Layout({ children }: { children: React.ReactNode }) {
               <span className="hidden md:inline">Langganan</span>
             </Link>
           </li>
-          {(user?.email === import.meta.env.VITE_ADMIN_EMAIL || profileData?.role === 'admin') && (
+          {(user) && (
             <li>
               <Link to="/admin" className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl transition-colors font-medium focus:bg-red-50">
                 <ShieldCheck className="w-5 h-5 flex-shrink-0" />
