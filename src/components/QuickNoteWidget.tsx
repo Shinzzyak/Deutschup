@@ -20,7 +20,7 @@ export default function QuickNoteWidget() {
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
-    await saveQuickNote(user.uid, text);
+    await saveQuickNote(user.id, text);
     setTimeout(() => {
       setSaving(false);
       setIsOpen(false);

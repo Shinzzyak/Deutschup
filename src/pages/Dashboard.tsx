@@ -71,7 +71,7 @@ export default function Dashboard() {
       yPos += 10;
       doc.setFontSize(11);
       doc.setTextColor(60, 60, 60);
-      doc.text(`Nama: ${user?.displayName || 'Siswa'}`, 14, yPos);
+      doc.text(`Nama: ${user?user_metadata.full_name || 'Siswa'}`, 14, yPos);
       doc.text(`Level Saat Ini: ${currentLevel}`, 105, yPos);
       yPos += 8;
       doc.text(`Tanggal Laporan: ${new Date().toLocaleDateString('id-ID')}`, 14, yPos);
@@ -171,7 +171,7 @@ export default function Dashboard() {
         doc.text(`Dicetak melalui DeutschUp - Halaman ${i} dari ${pageCount}`, 14, doc.internal.pageSize.height - 10);
       }
 
-      doc.save(`DeutschUp-Report-${user?.displayName || 'Student'}.pdf`);
+      doc.save(`DeutschUp-Report-${user?user_metadata.full_name || 'Student'}.pdf`);
       
       const pdfBlob = doc.output('blob');
       const blobUrl = URL.createObjectURL(pdfBlob);
@@ -208,7 +208,7 @@ export default function Dashboard() {
             </span>
           )}
           {pdfBlobUrl && (
-            <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.displayName || 'Student'}.pdf`} className="text-[12px] font-bold text-indigo-500 mt-2 text-left md:text-right underline">
+            <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?user_metadata.full_name || 'Student'}.pdf`} className="text-[12px] font-bold text-indigo-500 mt-2 text-left md:text-right underline">
               Klik di sini untuk mengunduh manual ➔
             </a>
           )}

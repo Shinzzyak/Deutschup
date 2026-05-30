@@ -25,11 +25,14 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (user && !initialized) {
-      loadProgress(user.uid);
+      loadProgress(user.id);
     }
   }, [user, initialized, loadProgress]);
 
-  if (authLoading || (user && progressLoading && !initialized)) {
+  // Only block for initial auth check. 
+  // Once we know if there's a user or not, we allow rendering.
+  // Progress loading happens in the background and doesn't block the whole app.
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-red-600" />
@@ -37,7 +40,6 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  // Not blocking login anymore, guest mode is allowed
   return <>{children}</>;
 }
 
@@ -130,14 +132,14 @@ function Layout({ children }: { children: React.ReactNode }) {
           ) : (
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center space-x-3 overflow-hidden">
-                <img src={profileData?.avatar_url || user?.photoURL || ''} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" />
+                <img src={profileData?.avatar_url || user?.user_metadata?.avatar_url || ''} alt="Avatar" className="w-10 h-10 rounded-full border-2 border-white shadow-sm flex-shrink-0" />
                 <div className="truncate hidden md:block lg:block">
-                  <p className="text-sm font-bold truncate">{profileData?.full_name || user?.displayName}</p>
+                  <p className="text-sm font-bold truncate">{profileData?.full_name || user?.user_metadata?.full_name}</p>
                   <p className="text-xs text-slate-400 truncate">{user?.email}</p>
                 </div>
                 {/* Show on mobile */}
                 <div className="truncate md:hidden">
-                  <p className="text-sm font-bold truncate">{profileData?.full_name || user?.displayName}</p>
+                  <p className="text-sm font-bold truncate">{profileData?.full_name || user?.user_metadata?.full_name}</p>
                 </div>
               </div>
               <button onClick={logout} className="text-slate-400 hover:text-red-500 focus:outline-none p-2" title="Keluar">

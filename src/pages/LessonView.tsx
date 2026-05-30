@@ -201,7 +201,7 @@ export default function LessonView() {
   const handleNextQuestion = async () => {
     if (checkResult?.isCorrect) {
       if(user) {
-         await addXp(user.uid, 10);
+         await addXp(user.id, 10);
       }
       if (currentQuizIndex < exercises.length - 1) {
         setCurrentQuizIndex(prev => prev + 1);
@@ -222,10 +222,10 @@ export default function LessonView() {
   const finishLesson = async () => {
     setQuizFinished(true);
     if(user && lesson) {
-       await completeLesson(user.uid, lesson.id);
-       await addXp(user.uid, 50); // Bonus XP
+       await completeLesson(user.id, lesson.id);
+       await addXp(user.id, 50); // Bonus XP
        if (nextLessonId && !unlockedLessons.includes(nextLessonId)) {
-         await unlockLesson(user.uid, nextLessonId); 
+         await unlockLesson(user.id, nextLessonId); 
        }
     }
   };

@@ -29,17 +29,22 @@ export const useAuthStore = create<AuthState>((set, get) => {
     let tierData: TierData = { tier: 'free' };
     let profileData: ProfileData = {};
 
-    if (user) {
-      try {
+    try {
+      if (user) {
         const { data, error } = await supabase
           .from('profiles')
           .select('tier, tierExpiry, full_name, avatar_url, role')
           .eq('id', user.id)
           .single();
 
-        if (error || !data) {
-          console.warn('Could not fetch profile data:', error);
-        } else {
+        if (error) {
+          console.warn('Could not fetch profile data:', error.message);
+          // If profile doesn't exist, create one
+          const { error: createError } = await supabase
+            .from('profiles')
+            .insert({ id: user.id, tier: 'free', role: 'user' });
+          if (createError) console.error('Error creating default profile:', createError.message);
+        } else if (data) {
           tierData = {
             tier: data.tier || 'free',
             tierExpiry: data.tierExpiry,
@@ -50,18 +55,22 @@ export const useAuthStore = create<AuthState>((set, get) => {
             role: data.role,
           };
         }
-
-        // Admin Override based on Env
-        if (user.email && user.email === import.meta.env.VITE_ADMIN_EMAIL) {
-          tierData.tier = 'pro';
-          profileData.role = 'admin';
-        }
-      } catch (e) {
-        console.error('Error fetching profile data:', e);
       }
+    } catch (e) {
+      console.error('Error fetching profile data:', e);
+    } finally {
+      // Ensure loading is ALWAYS set to false to prevent hanging screens
+      set({ user, tierData, profileData, loading: false });
     }
     
-    set({ user, tierData, profileData, loading: false });
+    // Admin Override: Always check email regardless of DB role for the primary admin
+    // This is done in a separate set to ensure it overrides any DB data
+    if (user?.email === import.meta.env.VITE_ADMIN_EMAIL) {
+      set({ 
+        tierData: { ...tierData, tier: 'pro' }, 
+        profileData: { ...profileData, role: 'admin' } 
+      });
+    }
   };
 
   // Immediate session recovery on load

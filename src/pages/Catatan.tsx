@@ -18,7 +18,7 @@ export default function Catatan() {
 
   useEffect(() => {
     if (user) {
-      fetchData(user.uid);
+      fetchData(user.id);
     }
   }, [user, fetchData]);
 
@@ -33,7 +33,7 @@ export default function Catatan() {
 
   const handleAddNote = async () => {
     if (!user || !newNote.trim()) return;
-    await addNote(user.uid, newNote.trim(), newNoteTag);
+    await addNote(user.id, newNote.trim(), newNoteTag);
     setNewNote('');
   };
 
@@ -49,7 +49,7 @@ export default function Catatan() {
       const data = await resp.json();
       if (data.tasks && data.tasks.length > 0) {
         const tasks = data.tasks.map((t: any) => ({ ...t, id: Math.random().toString(36).substring(7), completed: false }));
-        await saveStudyPlan(user.uid, tasks);
+        await saveStudyPlan(user.id, tasks);
       } else {
         alert("Gagal membuat rencana belajar. Herr Deutsch mungkin sedang sibuk, silakan coba lagi.");
       }
@@ -110,7 +110,7 @@ export default function Catatan() {
                 
                 <ul className="space-y-3 mt-4">
                   {studyPlan.tasks.map(task => (
-                    <li key={task.id} className="flex items-start space-x-3 p-3 bg-white hover:bg-slate-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-slate-200" onClick={() => user && toggleTask(user.uid, task.id)}>
+                    <li key={task.id} className="flex items-start space-x-3 p-3 bg-white hover:bg-slate-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-slate-200" onClick={() => user && toggleTask(user.id, task.id)}>
                       <button className="flex-shrink-0 mt-0.5">
                          {task.completed ? <CheckCircle2 className="w-6 h-6 text-green-500" /> : <Circle className="w-6 h-6 text-slate-300" />}
                       </button>
@@ -174,7 +174,7 @@ export default function Catatan() {
                  <div key={note.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl relative group">
                     <div className="flex justify-between items-start mb-2">
                        <span className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600">{note.tag}</span>
-                       <button onClick={() => user && deleteNote(user.uid, note.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                       <button onClick={() => user && deleteNote(user.id, note.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
                          <Trash2 className="w-4 h-4" />
                        </button>
                     </div>

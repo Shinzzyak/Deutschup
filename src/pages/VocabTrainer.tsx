@@ -47,7 +47,7 @@ export default function VocabTrainer() {
   const handleAnswer = async (known: boolean) => {
     if (!currentCard || !user) return;
     
-    await updateVocab(user.uid, currentCard.id, known ? 'known' : 'learning');
+    await updateVocab(user.id, currentCard.id, known ? 'known' : 'learning');
     setIsFlipped(false);
     setExamples(null);
     setPronunciation(null);

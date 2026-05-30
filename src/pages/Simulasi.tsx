@@ -112,13 +112,13 @@ export default function MockTest() {
     setScoreInfo({ score: correctCount, total: questions.length });
 
     if (user) {
-      await saveMockTest(user.uid, {
+      await saveMockTest(user.id, {
          level,
          score: correctCount,
          total: questions.length,
          createdAt: Date.now()
       });
-      await addXp(user.uid, correctCount * 10);
+      await addXp(user.id, correctCount * 10);
     }
 
     try {
