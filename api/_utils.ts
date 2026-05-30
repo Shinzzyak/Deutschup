@@ -74,9 +74,14 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
 
 export const adminMiddleware = async (req: any, res: any, next: any) => {
   const adminEmail = process.env.ADMIN_EMAIL;
+  const userEmail = req.user?.email;
   
+  console.log(`[AdminMiddleware] Checking access for: ${userEmail}`);
+  console.log(`[AdminMiddleware] Expected Admin Email: ${adminEmail}`);
+
   // 1. Absolute Override: Check if user email matches the master admin email in ENV
-  if (adminEmail && req.user?.email && req.user.email === adminEmail) {
+  if (adminEmail && userEmail && userEmail.toLowerCase().trim() === adminEmail.toLowerCase().trim()) {
+    console.log(`[AdminMiddleware] Access GRANTED via Email Override for: ${userEmail}`);
     return next();
   }
 
@@ -89,12 +94,16 @@ export const adminMiddleware = async (req: any, res: any, next: any) => {
       .single();
 
     if (!error && profile?.role === 'admin') {
+      console.log(`[AdminMiddleware] Access GRANTED via DB Role for: ${userEmail}`);
       return next();
     }
   } catch (e) {
-    console.error('Admin check error:', e);
+    console.error(`[AdminMiddleware] DB check error for ${userEmail}:`, e);
   }
 
-  // 3. Final Fallback: Deny access
-  res.status(403).json({ error: 'Forbidden: Admin privileges required' });
+  console.warn(`[AdminMiddleware] Access DENIED for: ${userEmail}`);
+  res.status(403).json({ 
+    error: 'Forbidden: Admin privileges required',
+    debug: process.env.NODE_ENV === 'development' ? { userEmail, adminEmail } : undefined 
+  });
 };
