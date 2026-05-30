@@ -75,11 +75,13 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
 export const adminMiddleware = async (req: any, res: any, next: any) => {
   const adminEmail = process.env.ADMIN_EMAIL;
   
+  // 1. Absolute Override: Check if user email matches the master admin email in ENV
   if (adminEmail && req.user?.email && req.user.email === adminEmail) {
     return next();
   }
 
   try {
+    // 2. Database Check: Check if the user has the 'admin' role in their profile
     const { data: profile, error } = await getDb()
       .from('profiles')
       .select('role')
@@ -93,5 +95,6 @@ export const adminMiddleware = async (req: any, res: any, next: any) => {
     console.error('Admin check error:', e);
   }
 
-  res.status(403).json({ error: 'Forbidden' });
+  // 3. Final Fallback: Deny access
+  res.status(403).json({ error: 'Forbidden: Admin privileges required' });
 };
