@@ -1,4 +1,4 @@
-import { runMiddleware, authMiddleware, getDb } from '../utils';
+import { runMiddleware, authMiddleware, getDb } from '../_utils';
 
 export default async function handler(req: any, res: any) {
   console.log('[DEBUG-ENDPOINT] Request received');
