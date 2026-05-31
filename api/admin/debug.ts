@@ -1,4 +1,4 @@
-import { runMiddleware, authMiddleware, getDb } from '../_utils';
+import { runMiddleware, authMiddleware, getDb } from '../_utils.js';
 
 export default async function handler(req: any, res: any) {
   console.log('[DEBUG-ENDPOINT] Request received');
@@ -9,7 +9,6 @@ export default async function handler(req: any, res: any) {
   }
   
   try {
-    // We use a simplified auth check to avoid middleware crashes
     await runMiddleware(req, res, authMiddleware);
     
     const user = req.user;
