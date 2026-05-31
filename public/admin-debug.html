@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Debug</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #0a0a0a;
+    color: #e0e0e0;
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  h1 {
+    font-size: 14px;
+    color: #555;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #1a1a1a;
+    padding-bottom: 12px;
+  }
+  .card {
+    background: #111;
+    border: 1px solid #1e1e1e;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+  .label {
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+  .value {
+    font-size: 13px;
+    color: #ccc;
+    word-break: break-all;
+  }
+  .token-box {
+    background: #0d0d0d;
+    border: 1px solid #1e1e1e;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 11px;
+    color: #3a3a3a;
+    word-break: break-all;
+    max-height: 80px;
+    overflow: hidden;
+  }
+  .token-found { color: #2a7a2a; }
+  .token-missing { color: #7a2a2a; }
+  button {
+    width: 100%;
+    padding: 14px;
+    background: #0f2a0f;
+    border: 1px solid #1a4a1a;
+    border-radius: 8px;
+    color: #4caf50;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: all 0.2s;
+  }
+  button:hover { background: #162e16; border-color: #2a6a2a; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .result {
+    background: #0d0d0d;
+    border: 1px solid #1e1e1e;
+    border-radius: 8px;
+    padding: 16px;
+    font-size: 12px;
+    line-height: 1.8;
+    display: none;
+  }
+  .result.show { display: block; }
+  .granted { color: #4caf50; }
+  .denied { color: #f44336; }
+  .neutral { color: #888; }
+  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #161616; }
+  .row:last-child { border-bottom: none; }
+  .key { color: #555; font-size: 11px; }
+  .spinner {
+    display: none;
+    text-align: center;
+    padding: 20px;
+    color: #333;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+  .spinner.show { display: block; }
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .badge-green { background: #0f2a0f; color: #4caf50; border: 1px solid #1a4a1a; }
+  .badge-red { background: #2a0f0f; color: #f44336; border: 1px solid #4a1a1a; }
+  .badge-yellow { background: #2a2a0f; color: #ffeb3b; border: 1px solid #4a4a1a; }
+  .raw-toggle {
+    font-size: 11px;
+    color: #333;
+    cursor: pointer;
+    text-decoration: underline;
+    margin-top: 12px;
+    display: block;
+  }
+  pre {
+    background: #080808;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 11px;
+    color: #2a6a2a;
+    overflow-x: auto;
+    margin-top: 8px;
+    display: none;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  pre.show { display: block; }
+</style>
+</head>
+<body>
+
+<h1>⬡ Admin Debug Panel</h1>
+
+<div class="card">
+  <div class="label">Token Status</div>
+  <div class="token-box" id="tokenBox">Scanning localStorage...</div>
+</div>
+
+<div class="card" id="userCard" style="display:none">
+  <div class="label">Detected Session</div>
+  <div class="value" id="userEmail">—</div>
+</div>
+
+<button id="btnTest" onclick="runDebug()">▶ RUN ADMIN DEBUG</button>
+
+<div class="spinner" id="spinner">QUERYING SERVER...</div>
+
+<div class="result" id="result">
+  <div class="row">
+    <span class="key">AUTHENTICATED</span>
+    <span id="rAuth">—</span>
+  </div>
+  <div class="row">
+    <span class="key">USER EMAIL</span>
+    <span id="rEmail" class="neutral">—</span>
+  </div>
+  <div class="row">
+    <span class="key">ADMIN_EMAIL ENV</span>
+    <span id="rEnv">—</span>
+  </div>
+  <div class="row">
+    <span class="key">EMAIL MATCH</span>
+    <span id="rMatch">—</span>
+  </div>
+  <div class="row">
+    <span class="key">DB ROLE</span>
+    <span id="rRole">—</span>
+  </div>
+  <div class="row">
+    <span class="key">FINAL DECISION</span>
+    <span id="rDecision" style="font-weight:bold">—</span>
+  </div>
+  <span class="raw-toggle" onclick="toggleRaw()">show raw JSON</span>
+  <pre id="rawJson"></pre>
+</div>
+
+<script>
+const DEBUG_URL = 'https://deutschup.sintec.my.id/api/admin/debug';
+let token = null;
+
+function findToken() {
+  // Try all common Supabase key patterns
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (!key) continue;
+    if (key.includes('supabase') || key.includes('auth') || key.includes('session')) {
+      try {
+        const val = JSON.parse(localStorage.getItem(key));
+        // supabase.auth.token format
+        if (val?.access_token) return { token: val.access_token, email: val.user?.email };
+        // supabase v2 format
+        if (val?.session?.access_token) return { token: val.session.access_token, email: val.session.user?.email };
+        if (val?.currentSession?.access_token) return { token: val.currentSession.access_token, email: val.currentSession.user?.email };
+      } catch(e) {}
+    }
+  }
+
+  // Fallback: scan all keys for access_token
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    try {
+      const val = JSON.parse(localStorage.getItem(key));
+      if (val?.access_token) return { token: val.access_token, email: val.user?.email };
+    } catch(e) {}
+  }
+
+  return null;
+}
+
+function init() {
+  const found = findToken();
+  const box = document.getElementById('tokenBox');
+  const btn = document.getElementById('btnTest');
+
+  if (found) {
+    token = found.token;
+    box.innerHTML = `<span class="token-found">✓ TOKEN FOUND</span><br>${token.substring(0,40)}...`;
+    if (found.email) {
+      document.getElementById('userCard').style.display = 'block';
+      document.getElementById('userEmail').textContent = found.email;
+    }
+  } else {
+    box.innerHTML = `<span class="token-missing">✗ NO TOKEN FOUND — Are you logged in on this domain?</span>`;
+    btn.disabled = true;
+  }
+}
+
+async function runDebug() {
+  if (!token) return;
+  document.getElementById('spinner').classList.add('show');
+  document.getElementById('result').classList.remove('show');
+  document.getElementById('btnTest').disabled = true;
+
+  try {
+    const res = await fetch(DEBUG_URL, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    });
+    const data = await res.json();
+
+    document.getElementById('spinner').classList.remove('show');
+    document.getElementById('result').classList.add('show');
+    document.getElementById('btnTest').disabled = false;
+
+    const b = (val, t, f) => `<span class="badge ${val ? 'badge-green' : 'badge-red'}">${val ? t : f}</span>`;
+
+    document.getElementById('rAuth').innerHTML = b(data.auth?.isAuthenticated, 'YES', 'NO');
+    document.getElementById('rEmail').textContent = data.auth?.userEmail || '—';
+    document.getElementById('rEnv').innerHTML = b(data.env?.adminEmailSet, `SET (${data.env?.adminEmailValue})`, 'NOT SET');
+    document.getElementById('rMatch').innerHTML = b(data.logic?.emailMatch, 'TRUE ✓', 'FALSE ✗');
+    document.getElementById('rRole').innerHTML = `<span class="badge badge-yellow">${data.database?.role || '?'}</span>${data.database?.error ? ` <span style="color:#555;font-size:10px">(${data.database.error})</span>` : ''}`;
+
+    const granted = data.logic?.finalDecision === 'GRANTED';
+    document.getElementById('rDecision').innerHTML = `<span class="badge ${granted ? 'badge-green' : 'badge-red'}">${data.logic?.finalDecision || '?'}</span>`;
+
+    document.getElementById('rawJson').textContent = JSON.stringify(data, null, 2);
+  } catch(e) {
+    document.getElementById('spinner').classList.remove('show');
+    document.getElementById('result').classList.add('show');
+    document.getElementById('btnTest').disabled = false;
+    document.getElementById('rDecision').innerHTML = `<span class="badge badge-red">ERROR: ${e.message}</span>`;
+  }
+}
+
+function toggleRaw() {
+  document.getElementById('rawJson').classList.toggle('show');
+}
+
+init();
+</script>
+</body>
+</html>
