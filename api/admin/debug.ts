@@ -1,43 +1,66 @@
-import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../utils';
+import { runMiddleware, authMiddleware, getDb } from '../utils';
 
 export default async function handler(req: any, res: any) {
-  if (req.method !== 'GET') return res.status(405).end();
+  console.log('[DEBUG-ENDPOINT] Request received');
+  
+  if (req.method !== 'GET') {
+    console.log('[DEBUG-ENDPOINT] Method not GET');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
   
   try {
-    // We only use authMiddleware here, NOT adminMiddleware, 
-    // so we can see why the admin check is failing.
+    // We use a simplified auth check to avoid middleware crashes
     await runMiddleware(req, res, authMiddleware);
     
     const user = req.user;
-    const adminEmailEnv = process.env.ADMIN_EMAIL;
+    console.log('[DEBUG-ENDPOINT] User identified:', user?.email);
     
-    // Check if the user is an admin according to the logic we implemented
-    const isEmailAdmin = adminEmailEnv && user?.email === adminEmailEnv;
+    const adminEmailEnv = process.env.ADMIN_EMAIL;
+    console.log('[DEBUG-ENDPOINT] Env ADMIN_EMAIL:', adminEmailEnv ? 'SET' : 'NOT SET');
     
     let dbRole = 'unknown';
-    try {
-      const { data } = await getDb().from('profiles').select('role').eq('id', user?.id).single();
-      dbRole = data?.role || 'not found';
-    } catch (e) {}
+    let dbError = null;
+    
+    if (user && user.id) {
+      try {
+        const { data, error } = await getDb().from('profiles').select('role').eq('id', user.id).single();
+        if (error) {
+          dbError = error.message;
+        } else {
+          dbRole = data?.role || 'not found';
+        }
+      } catch (e: any) {
+        dbError = e.message;
+      }
+    }
 
     return res.json({
-      message: "Debug Info",
+      status: "Surgical Debugging Active",
       auth: {
         isAuthenticated: !!user,
-        userEmail: user?.email,
-        userId: user?.id,
+        userEmail: user?.email || 'No email found',
+        userId: user?.id || 'No ID found',
       },
       env: {
         adminEmailSet: !!adminEmailEnv,
         adminEmailValue: adminEmailEnv ? `${adminEmailEnv.substring(0,3)}...${adminEmailEnv.slice(-4)}` : 'NOT SET',
       },
+      database: {
+        role: dbRole,
+        error: dbError
+      },
       logic: {
-        emailMatch: isEmailAdmin,
-        dbRole: dbRole,
-        finalDecision: (isEmailAdmin || dbRole === 'admin') ? 'GRANTED' : 'DENIED'
+        emailMatch: (adminEmailEnv && user?.email && adminEmailEnv.toLowerCase().trim() === user.email.toLowerCase().trim()),
+        isDbAdmin: dbRole === 'admin',
+        finalDecision: (adminEmailEnv && user?.email && adminEmailEnv.toLowerCase().trim() === user.email.toLowerCase().trim()) || dbRole === 'admin' ? 'GRANTED' : 'DENIED'
       }
     });
   } catch (e: any) {
-    res.status(500).json({ error: e.message });
+    console.error('[DEBUG-ENDPOINT] Critical Crash:', e);
+    return res.status(500).json({ 
+      error: "Critical Debugger Failure", 
+      details: e.message,
+      stack: process.env.NODE_ENV === 'development' ? e.stack : undefined
+    });
   }
 }
