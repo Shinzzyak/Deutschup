@@ -16,6 +16,7 @@ interface ProfileData {
 
 interface AuthState {
   user: User | null;
+  session: any;
   tierData: TierData;
   profileData: ProfileData;
   loading: boolean;
@@ -60,7 +61,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
         tierData = { ...tierData, tier: 'pro' };
         profileData = { ...profileData, role: 'admin' };
       }
-      set({ user, tierData, profileData, loading: false, isRefreshing: false });
+      set({ user, session, tierData, profileData, loading: false, isRefreshing: false });
     }
   };
 
@@ -69,6 +70,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
   return {
     user: null,
+    session: null,
     tierData: { tier: 'free' },
     profileData: {},
     loading: true,

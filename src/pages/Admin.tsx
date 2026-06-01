@@ -1,150 +1,94 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { supabase } from '../lib/supabase';
 
 export default function Admin() {
-  const { user } = useAuthStore();
-  const [session, setSession] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const { session, loading, profileData } = useAuthStore();
   const [users, setUsers] = useState<any[]>([]);
   const [apiKey, setApiKey] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [loadingKey, setLoadingKey] = useState(false);
-  const adminCheckDone = useRef(false);
+  const [savingKey, setSavingKey] = useState(false);
+  const [savingUser, setSavingUser] = useState(false);
+  const [fetching, setFetching] = useState(false);
 
+  // Once store confirms admin + we have a session, fetch data
   useEffect(() => {
-    let cancelled = false;
+    if (profileData.role !== 'admin' || !session) return;
 
-    async function performAdminCheck(currentSession: any) {
-      if (cancelled) return;
-      setSession(currentSession);
-
-      const res = await fetch('/api/admin/users', {
-        headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-      });
-
-      if (cancelled) return;
-
-      if (res.ok) {
-        const data = await res.json();
-        setUsers(data);
-        setIsAdmin(true);
-        adminCheckDone.current = true;
-
-        const configRes = await fetch('/api/admin/config', {
-          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-        });
-        if (configRes.ok && !cancelled) {
-          const configData = await configRes.json();
-          setApiKey(configData.geminiApiKey || '');
-        }
-      } else {
-        setIsAdmin(false);
-      }
-    }
-
-    async function initialize() {
+    async function fetchData() {
+      setFetching(true);
       try {
-        // 1. Coba ambil session langsung
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        if (currentSession) {
-          await performAdminCheck(currentSession);
-          return;
+        const [usersRes, configRes] = await Promise.all([
+          fetch('/api/admin/users', {
+            headers: { 'Authorization': `Bearer ${session.access_token}` }
+          }),
+          fetch('/api/admin/config', {
+            headers: { 'Authorization': `Bearer ${session.access_token}` }
+          })
+        ]);
+
+        if (usersRes.ok) setUsers(await usersRes.json());
+        if (configRes.ok) {
+          const d = await configRes.json();
+          setApiKey(d.geminiApiKey || '');
         }
-        // Session null → tunggu auth state change, jangan langsung tolak
       } catch (e) {
-        console.error("Admin initialization failed", e);
-        if (!cancelled) setIsAdmin(false);
+        console.error('Fetch admin data failed', e);
+      } finally {
+        setFetching(false);
       }
     }
-
-    initialize();
-
-    // 2. Fallback: subscribe ke auth state change
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (cancelled || adminCheckDone.current) return;
-      if (session) {
-        // Session baru muncul → trigger admin check
-        try {
-          await performAdminCheck(session);
-          adminCheckDone.current = true;
-        } catch (e) {
-          console.error("Admin check via onAuthStateChange failed", e);
-          setIsAdmin(false);
-        }
-      } else {
-        // User signed out atau gak login
-        setIsAdmin(false);
-      }
-    });
-
-    return () => {
-      cancelled = true;
-      subscription.unsubscribe();
-    };
-  }, []);
-
-  const fetchConfig = async () => {
-    try {
-      const res = await fetch('/api/admin/config', {
-        headers: { 'Authorization': `Bearer ${session?.access_token}` }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        setApiKey(data.geminiApiKey || '');
-      }
-    } catch (e) {
-      console.error("Failed to fetch config", e);
-    }
-  };
+    fetchData();
+  }, [profileData.role, session]);
 
   const handleUpdateApiKey = async () => {
-    if (!apiKey) return;
-    setLoadingKey(true);
+    if (!apiKey || !session) return;
+    setSavingKey(true);
     try {
       const res = await fetch('/api/admin/config', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({ geminiApiKey: apiKey })
       });
-      if (res.ok) alert('API Key updated successfully!');
-      else alert('Failed to update API Key');
-    } catch (e) {
+      alert(res.ok ? 'API Key updated!' : 'Failed to update');
+    } catch {
       alert('Error updating config');
     } finally {
-      setLoadingKey(false);
+      setSavingKey(false);
     }
   };
 
   const handleUpdateUser = async (userId: string, updates: any) => {
-    setLoading(true);
+    if (!session) return;
+    setSavingUser(true);
     try {
       const res = await fetch('/api/admin/users', {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token}` },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
         body: JSON.stringify({ targetUserId: userId, ...updates })
       });
       if (res.ok) {
-        alert('User updated successfully!');
-        // Refresh list
-        const updatedRes = await fetch('/api/admin/users', {
-          headers: { 'Authorization': `Bearer ${session?.access_token}` }
+        const updated = await fetch('/api/admin/users', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
         });
-        const data = await updatedRes.json();
-        setUsers(data);
-      } else {
-        alert('Failed to update user');
+        setUsers(await updated.json());
       }
-    } catch (e) {
+      alert(res.ok ? 'User updated!' : 'Failed to update');
+    } catch {
       alert('Error updating user');
     } finally {
-      setLoading(false);
+      setSavingUser(false);
     }
   };
 
-  if (isAdmin === null) {
+  // --- Render Gates ---
+  if (loading || fetching) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
@@ -152,7 +96,7 @@ export default function Admin() {
     );
   }
 
-  if (!isAdmin) {
+  if (!session || profileData.role !== 'admin') {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
         <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
@@ -171,7 +115,7 @@ export default function Admin() {
         <p className="text-slate-500">Manage users, system configuration, and AI settings.</p>
       </header>
 
-      {/* Stats Grid */}
+      {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center">
           <div className="p-3 bg-blue-50 rounded-2xl mr-4"><Users className="w-6 h-6 text-blue-600" /></div>
@@ -198,26 +142,22 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* Config Section */}
+      {/* API Key Config */}
       <section className="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-10">
         <div className="flex items-center mb-6">
           <Key className="w-6 h-6 text-amber-500 mr-3" />
           <h2 className="text-xl font-bold text-slate-800">AI Engine Configuration</h2>
         </div>
         <div className="flex flex-col md:flex-row gap-4">
-          <input 
-            type="password" 
-            value={apiKey} 
-            onChange={(e) => setApiKey(e.target.value)} 
-            className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all" 
-            placeholder="Enter Gemini API Key..." 
+          <input
+            type="password"
+            value={apiKey}
+            onChange={(e) => setApiKey(e.target.value)}
+            className="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+            placeholder="Enter Gemini API Key..."
           />
-          <Button 
-            onClick={handleUpdateApiKey} 
-            disabled={loadingKey} 
-            className="rounded-2xl px-8 bg-slate-900 hover:bg-slate-800"
-          >
-            {loadingKey ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
+          <Button onClick={handleUpdateApiKey} disabled={savingKey} className="rounded-2xl px-8 bg-slate-900 hover:bg-slate-800">
+            {savingKey ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
             Update Key
           </Button>
         </div>
@@ -261,16 +201,16 @@ export default function Admin() {
                   </td>
                   <td className="py-4 px-6 text-right">
                     <div className="flex justify-end gap-2">
-                      <select 
-                        value={u.tier || 'free'} 
+                      <select
+                        value={u.tier || 'free'}
                         onChange={(e) => handleUpdateUser(u.id, { tier: e.target.value })}
                         className="bg-slate-100 text-xs rounded-lg px-2 py-1 border border-slate-200 outline-none"
                       >
                         <option value="free">Free</option>
                         <option value="pro">Pro</option>
                       </select>
-                      <select 
-                        value={u.role || 'user'} 
+                      <select
+                        value={u.role || 'user'}
                         onChange={(e) => handleUpdateUser(u.id, { role: e.target.value })}
                         className="bg-slate-100 text-xs rounded-lg px-2 py-1 border border-slate-200 outline-none"
                       >
@@ -284,7 +224,7 @@ export default function Admin() {
             </tbody>
           </table>
         </div>
-        {loading && (
+        {savingUser && (
           <div className="p-4 text-center bg-blue-50 text-blue-600 text-sm font-medium animate-pulse">
             Updating user data...
           </div>
