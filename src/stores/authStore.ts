@@ -26,7 +26,10 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => {
+  let authVersion = 0;
+
   const updateAuthState = async (session: any) => {
+    const myVersion = ++authVersion;
     set({ isRefreshing: true });
 
     const user = session?.user ?? null;
@@ -55,6 +58,8 @@ export const useAuthStore = create<AuthState>((set, get) => {
     } catch (e) {
       console.error('Critical auth sync error:', e);
     } finally {
+      // Stale guard: if a newer call has started, discard this result
+      if (myVersion !== authVersion) return;
       // Force Admin Access
       if (user?.email === import.meta.env.VITE_ADMIN_EMAIL) {
         tierData = { ...tierData, tier: 'pro' };
@@ -64,9 +69,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
     }
   };
 
+  // Primary: getSession() triggers localStorage read + populates internal state
+  supabase.auth.getSession().then(({ data: { session } }) => updateAuthState(session));
+
   supabase.auth.onAuthStateChange(async (event, session) => {
-    // INITIAL_SESSION provides the session — no need for getSession() which races
-    if (event === 'SIGNED_OUT' && get().user) return;
     await updateAuthState(session);
   });
 
