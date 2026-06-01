@@ -1,6 +1,13 @@
 import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../_utils';
 
 export default async function handler(req: any, res: any) {
+  // CORS preflight — OPTIONS gak perlu auth
+  if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    return res.status(200).end();
+  }
+
   const { slug } = req.query;
   const path = Array.isArray(slug) ? slug.join('/') : slug;
 
