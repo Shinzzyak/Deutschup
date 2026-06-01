@@ -45,10 +45,10 @@ export default function Admin() {
     if (!session) { alert('Session not ready, try again'); return; }
     if (!apiKey) { alert('API Key is empty'); return; }
     setSavingKey(true);
-    alert(`Sending PATCH to: /api/admin/config with session: ${!!session}`);
+    alert(`Sending POST to: /api/admin/config with session: ${!!session}`);
     try {
       const res = await fetch('/api/admin/config', {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
@@ -68,7 +68,7 @@ export default function Admin() {
     setSavingUser(true);
     try {
       const res = await fetch('/api/admin/users', {
-        method: 'PATCH',
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`

@@ -3,7 +3,7 @@ import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../_utils
 export default async function handler(req: any, res: any) {
   // CORS preflight — OPTIONS gak perlu auth
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Methods', 'GET, PATCH, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(200).end();
   }
@@ -24,7 +24,7 @@ export default async function handler(req: any, res: any) {
           .order('created_at', { ascending: false });
         if (error) throw error;
         return res.json(data);
-      } else if (req.method === 'PATCH') {
+      } else if (req.method === 'POST') {
         const { targetUserId, tier, role } = req.body;
         const updateData: any = {};
         if (tier) {
@@ -41,7 +41,7 @@ export default async function handler(req: any, res: any) {
         const { data, error } = await getDb().from('config').select('*').eq('key', 'global').single();
         if (error) throw error;
         return res.json(data);
-      } else if (req.method === 'PATCH') {
+      } else if (req.method === 'POST') {
         const { geminiApiKey } = req.body;
         const { error } = await getDb().from('config').upsert({ key: 'global', geminiApiKey });
         if (error) throw error;
