@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -12,47 +12,78 @@ export default function Admin() {
   const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingKey, setLoadingKey] = useState(false);
+  const adminCheckDone = useRef(false);
 
   useEffect(() => {
-    async function initialize() {
-      try {
-        // 1. Ambil session langsung
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        setSession(currentSession);
+    let cancelled = false;
 
-        // 2. Kalau session gak ada, langsung tolak akses
-        if (!currentSession) {
-          setIsAdmin(false);
-          return;
-        }
+    async function performAdminCheck(currentSession: any) {
+      if (cancelled) return;
+      setSession(currentSession);
 
-        // 3. Eksekusi admin check menggunakan session yang baru didapat
-        const res = await fetch('/api/admin/users', {
+      const res = await fetch('/api/admin/users', {
+        headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+      });
+
+      if (cancelled) return;
+
+      if (res.ok) {
+        const data = await res.json();
+        setUsers(data);
+        setIsAdmin(true);
+        adminCheckDone.current = true;
+
+        const configRes = await fetch('/api/admin/config', {
           headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
-
-        if (res.ok) {
-          const data = await res.json();
-          setUsers(data);
-          setIsAdmin(true);
-
-          // 4. Fetch config sekalian
-          const configRes = await fetch('/api/admin/config', {
-            headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
-          });
-          if (configRes.ok) {
-            const configData = await configRes.json();
-            setApiKey(configData.geminiApiKey || '');
-          }
-        } else {
-          setIsAdmin(false);
+        if (configRes.ok && !cancelled) {
+          const configData = await configRes.json();
+          setApiKey(configData.geminiApiKey || '');
         }
-      } catch (e) {
-        console.error("Admin initialization failed", e);
+      } else {
         setIsAdmin(false);
       }
     }
+
+    async function initialize() {
+      try {
+        // 1. Coba ambil session langsung
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        if (currentSession) {
+          await performAdminCheck(currentSession);
+          return;
+        }
+        // Session null → tunggu auth state change, jangan langsung tolak
+      } catch (e) {
+        console.error("Admin initialization failed", e);
+        if (!cancelled) setIsAdmin(false);
+      }
+    }
+
     initialize();
+
+    // 2. Fallback: subscribe ke auth state change
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (cancelled || adminCheckDone.current) return;
+      if (session) {
+        // Session baru muncul → trigger admin check
+        try {
+          await performAdminCheck(session);
+          adminCheckDone.current = true;
+        } catch (e) {
+          console.error("Admin check via onAuthStateChange failed", e);
+          setIsAdmin(false);
+        }
+      } else {
+        // User signed out atau gak login
+        setIsAdmin(false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const fetchConfig = async () => {
