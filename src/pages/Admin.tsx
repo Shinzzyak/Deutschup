@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { supabase } from '../lib/supabase';
 
 export default function Admin() {
-  const { user, session } = useAuthStore();
+  const { user } = useAuthStore();
+  const [session, setSession] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [users, setUsers] = useState<any[]>([]);
   const [apiKey, setApiKey] = useState('');
@@ -12,9 +14,21 @@ export default function Admin() {
   const [loadingKey, setLoadingKey] = useState(false);
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session);
+    });
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (!session) setIsAdmin(false);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [session]);
+
+  useEffect(() => {
     async function initAdmin() {
       if (!session) {
-        setIsAdmin(false);
         return;
       }
 
