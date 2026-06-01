@@ -21,13 +21,14 @@ interface AuthState {
   profileData: ProfileData;
   loading: boolean;
   isRefreshing: boolean;
+  lastAuthEvent: string | null;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>((set, get) => {
   const updateAuthState = async (session: any) => {
-    set({ isRefreshing: true });
+    set({ isRefreshing: true, lastAuthEvent: null });
 
     const user = session?.user ?? null;
     let tierData: TierData = { tier: 'free' };
@@ -66,7 +67,9 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
   supabase.auth.getSession().then(({ data: { session } }) => updateAuthState(session));
   supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log('[AUTH EVENT]', event, session?.user?.email ?? 'no email');
+    const email = session?.user?.email ?? 'null';
+    set({ lastAuthEvent: `${event} (${email})` });
+    alert(`[AUTH] ${event} | ${email}`);
     if (event === 'SIGNED_OUT' && get().user) return; // ignore transient logout — real session still valid
     await updateAuthState(session);
   });
@@ -78,6 +81,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
     profileData: {},
     loading: true,
     isRefreshing: false,
+    lastAuthEvent: null,
     loginWithGoogle: async () => await supabase.auth.signInWithOAuth({ provider: 'google' }),
     logout: async () => await supabase.auth.signOut(),
   };
