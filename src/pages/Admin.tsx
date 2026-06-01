@@ -42,7 +42,8 @@ export default function Admin() {
   }, [profileData.role, session]);
 
   const handleUpdateApiKey = async () => {
-    if (!apiKey || !session) return;
+    if (!session) { alert('Session not ready, try again'); return; }
+    if (!apiKey) { alert('API Key is empty'); return; }
     setSavingKey(true);
     try {
       const res = await fetch('/api/admin/config', {
