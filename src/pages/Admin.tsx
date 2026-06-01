@@ -14,47 +14,46 @@ export default function Admin() {
   const [loadingKey, setLoadingKey] = useState(false);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session);
-    });
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      if (!session) setIsAdmin(false);
-    }, 5000);
-    return () => clearTimeout(timer);
-  }, [session]);
-
-  useEffect(() => {
-    async function initAdmin() {
-      if (!session) {
-        return;
-      }
-
+    async function initialize() {
       try {
-        // Attempt to fetch users as the primary admin check
+        // 1. Ambil session langsung
+        const { data: { session: currentSession } } = await supabase.auth.getSession();
+        setSession(currentSession);
+
+        // 2. Kalau session gak ada, langsung tolak akses
+        if (!currentSession) {
+          setIsAdmin(false);
+          return;
+        }
+
+        // 3. Eksekusi admin check menggunakan session yang baru didapat
         const res = await fetch('/api/admin/users', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
+          headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
         });
 
         if (res.ok) {
           const data = await res.json();
           setUsers(data);
           setIsAdmin(true);
-          fetchConfig();
-        } else if (res.status === 403) {
-          setIsAdmin(false);
+
+          // 4. Fetch config sekalian
+          const configRes = await fetch('/api/admin/config', {
+            headers: { 'Authorization': `Bearer ${currentSession.access_token}` }
+          });
+          if (configRes.ok) {
+            const configData = await configRes.json();
+            setApiKey(configData.geminiApiKey || '');
+          }
         } else {
           setIsAdmin(false);
         }
       } catch (e) {
-        console.error("Admin check failed", e);
+        console.error("Admin initialization failed", e);
         setIsAdmin(false);
       }
     }
-    initAdmin();
-  }, [session]);
+    initialize();
+  }, []);
 
   const fetchConfig = async () => {
     try {
