@@ -1,4 +1,4 @@
-import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../_utils';
+import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../_utils.js';
 
 export default async function handler(req: any, res: any) {
   // CORS preflight — OPTIONS gak perlu auth
