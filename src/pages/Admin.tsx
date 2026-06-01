@@ -45,6 +45,7 @@ export default function Admin() {
     if (!session) { alert('Session not ready, try again'); return; }
     if (!apiKey) { alert('API Key is empty'); return; }
     setSavingKey(true);
+    alert(`Sending PATCH to: /api/admin/config with session: ${!!session}`);
     try {
       const res = await fetch('/api/admin/config', {
         method: 'PATCH',
