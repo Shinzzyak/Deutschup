@@ -54,7 +54,7 @@ export default function Admin() {
         },
         body: JSON.stringify({ geminiApiKey: apiKey })
       });
-      alert(res.ok ? 'API Key updated!' : 'Failed to update');
+      alert(res.ok ? 'API Key updated!' : `Failed: ${res.status} ${await res.text()}`);
     } catch {
       alert('Error updating config');
     } finally {
