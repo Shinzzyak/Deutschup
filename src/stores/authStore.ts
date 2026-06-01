@@ -26,8 +26,14 @@ interface AuthState {
 }
 
 export const useAuthStore = create<AuthState>((set, get) => {
+  let refreshVersion = 0;
   const updateAuthState = async (session: any) => {
-    if (get().isRefreshing) return;
+    const version = ++refreshVersion;
+    if (get().isRefreshing) {
+      // Wait for current refresh, then re-run with latest session
+      await new Promise(r => setTimeout(r, 100));
+      if (version !== refreshVersion) return; // stale — newer call will handle
+    }
     set({ isRefreshing: true });
 
     const user = session?.user ?? null;
@@ -56,6 +62,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
     } catch (e) {
       console.error('Critical auth sync error:', e);
     } finally {
+      if (version !== refreshVersion) return; // stale — newer call supersedes
       // Force Admin Access
       if (user?.email === import.meta.env.VITE_ADMIN_EMAIL) {
         tierData = { ...tierData, tier: 'pro' };
