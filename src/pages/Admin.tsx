@@ -19,10 +19,10 @@ export default function Admin() {
       setFetching(true);
       try {
         const [usersRes, configRes] = await Promise.all([
-          fetch('/api/admin/users', {
+          fetch('/api/admin?action=users', {
             headers: { 'Authorization': `Bearer ${session.access_token}` }
           }),
-          fetch('/api/admin/config', {
+          fetch('/api/admin?action=config', {
             headers: { 'Authorization': `Bearer ${session.access_token}` }
           })
         ]);
@@ -45,9 +45,8 @@ export default function Admin() {
     if (!session) { alert('Session not ready, try again'); return; }
     if (!apiKey) { alert('API Key is empty'); return; }
     setSavingKey(true);
-    alert(`Sending POST to: /api/admin/config with session: ${!!session}`);
     try {
-      const res = await fetch('/api/admin/config', {
+      const res = await fetch('/api/admin?action=config', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +66,7 @@ export default function Admin() {
     if (!session) return;
     setSavingUser(true);
     try {
-      const res = await fetch('/api/admin/users', {
+      const res = await fetch('/api/admin?action=users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,7 +75,7 @@ export default function Admin() {
         body: JSON.stringify({ targetUserId: userId, ...updates })
       });
       if (res.ok) {
-        const updated = await fetch('/api/admin/users', {
+        const updated = await fetch('/api/admin?action=users', {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         });
         setUsers(await updated.json());
