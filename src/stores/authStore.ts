@@ -66,6 +66,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
   supabase.auth.getSession().then(({ data: { session } }) => updateAuthState(session));
   supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log('[AUTH EVENT]', event, session?.user?.email ?? 'no email');
     if (event === 'SIGNED_OUT' && get().user) return; // ignore transient logout — real session still valid
     await updateAuthState(session);
   });
