@@ -8,8 +8,9 @@ export default async function handler(req: any, res: any) {
     return res.status(200).end();
   }
 
-  const { slug } = req.query;
-  const path = Array.isArray(slug) ? slug.join('/') : slug;
+  // Catch-all param accessed via bracket notation — key is '...slug', not 'slug'
+  const slugParam = req.query['...slug'];
+  const path = Array.isArray(slugParam) ? slugParam.join('/') : slugParam;
 
   try {
     await runMiddleware(req, res, authMiddleware);
