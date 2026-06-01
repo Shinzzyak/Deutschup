@@ -50,7 +50,7 @@ export default async function handler(req: any, res: any) {
       if (req.method === 'GET') return res.json({ ok: true });
     }
 
-    res.status(404).json({ error: 'Admin endpoint not found' });
+    res.status(404).json({ error: 'Admin endpoint not found', debug: { path, method: req.method, slug: req.query.slug } });
   } catch (e: any) {
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }
