@@ -94,11 +94,25 @@ export default function Admin() {
     }
   };
 
+  // Safety: force-resolve stuck loading state after 12s
+  const [forceResolve, setForceResolve] = useState(false);
+  useEffect(() => {
+    if (!loading) return;
+    const t = setTimeout(() => {
+      console.warn('[Admin] FORCE RESOLVE — loading stuck >12s');
+      setForceResolve(true);
+    }, 12000);
+    return () => clearTimeout(t);
+  }, [loading]);
+
   // --- Render Gates ---
-  if (loading || fetching) {
+  if ((loading && !forceResolve) || fetching) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-screen gap-3">
         <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <p className="text-sm text-slate-400">
+          {loading ? 'Memeriksa autentikasi...' : 'Mengambil data admin...'}
+        </p>
       </div>
     );
   }

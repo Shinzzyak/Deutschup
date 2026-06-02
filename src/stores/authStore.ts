@@ -65,21 +65,41 @@ export const useAuthStore = create<AuthState>((set) => {
     let tierData: TierData = { tier: 'free' };
     let profileData: ProfileData = {};
 
+    const PROFILE_TIMEOUT_MS = 10000;
+
     try {
       if (user) {
         console.log('[AUTH] fetching profile for:', user.id);
-        const { data, error } = await supabase
+
+        const profilePromise = supabase
           .from('profiles')
           .select('tier, tierExpiry, full_name, avatar_url, role')
           .eq('id', user.id)
           .single();
 
+        const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+          setTimeout(
+            () => resolve({ data: null, error: new Error('[AUTH] profile fetch timeout') }),
+            PROFILE_TIMEOUT_MS
+          )
+        );
+
+        const result = await Promise.race([profilePromise, timeoutPromise]);
+        const { data, error } = result;
+
         if (error) {
           console.error('[AUTH] profile fetch error:', error.message);
-          const { error: createError } = await supabase
-            .from('profiles')
-            .insert({ id: user.id, tier: 'free', role: 'user' });
-          if (createError) console.error('[AUTH] profile create error:', createError.message);
+          // Only try insert if it wasn't a timeout (timeout = unknown state)
+          if (error.message !== '[AUTH] profile fetch timeout') {
+            try {
+              const { error: createError } = await supabase
+                .from('profiles')
+                .insert({ id: user.id, tier: 'free', role: 'user' });
+              if (createError) console.error('[AUTH] profile create error:', createError.message);
+            } catch (insertErr) {
+              console.error('[AUTH] profile insert exception:', insertErr);
+            }
+          }
         } else if (data) {
           tierData = { tier: data.tier || 'free', tierExpiry: data.tierExpiry };
           profileData = { full_name: data.full_name, avatar_url: data.avatar_url, role: data.role };
@@ -116,6 +136,15 @@ export const useAuthStore = create<AuthState>((set) => {
   });
 
   // SINGLE SOURCE OF TRUTH — only onAuthStateChange updates state
+  // Safety: force loading=false after 15s even if onAuthStateChange never fires
+  setTimeout(() => {
+    const state = useAuthStore.getState();
+    if (state.loading) {
+      console.warn('[AUTH] SAFETY TIMEOUT — forcing loading=false after 15s');
+      set({ loading: false });
+    }
+  }, 15000);
+
   supabase.auth.onAuthStateChange(async (event, session) => {
     console.log('[AUTH] onAuthStateChange:', event, session?.user?.email ?? 'null');
     await updateAuthState(session);
