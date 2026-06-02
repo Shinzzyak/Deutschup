@@ -1,4 +1,4 @@
-import { runMiddleware, authMiddleware, getDb } from '../_utils';
+import { runMiddleware, authMiddleware, getDb } from '../../lib/api-utils.js';
 import crypto from "crypto";
 
 export default async function handler(req: any, res: any) {

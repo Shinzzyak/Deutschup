@@ -1,4 +1,4 @@
-import { runMiddleware, authMiddleware, adminMiddleware, getDb } from './_utils.js';
+import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../lib/api-utils.js';
 
 export default async function handler(req: any, res: any) {
   if (req.method === 'OPTIONS') {
