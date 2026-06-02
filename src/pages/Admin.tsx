@@ -18,14 +18,20 @@ export default function Admin() {
     async function fetchData() {
       setFetching(true);
       try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
         const [usersRes, configRes] = await Promise.all([
           fetch('/api/admin?action=users', {
-            headers: { 'Authorization': `Bearer ${session.access_token}` }
+            headers: { 'Authorization': `Bearer ${session.access_token}` },
+            signal: controller.signal
           }),
           fetch('/api/admin?action=config', {
-            headers: { 'Authorization': `Bearer ${session.access_token}` }
+            headers: { 'Authorization': `Bearer ${session.access_token}` },
+            signal: controller.signal
           })
         ]);
+        clearTimeout(timeoutId);
 
         if (usersRes.ok) setUsers(await usersRes.json());
         if (configRes.ok) {
@@ -33,7 +39,7 @@ export default function Admin() {
           setApiKey(d.geminiApiKey || '');
         }
       } catch (e) {
-        console.error('Fetch admin data failed', e);
+        console.error('Fetch admin data failed:', e);
       } finally {
         setFetching(false);
       }
