@@ -11,7 +11,7 @@ export default async function handler(req: any, res: any) {
       const userDoc = await getDb().collection('users').doc(uid).get();
       let tier = userDoc.data()?.tier || 'free';
       
-      const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
+      const adminEmail = process.env.ADMIN_EMAIL;
       if (req.user.email === adminEmail) {
          tier = 'pro';
       }

@@ -56,7 +56,7 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   const authHeader = req.headers.authorization;
   if (!authHeader?.startsWith('Bearer ')) {
     res.status(401).json({ error: 'Unauthorized' });
-    return;
+    return next(new Error('Unauthorized'));
   }
   const token = authHeader.split('Bearer ')[1];
   try {
@@ -69,6 +69,7 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   } catch (e: any) {
     console.error('Auth error:', e.message);
     res.status(401).json({ error: 'Invalid token' });
+    return next(new Error(e.message));
   }
 };
 
@@ -79,14 +80,12 @@ export const adminMiddleware = async (req: any, res: any, next: any) => {
   console.log(`[AdminMiddleware] Checking access for: ${userEmail}`);
   console.log(`[AdminMiddleware] Expected Admin Email: ${adminEmail}`);
 
-  // 1. Absolute Override: Check if user email matches the master admin email in ENV
   if (adminEmail && userEmail && userEmail.toLowerCase().trim() === adminEmail.toLowerCase().trim()) {
     console.log(`[AdminMiddleware] Access GRANTED via Email Override for: ${userEmail}`);
     return next();
   }
 
   try {
-    // 2. Database Check: Check if the user has the 'admin' role in their profile
     const { data: profile, error } = await getDb()
       .from('profiles')
       .select('role')
@@ -106,4 +105,5 @@ export const adminMiddleware = async (req: any, res: any, next: any) => {
     error: 'Forbidden: Admin privileges required',
     debug: process.env.NODE_ENV === 'development' ? { userEmail, adminEmail } : undefined 
   });
+  return next(new Error('Forbidden'));
 };
