@@ -18,8 +18,8 @@ View your app in AI Studio: https://ai.studio/apps/2606d214-cab6-4242-bdfd-6070c
 
 2. Set environment variables in `.env.local`:
    - `GEMINI_API_KEY=...`
-   - `ADMIN_EMAIL=your-email@gmail.com`
-   - `VITE_ADMIN_EMAIL=your-email@gmail.com`
+   - `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
+   - `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
 codex/analisis-isi-repo-m2hqsg
    - `VITE_FIREBASE_API_KEY=...` (wajib, jangan commit key asli ke repo)=======>>>>>>> main
 3. Run the app:
@@ -34,7 +34,7 @@ Aplikasi sudah direfactor untuk model **Vercel Serverless Functions**:
 
 Pastikan environment variables berikut diset di Vercel Project Settings:
 - `GEMINI_API_KEY`
-- `ADMIN_EMAIL=your-email@gmail.com`
-- `VITE_ADMIN_EMAIL=your-email@gmail.com`
+- `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
+- `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
 - `IPAYMU_VA`, `IPAYMU_API_KEY`, `IPAYMU_URL`
 - `APP_URL`<<<<<<< codex/analisis-isi-repo-m2hqsg> Security note: jika API key Firebase pernah ter-publish, segera rotate key di Google Cloud Console lalu update Vercel env variables.=======>>>>>>> main
