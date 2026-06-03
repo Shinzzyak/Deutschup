@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Search } from 'lucide-react';
 import { cn } from '../lib/utils';
-import { allVocab } from '../data/course';
+import { allVocab } from '../data/lessons';
 
 export interface VerbConjugation {
   infinitive: string;

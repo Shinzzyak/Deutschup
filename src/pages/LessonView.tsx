@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import React, { isValidElement } from 'react';
 import { useParams, useNavigate } from 'react-router';
-import { courseData } from '../data/course';
+import { courseData } from '../data/lessons';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/button';

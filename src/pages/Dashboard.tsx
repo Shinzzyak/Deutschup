@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { useState } from 'react';
-import { courseData, Level } from '../data/course';
+import type { Level } from '../data/course';
+import { courseIndex } from '../data/lessonIndex';
 import { useProgressStore } from '../stores/progressStore';
 import { useLearningStore } from '../stores/learningStore';
 import { useAuthStore } from '../stores/authStore';
@@ -8,8 +9,6 @@ import { CheckCircle2, Lock, PlayCircle, Download, Loader2 } from 'lucide-react'
 import { cn } from '../lib/utils';
 import { Progress } from '../components/ui/progress';
 import { Button } from '../components/ui/button';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
 
 function isLevelLocked(level: string, tier: string) {
   if (tier === 'free' && level !== 'A1') return true;
@@ -46,6 +45,12 @@ export default function Dashboard() {
     
     setExporting(true);
     
+    // Lazy-load PDF libraries (saves ~340KB on initial page load)
+    const [{ jsPDF }, autoTable] = await Promise.all([
+      import('jspdf'),
+      import('jspdf-autotable').then(m => m.default)
+    ]);
+
     await new Promise(resolve => setTimeout(resolve, 500));
 
     try {
@@ -92,7 +97,7 @@ export default function Dashboard() {
       doc.setFontSize(10);
       doc.setTextColor(80, 80, 80);
       
-      const unlockedCourseData = courseData.filter(l => unlockedLessons.includes(l.id));
+      const unlockedCourseData = courseIndex.filter(l => unlockedLessons.includes(l.id));
       
       if (unlockedCourseData.length === 0) {
         doc.text("Belum ada pelajaran yang diselesaikan.", 14, yPos + 5);
@@ -238,7 +243,7 @@ export default function Dashboard() {
         {levels.map((lvl, index) => {
           const tierLocked = isLevelLocked(lvl.id, tierData.tier);
           const isLevelUnlocked = index <= userLevelIndex && !tierLocked;
-          const levelLessons = courseData.filter(l => l.level === lvl.id);
+          const levelLessons = courseIndex.filter(l => l.level === lvl.id);
           const actualCompletedInLevel = levelLessons.filter(l => 
             completedLessons?.includes(l.id)
           ).length; 

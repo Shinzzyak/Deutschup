@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { allVocab } from '../data/course';
+import { allVocab } from '../data/lessons';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/button';

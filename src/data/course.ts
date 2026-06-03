@@ -56,5 +56,6 @@ export interface Lesson {
   reviewLessons?: string[];
 }
 
-export * from './lessons';
+// Data exports live in './lessons' — import directly from there.
+// This file contains ONLY type definitions. Keep it 460KB-free.
 
