@@ -50,10 +50,10 @@ export default function Pricing() {
     
     setLoading(planId);
     try {
-      const res = await fetch('/api/payment/create', {
+      const res = await fetch('/api/payment?action=create', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id, planType: planId, email: user.email, name: useruser_metadata.full_name })
+        body: JSON.stringify({ userId: user.id, planType: planId, email: user.email, name: user.user_metadata?.full_name || user.email })
       });
       const data = await res.json();
       if (data.url) {
