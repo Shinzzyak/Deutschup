@@ -38,7 +38,7 @@ export async function getAiClient() {
   }
   return new GoogleGenAI({ 
     apiKey,
-    httpOptions: { headers: { 'User-Agent': 'aistudio-build' } }
+    httpOptions: { headers: { 'User-Agent': 'deutschup-api' } }
   });
 }
 

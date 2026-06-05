@@ -1,40 +1,71 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# DeutschUp 🇩🇪
 
-# Run and deploy your AI Studio app
+Platform belajar Bahasa Jerman interaktif berbasis AI.
 
-This contains everything you need to run your app locally.
+## Fitur
 
-View your app in AI Studio: https://ai.studio/apps/2606d214-cab6-4242-bdfd-6070cb05f75e
+- **Kurikulum Terstruktur** — Level A1-B2 dengan XP dan streak tracking
+- **Vocab Trainer** — Flashcard spaced repetition + contoh kalimat AI
+- **Kamus Mini** — Referensi verb Jerman lengkap
+- **Koreksi Kalimat** — AI koreksi grammar dan tata bahasa
+- **Catatan Belajar** — Auto-generated study plan
+- **Simulasi Ujian** — Mock test A1-B2 dengan AI-powered scoring
+- **Chat AI (Herr Deutsch)** — Tutor bahasa Jerman virtual
+- **Pembayaran** — Integrasi iPaymu untuk upgrade Pro
+
+## Tech Stack
+
+- **Frontend:** React + Vite + Tailwind CSS + Zustand
+- **Backend:** Vercel Serverless Functions (TypeScript)
+- **Database:** Supabase (PostgreSQL)
+- **AI:** Google Gemini API
+- **Auth:** Supabase Auth (Google OAuth)
+- **Payment:** iPaymu
 
 ## Run Locally
 
-**Prerequisites:**  Node.js
-
+**Prerequisites:** Node.js v18+
 
 1. Install dependencies:
-   `npm install`
+   ```bash
+   npm install
+   ```
 
-2. Set environment variables in `.env.local`:
-   - `GEMINI_API_KEY=...`
-   - `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
-   - `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
-codex/analisis-isi-repo-m2hqsg
-   - `VITE_FIREBASE_API_KEY=...` (wajib, jangan commit key asli ke repo)=======>>>>>>> main
+2. Set environment variables di `.env.local`:
+   ```
+   GEMINI_API_KEY=your_key
+   ADMIN_EMAIL=your_email
+   VITE_ADMIN_EMAIL=your_email
+   VITE_SUPABASE_URL=your_supabase_url
+   VITE_SUPABASE_ANON_KEY=your_anon_key
+   SUPABASE_SERVICE_ROLE_KEY=your_service_key
+   IPAYMU_VA=your_va
+   IPAYMU_API_KEY=your_api_key
+   IPAYMU_URL=your_ipaymu_url
+   APP_URL=http://localhost:5173
+   ```
+
 3. Run the app:
-   `npm run dev`
-
+   ```bash
+   npm run dev
+   ```
 
 ## Deployment (Vercel)
 
-Aplikasi sudah direfactor untuk model **Vercel Serverless Functions**:
-- Semua backend endpoint berjalan dari file di folder `api/` (mis. `/api/chat`, `/api/admin/*`, `/api/payment/*`).
-- Frontend tetap SPA Vite, dengan rewrite ke `index.html` untuk non-API route.
+Aplikasi sudah dikonfigurasi untuk Vercel:
+- Frontend: SPA Vite dengan rewrite ke `index.html`
+- Backend: Serverless Functions di folder `api/`
 
 Pastikan environment variables berikut diset di Vercel Project Settings:
 - `GEMINI_API_KEY`
-- `ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
-- `VITE_ADMIN_EMAIL=abdullahalmughiroh@gmail.com`
+- `ADMIN_EMAIL`
+- `VITE_ADMIN_EMAIL`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
 - `IPAYMU_VA`, `IPAYMU_API_KEY`, `IPAYMU_URL`
-- `APP_URL`<<<<<<< codex/analisis-isi-repo-m2hqsg> Security note: jika API key Firebase pernah ter-publish, segera rotate key di Google Cloud Console lalu update Vercel env variables.=======>>>>>>> main
+- `APP_URL`
+
+## License
+
+Private — DeutschUp
