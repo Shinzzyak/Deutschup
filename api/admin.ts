@@ -75,8 +75,8 @@ export default async function handler(req: any, res: any) {
   if (action === 'users') {
     if (req.method === 'GET') {
       const { data: profiles, error } = await getDb()
-        .from('profiles')
-        .select('id, email, tier, tier_expiry, role, created_at')
+        .from('users')
+        .select('id, email, tier, role, created_at, xp, streak')
         .order('created_at', { ascending: false });
       if (error) return res.status(500).json({ error: error.message });
 

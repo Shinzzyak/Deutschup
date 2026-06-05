@@ -72,7 +72,7 @@ export const useAuthStore = create<AuthState>((set) => {
         console.log('[AUTH] fetching profile for:', user.id);
 
         const profilePromise = supabase
-          .from('profiles')
+          .from('users')
           .select('tier, tierExpiry, full_name, avatar_url, role')
           .eq('id', user.id)
           .single();
@@ -93,7 +93,7 @@ export const useAuthStore = create<AuthState>((set) => {
           if (error.message !== '[AUTH] profile fetch timeout') {
             try {
               const { error: createError } = await supabase
-                .from('profiles')
+                .from('users')
                 .insert({ id: user.id, tier: 'free', role: 'user' });
               if (createError) console.error('[AUTH] profile create error:', createError.message);
             } catch (insertErr) {
