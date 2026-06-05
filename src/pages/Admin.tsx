@@ -196,6 +196,7 @@ export default function Admin() {
                 <th className="py-4 px-6">User</th>
                 <th className="py-4 px-6">Tier</th>
                 <th className="py-4 px-6">Role</th>
+                <th className="py-4 px-6">Joined</th>
                 <th className="py-4 px-6 text-right">Action</th>
               </tr>
             </thead>
@@ -219,6 +220,9 @@ export default function Admin() {
                     }`}>
                       {u.role || 'user'}
                     </span>
+                  </td>
+                  <td className="py-4 px-6 text-sm text-slate-500">
+                    {u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
                   </td>
                   <td className="py-4 px-6 text-right">
                     <div className="flex justify-end gap-2">
