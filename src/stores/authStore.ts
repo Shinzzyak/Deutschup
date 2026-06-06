@@ -12,6 +12,7 @@ interface ProfileData {
   full_name?: string;
   avatar_url?: string;
   role?: string;
+  tier?: string;
 }
 
 interface AuthState {
@@ -72,8 +73,8 @@ export const useAuthStore = create<AuthState>((set) => {
         console.log('[AUTH] fetching profile for:', user.id);
 
         const profilePromise = supabase
-          .from('users')
-          .select('tier, tierExpiry, full_name, avatar_url, role')
+          .from('profiles')
+          .select('tier, tier_expiry, full_name, avatar_url, role')
           .eq('id', user.id)
           .single();
 
@@ -93,7 +94,7 @@ export const useAuthStore = create<AuthState>((set) => {
           if (error.message !== '[AUTH] profile fetch timeout') {
             try {
               const { error: createError } = await supabase
-                .from('users')
+                .from('profiles')
                 .insert({ id: user.id, tier: 'free', role: 'user' });
               if (createError) console.error('[AUTH] profile create error:', createError.message);
             } catch (insertErr) {
@@ -101,7 +102,7 @@ export const useAuthStore = create<AuthState>((set) => {
             }
           }
         } else if (data) {
-          tierData = { tier: data.tier || 'free', tierExpiry: data.tierExpiry };
+          tierData = { tier: data.tier || 'free', tierExpiry: data.tier_expiry };
           profileData = { full_name: data.full_name, avatar_url: data.avatar_url, role: data.role };
           console.log('[AUTH] profile loaded:', profileData.role, tierData.tier);
         }
