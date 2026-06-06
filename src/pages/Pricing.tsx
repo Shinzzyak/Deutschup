@@ -55,9 +55,21 @@ export default function Pricing() {
 
       const res = await fetch('/api/payment?action=create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ userId: user.id, planType: planId, email: user.email, name: user.user_metadata?.full_name || user.email })
       });
+      
+      // Check if response is HTML (redirected to auth page)
+      const contentType = res.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        console.error('[payment] Expected JSON but got:', contentType, res.status);
+        alert('Gagal terhubung ke server pembayaran. Coba lagi nanti.');
+        return;
+      }
+      
       const data = await res.json();
       if (data.url) {
         window.location.href = data.url;
