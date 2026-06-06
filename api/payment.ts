@@ -105,7 +105,7 @@ export default async function handler(req: any, res: any) {
 
         const { error: profileError } = await getDb()
           .from('profiles')
-          .update({ tier: order.planType, tierExpiry: expiry })
+          .update({ tier: order.planType, tier_expiry: expiry })
           .eq('id', order.userId);
 
         if (profileError) {
