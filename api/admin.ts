@@ -75,16 +75,13 @@ export default async function handler(req: any, res: any) {
   if (action === 'users') {
     if (req.method === 'GET') {
       const { data: profiles, error } = await getDb()
-        .from('users')
-        .select('id, email, tier, role, created_at, xp, streak')
+        .from('profiles')
+        .select('id, tier, role, created_at')
         .order('created_at', { ascending: false });
       if (error) return res.status(500).json({ error: error.message });
 
       // Filter out admin users from list
-      const adminEmail = process.env.ADMIN_EMAIL?.toLowerCase();
-      const filtered = profiles?.filter((p: any) => 
-        p.email?.toLowerCase() !== adminEmail
-      ) || [];
+      const filtered = profiles || [];
 
       return res.json(filtered);
     }

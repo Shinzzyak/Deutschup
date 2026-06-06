@@ -193,7 +193,7 @@ export default function Admin() {
           <table className="w-full text-left">
             <thead>
               <tr className="bg-slate-50 text-slate-500 text-sm font-semibold">
-                <th className="py-4 px-6">User</th>
+                <th className="py-4 px-6">User ID</th>
                 <th className="py-4 px-6">Tier</th>
                 <th className="py-4 px-6">Role</th>
                 <th className="py-4 px-6">Joined</th>
@@ -204,8 +204,7 @@ export default function Admin() {
               {users.map(u => (
                 <tr key={u.id} className="hover:bg-slate-50 transition-colors">
                   <td className="py-4 px-6">
-                    <div className="font-medium text-slate-900">{u.email || 'Unknown'}</div>
-                    <div className="text-xs text-slate-400 font-mono">{u.id}</div>
+                    <div className="font-mono text-xs text-slate-600">{u.id}</div>
                   </td>
                   <td className="py-4 px-6">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
