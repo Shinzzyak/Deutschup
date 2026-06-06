@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { Check, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { supabase } from '../lib/supabase';
 
 type PlanVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 
@@ -50,9 +51,13 @@ export default function Pricing() {
     
     setLoading(planId);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const token = session?.access_token;
+      if (!token) return alert("Sesi tidak valid. Silakan login ulang.");
+
       const res = await fetch('/api/payment?action=create', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
         body: JSON.stringify({ userId: user.id, planType: planId, email: user.email, name: user.user_metadata?.full_name || user.email })
       });
       const data = await res.json();
