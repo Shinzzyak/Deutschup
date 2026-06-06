@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { Check, Loader2, Sparkles } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { supabase } from '../lib/supabase';
 
 type PlanVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 
@@ -19,7 +18,7 @@ interface Plan {
 }
 
 export default function Pricing() {
-  const { user, tierData } = useAuthStore();
+  const { user, session, tierData } = useAuthStore();
   const [loading, setLoading] = useState<string | null>(null);
   
   const plans: Plan[] = [
@@ -51,9 +50,8 @@ export default function Pricing() {
     
     setLoading(planId);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) return alert("Sesi tidak valid. Silakan login ulang.");
+      if (!session?.access_token) return alert("Sesi tidak valid. Silakan login ulang.");
+      const token = session.access_token;
 
       const res = await fetch('/api/payment?action=create', {
         method: 'POST',
