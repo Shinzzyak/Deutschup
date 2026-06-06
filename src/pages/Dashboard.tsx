@@ -194,7 +194,7 @@ export default function Dashboard() {
       {errorMsg && (
         <div className="bg-red-500/10 border border-red-500/20 text-red-600 rounded-lg p-4 font-medium flex items-center justify-between">
             <span>{errorMsg}</span>
-            <button onClick={() => setErrorMsg("")} className="opacity-70 hover:opacity-100">✕</button>
+            <button onClick={() => setErrorMsg("")} className="opacity-70 hover:opacity-100" aria-label="Tutup pesan error">✕</button>
         </div>
       )}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
@@ -213,7 +213,7 @@ export default function Dashboard() {
             </span>
           )}
           {pdfBlobUrl && (
-            <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`} className="text-[12px] font-bold text-indigo-500 mt-2 text-left md:text-right underline">
+            <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`} className="text-[12px] font-bold text-indigo-500 mt-2 text-left md:text-right underline" aria-label="Unduh laporan PDF secara manual">
               Klik di sini untuk mengunduh manual ➔
             </a>
           )}
@@ -268,7 +268,7 @@ export default function Dashboard() {
                     {tierLocked ? (
                        <p className="text-amber-500 font-bold flex items-center space-x-1">
                          <Lock className="w-4 h-4 mr-1" /> Premium Only 
-                         <Link to="/pricing" className="ml-2 underline text-sm text-blue-600 font-semibold">Upgrade</Link>
+                         <Link to="/pricing" className="ml-2 underline text-sm text-blue-600 font-semibold" aria-label="Upgrade ke Premium">Upgrade</Link>
                        </p>
                     ) : isLevelUnlocked ? (
                        <p className="text-slate-500 font-medium">Terbuka • {levelLessons.length} Pelajaran</p>
@@ -296,6 +296,7 @@ export default function Dashboard() {
                         isUnlocked ? "bg-white border-blue-500 shadow-lg shadow-blue-100 hover:-translate-y-1" :
                         "bg-slate-50 border-slate-100 cursor-not-allowed"
                       )}
+                      aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
                     >
                       <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100">
                          <div 

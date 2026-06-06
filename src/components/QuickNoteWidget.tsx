@@ -37,6 +37,7 @@ export default function QuickNoteWidget() {
           "fixed bottom-28 right-6 w-14 h-14 rounded-full bg-yellow-400 text-yellow-900 flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-40 border-4 border-white",
           isOpen && "hidden"
         )}
+        aria-label={isOpen ? "Tutup quick note" : "Buka quick note"}
       >
         <Edit3 className="w-6 h-6" />
       </button>
@@ -47,19 +48,20 @@ export default function QuickNoteWidget() {
       )}>
         <div className="bg-yellow-200 p-3 rounded-t-3xl flex justify-between items-center text-yellow-900 font-bold border-b border-yellow-300">
            <span>Quick Note</span>
-           <button onClick={() => setIsOpen(false)} className="hover:bg-yellow-300 p-1 rounded-full"><X className="w-4 h-4" /></button>
+           <button onClick={() => setIsOpen(false)} className="hover:bg-yellow-300 p-1 rounded-full" aria-label="Tutup quick note"><X className="w-4 h-4" /></button>
         </div>
         <textarea
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Tuliskan coretan cepat di sini..."
-          className="flex-1 bg-transparent p-4 resize-none focus:outline-none text-yellow-900 placeholder:text-yellow-700/50 text-sm"
+          className="flex-1 bg-transparent p-4 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500 text-yellow-900 placeholder:text-yellow-700/50 text-sm"
         />
         <div className="p-3 bg-yellow-200/50 rounded-b-3xl border-t border-yellow-300 flex justify-end">
           <button 
              onClick={handleSave}
              disabled={saving}
              className="px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-sm font-bold rounded-xl flex items-center shadow-sm transition-colors"
+             aria-label="Simpan catatan"
           >
              {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
              Simpan

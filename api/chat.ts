@@ -8,8 +8,8 @@ export default async function handler(req: any, res: any) {
     // Free Tier Limit Check
     const uid = req.user.uid;
     try {
-      const userDoc = await getDb().collection('users').doc(uid).get();
-      let tier = userDoc.data()?.tier || 'free';
+      const userDoc = await getDb().from('users').select('*').eq('id', uid).single();
+      let tier = userDoc.data?.tier || 'free';
       
       const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
       if (req.user.email === adminEmail) {
@@ -18,8 +18,8 @@ export default async function handler(req: any, res: any) {
       
       if (tier === 'free') {
          const today = new Date().toISOString().split('T')[0];
-         const usageDate = userDoc.data()?.geminiLastDate;
-         let usageCount = userDoc.data()?.geminiDailyUsage || 0;
+         const usageDate = userDoc.data?.geminiLastDate;
+         let usageCount = userDoc.data?.geminiDailyUsage || 0;
          
          if (usageDate !== today) {
             usageCount = 0;
@@ -29,10 +29,11 @@ export default async function handler(req: any, res: any) {
             return res.status(403).json({ error: "Batas 10 pesan Herr Deutsch tercapai hari ini untuk paket Free. Silakan Upgrade!" });
          }
          
-         await getDb().collection('users').doc(uid).set({
+         await getDb().from('users').upsert({
+            id: uid,
             geminiLastDate: today,
             geminiDailyUsage: usageCount + 1
-         }, { merge: true });
+         }, { onConflict: 'id' });
       }
     } catch (dbError) {
       console.warn("Failed to check or update free tier limit due to DB error:", dbError);

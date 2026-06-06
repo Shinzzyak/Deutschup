@@ -156,7 +156,7 @@ export const useAuthStore = create<AuthState>((set) => {
     tierData: { tier: 'free' },
     profileData: {},
     loading: true,
-    loginWithGoogle: async () => await supabase.auth.signInWithOAuth({ provider: 'google' }),
+    loginWithGoogle: async () => { await supabase.auth.signInWithOAuth({ provider: 'google' }); },
     logout: async () => {
       await supabase.auth.signOut();
       cacheSession(null);

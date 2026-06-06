@@ -111,7 +111,7 @@ export default function Catatan() {
                 <ul className="space-y-3 mt-4">
                   {studyPlan.tasks.map(task => (
                     <li key={task.id} className="flex items-start space-x-3 p-3 bg-white hover:bg-slate-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-slate-200" onClick={() => user && toggleTask(user.id, task.id)}>
-                      <button className="flex-shrink-0 mt-0.5">
+                      <button className="flex-shrink-0 mt-0.5" aria-label={task.completed ? "Tandai belum selesai" : "Tandai selesai"}>
                          {task.completed ? <CheckCircle2 className="w-6 h-6 text-green-500" /> : <Circle className="w-6 h-6 text-slate-300" />}
                       </button>
                       <span className={cn("text-slate-700 leading-relaxed", task.completed && "line-through text-slate-400")}>
@@ -135,7 +135,7 @@ export default function Catatan() {
                  value={newNote}
                  onChange={(e) => setNewNote(e.target.value)}
                  placeholder="Tulis hal penting untuk diingat..."
-                 className="w-full h-24 bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500 transition-all resize-none mb-3"
+                 className="w-full h-24 bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all resize-none mb-3"
                />
                <div className="flex justify-between items-center">
                   <div className="flex gap-2">
@@ -147,6 +147,8 @@ export default function Catatan() {
                             "px-3 py-1.5 rounded-full text-xs font-bold transition-colors",
                             newNoteTag === tag ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                           )}
+                          aria-pressed={newNoteTag === tag}
+                          aria-label={`Tag: ${tag}`}
                         >
                           {tag}
                         </button>
@@ -174,7 +176,7 @@ export default function Catatan() {
                  <div key={note.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl relative group">
                     <div className="flex justify-between items-start mb-2">
                        <span className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600">{note.tag}</span>
-                       <button onClick={() => user && deleteNote(user.id, note.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                       <button onClick={() => user && deleteNote(user.id, note.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Hapus catatan">
                          <Trash2 className="w-4 h-4" />
                        </button>
                     </div>

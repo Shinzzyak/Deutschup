@@ -255,10 +255,10 @@ export default function LessonView() {
 
         <TabsContent value="materi" className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
           <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
-            <h3 className="text-xl font-bold mb-4 flex items-center space-x-2">
+            <h2 className="text-xl font-bold mb-4 flex items-center space-x-2">
               <Brain className="w-6 h-6 text-indigo-500" />
               <span>Tata Bahasa (Grammar)</span>
-            </h3>
+            </h2>
             <div className="prose prose-slate max-w-none text-lg">
               <ReactMarkdown
                 components={{
@@ -273,10 +273,10 @@ export default function LessonView() {
 
           {lesson.canDoGoals && lesson.canDoGoals.length > 0 && (
             <div className="bg-gradient-to-br from-green-50 to-emerald-100 p-6 md:p-8 rounded-3xl shadow-sm border border-green-200">
-              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-emerald-800">
+              <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-emerald-800">
                 <Target className="w-6 h-6" />
                 <span>Setelah pelajaran ini, kamu bisa:</span>
-              </h3>
+              </h2>
               <ul className="space-y-3">
                 {lesson.canDoGoals.map((goal, idx) => (
                   <li key={idx} className="flex items-start">
@@ -290,10 +290,10 @@ export default function LessonView() {
 
           {lesson.indonesianMistakes && (
             <div className="bg-orange-50 p-6 md:p-8 rounded-3xl shadow-sm border border-orange-200">
-              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-orange-800">
+              <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-orange-800">
                 <AlertTriangle className="w-6 h-6" />
                 <span>⚠️ Kesalahan Umum Pembelajar Indonesia</span>
-              </h3>
+              </h2>
               <div className="prose prose-orange max-w-none text-lg">
                 <ReactMarkdown
                   components={{
@@ -309,10 +309,10 @@ export default function LessonView() {
 
           {lesson.culturalNotes && (
             <div className="bg-blue-50 p-6 md:p-8 rounded-3xl shadow-sm border border-blue-200">
-              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-blue-800">
+              <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-blue-800">
                 <Globe className="w-6 h-6" />
                 <span>Real-Life Germany Notes</span>
-              </h3>
+              </h2>
               <div className="text-blue-900 text-lg">
                 {lesson.culturalNotes}
               </div>
@@ -321,10 +321,10 @@ export default function LessonView() {
 
           {lesson.registerNotes && (
             <div className="bg-indigo-50 p-6 md:p-8 rounded-3xl shadow-sm border border-indigo-200">
-              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-800">
+              <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-800">
                 <MessageSquare className="w-6 h-6" />
                 <span>Register Notes (Formal/Informal)</span>
-              </h3>
+              </h2>
               <div className="text-indigo-900 text-lg prose prose-indigo max-w-none">
                 <ReactMarkdown>
                   {lesson.registerNotes}
@@ -335,10 +335,10 @@ export default function LessonView() {
 
           {lesson.listeningSimulation && (
             <div className="bg-slate-50 p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
-              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-slate-800">
+              <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-slate-800">
                 <Headphones className="w-6 h-6" />
                 <span>Listening Simulation Transcript</span>
-              </h3>
+              </h2>
               <div className="space-y-4 mb-6">
                 {lesson.listeningSimulation.transcript.map((line, idx) => (
                   <div key={idx} className="flex flex-col">
@@ -358,10 +358,10 @@ export default function LessonView() {
 
           {lesson.vocabulary && lesson.vocabulary.length > 0 && (
             <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-200">
-              <h3 className="text-xl font-bold mb-6 flex items-center space-x-2">
+              <h2 className="text-xl font-bold mb-6 flex items-center space-x-2">
                 <Star className="w-6 h-6 text-yellow-500" />
                 <span>Kosakata Utama</span>
-              </h3>
+              </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {lesson.vocabulary?.map((v) => (
                   <div key={v.id} className="flex flex-col sm:flex-row items-center justify-between p-4 bg-slate-50 hover:bg-slate-100 transition-colors rounded-2xl border border-slate-100">
@@ -384,10 +384,10 @@ export default function LessonView() {
 
           {lesson.pronunciationTips && (
             <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 md:p-8 rounded-3xl shadow-sm border border-indigo-100">
-              <h3 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-900">
+              <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-900">
                 <Mic className="w-6 h-6 text-indigo-500" />
                 <span>Panduan Pengucapan</span>
-              </h3>
+              </h2>
               <div className="text-indigo-800 text-lg space-y-4 prose prose-indigo max-w-none">
                 {Array.isArray(lesson.pronunciationTips) ? (
                   <ul className="list-disc pl-5 space-y-2">
@@ -406,10 +406,10 @@ export default function LessonView() {
 
           {lesson.reviewLessons && lesson.reviewLessons.length > 0 && (
             <div className="bg-yellow-50 p-6 md:p-8 rounded-3xl shadow-sm border border-yellow-200 fade-in-50 duration-500 animate-in">
-              <h3 className="text-xl font-bold mb-6 flex items-center space-x-2 text-yellow-800">
+              <h2 className="text-xl font-bold mb-6 flex items-center space-x-2 text-yellow-800">
                 <Brain className="w-6 h-6" />
                 <span>Ulas Kembali (Vocabulary Recycling)</span>
-              </h3>
+              </h2>
               <p className="text-yellow-700 mb-6">Kosakata dari pelajaran sebelumnya yang muncul lagi hari ini agar kamu tidak lupa!</p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {lesson.reviewLessons.flatMap(id => {
@@ -502,6 +502,7 @@ export default function LessonView() {
                           isSelected && !isAnswerChecked ? "border-blue-500 bg-blue-50" : "border-slate-200 hover:border-slate-300 bg-white",
                           isCorrectOption ? "border-green-500 bg-green-50 text-green-700" : isWrongOption ? "border-red-500 bg-red-50 text-red-700" : ""
                         )}
+                        aria-label={`Jawaban: ${opt}`}
                       >
                         <div className="flex justify-between items-center">
                           <span>{opt}</span>

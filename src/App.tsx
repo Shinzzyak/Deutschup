@@ -53,8 +53,12 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col md:flex-row">
+      {/* Skip navigation link for keyboard users */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded-xl focus:shadow-lg focus:text-slate-900 focus:font-bold">
+        Lewati navigasi ke konten utama
+      </a>
       {/* Sidebar Navigation */}
-      <nav className="w-full md:w-64 bg-white border-r border-slate-200 p-4 flex flex-col md:h-screen md:sticky top-0 z-50 shadow-sm md:shadow-none">
+      <nav className="w-full md:w-64 bg-white border-r border-slate-200 p-4 flex flex-col md:h-screen md:sticky top-0 z-50 shadow-sm md:shadow-none" aria-label="Navigasi sidebar">
         <div className="flex items-center space-x-2 mb-8 px-2 pt-2 pb-4 border-b border-slate-100">
            <div className="flex space-x-0.5">
              <div className="w-3 h-5 bg-black rounded-sm"></div>
@@ -77,50 +81,50 @@ function Layout({ children }: { children: React.ReactNode }) {
 
         <ul className="flex-1 space-y-2 flex flex-row overflow-x-auto md:flex-col items-center md:items-stretch pb-2">
           <li>
-            <Link to="/" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+            <Link to="/" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none" aria-label="Kurikulum">
               <BookOpen className="w-5 h-5 flex-shrink-0" />
               <span className="hidden md:inline">Kurikulum</span>
             </Link>
           </li>
           <li>
-            <Link to="/vocab" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+            <Link to="/vocab" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none" aria-label="Latihan Kosakata">
               <BrainCircuit className="w-5 h-5 flex-shrink-0" />
               <span className="hidden md:inline">Latihan Kosakata</span>
             </Link>
           </li>
           <li>
-            <Link to="/verbs" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+            <Link to="/verbs" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none" aria-label="Kamus Mini">
               <Search className="w-5 h-5 flex-shrink-0" />
               <span className="hidden md:inline">Kamus Mini</span>
             </Link>
           </li>
           <li>
-            <Link to="/koreksi" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+            <Link to="/koreksi" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none" aria-label="Koreksi Pintar">
               <Sparkles className="w-5 h-5 flex-shrink-0 text-yellow-500" />
               <span className="hidden md:inline">Koreksi Pintar</span>
             </Link>
           </li>
           <li>
-            <Link to="/catatan" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+            <Link to="/catatan" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none" aria-label="Catatan Belajar">
               <BookOpen className="w-5 h-5 flex-shrink-0 text-blue-500" />
               <span className="hidden md:inline">Catatan Belajar</span>
             </Link>
           </li>
           <li>
-            <Link to="/simulasi" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+            <Link to="/simulasi" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none" aria-label="Simulasi Ujian">
               <BookOpen className="w-5 h-5 flex-shrink-0 text-amber-500" />
               <span className="hidden md:inline">Simulasi Ujian</span>
             </Link>
           </li>
           <li>
-            <Link to="/pricing" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus:bg-slate-100">
+            <Link to="/pricing" className="flex items-center space-x-3 px-4 py-3 text-slate-600 hover:bg-slate-100 rounded-xl transition-colors font-medium hover:text-slate-900 focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:outline-none" aria-label="Langganan">
               <CreditCard className="w-5 h-5 flex-shrink-0 text-indigo-500" />
               <span className="hidden md:inline">Langganan</span>
             </Link>
           </li>
           {(user) && (
             <li>
-              <Link to="/admin" className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl transition-colors font-medium focus:bg-red-50">
+              <Link to="/admin" className="flex items-center space-x-3 px-4 py-3 text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl transition-colors font-medium focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:outline-none" aria-label="Admin Panel">
                 <ShieldCheck className="w-5 h-5 flex-shrink-0" />
                 <span className="hidden md:inline">Admin Panel</span>
               </Link>
@@ -146,7 +150,7 @@ function Layout({ children }: { children: React.ReactNode }) {
                   <p className="text-sm font-bold truncate">{profileData?.full_name || user?.user_metadata?.full_name}</p>
                 </div>
               </div>
-              <button onClick={logout} className="text-slate-400 hover:text-red-500 focus:outline-none p-2" title="Keluar">
+              <button onClick={logout} className="text-slate-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-red-500 p-2" title="Keluar">
                 <LogOut className="w-5 h-5" />
               </button>
             </div>
@@ -154,7 +158,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
 
-      <main className="flex-1 w-full max-w-5xl mx-auto p-4 md:p-8">
+      <main id="main-content" className="flex-1 w-full max-w-5xl mx-auto p-4 md:p-8">
         {children}
       </main>
     </div>
@@ -251,7 +255,7 @@ function LandingPage() {
             <span className="font-bold tracking-tight text-xl text-slate-900">DeutschUp</span>
           </div>
           <div className="flex items-center space-x-4">
-            <a href="/login" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">Masuk</a>
+            <a href="/login" className="text-slate-600 hover:text-slate-900 font-medium transition-colors" aria-label="Masuk ke akun Anda">Masuk</a>
             <Button onClick={loginWithGoogle} className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl">
               Daftar Gratis
             </Button>
@@ -272,7 +276,7 @@ function LandingPage() {
           <Button onClick={loginWithGoogle} className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-6 rounded-2xl font-bold shadow-lg">
             Mulai Belajar
           </Button>
-          <a href="#fitur" className="text-slate-600 hover:text-slate-900 font-medium text-lg underline underline-offset-4">
+          <a href="#fitur" className="text-slate-600 hover:text-slate-900 font-medium text-lg underline underline-offset-4" aria-label="Lihat materi pembelajaran">
             Lihat Materi
           </a>
         </div>
@@ -284,21 +288,21 @@ function LandingPage() {
         <div className="grid md:grid-cols-3 gap-8">
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
             <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl">🤖</span>
+              <span className="text-3xl" role="img" aria-label="Robot AI">🤖</span>
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">Tutor AI</h3>
             <p className="text-slate-600">Bertanya apa saja tentang bahasa Jerman, dapatkan penjelasan instan dari AI tutor kami.</p>
           </div>
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
             <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl">📝</span>
+              <span className="text-3xl" role="img" aria-label="Koreksi">📝</span>
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">Koreksi Pintar</h3>
             <p className="text-slate-600">Kirim kalimat dalam bahasa Jerman, dapatkan koreksi instan dengan penjelasan grammar.</p>
           </div>
           <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
             <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl">🎓</span>
+              <span className="text-3xl" role="img" aria-label="Ujian">🎓</span>
             </div>
             <h3 className="text-xl font-bold text-slate-900 mb-3">Simulasi Ujian</h3>
             <p className="text-slate-600">Latihan ujian seperti Goethe-Zertifikat dengan soal-soal realistis dan skor otomatis.</p>
@@ -332,9 +336,9 @@ function LandingPage() {
           </div>
           <p className="text-slate-400 mb-6">Platform belajar bahasa Jerman untuk semua kalangan.</p>
           <div className="flex justify-center space-x-6 text-sm text-slate-400">
-            <a href="/pricing" className="hover:text-white transition-colors">Harga</a>
-            <a href="#fitur" className="hover:text-white transition-colors">Fitur</a>
-            <a href="mailto:abdullahalmughiroh@gmail.com" className="hover:text-white transition-colors">Kontak</a>
+            <a href="/pricing" className="hover:text-white transition-colors" aria-label="Lihat harga dan paket">Harga</a>
+            <a href="#fitur" className="hover:text-white transition-colors" aria-label="Lihat fitur DeutschUp">Fitur</a>
+            <a href="mailto:abdullahalmughiroh@gmail.com" className="hover:text-white transition-colors" aria-label="Hubungi kami via email">Kontak</a>
           </div>
           <p className="text-slate-500 text-xs mt-8">© {new Date().getFullYear()} DeutschUp. Semua hak dilindungi.</p>
         </div>

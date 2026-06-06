@@ -3,6 +3,7 @@ import { Bot, X, Send, Loader2 } from 'lucide-react';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { cn } from '../lib/utils';
+import { supabase } from '../lib/supabase';
 import ReactMarkdown from 'react-markdown';
 
 export default function ChatWidget() {
@@ -33,7 +34,7 @@ export default function ChatWidget() {
     setIsTyping(true);
 
     try {
-      const token = await user.getIdToken();
+      const token = (await supabase.auth.getSession()).data.session?.access_token;
       const resp = await fetch('/api/chat', {
         method: 'POST',
         headers: { 
@@ -69,6 +70,7 @@ export default function ChatWidget() {
           "fixed bottom-6 right-6 w-16 h-16 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform z-40",
           isOpen && "hidden"
         )}
+        aria-label="Buka chat Herr Deutsch"
       >
         <Bot className="w-8 h-8 text-yellow-400" />
       </button>
@@ -87,7 +89,7 @@ export default function ChatWidget() {
               <p className="text-xs text-slate-400">Tutor Bahasa Jerman</p>
             </div>
           </div>
-          <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white p-2">
+          <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white p-2" aria-label="Tutup chat">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -128,6 +130,7 @@ export default function ChatWidget() {
               onClick={handleSend}
               disabled={isTyping || !input.trim()}
               className="w-12 h-12 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white rounded-xl flex items-center justify-center transition-colors shadow-md shadow-blue-100"
+              aria-label="Kirim pesan"
             >
               <Send className="w-5 h-5" />
             </button>
