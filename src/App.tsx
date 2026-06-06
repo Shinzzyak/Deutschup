@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, useLocation } from 'react-router';
+import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router';
 import { useEffect, Suspense, lazy, useState } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { useProgressStore } from './stores/progressStore';
@@ -195,16 +195,150 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
   )
 }
 
+function PublicRoutes() {
+  return (
+    <Routes>
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/pricing" element={<Pricing />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 export default function App() {
+  const { user, loading } = useAuthStore();
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-red-600" />
+      </div>
+    );
+  }
+
   return (
     <BrowserRouter>
-      <AuthWrapper>
-        <Layout>
-          <AnimatedRoutes />
-          <ChatWidget />
-          <QuickNoteWidget />
-        </Layout>
-      </AuthWrapper>
+      {user ? (
+        <AuthWrapper>
+          <Layout>
+            <AnimatedRoutes />
+            <ChatWidget />
+            <QuickNoteWidget />
+          </Layout>
+        </AuthWrapper>
+      ) : (
+        <PublicRoutes />
+      )}
     </BrowserRouter>
+  );
+}
+
+// Landing page for unauthenticated users
+function LandingPage() {
+  const { loginWithGoogle } = useAuthStore();
+  
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      {/* Header */}
+      <header className="w-full bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
+        <nav className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between" aria-label="Navigasi utama">
+          <div className="flex items-center space-x-2">
+            <div className="flex space-x-0.5">
+              <div className="w-3 h-5 bg-black rounded-sm"></div>
+              <div className="w-3 h-5 bg-red-600 rounded-sm"></div>
+              <div className="w-3 h-5 bg-yellow-400 rounded-sm"></div>
+            </div>
+            <span className="font-bold tracking-tight text-xl text-slate-900">DeutschUp</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <a href="/login" className="text-slate-600 hover:text-slate-900 font-medium transition-colors">Masuk</a>
+            <Button onClick={loginWithGoogle} className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl">
+              Daftar Gratis
+            </Button>
+          </div>
+        </nav>
+      </header>
+
+      {/* Hero Section */}
+      <section className="max-w-6xl mx-auto px-4 py-20 text-center">
+        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6">
+          Belajar Bahasa Jerman<br />
+          <span className="text-red-600">Lebih Cepat</span> dengan AI
+        </h1>
+        <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
+          DeutschUp membantu kamu menguasai bahasa Jerman dari nol hingga mahir dengan tutor AI, latihan interaktif, dan simulasi ujian realistis.
+        </p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Button onClick={loginWithGoogle} className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-6 rounded-2xl font-bold shadow-lg">
+            Mulai Belajar
+          </Button>
+          <a href="#fitur" className="text-slate-600 hover:text-slate-900 font-medium text-lg underline underline-offset-4">
+            Lihat Materi
+          </a>
+        </div>
+      </section>
+
+      {/* Features */}
+      <section id="fitur" className="max-w-6xl mx-auto px-4 py-20">
+        <h2 className="text-3xl font-bold text-center text-slate-900 mb-12">Kenapa DeutschUp?</h2>
+        <div className="grid md:grid-cols-3 gap-8">
+          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
+            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">🤖</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-3">Tutor AI</h3>
+            <p className="text-slate-600">Bertanya apa saja tentang bahasa Jerman, dapatkan penjelasan instan dari AI tutor kami.</p>
+          </div>
+          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
+            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">📝</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-3">Koreksi Pintar</h3>
+            <p className="text-slate-600">Kirim kalimat dalam bahasa Jerman, dapatkan koreksi instan dengan penjelasan grammar.</p>
+          </div>
+          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
+            <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
+              <span className="text-3xl">🎓</span>
+            </div>
+            <h3 className="text-xl font-bold text-slate-900 mb-3">Simulasi Ujian</h3>
+            <p className="text-slate-600">Latihan ujian seperti Goethe-Zertifikat dengan soal-soal realistis dan skor otomatis.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Levels */}
+      <section className="max-w-6xl mx-auto px-4 py-20 bg-white rounded-3xl mx-4 mb-20 shadow-sm">
+        <h2 className="text-3xl font-bold text-center text-slate-900 mb-12">Kurikulum Terstruktur</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          {['A1', 'A2', 'B1', 'B2'].map((level, i) => (
+            <div key={level} className={`p-6 rounded-2xl text-center ${i === 0 ? 'bg-green-50 border-2 border-green-200' : 'bg-slate-50 border border-slate-200'}`}>
+              <div className={`text-4xl font-black mb-2 ${i === 0 ? 'text-green-600' : 'text-slate-400'}`}>{level}</div>
+              <p className="text-sm font-medium text-slate-600">{['Pemula', 'Dasar', 'Menengah', 'Mahir'][i]}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-white py-12">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <div className="flex items-center justify-center space-x-2 mb-6">
+            <div className="flex space-x-0.5">
+              <div className="w-2 h-4 bg-white rounded-sm"></div>
+              <div className="w-2 h-4 bg-red-500 rounded-sm"></div>
+              <div className="w-2 h-4 bg-yellow-400 rounded-sm"></div>
+            </div>
+            <span className="font-bold tracking-tight text-lg">DeutschUp</span>
+          </div>
+          <p className="text-slate-400 mb-6">Platform belajar bahasa Jerman untuk semua kalangan.</p>
+          <div className="flex justify-center space-x-6 text-sm text-slate-400">
+            <a href="/pricing" className="hover:text-white transition-colors">Harga</a>
+            <a href="#fitur" className="hover:text-white transition-colors">Fitur</a>
+            <a href="mailto:abdullahalmughiroh@gmail.com" className="hover:text-white transition-colors">Kontak</a>
+          </div>
+          <p className="text-slate-500 text-xs mt-8">© {new Date().getFullYear()} DeutschUp. Semua hak dilindungi.</p>
+        </div>
+      </footer>
+    </div>
   );
 }
