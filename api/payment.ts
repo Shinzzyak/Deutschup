@@ -93,11 +93,11 @@ export default async function handler(req: any, res: any) {
         });
       }
 
-      if (ipaymuRes.Data && ipaymuRes.Data.SessionId) {
+      if (ipaymuRes.Data && ipaymuRes.Data.SessionID) {
         const { error } = await getDb()
           .from('orders')
           .insert({
-            id: ipaymuRes.Data.SessionId,
+            id: ipaymuRes.Data.SessionID,
             userId,
             planType: planType || 'pro',
             status: 'pending',
