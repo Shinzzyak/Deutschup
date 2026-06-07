@@ -22,6 +22,19 @@ export default async function handler(req: any, res: any) {
       const IPAYMU_URL = process.env.IPAYMU_URL || 'https://api.ipaymu.com';
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
+      // === DETAILED ENV LOG ===
+      const urlEnvSet = 'IPAYMU_URL' in process.env;
+      const finalUrl = `${IPAYMU_URL}/api/v2/payment`;
+      const signaturePresent = !!(IPAYMU_API_KEY && IPAYMU_VA);
+
+      console.log('[payment/create] === ENV DEBUG ===');
+      console.log(`[payment/create] IPAYMU_URL_ENV_SET=${urlEnvSet}`);
+      console.log(`[payment/create] IPAYMU_URL_RAW=${process.env.IPAYMU_URL || '(not set)'}`);
+      console.log(`[payment/create] IPAYMU_URL_FINAL=${finalUrl}`);
+      console.log(`[payment/create] VA_PRESENT=${!!IPAYMU_VA} value=${IPAYMU_VA ? IPAYMU_VA.substring(0, 4) + '****' : 'N/A'}`);
+      console.log(`[payment/create] API_KEY_PRESENT=${!!IPAYMU_API_KEY} length=${IPAYMU_API_KEY?.length || 0}`);
+      console.log('[payment/create] === END ENV DEBUG ===');
+
       const { userId, planType, email, name } = req.body;
       const price = 49000;
 
@@ -47,7 +60,12 @@ export default async function handler(req: any, res: any) {
         .digest('hex')
         .toLowerCase();
 
-      const ipaymuReq = await fetch(`${IPAYMU_URL}/api/v2/payment`, {
+      console.log(`[payment/create] SIGNATURE_PRESENT=${signaturePresent}`);
+      console.log(`[payment/create] SIGNATURE_FIRST_8=${signature.substring(0, 8)}...`);
+      console.log(`[payment/create] REQUEST_URL=${finalUrl}`);
+      console.log(`[payment/create] REQUEST_BODY_KEYS=${Object.keys(body).join(',')}`);
+
+      const ipaymuReq = await fetch(finalUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -58,11 +76,12 @@ export default async function handler(req: any, res: any) {
       });
 
       const ipaymuResText = await ipaymuReq.text();
-      console.log('[payment/create] iPaymu response:', {
-        status: ipaymuReq.status,
-        contentType: ipaymuReq.headers.get('content-type'),
-        body: ipaymuResText.substring(0, 500),
-      });
+      console.log('[payment/create] === RESPONSE DEBUG ===');
+      console.log(`[payment/create] HTTP_STATUS=${ipaymuReq.status}`);
+      console.log(`[payment/create] CONTENT_TYPE=${ipaymuReq.headers.get('content-type')}`);
+      console.log(`[payment/create] RESPONSE_LENGTH=${ipaymuResText.length}`);
+      console.log(`[payment/create] RESPONSE_FIRST_300=${ipaymuResText.substring(0, 300)}`);
+      console.log('[payment/create] === END RESPONSE DEBUG ===');
 
       let ipaymuRes: any;
       try {
