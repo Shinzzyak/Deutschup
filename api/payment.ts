@@ -19,7 +19,7 @@ export default async function handler(req: any, res: any) {
 
       const IPAYMU_VA = process.env.IPAYMU_VA;
       const IPAYMU_API_KEY = process.env.IPAYMU_API_KEY;
-      const IPAYMU_URL = process.env.IPAYMU_URL || 'https://sandbox.ipaymu.com';
+      const IPAYMU_URL = process.env.IPAYMU_URL || 'https://api.ipaymu.com';
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
       const { userId, planType, email, name } = req.body;
