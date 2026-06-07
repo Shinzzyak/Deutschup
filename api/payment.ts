@@ -18,22 +18,14 @@ export default async function handler(req: any, res: any) {
       await runMiddleware(req, res, authMiddleware);
 
       const IPAYMU_VA = process.env.IPAYMU_VA;
-      const IPAYMU_API_KEY = process.env.IPAYMU_API_KEY;
+      const IPAYMU_API_KEY = proces…KEY;
       const IPAYMU_URL = process.env.IPAYMU_URL || 'https://api.ipaymu.com';
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
-      // === DETAILED ENV LOG ===
-      const urlEnvSet = 'IPAYMU_URL' in process.env;
-      const finalUrl = `${IPAYMU_URL}/api/v2/payment`;
-      const signaturePresent = !!(IPAYMU_API_KEY && IPAYMU_VA);
-
-      console.log('[payment/create] === ENV DEBUG ===');
-      console.log(`[payment/create] IPAYMU_URL_ENV_SET=${urlEnvSet}`);
-      console.log(`[payment/create] IPAYMU_URL_RAW=${process.env.IPAYMU_URL || '(not set)'}`);
-      console.log(`[payment/create] IPAYMU_URL_FINAL=${finalUrl}`);
-      console.log(`[payment/create] VA_PRESENT=${!!IPAYMU_VA} value=${IPAYMU_VA ? IPAYMU_VA.substring(0, 4) + '****' : 'N/A'}`);
-      console.log(`[payment/create] API_KEY_PRESENT=${!!IPAYMU_API_KEY} length=${IPAYMU_API_KEY?.length || 0}`);
-      console.log('[payment/create] === END ENV DEBUG ===');
+      console.log('IPAYMU_URL', IPAYMU_URL);
+      console.log('VA', IPAYMU_VA);
+      console.log('API_KEY_LENGTH', IPAYMU_API_KEY?.length);
+      console.log('URL_ENV_SET', 'IPAYMU_URL' in process.env);
 
       const { userId, planType, email, name } = req.body;
       const price = 49000;
@@ -60,12 +52,12 @@ export default async function handler(req: any, res: any) {
         .digest('hex')
         .toLowerCase();
 
-      console.log(`[payment/create] SIGNATURE_PRESENT=${signaturePresent}`);
-      console.log(`[payment/create] SIGNATURE_FIRST_8=${signature.substring(0, 8)}...`);
-      console.log(`[payment/create] REQUEST_URL=${finalUrl}`);
-      console.log(`[payment/create] REQUEST_BODY_KEYS=${Object.keys(body).join(',')}`);
+      console.log('SIGNATURE', signature?.substring(0, 12));
 
-      const ipaymuReq = await fetch(finalUrl, {
+      const requestUrl = `${IPAYMU_URL}/api/v2/payment`;
+      console.log('REQUEST_URL', requestUrl);
+
+      const ipaymuReq = await fetch(requestUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,27 +67,23 @@ export default async function handler(req: any, res: any) {
         body: JSON.stringify(body),
       });
 
-      const ipaymuResText = await ipaymuReq.text();
-      console.log('[payment/create] === RESPONSE DEBUG ===');
-      console.log(`[payment/create] HTTP_STATUS=${ipaymuReq.status}`);
-      console.log(`[payment/create] CONTENT_TYPE=${ipaymuReq.headers.get('content-type')}`);
-      console.log(`[payment/create] RESPONSE_LENGTH=${ipaymuResText.length}`);
-      console.log(`[payment/create] RESPONSE_FIRST_300=${ipaymuResText.substring(0, 300)}`);
-      console.log('[payment/create] === END RESPONSE DEBUG ===');
+      console.log('STATUS', ipaymuReq.status);
+      console.log('CONTENT_TYPE', ipaymuReq.headers.get('content-type'));
+
+      const raw = await ipaymuReq.text();
+
+      console.log('RAW_RESPONSE_FIRST_1000');
+      console.log(raw.slice(0, 1000));
 
       let ipaymuRes: any;
       try {
-        ipaymuRes = JSON.parse(ipaymuResText);
+        ipaymuRes = JSON.parse(raw);
       } catch (parseErr) {
-        console.error('[payment/create] iPaymu returned non-JSON:', {
+        return res.status(502).json({
+          error: 'Payment gateway returned non-JSON',
           status: ipaymuReq.status,
           contentType: ipaymuReq.headers.get('content-type'),
-          body: ipaymuResText.substring(0, 500),
-        });
-        return res.status(502).json({
-          error: 'Payment gateway returned invalid response',
-          status: ipaymuReq.status,
-          body: ipaymuResText.substring(0, 200),
+          rawFirst500: raw.slice(0, 500),
         });
       }
 
