@@ -19,7 +19,7 @@ export default async function handler(req: any, res: any) {
 
       const IPAYMU_VA = process.env.IPAYMU_VA;
       const IPAYMU_API_KEY = proces…KEY;
-      const IPAYMU_URL = process.env.IPAYMU_URL || 'https://api.ipaymu.com';
+      const IPAYMU_URL = process.env.IPAYMU_URL || 'https://my.ipaymu.com';
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
       console.log('IPAYMU_URL', IPAYMU_URL);
@@ -54,16 +54,22 @@ export default async function handler(req: any, res: any) {
 
       console.log('SIGNATURE', signature?.substring(0, 12));
 
+      const headers: any = {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'signature': signature,
+        'va': IPAYMU_VA!,
+      };
+
+      console.log('HEADERS', JSON.stringify(headers, null, 2));
+      console.log('BODY', JSON.stringify(body, null, 2));
+
       const requestUrl = `${IPAYMU_URL}/api/v2/payment`;
       console.log('REQUEST_URL', requestUrl);
 
       const ipaymuReq = await fetch(requestUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          signature: signature,
-          va: IPAYMU_VA!,
-        },
+        headers,
         body: JSON.stringify(body),
       });
 
@@ -72,8 +78,8 @@ export default async function handler(req: any, res: any) {
 
       const raw = await ipaymuReq.text();
 
-      console.log('RAW_RESPONSE_FIRST_1000');
-      console.log(raw.slice(0, 1000));
+      console.log('RAW_RESPONSE_FIRST_3000');
+      console.log(raw.slice(0, 3000));
 
       let ipaymuRes: any;
       try {
