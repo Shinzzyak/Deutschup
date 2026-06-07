@@ -18,7 +18,7 @@ export default async function handler(req: any, res: any) {
       await runMiddleware(req, res, authMiddleware);
 
       const IPAYMU_VA = process.env.IPAYMU_VA;
-      const IPAYMU_API_KEY = proces…KEY;
+      const IPAYMU_API_KEY = process.env.IPAYMU_API_KEY;
       const IPAYMU_URL = process.env.IPAYMU_URL || 'https://my.ipaymu.com';
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
 
