@@ -57,7 +57,28 @@ export default async function handler(req: any, res: any) {
         body: JSON.stringify(body),
       });
 
-      const ipaymuRes: any = await ipaymuReq.json();
+      const ipaymuResText = await ipaymuReq.text();
+      console.log('[payment/create] iPaymu response:', {
+        status: ipaymuReq.status,
+        contentType: ipaymuReq.headers.get('content-type'),
+        body: ipaymuResText.substring(0, 500),
+      });
+
+      let ipaymuRes: any;
+      try {
+        ipaymuRes = JSON.parse(ipaymuResText);
+      } catch (parseErr) {
+        console.error('[payment/create] iPaymu returned non-JSON:', {
+          status: ipaymuReq.status,
+          contentType: ipaymuReq.headers.get('content-type'),
+          body: ipaymuResText.substring(0, 500),
+        });
+        return res.status(502).json({
+          error: 'Payment gateway returned invalid response',
+          status: ipaymuReq.status,
+          body: ipaymuResText.substring(0, 200),
+        });
+      }
 
       if (ipaymuRes.Data && ipaymuRes.Data.SessionId) {
         const { error } = await getDb()
@@ -137,4 +158,3 @@ export default async function handler(req: any, res: any) {
     }
   }
 }
-
