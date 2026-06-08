@@ -24,6 +24,7 @@ export default async function handler(req: any, res: any) {
       console.log('[payment/create] Provider: bayar_gg');
       console.log('[payment/create] API_KEY_LENGTH', BAYAR_GG_API_KEY?.length);
       console.log('[payment/create] BASE_URL', BAYAR_GG_BASE_URL);
+      console.log('[payment/create] APP_URL', APP_URL);
 
       const { userId, planType, email, name } = req.body;
 
@@ -44,6 +45,8 @@ export default async function handler(req: any, res: any) {
       };
 
       console.log('[BAYARGG REQUEST]', JSON.stringify(payload, null, 2));
+      console.log('[payment/create] CALLBACK_URL', payload.callback_url);
+      console.log('[payment/create] REDIRECT_URL', payload.redirect_url);
 
       const bayarRes = await fetch(`${BAYAR_GG_BASE_URL}/create-payment.php`, {
         method: 'POST',
