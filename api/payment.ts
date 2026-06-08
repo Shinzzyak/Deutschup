@@ -17,7 +17,7 @@ export default async function handler(req: any, res: any) {
 
       await runMiddleware(req, res, authMiddleware);
 
-      const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY;
+      const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY || process.env.BAYAR_GG_API_KEY_FALLBACK;
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
       const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
