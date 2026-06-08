@@ -17,90 +17,69 @@ export default async function handler(req: any, res: any) {
 
       await runMiddleware(req, res, authMiddleware);
 
-      const IPAYMU_VA = process.env.IPAYMU_VA;
-      const IPAYMU_API_KEY = process.env.IPAYMU_API_KEY;
-      const IPAYMU_URL = process.env.IPAYMU_URL || 'https://my.ipaymu.com';
+      const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY;
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
+      const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
-      console.log('IPAYMU_URL', IPAYMU_URL);
-      console.log('VA', IPAYMU_VA);
-      console.log('API_KEY_LENGTH', IPAYMU_API_KEY?.length);
-      console.log('URL_ENV_SET', 'IPAYMU_URL' in process.env);
+      console.log('[payment/create] Provider: bayar_gg');
+      console.log('[payment/create] API_KEY_LENGTH', BAYAR_GG_API_KEY?.length);
+      console.log('[payment/create] BASE_URL', BAYAR_GG_BASE_URL);
 
       const { userId, planType, email, name } = req.body;
       const price = 49000;
 
-      const body: any = {
-        account: IPAYMU_VA,
-        product: [`DeutschUp ${(planType || 'pro').toUpperCase()}`],
-        qty: ['1'],
-        price: [price.toString()],
-        returnUrl: `${APP_URL}/dashboard?payment=success`,
-        notifyUrl: `${APP_URL}/api/payment?action=callback`,
-        cancelUrl: `${APP_URL}/pricing?payment=cancel`,
-        referenceId: `ORDER-${userId}-${Date.now()}`,
-        buyerName: name || 'Student',
-        buyerEmail: email || 'student@example.com',
+      const payload = {
+        amount: price,
+        description: `DeutschUp ${(planType || 'pro').toUpperCase()} Subscription`,
+        customer_name: name || 'Student',
+        customer_email: email || 'student@example.com',
+        callback_url: `${APP_URL}/api/payment?action=callback`,
+        redirect_url: `${APP_URL}/dashboard?payment=success`,
+        payment_method: 'qris',
       };
 
-      const stringBody = JSON.stringify(body);
-      const bodyHash = crypto.createHash('sha256').update(stringBody).digest('hex').toLowerCase();
-      const stringToSign = `POST:${IPAYMU_VA}:${bodyHash}:${IPAYMU_API_KEY}`;
-      const signature = crypto
-        .createHmac('sha256', IPAYMU_API_KEY!)
-        .update(stringToSign)
-        .digest('hex')
-        .toLowerCase();
+      console.log('[payment/create] Request payload:', JSON.stringify(payload, null, 2));
 
-      console.log('SIGNATURE', signature?.substring(0, 12));
-
-      const headers: any = {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'signature': signature,
-        'va': IPAYMU_VA!,
-      };
-
-      console.log('HEADERS', JSON.stringify(headers, null, 2));
-      console.log('BODY', JSON.stringify(body, null, 2));
-
-      const requestUrl = `${IPAYMU_URL}/api/v2/payment`;
-      console.log('REQUEST_URL', requestUrl);
-
-      const ipaymuReq = await fetch(requestUrl, {
+      const bayarRes = await fetch(`${BAYAR_GG_BASE_URL}/create-payment.php`, {
         method: 'POST',
-        headers,
-        body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': BAYAR_GG_API_KEY!,
+        },
+        body: JSON.stringify(payload),
       });
 
-      console.log('STATUS', ipaymuReq.status);
-      console.log('CONTENT_TYPE', ipaymuReq.headers.get('content-type'));
+      console.log('[payment/create] STATUS', bayarRes.status);
+      console.log('[payment/create] CONTENT_TYPE', bayarRes.headers.get('content-type'));
 
-      const raw = await ipaymuReq.text();
-
-      console.log('RAW_RESPONSE_FIRST_3000');
+      const raw = await bayarRes.text();
+      console.log('[payment/create] RAW_RESPONSE_FIRST_3000');
       console.log(raw.slice(0, 3000));
 
-      let ipaymuRes: any;
+      let bayarData: any;
       try {
-        ipaymuRes = JSON.parse(raw);
+        bayarData = JSON.parse(raw);
       } catch (parseErr) {
         return res.status(502).json({
           error: 'Payment gateway returned non-JSON',
-          status: ipaymuReq.status,
-          contentType: ipaymuReq.headers.get('content-type'),
+          status: bayarRes.status,
+          contentType: bayarRes.headers.get('content-type'),
           rawFirst500: raw.slice(0, 500),
         });
       }
 
-      if (ipaymuRes.Data && ipaymuRes.Data.SessionID) {
+      console.log('[payment/create] Response:', JSON.stringify(bayarData, null, 2));
+
+      if (bayarData.success && bayarData.data?.invoice_id) {
         const { error } = await getDb()
           .from('orders')
           .insert({
-            id: ipaymuRes.Data.SessionID,
+            id: bayarData.data.invoice_id,
             userId,
             planType: planType || 'pro',
             status: 'pending',
+            amount: price,
+            payment_method: bayarData.data.payment_method || 'qris',
             createdAt: new Date().toISOString(),
           });
 
@@ -109,29 +88,38 @@ export default async function handler(req: any, res: any) {
           return res.status(500).json({ error: 'Failed to save order', details: error.message });
         }
 
-        return res.json({ url: ipaymuRes.Data.Url });
+        return res.json({
+          url: bayarData.data.payment_url,
+          invoice_id: bayarData.data.invoice_id,
+          expires_at: bayarData.data.expires_at,
+        });
       } else {
-        console.error('[payment/create] iPaymu error:', ipaymuRes);
-        return res.status(400).json({ error: 'Payment gateway error', details: ipaymuRes });
+        console.error('[payment/create] Bayar.gg error:', bayarData);
+        return res.status(400).json({
+          error: 'Payment gateway error',
+          details: bayarData.message || bayarData.error || 'Unknown error',
+        });
       }
     }
 
-    // === action=callback (POST, no auth — called by iPaymu server) ===
+    // === action=callback (POST, no auth — called by Bayar.gg webhook) ===
     if (action === 'callback') {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-      const { trx_id, status, sid } = req.body;
-      console.log('[payment/callback] Received:', { trx_id, status, sid });
+      const webhookPayload = req.body;
+      console.log('[payment/callback] Received webhook:', JSON.stringify(webhookPayload, null, 2));
 
-      if (status === 'berhasil' || status === 'success') {
+      const { invoice_id, status, paid_at, payment_method, paid_reff_num } = webhookPayload;
+
+      if (status === 'paid') {
         const { data: order, error: orderError } = await getDb()
           .from('orders')
           .select('*')
-          .eq('id', sid)
+          .eq('id', invoice_id)
           .single();
 
         if (orderError || !order) {
-          console.error('[payment/callback] Order not found:', sid, orderError);
+          console.error('[payment/callback] Order not found:', invoice_id, orderError);
           return res.status(404).json({ error: 'Order not found' });
         }
 
@@ -149,8 +137,13 @@ export default async function handler(req: any, res: any) {
 
         const { error: updateOrderError } = await getDb()
           .from('orders')
-          .update({ status: 'paid', paidAt: new Date().toISOString() })
-          .eq('id', sid);
+          .update({
+            status: 'paid',
+            paid_at: paid_at || new Date().toISOString(),
+            payment_method: payment_method || order.payment_method,
+            paid_reff_num: paid_reff_num || null,
+          })
+          .eq('id', invoice_id);
 
         if (updateOrderError) {
           console.error('[payment/callback] Order update error:', updateOrderError);
