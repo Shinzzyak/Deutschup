@@ -123,11 +123,18 @@ export default async function handler(req: any, res: any) {
           return res.status(404).json({ error: 'Order not found' });
         }
 
-        const expiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+        const now = new Date();
+        const expiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000).toISOString();
 
+        // Update profile with subscription + legacy tier fields
         const { error: profileError } = await getDb()
           .from('profiles')
-          .update({ tier: order.plan_type, tier_expiry: expiry })
+          .update({
+            tier: order.plan_type,
+            tier_expiry: expiry,
+            subscription: order.plan_type,
+            pro_expires_at: expiry,
+          })
           .eq('id', order.user_id);
 
         if (profileError) {

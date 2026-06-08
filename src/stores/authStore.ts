@@ -6,6 +6,8 @@ import { supabase } from '../lib/supabase';
 export interface TierData {
   tier: 'free' | 'pro';
   tierExpiry?: number;
+  subscription?: 'free' | 'pro';
+  pro_expires_at?: string | null;
 }
 
 interface ProfileData {
@@ -74,7 +76,7 @@ export const useAuthStore = create<AuthState>((set) => {
 
         const profilePromise = supabase
           .from('profiles')
-          .select('tier, tier_expiry, full_name, avatar_url, role')
+          .select('tier, tier_expiry, full_name, avatar_url, role, subscription, pro_expires_at')
           .eq('id', user.id)
           .single();
 
@@ -102,9 +104,19 @@ export const useAuthStore = create<AuthState>((set) => {
             }
           }
         } else if (data) {
-          tierData = { tier: data.tier || 'free', tierExpiry: data.tier_expiry };
+          // Compute effective subscription: if pro_expires_at is past, treat as free
+          const now = Date.now();
+          const isPro = data.subscription === 'pro' && data.pro_expires_at && new Date(data.pro_expires_at).getTime() > now;
+          const effectiveTier = isPro ? 'pro' : 'free';
+
+          tierData = {
+            tier: effectiveTier,
+            tierExpiry: data.tier_expiry,
+            subscription: data.subscription || 'free',
+            pro_expires_at: data.pro_expires_at,
+          };
           profileData = { full_name: data.full_name, avatar_url: data.avatar_url, role: data.role };
-          console.log('[AUTH] profile loaded:', profileData.role, tierData.tier);
+          console.log('[AUTH] profile loaded:', profileData.role, tierData.tier, 'pro_expires_at:', data.pro_expires_at);
         }
       }
     } catch (e) {
