@@ -26,7 +26,10 @@ export default async function handler(req: any, res: any) {
       console.log('[payment/create] BASE_URL', BAYAR_GG_BASE_URL);
 
       const { userId, planType, email, name } = req.body;
-      const price = 49000;
+
+      const isTestMode = process.env.TEST_PAYMENT_MODE === 'true';
+      const price = isTestMode ? 1 : 1000;
+      console.log('[payment/create] TEST_PAYMENT_MODE:', isTestMode, '| price:', price);
 
       const payload = {
         amount: price,
@@ -91,6 +94,7 @@ export default async function handler(req: any, res: any) {
         return res.json({
           url: bayarData.data.payment_url,
           invoice_id: bayarData.data.invoice_id,
+          amount: price,
           expires_at: bayarData.data.expires_at,
         });
       } else {
