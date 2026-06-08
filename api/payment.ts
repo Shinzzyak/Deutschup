@@ -41,7 +41,7 @@ export default async function handler(req: any, res: any) {
         payment_method: 'qris',
       };
 
-      console.log('[payment/create] Request payload:', JSON.stringify(payload, null, 2));
+      console.log('[BAYARGG REQUEST]', JSON.stringify(payload, null, 2));
 
       const bayarRes = await fetch(`${BAYAR_GG_BASE_URL}/create-payment.php`, {
         method: 'POST',
@@ -71,7 +71,7 @@ export default async function handler(req: any, res: any) {
         });
       }
 
-      console.log('[payment/create] Response:', JSON.stringify(bayarData, null, 2));
+      console.log('[BAYARGG RESPONSE]', JSON.stringify(bayarData, null, 2));
 
       if (bayarData.success && bayarData.data?.invoice_id) {
         const { error } = await getDb()
@@ -98,10 +98,10 @@ export default async function handler(req: any, res: any) {
           expires_at: bayarData.data.expires_at,
         });
       } else {
-        console.error('[payment/create] Bayar.gg error:', bayarData);
+        console.error('[BAYARGG ERROR]', JSON.stringify(bayarData, null, 2));
         return res.status(400).json({
           error: 'Payment gateway error',
-          details: bayarData.message || bayarData.error || 'Unknown error',
+          gateway_response: bayarData,
         });
       }
     }
