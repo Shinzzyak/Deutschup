@@ -28,7 +28,9 @@ export default async function handler(req: any, res: any) {
       const { userId, planType, email, name } = req.body;
 
       const isTestMode = process.env.TEST_PAYMENT_MODE === 'true';
-      const price = isTestMode ? 1 : 1000;
+      const TEST_PRICE = 1000;
+      const PROD_PRICE = 49000;
+      const price = isTestMode ? TEST_PRICE : PROD_PRICE;
       console.log('[payment/create] TEST_PAYMENT_MODE:', isTestMode, '| price:', price);
 
       const payload = {
