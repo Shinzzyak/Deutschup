@@ -149,7 +149,7 @@ export default async function handler(req: any, res: any) {
           console.error('[payment/callback] Order update error:', updateOrderError);
         }
 
-        console.log('[payment/callback] Payment processed successfully for user:', order.userId);
+        console.log('[payment/callback] Payment processed successfully for user:', order.user_id);
       }
 
       return res.json({ success: true });
