@@ -75,12 +75,12 @@ export default async function handler(req: any, res: any) {
           .from('orders')
           .insert({
             id: bayarData.data.invoice_id,
-            userId,
-            planType: planType || 'pro',
+            user_id: userId,
+            plan_type: planType || 'pro',
             status: 'pending',
             amount: price,
             payment_method: bayarData.data.payment_method || 'qris',
-            createdAt: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           });
 
         if (error) {
@@ -127,8 +127,8 @@ export default async function handler(req: any, res: any) {
 
         const { error: profileError } = await getDb()
           .from('profiles')
-          .update({ tier: order.planType, tier_expiry: expiry })
-          .eq('id', order.userId);
+          .update({ tier: order.plan_type, tier_expiry: expiry })
+          .eq('id', order.user_id);
 
         if (profileError) {
           console.error('[payment/callback] Profile update error:', profileError);

@@ -67,3 +67,15 @@ CREATE TABLE IF NOT EXISTS mock_tests (
   completed_at TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+CREATE TABLE IF NOT EXISTS orders (
+  id TEXT PRIMARY KEY,
+  user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  plan_type TEXT NOT NULL DEFAULT 'pro',
+  status TEXT NOT NULL DEFAULT 'pending',
+  amount INTEGER,
+  payment_method TEXT,
+  paid_at TIMESTAMPTZ,
+  paid_reff_num TEXT,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
