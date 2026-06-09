@@ -11,11 +11,6 @@ import { cn } from '../lib/utils';
 import { Progress } from '../components/ui/progress';
 import { Button } from '../components/ui/button';
 
-function isLevelLocked(level: string, tier: string) {
-  if (tier === 'free' && level !== 'A1') return true;
-  return false;
-}
-
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab } = useProgressStore();
   const { mockTests } = useLearningStore();

@@ -127,7 +127,7 @@ export default function Admin() {
     );
   }
 
-  const proCount = users.filter(u => u.tier === 'pro').length;
+  const proCount = users.filter(u => (u.subscription || u.tier) === 'pro').length;
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-6">
@@ -208,9 +208,9 @@ export default function Admin() {
                   </td>
                   <td className="py-4 px-6">
                     <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                      u.tier === 'pro' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'
+                      (u.subscription || u.tier) === 'pro' ? 'bg-blue-100 text-blue-700' : 'bg-slate-100 text-slate-600'
                     }`}>
-                      {u.tier || 'free'}
+                      {u.subscription || u.tier || 'free'}
                     </span>
                   </td>
                   <td className="py-4 px-6">
@@ -226,8 +226,8 @@ export default function Admin() {
                   <td className="py-4 px-6 text-right">
                     <div className="flex justify-end gap-2">
                       <select
-                        value={u.tier || 'free'}
-                        onChange={(e) => handleUpdateUser(u.id, { tier: e.target.value })}
+                        value={u.subscription || u.tier || 'free'}
+                        onChange={(e) => handleUpdateUser(u.id, { tier: e.target.value, subscription: e.target.value })}
                         className="bg-slate-100 text-xs rounded-lg px-2 py-1 border border-slate-200 outline-none"
                       >
                         <option value="free">Free</option>
