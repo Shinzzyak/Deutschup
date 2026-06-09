@@ -8,90 +8,84 @@ export default async function handler(req: any, res: any) {
     // Free Tier Limit Check
     const uid = req.user.uid;
     const userEmail = req.user.email;
-    console.log('[CHAT] START', { uid, userEmail });
+    console.log('[STEP0 AUTH]', { uid, email: userEmail });
 
     try {
       // STEP 1: Profile query
-      const userDoc = await getDb()
+      const { data: profile, error: profileErr } = await getDb()
         .from('profiles')
         .select('id, tier, subscription, pro_expires_at')
         .eq('id', uid)
         .single();
 
-      if (userDoc.error) {
-        console.error('[CHAT] STEP1 profile query FAILED:', JSON.stringify(userDoc.error));
-      } else {
-        console.log('[CHAT] STEP1 profile OK:', JSON.stringify(userDoc.data));
-      }
+      console.log('[STEP1 PROFILE]', { profile, error: profileErr });
 
       const nowMs = Date.now();
-      const isPro = userDoc.data?.subscription === 'pro'
-        && userDoc.data?.pro_expires_at
-        && new Date(userDoc.data.pro_expires_at).getTime() > nowMs;
-      let tier = isPro ? 'pro' : (userDoc.data?.tier || 'free');
+      const isPro = profile?.subscription === 'pro'
+        && profile?.pro_expires_at
+        && new Date(profile.pro_expires_at).getTime() > nowMs;
+      let tier = isPro ? 'pro' : (profile?.tier || 'free');
       
       const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
-      if (userEmail === adminEmail) {
-         tier = 'pro';
-      }
+      if (userEmail === adminEmail) tier = 'pro';
 
-      console.log('[CHAT] STEP2 tier decided:', { tier, isPro, email: userEmail });
+      console.log('[STEP2 TIER]', { tier, subscription: profile?.subscription, pro_expires_at: profile?.pro_expires_at });
       
       if (tier === 'free') {
          const today = new Date().toISOString().split('T')[0];
 
          // STEP 3: Read current usage
-         const usageResult = await getDb()
+         const { data: usageRow, error: usageReadErr } = await getDb()
            .from('user_daily_usage')
            .select('date, gemini_count')
            .eq('user_id', uid)
            .eq('date', today)
            .maybeSingle();
 
-         if (usageResult.error) {
-           console.error('[CHAT] STEP3 usage read FAILED:', JSON.stringify(usageResult.error));
-         }
-         console.log('[CHAT] STEP3 usage read:', JSON.stringify(usageResult.data), 'error:', JSON.stringify(usageResult.error));
+         console.log('[STEP3 USAGE READ]', { usageRow, error: usageReadErr });
 
-         let usageCount = usageResult.data?.gemini_count || 0;
-         console.log('[CHAT] STEP3 usageCount:', usageCount);
+         if (usageReadErr) {
+           console.error('[STEP3 FAILED] Blocking request — DB read error', JSON.stringify(usageReadErr));
+           return res.status(500).json({ error: 'USAGE_READ_FAILED', details: usageReadErr });
+         }
+
+         const usageCount = usageRow?.gemini_count || 0;
          
          if (usageCount >= 10) {
-            console.log('[CHAT] BLOCKED: daily limit reached');
-            return res.status(403).json({ error: "Batas 10 pesan Herr Deutsch tercapai hari ini untuk paket Free. Silakan Upgrade!" });
+            console.log('[STEP3 BLOCKED] daily limit reached');
+            return res.status(403).json({ error: 'Batas 10 pesan Herr Deutsch tercapai hari ini untuk paket Free. Silakan Upgrade!' });
          }
 
          // STEP 4: Write updated count
-         if (usageResult.data) {
-           // UPDATE existing row
-           const updateResult = await getDb().from('user_daily_usage').update({
-             gemini_count: usageCount + 1,
-           }).eq('user_id', uid).eq('date', today);
+         const nextCount = usageCount + 1;
+         console.log('[STEP4 BEFORE WRITE]', { usageCount, nextCount });
 
-           if (updateResult.error) {
-             console.error('[CHAT] STEP4 update FAILED:', JSON.stringify(updateResult.error));
-           } else {
-             console.log('[CHAT] STEP4 update OK:', JSON.stringify(updateResult.data));
-           }
+         let writeErr;
+         if (usageRow) {
+           const { error } = await getDb().from('user_daily_usage').update({ gemini_count: nextCount })
+             .eq('user_id', uid).eq('date', today);
+           writeErr = error;
+           console.log('[STEP4 UPDATE]', { nextCount, error });
          } else {
-           // INSERT new row
-           const insertResult = await getDb().from('user_daily_usage').insert({
-             user_id: uid,
-             date: today,
-             gemini_count: 1,
+           const { error } = await getDb().from('user_daily_usage').insert({
+             user_id: uid, date: today, gemini_count: 1,
            });
-
-           if (insertResult.error) {
-             console.error('[CHAT] STEP4 insert FAILED:', JSON.stringify(insertResult.error));
-           } else {
-             console.log('[CHAT] STEP4 insert OK:', JSON.stringify(insertResult.data));
-           }
+           writeErr = error;
+           console.log('[STEP4 INSERT]', { error });
          }
+
+         if (writeErr) {
+           console.error('[STEP4 FAILED] Blocking request — DB write error', JSON.stringify(writeErr));
+           return res.status(500).json({ error: 'USAGE_WRITE_FAILED', details: writeErr });
+         }
+
+         console.log('[STEP4 OK] usage tracked:', nextCount);
       } else {
-        console.log('[CHAT] PRO user, skipping rate limit');
+        console.log('[STEP2] PRO user, skipping rate limit');
       }
     } catch (dbError: any) {
-      console.error('[CHAT] DB BLOCK FAILED:', dbError?.message, dbError?.stack);
+      console.error('[STEP-FATAL]', dbError?.message, dbError?.stack);
+      return res.status(500).json({ error: 'RATE_LIMIT_DB_ERROR', details: dbError?.message });
     }
 
     const ai = await getAiClient();
