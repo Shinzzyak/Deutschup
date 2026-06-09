@@ -9,7 +9,7 @@ export default async function handler(req: any, res: any) {
     const { level, grammarTopic, vocabulary } = req.body;
     
     const response = await ai.models.generateContent({
-      model: "gemma-4",
+      model: "gemma-4-31b-it",
       contents: `Buatkan persis 3 soal kuis mini pilihan ganda (multiple_choice) Bahasa Jerman untuk level ${level} berdasarkan materi: ${grammarTopic}. Gunakan kosa kata berikut jika relevan: ${vocabulary?.map((v:any) => v.word).join(', ')}. Soal HARUS berupa pilihan ganda dengan 4 opsi jawaban.`,
       config: {
         responseMimeType: "application/json",

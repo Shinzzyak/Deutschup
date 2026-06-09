@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
     const ai = await getAiClient();
     const { level } = req.body;
     const response = await ai.models.generateContent({
-      model: "gemma-4",
+      model: "gemma-4-31b-it",
       contents: `Buatkan ujian simulasi (Mock Test) bahasa Jerman level ${level} dalam format resmi seperti (Goethe/TELC).
 Total 20 soal pilihan ganda, dibagi menjadi 3 bagian (Reading: 5, Grammar: 8, Vocab: 7).
 Tiap Reading question beri sedikit konteks teks bacaan pendek.
