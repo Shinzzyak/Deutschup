@@ -8,32 +8,60 @@ export default async function handler(req: any, res: any) {
     // Free Tier Limit Check
     const uid = req.user.uid;
     try {
-      const userDoc = await getDb().from('users').select('*').eq('id', uid).single();
-      let tier = userDoc.data?.tier || 'free';
+      // FIX: Query from 'profiles' table (correct table), not 'users' (non-existent)
+      const userDoc = await getDb()
+        .from('profiles')
+        .select('id, tier, subscription, pro_expires_at')
+        .eq('id', uid)
+        .single();
+
+      // FIX: Check subscription + pro_expires_at instead of just legacy tier field
+      const nowMs = Date.now();
+      const isPro = userDoc.data?.subscription === 'pro'
+        && userDoc.data?.pro_expires_at
+        && new Date(userDoc.data.pro_expires_at).getTime() > nowMs;
+      let tier = isPro ? 'pro' : (userDoc.data?.tier || 'free');
       
       const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
       if (req.user.email === adminEmail) {
          tier = 'pro';
       }
+
+      // TEMP LOG: Remove after verification
+      console.log('[CHAT]', {
+        userId: uid,
+        subscription: userDoc.data?.subscription,
+        pro_expires_at: userDoc.data?.pro_expires_at,
+        usageCount: 0,
+        dailyLimit: tier === 'free' ? 10 : 'unlimited',
+        isPro
+      });
       
       if (tier === 'free') {
          const today = new Date().toISOString().split('T')[0];
-         const usageDate = userDoc.data?.geminiLastDate;
-         let usageCount = userDoc.data?.geminiDailyUsage || 0;
-         
-         if (usageDate !== today) {
-            usageCount = 0;
-         }
+
+         // FIX: Use dedicated user_daily_usage table for rate limiting
+         const { data: usageRow } = await getDb()
+           .from('user_daily_usage')
+           .select('date, gemini_count')
+           .eq('user_id', uid)
+           .eq('date', today)
+           .single();
+
+         let usageCount = usageRow?.gemini_count || 0;
+
+         // Update log with actual usage count
+         console.log('[CHAT] usageCount:', usageCount);
          
          if (usageCount >= 10) {
             return res.status(403).json({ error: "Batas 10 pesan Herr Deutsch tercapai hari ini untuk paket Free. Silakan Upgrade!" });
          }
          
-         await getDb().from('users').upsert({
-            id: uid,
-            geminiLastDate: today,
-            geminiDailyUsage: usageCount + 1
-         }, { onConflict: 'id' });
+         await getDb().from('user_daily_usage').upsert({
+           user_id: uid,
+           date: today,
+           gemini_count: usageCount + 1,
+         }, { onConflict: 'user_id,date' });
       }
     } catch (dbError) {
       console.warn("Failed to check or update free tier limit due to DB error:", dbError);
