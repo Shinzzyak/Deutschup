@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
     const ai = await getAiClient();
     const { word, level } = req.body;
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemma-4",
       contents: `Buatkan 2 contoh kalimat sederhana berbahasa Jerman menggunakan kata '${word}' untuk siswa level ${level}. Sertakan terjemahannya di bahasa Indonesia.`,
       config: {
         responseMimeType: "application/json",

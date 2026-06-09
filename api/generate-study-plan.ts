@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
     const ai = await getAiClient();
     const { level, xp, lessonsCompleted } = req.body;
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemma-4",
       contents: `Saya adalah siswa bahasa Jerman di level ${level}. Saya memiliki ${xp} XP dan telah menyelesaikan pelajaran berikut: ${lessonsCompleted.join(", ")}.
 Buatkan rencana belajar berupa 10 poin fokus (checklist) yang spesifik dan actionable untuk sesi saya selanjutnya.
 Gunakan bahasa Indonesia. Output harus JSON array of objects dengan keys "id", "text", dan "completed" (selalu false).`,

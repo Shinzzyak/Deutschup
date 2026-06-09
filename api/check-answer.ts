@@ -8,7 +8,7 @@ export default async function handler(req: any, res: any) {
     const ai = await getAiClient();
     const { question, answer, level } = req.body;
     const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
+      model: "gemma-4",
       contents: `Soal: ${question}\nJawaban siswa (${level}): ${answer}\n\nKoreksi jawaban ini. Apakah maknanya benar dan grammar/artikelnya tepat? Berikan skor benar/salah, penjelasan dalam bahasa Indonesia, dan perbaikannya bila ada kesalahan.`,
       config: {
         responseMimeType: "application/json",
