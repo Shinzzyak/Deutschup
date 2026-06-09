@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useLearningStore } from '../stores/learningStore';
+import { isUserPro } from '../lib/subscription';
 import { useProgressStore } from '../stores/progressStore';
 import { Button } from '../components/ui/button';
 import { FileText, Loader2, PlayCircle, Timer, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
@@ -56,7 +57,7 @@ export default function MockTest() {
   }, [testState, targetTime]);
 
   const startTest = async () => {
-    if (tierData.tier === 'free') {
+    if (!isUserPro(tierData)) {
       const now = Date.now();
       const oneWeek = 7 * 24 * 60 * 60 * 1000;
       const recentTests = mockTests?.filter(t => (now - t.createdAt) < oneWeek) || [];

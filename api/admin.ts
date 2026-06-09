@@ -76,7 +76,7 @@ export default async function handler(req: any, res: any) {
     if (req.method === 'GET') {
       const { data: profiles, error } = await getDb()
         .from('profiles')
-        .select('id, tier, role, created_at')
+        .select('id, tier, tier_expiry, role, subscription, pro_expires_at, created_at')
         .order('created_at', { ascending: false });
       if (error) return res.status(500).json({ error: error.message });
 
@@ -87,16 +87,27 @@ export default async function handler(req: any, res: any) {
     }
 
     if (req.method === 'POST') {
-      const { targetUserId, tier, role } = req.body;
+      const { targetUserId, tier, role, subscription } = req.body;
       const updateData: any = {};
       if (tier) {
         updateData.tier = tier;
-        updateData.tierExpiry =
+        updateData.tier_expiry =
           tier !== 'free'
             ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
             : null;
+        // Also sync new subscription fields
+        updateData.subscription = tier === 'pro' ? 'pro' : 'free';
+        updateData.pro_expires_at =
+          tier === 'pro'
+            ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+            : null;
+      }
+      if (subscription) {
+        updateData.subscription = subscription;
+        if (subscription === 'free') updateData.pro_expires_at = null;
       }
       if (role) updateData.role = role;
+      updateData.updated_at = new Date().toISOString();
       const { error } = await getDb()
         .from('profiles')
         .update(updateData)

@@ -5,6 +5,7 @@ import { courseIndex } from '../data/lessonIndex';
 import { useProgressStore } from '../stores/progressStore';
 import { useLearningStore } from '../stores/learningStore';
 import { useAuthStore } from '../stores/authStore';
+import { isUserPro } from '../lib/subscription';
 import { CheckCircle2, Lock, PlayCircle, Download, Loader2 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { Progress } from '../components/ui/progress';
@@ -38,7 +39,7 @@ export default function Dashboard() {
     setErrorMsg("");
     setPdfBlobUrl(null);
     
-    if (tierData.tier === 'free') {
+    if (!isUserPro(tierData)) {
       setErrorMsg("Fitur Export PDF hanya tersedia untuk pengguna Pro.");
       return;
     }
@@ -241,7 +242,7 @@ export default function Dashboard() {
 
       <div className="space-y-16">
         {levels.map((lvl, index) => {
-          const tierLocked = isLevelLocked(lvl.id, tierData.tier);
+          const tierLocked = !isUserPro(tierData) && lvl.id !== 'A1';
           const isLevelUnlocked = index <= userLevelIndex && !tierLocked;
           const levelLessons = courseIndex.filter(l => l.level === lvl.id);
           const actualCompletedInLevel = levelLessons.filter(l => 

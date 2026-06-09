@@ -1,9 +1,10 @@
-import { getAiClient } from '../lib/api-utils.js';
+import { runMiddleware, authMiddleware, getAiClient } from '../lib/api-utils.js';
 import { Type } from "@google/genai";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).end();
   try {
+    await runMiddleware(req, res, authMiddleware);
     const ai = await getAiClient();
     const { level, wrongAnswers } = req.body;
     // wrongAnswers: array of { question, userAnswer, correctAnswer }

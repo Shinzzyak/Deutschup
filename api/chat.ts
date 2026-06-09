@@ -8,17 +8,19 @@ export default async function handler(req: any, res: any) {
     // Free Tier Limit Check
     const uid = req.user.id;
     const userEmail = req.user.email;
-    console.log('[STEP0 AUTH]', { uid, email: userEmail });
 
     try {
-      // STEP 1: Profile query
+      // Profile query
       const { data: profile, error: profileErr } = await getDb()
         .from('profiles')
         .select('id, tier, subscription, pro_expires_at')
         .eq('id', uid)
         .single();
 
-      console.log('[STEP1 PROFILE]', { profile, error: profileErr });
+      if (profileErr) {
+        console.error('[CHAT] Profile query failed:', JSON.stringify(profileErr));
+        return res.status(500).json({ error: 'PROFILE_QUERY_FAILED', details: profileErr });
+      }
 
       const nowMs = Date.now();
       const isPro = profile?.subscription === 'pro'
@@ -28,13 +30,11 @@ export default async function handler(req: any, res: any) {
       
       const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
       if (userEmail === adminEmail) tier = 'pro';
-
-      console.log('[STEP2 TIER]', { tier, subscription: profile?.subscription, pro_expires_at: profile?.pro_expires_at });
       
       if (tier === 'free') {
          const today = new Date().toISOString().split('T')[0];
 
-         // STEP 3: Read current usage
+         // Read current usage
          const { data: usageRow, error: usageReadErr } = await getDb()
            .from('user_daily_usage')
            .select('date, gemini_count')
@@ -42,46 +42,35 @@ export default async function handler(req: any, res: any) {
            .eq('date', today)
            .maybeSingle();
 
-         console.log('[STEP3 USAGE READ]', { usageRow, error: usageReadErr });
-
          if (usageReadErr) {
-           console.error('[STEP3 FAILED] Blocking request — DB read error', JSON.stringify(usageReadErr));
+           console.error('[CHAT] Usage read failed:', JSON.stringify(usageReadErr));
            return res.status(500).json({ error: 'USAGE_READ_FAILED', details: usageReadErr });
          }
 
          const usageCount = usageRow?.gemini_count || 0;
          
          if (usageCount >= 10) {
-            console.log('[STEP3 BLOCKED] daily limit reached');
             return res.status(403).json({ error: 'Batas 10 pesan Herr Deutsch tercapai hari ini untuk paket Free. Silakan Upgrade!' });
          }
 
-         // STEP 4: Write updated count
+         // Write updated count
          const nextCount = usageCount + 1;
-         console.log('[STEP4 BEFORE WRITE]', { usageCount, nextCount });
-
          let writeErr;
          if (usageRow) {
            const { error } = await getDb().from('user_daily_usage').update({ gemini_count: nextCount })
              .eq('user_id', uid).eq('date', today);
            writeErr = error;
-           console.log('[STEP4 UPDATE]', { nextCount, error });
          } else {
            const { error } = await getDb().from('user_daily_usage').insert({
              user_id: uid, date: today, gemini_count: 1,
            });
            writeErr = error;
-           console.log('[STEP4 INSERT]', { error });
          }
 
          if (writeErr) {
-           console.error('[STEP4 FAILED] Blocking request — DB write error', JSON.stringify(writeErr));
+           console.error('[CHAT] Usage write failed:', JSON.stringify(writeErr));
            return res.status(500).json({ error: 'USAGE_WRITE_FAILED', details: writeErr });
          }
-
-         console.log('[STEP4 OK] usage tracked:', nextCount);
-      } else {
-        console.log('[STEP2] PRO user, skipping rate limit');
       }
     } catch (dbError: any) {
       console.error('[STEP-FATAL]', dbError?.message, dbError?.stack);

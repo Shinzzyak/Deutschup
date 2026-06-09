@@ -53,7 +53,6 @@ function loadCachedUser(): User | null {
       localStorage.removeItem(SESSION_CACHE);
       return null;
     }
-    console.log('[AUTH] cache hit:', user.email);
     return user;
   } catch {
     return null;
@@ -62,7 +61,6 @@ function loadCachedUser(): User | null {
 
 export const useAuthStore = create<AuthState>((set) => {
   const updateAuthState = async (session: any) => {
-    console.log('[AUTH] updateAuthState called, session:', session?.user?.email ?? 'null');
 
     const user = session?.user ?? null;
     let tierData: TierData = { tier: 'free' };
@@ -72,7 +70,6 @@ export const useAuthStore = create<AuthState>((set) => {
 
     try {
       if (user) {
-        console.log('[AUTH] fetching profile for:', user.id);
 
         const profilePromise = supabase
           .from('profiles')
@@ -116,7 +113,6 @@ export const useAuthStore = create<AuthState>((set) => {
             pro_expires_at: data.pro_expires_at,
           };
           profileData = { full_name: data.full_name, avatar_url: data.avatar_url, role: data.role };
-          console.log('[AUTH] profile loaded:', profileData.role, tierData.tier, 'pro_expires_at:', data.pro_expires_at);
         }
       }
     } catch (e) {
@@ -127,25 +123,21 @@ export const useAuthStore = create<AuthState>((set) => {
     if (user?.email === import.meta.env.VITE_ADMIN_EMAIL) {
       tierData = { ...tierData, tier: 'pro' };
       profileData = { ...profileData, role: 'admin' };
-      console.log('[AUTH] admin override applied');
     }
 
     cacheSession(session);
-    console.log('[AUTH] final state -> user:', user?.email ?? 'null', 'role:', profileData.role ?? 'none', 'loading: false');
     set({ user, session, tierData, profileData, loading: false });
   };
 
   // BOOT: instant restore from cache
   const cachedUser = loadCachedUser();
   if (cachedUser) {
-    console.log('[AUTH] boot: cache user set immediately');
     set({ user: cachedUser, loading: true });
   }
 
   // getSession() triggers Supabase internal session recovery from localStorage.
   // Its result is DISCARDED — onAuthStateChange is the only state setter.
   supabase.auth.getSession().then(({ data }) => {
-    console.log('[AUTH] getSession resolved:', data.session?.user?.email ?? 'null', '(IGNORED — waiting for onAuthStateChange)');
   });
 
   // SINGLE SOURCE OF TRUTH — only onAuthStateChange updates state
@@ -159,7 +151,6 @@ export const useAuthStore = create<AuthState>((set) => {
   }, 15000);
 
   supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log('[AUTH] onAuthStateChange:', event, session?.user?.email ?? 'null');
     await updateAuthState(session);
   });
 
