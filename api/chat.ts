@@ -6,7 +6,7 @@ export default async function handler(req: any, res: any) {
     await runMiddleware(req, res, authMiddleware);
 
     // Free Tier Limit Check
-    const uid = req.user.uid;
+    const uid = req.user.id;
     const userEmail = req.user.email;
     console.log('[STEP0 AUTH]', { uid, email: userEmail });
 
