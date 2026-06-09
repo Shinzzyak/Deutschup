@@ -46,7 +46,7 @@ export default async function handler(req: any, res: any) {
            .select('date, gemini_count')
            .eq('user_id', uid)
            .eq('date', today)
-           .single();
+           .maybeSingle();
 
          let usageCount = usageRow?.gemini_count || 0;
 
@@ -56,12 +56,19 @@ export default async function handler(req: any, res: any) {
          if (usageCount >= 10) {
             return res.status(403).json({ error: "Batas 10 pesan Herr Deutsch tercapai hari ini untuk paket Free. Silakan Upgrade!" });
          }
-         
-         await getDb().from('user_daily_usage').upsert({
-           user_id: uid,
-           date: today,
-           gemini_count: usageCount + 1,
-         }, { onConflict: 'user_id,date' });
+
+         // FIX: Use select-then-insert/update pattern (upsert breaks with composite PK on Supabase REST)
+         if (usageRow) {
+           await getDb().from('user_daily_usage').update({
+             gemini_count: usageCount + 1,
+           }).eq('user_id', uid).eq('date', today);
+         } else {
+           await getDb().from('user_daily_usage').insert({
+             user_id: uid,
+             date: today,
+             gemini_count: 1,
+           });
+         }
       }
     } catch (dbError) {
       console.warn("Failed to check or update free tier limit due to DB error:", dbError);
