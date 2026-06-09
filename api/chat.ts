@@ -7,15 +7,23 @@ export default async function handler(req: any, res: any) {
 
     // Free Tier Limit Check
     const uid = req.user.uid;
+    const userEmail = req.user.email;
+    console.log('[CHAT] START', { uid, userEmail });
+
     try {
-      // FIX: Query from 'profiles' table (correct table), not 'users' (non-existent)
+      // STEP 1: Profile query
       const userDoc = await getDb()
         .from('profiles')
         .select('id, tier, subscription, pro_expires_at')
         .eq('id', uid)
         .single();
 
-      // FIX: Check subscription + pro_expires_at instead of just legacy tier field
+      if (userDoc.error) {
+        console.error('[CHAT] STEP1 profile query FAILED:', JSON.stringify(userDoc.error));
+      } else {
+        console.log('[CHAT] STEP1 profile OK:', JSON.stringify(userDoc.data));
+      }
+
       const nowMs = Date.now();
       const isPro = userDoc.data?.subscription === 'pro'
         && userDoc.data?.pro_expires_at
@@ -23,55 +31,67 @@ export default async function handler(req: any, res: any) {
       let tier = isPro ? 'pro' : (userDoc.data?.tier || 'free');
       
       const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
-      if (req.user.email === adminEmail) {
+      if (userEmail === adminEmail) {
          tier = 'pro';
       }
 
-      // TEMP LOG: Remove after verification
-      console.log('[CHAT]', {
-        userId: uid,
-        subscription: userDoc.data?.subscription,
-        pro_expires_at: userDoc.data?.pro_expires_at,
-        usageCount: 0,
-        dailyLimit: tier === 'free' ? 10 : 'unlimited',
-        isPro
-      });
+      console.log('[CHAT] STEP2 tier decided:', { tier, isPro, email: userEmail });
       
       if (tier === 'free') {
          const today = new Date().toISOString().split('T')[0];
 
-         // FIX: Use dedicated user_daily_usage table for rate limiting
-         const { data: usageRow } = await getDb()
+         // STEP 3: Read current usage
+         const usageResult = await getDb()
            .from('user_daily_usage')
            .select('date, gemini_count')
            .eq('user_id', uid)
            .eq('date', today)
            .maybeSingle();
 
-         let usageCount = usageRow?.gemini_count || 0;
+         if (usageResult.error) {
+           console.error('[CHAT] STEP3 usage read FAILED:', JSON.stringify(usageResult.error));
+         }
+         console.log('[CHAT] STEP3 usage read:', JSON.stringify(usageResult.data), 'error:', JSON.stringify(usageResult.error));
 
-         // Update log with actual usage count
-         console.log('[CHAT] usageCount:', usageCount);
+         let usageCount = usageResult.data?.gemini_count || 0;
+         console.log('[CHAT] STEP3 usageCount:', usageCount);
          
          if (usageCount >= 10) {
+            console.log('[CHAT] BLOCKED: daily limit reached');
             return res.status(403).json({ error: "Batas 10 pesan Herr Deutsch tercapai hari ini untuk paket Free. Silakan Upgrade!" });
          }
 
-         // FIX: Use select-then-insert/update pattern (upsert breaks with composite PK on Supabase REST)
-         if (usageRow) {
-           await getDb().from('user_daily_usage').update({
+         // STEP 4: Write updated count
+         if (usageResult.data) {
+           // UPDATE existing row
+           const updateResult = await getDb().from('user_daily_usage').update({
              gemini_count: usageCount + 1,
            }).eq('user_id', uid).eq('date', today);
+
+           if (updateResult.error) {
+             console.error('[CHAT] STEP4 update FAILED:', JSON.stringify(updateResult.error));
+           } else {
+             console.log('[CHAT] STEP4 update OK:', JSON.stringify(updateResult.data));
+           }
          } else {
-           await getDb().from('user_daily_usage').insert({
+           // INSERT new row
+           const insertResult = await getDb().from('user_daily_usage').insert({
              user_id: uid,
              date: today,
              gemini_count: 1,
            });
+
+           if (insertResult.error) {
+             console.error('[CHAT] STEP4 insert FAILED:', JSON.stringify(insertResult.error));
+           } else {
+             console.log('[CHAT] STEP4 insert OK:', JSON.stringify(insertResult.data));
+           }
          }
+      } else {
+        console.log('[CHAT] PRO user, skipping rate limit');
       }
-    } catch (dbError) {
-      console.warn("Failed to check or update free tier limit due to DB error:", dbError);
+    } catch (dbError: any) {
+      console.error('[CHAT] DB BLOCK FAILED:', dbError?.message, dbError?.stack);
     }
 
     const ai = await getAiClient();
