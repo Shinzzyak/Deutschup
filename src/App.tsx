@@ -181,7 +181,7 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        <Route path="/" element={<PageWrapper><Dashboard /></PageWrapper>} />
+        <Route path="/" element={<PageWrapper><DashboardWithPaymentRefresh /></PageWrapper>} />
         <Route path="/lesson/:id" element={<PageWrapper><LessonView /></PageWrapper>} />
         <Route path="/vocab" element={<PageWrapper><VocabTrainer /></PageWrapper>} />
         <Route path="/verbs" element={<PageWrapper><VerbTrainer /></PageWrapper>} />
