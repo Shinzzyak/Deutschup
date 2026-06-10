@@ -40,6 +40,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     callback_url: `${APP_URL}/api/payment?action=callback`,
     redirect_url: `${APP_URL}/dashboard?payment=success`,
     payment_method: 'qris',
+    payment_url: 'https://www.bayar.gg/pay',
   };
 
   console.log('[PAYMENT-DEBUG] REQUEST:', JSON.stringify(payload, null, 2));
