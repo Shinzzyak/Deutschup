@@ -1,4 +1,5 @@
 import { runMiddleware, authMiddleware, getAiClient } from '../lib/api-utils.js';
+import { logAiRequest } from '../lib/ai-logger.js';
 import { Type } from "@google/genai";
 
 export default async function handler(req: any, res: any) {
@@ -36,7 +37,23 @@ Output harus array JSON berisi soal-soal.`,
       }
     });
     return res.json({ questions: JSON.parse(response.text?.trim() || "[]") });
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'generate-mock-test',
+      model: 'gemma-4-31b-it',
+      latencyMs: Date.now() - startTime,
+      success: true,
+    });
+    return res.json({ questions: JSON.parse(response.text?.trim() || "[]") });
   } catch (e: any) {
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'generate-mock-test',
+      model: 'gemma-4-31b-it',
+      latencyMs: Date.now() - startTime,
+      success: false,
+      errorMessage: e.message,
+    });
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }
 }

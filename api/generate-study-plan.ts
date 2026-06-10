@@ -40,7 +40,23 @@ Buat poin yang belum dikuasai.`,
     }));
 
     return res.json({ tasks });
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'generate-study-plan',
+      model: 'gemini-3.1-flash-lite',
+      latencyMs: Date.now() - startTime,
+      success: true,
+    });
+    return res.json({ tasks: JSON.parse(response.text?.trim() || "[]") });
   } catch (e: any) {
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'generate-study-plan',
+      model: 'gemini-3.1-flash-lite',
+      latencyMs: Date.now() - startTime,
+      success: false,
+      errorMessage: e.message,
+    });
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }
 }

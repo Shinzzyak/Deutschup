@@ -36,7 +36,23 @@ export default async function handler(req: any, res: any) {
       }
     });
     return res.json({ examples: extractJson(response.text || "[]") });
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'vocab-examples',
+      model: 'gemini-3.1-flash-lite',
+      latencyMs: Date.now() - startTime,
+      success: true,
+    });
+    return res.json({ examples: JSON.parse(response.text?.trim() || "[]") });
   } catch (e: any) {
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'vocab-examples',
+      model: 'gemini-3.1-flash-lite',
+      latencyMs: Date.now() - startTime,
+      success: false,
+      errorMessage: e.message,
+    });
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }
 }

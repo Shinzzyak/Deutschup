@@ -26,7 +26,23 @@ export default async function handler(req: any, res: any) {
       }
     });
     return res.json(JSON.parse(response.text?.trim() || "{}"));
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'check-answer',
+      model: 'gemini-3.1-flash-lite',
+      latencyMs: Date.now() - startTime,
+      success: true,
+    });
+    return res.json(JSON.parse(response.text?.trim() || "{}"));
   } catch (e: any) {
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'check-answer',
+      model: 'gemini-3.1-flash-lite',
+      latencyMs: Date.now() - startTime,
+      success: false,
+      errorMessage: e.message,
+    });
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }
 }
