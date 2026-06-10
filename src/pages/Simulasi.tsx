@@ -69,7 +69,7 @@ export default function MockTest() {
 
     setTestState('LOADING');
     try {
-      const resp = await fetch('/api/generate-mock-test', {
+      const resp = await fetch('/api/ai?action=generate-mock-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ level })
@@ -123,7 +123,7 @@ export default function MockTest() {
     }
 
     try {
-       const resp = await fetch('/api/check-mock-test', {
+       const resp = await fetch('/api/ai?action=check-mock-test', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ level, wrongAnswers })

@@ -15,7 +15,7 @@ export default function Koreksi() {
     setResult(null);
 
     try {
-      const resp = await fetch('/api/koreksi-kalimat', {
+      const resp = await fetch('/api/ai?action=koreksi-kalimat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sentence: input.trim() })

@@ -148,7 +148,7 @@ export default function LessonView() {
     
     setExercisesLoading(true);
     try {
-      const resp = await fetch('/api/generate-exercises', {
+      const resp = await fetch('/api/ai?action=generate-exercises', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({ level: lesson.level, grammarTopic: lesson.grammarDescription, vocabulary: lesson.vocabulary || [] })
@@ -182,7 +182,7 @@ export default function LessonView() {
             feedback: isCorrect ? "Tepat sekali!" : `Kurang tepat. Jawaban yang benar adalah: ${currentQuestion.correctAnswerStr}`
          });
       } else {
-         const resp = await fetch('/api/check-answer', {
+         const resp = await fetch('/api/ai?action=check-answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: currentQuestion.question, answer: selectedAnswer, level: lesson.level })

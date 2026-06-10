@@ -41,7 +41,7 @@ export default function Catatan() {
     if (!user) return;
     setGeneratingPlan(true);
     try {
-      const resp = await fetch('/api/generate-study-plan', {
+      const resp = await fetch('/api/ai?action=generate-study-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ level: currentLevel, xp, lessonsCompleted: unlockedLessons })

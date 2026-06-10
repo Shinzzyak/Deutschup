@@ -1,142 +1,143 @@
-import { useState, useRef, useEffect } from 'react';
-import { Bot, X, Send, Loader2 } from 'lucide-react';
-import { useProgressStore } from '../stores/progressStore';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { cn } from '../lib/utils';
+import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../lib/supabase';
-import ReactMarkdown from 'react-markdown';
+
+interface Message {
+  role: 'user' | 'model';
+  text: string;
+}
 
 export default function ChatWidget() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<{ role: 'user' | 'model', text: string }[]>([
-    { role: 'model', text: 'Guten Tag! Saya Herr Deutsch, tutor bahasa Jerman Anda. Ada yang bisa saya bantu hari ini?' }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const { currentLevel } = useProgressStore();
-  const { user } = useAuthStore();
-  const endRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user, profile } = useAuthStore();
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, isTyping]);
+    scrollToBottom();
+  }, [messages]);
 
-  const handleSend = async () => {
-    if (!input.trim() || isTyping) return;
-    if (!user) {
-      alert("Silakan login untuk chatting bersama Herr Deutsch.");
-      return;
-    }
-    
+  const sendMessage = async () => {
+    if (!input.trim() || isLoading) return;
+
     const userMsg = input.trim();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMsg }]);
-    setIsTyping(true);
+    setIsLoading(true);
 
     try {
       const token = (await supabase.auth.getSession()).data.session?.access_token;
-      const resp = await fetch('/api/chat', {
+      const resp = await fetch('/api/ai?action=chat', {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
-           message: userMsg,
-           history: messages,
-           level: currentLevel
+          message: userMsg,
+          history: messages.slice(-6),
+          level: profile?.level || 'A1'
         })
       });
+
       const data = await resp.json();
-      
-      if (!resp.ok) {
-         setMessages(prev => [...prev, { role: 'model', text: data.error || "Maaf, terjadi kesalahan." }]);
-         return;
+      if (resp.ok) {
+        setMessages(prev => [...prev, { role: 'model', text: data.text }]);
+      } else {
+        setMessages(prev => [...prev, { role: 'model', text: data.error || 'Maaf, ada kesalahan.' }]);
       }
-      
-      setMessages(prev => [...prev, { role: 'model', text: data.text || "Maaf, Herr Deutsch sedang istirahat." }]);
-    } catch(e) {
-      setMessages(prev => [...prev, { role: 'model', text: "Maaf, terjadi kesalahan koneksi." }]);
+    } catch (error) {
+      setMessages(prev => [...prev, { role: 'model', text: 'Gagal terhubung ke server.' }]);
     } finally {
-      setIsTyping(false);
+      setIsLoading(false);
     }
   };
 
   return (
-    <>
-      <button 
-        onClick={() => setIsOpen(true)}
-        className={cn(
-          "fixed bottom-6 right-6 w-16 h-16 rounded-full bg-slate-900 text-white flex items-center justify-center shadow-2xl hover:scale-110 transition-transform z-40",
-          isOpen && "hidden"
-        )}
-        aria-label="Buka chat Herr Deutsch"
+    <div className="fixed bottom-4 right-4 z-50">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
       >
-        <Bot className="w-8 h-8 text-yellow-400" />
+        <Bot className="w-6 h-6 text-white" />
       </button>
 
-      <div className={cn(
-        "fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[calc(100vw-2rem)] sm:w-[400px] h-[550px] max-h-[85vh] bg-white rounded-3xl shadow-2xl flex flex-col z-50 transition-all duration-300 transform border border-slate-200 overflow-hidden",
-        isOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0 pointer-events-none"
-      )}>
-        <div className="bg-slate-900 p-4 flex items-center justify-between text-white border-b-4 border-red-600">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center">
-              <Bot className="w-6 h-6 text-yellow-400" />
-            </div>
-            <div>
-              <h3 className="font-bold">Herr Deutsch</h3>
-              <p className="text-xs text-slate-400">Tutor Bahasa Jerman</p>
-            </div>
-          </div>
-          <button onClick={() => setIsOpen(false)} className="text-slate-400 hover:text-white p-2" aria-label="Tutup chat">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-slate-50">
-          {messages.map((msg, i) => (
-            <div key={i} className={cn("flex", msg.role === 'user' ? "justify-end" : "justify-start")}>
-              <div className={cn(
-                "max-w-[85%] rounded-2xl p-4 prose prose-sm",
-                msg.role === 'user' ? "bg-blue-600 text-white rounded-br-sm" : "bg-white border border-slate-200 text-slate-800 rounded-bl-sm shadow-sm"
-              )}>
-                <ReactMarkdown>{msg.text}</ReactMarkdown>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="absolute bottom-20 right-0 w-96 h-[500px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
+          >
+            <div className="bg-blue-600 text-white p-4 flex items-center gap-3">
+              <Bot className="w-6 h-6" />
+              <div>
+                <h3 className="font-semibold">Herr Deutsch</h3>
+                <p className="text-xs text-blue-100">Tutor Bahasa Jerman AI</p>
               </div>
             </div>
-          ))}
-          {isTyping && (
-            <div className="flex justify-start">
-              <div className="bg-white border border-slate-200 rounded-2xl p-4 rounded-bl-sm shadow-sm flex space-x-2 items-center">
-                 <Loader2 className="w-4 h-4 text-slate-400 animate-spin" />
-                 <span className="text-slate-400 text-sm">Mengetik...</span>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              {messages.length === 0 && (
+                <div className="text-center text-gray-400 mt-8">
+                  <Bot className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                  <p>Ada yang bisa saya bantu?</p>
+                  <p className="text-xs mt-1">Tanyakan tentang grammar, vocab, atau latihan!</p>
+                </div>
+              )}
+              {messages.map((msg, i) => (
+                <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                  <div className={`max-w-[80%] p-3 rounded-lg ${
+                    msg.role === 'user' 
+                      ? 'bg-blue-600 text-white rounded-br-none' 
+                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                  }`}>
+                    <p className="whitespace-pre-wrap">{msg.text}</p>
+                  </div>
+                </div>
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-gray-100 p-3 rounded-lg rounded-bl-none">
+                    <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+                  </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
+            </div>
+
+            <div className="p-4 border-t border-gray-200">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                  placeholder="Ketik pesan..."
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  disabled={isLoading}
+                />
+                <button
+                  onClick={sendMessage}
+                  disabled={isLoading || !input.trim()}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Send className="w-5 h-5" />
+                </button>
               </div>
             </div>
-          )}
-          <div ref={endRef} />
-        </div>
-
-        <div className="p-4 bg-white border-t border-slate-100">
-          <div className="flex items-center space-x-2">
-            <input 
-              type="text"
-              value={input}
-              onChange={e => setInput(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && handleSend()}
-              placeholder="Tanya Herr Deutsch..."
-              className="flex-1 bg-slate-100 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium"
-            />
-            <button 
-              onClick={handleSend}
-              disabled={isTyping || !input.trim()}
-              className="w-12 h-12 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white rounded-xl flex items-center justify-center transition-colors shadow-md shadow-blue-100"
-              aria-label="Kirim pesan"
-            >
-              <Send className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-      </div>
-    </>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 }

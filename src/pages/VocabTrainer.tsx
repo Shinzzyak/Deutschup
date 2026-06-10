@@ -59,7 +59,7 @@ export default function VocabTrainer() {
     if (examples || examplesLoading) return;
     setExamplesLoading(true);
     try {
-       const resp = await fetch('/api/vocab-examples', {
+       const resp = await fetch('/api/ai?action=vocab-examples', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ word: currentCard.word, level: currentCard.level })
@@ -78,7 +78,7 @@ export default function VocabTrainer() {
     if (pronunciation || pronunciationLoading) return;
     setPronunciationLoading(true);
     try {
-       const resp = await fetch('/api/pronunciation', {
+       const resp = await fetch('/api/ai?action=pronunciation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ word: currentCard.word })
