@@ -151,29 +151,6 @@ const payload = {
 
 ---
 
-## Verification Checklist
-
-After fix implementation:
-
-- [ ] Create payment request
-- [ ] Verify payment URL returned
-- [ ] Redirect to payment page
-- [ ] Complete payment
-- [ ] Callback received
-- [ ] Webhook processed
-- [ ] Subscription activated
-- [ ] User sees Pro status
-
----
-
-## Related Files
-
-- `api/payment.ts` — Payment creation handler
-- `api/payment-test.ts` — Diagnostic endpoint
-- `src/pages/Pricing.tsx` — Frontend payment flow
-
----
-
 ## Timeline
 
 | Time | Event |
