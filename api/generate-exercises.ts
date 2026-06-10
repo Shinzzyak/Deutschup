@@ -1,7 +1,9 @@
+import { logAiRequest } from "../lib/ai-logger.js";
 import { runMiddleware, authMiddleware, getAiClient } from '../lib/api-utils.js';
 import { Type } from "@google/genai";
 
 export default async function handler(req: any, res: any) {
+  const startTime = Date.now();
   if (req.method !== 'POST') return res.status(405).end();
   try {
     await runMiddleware(req, res, authMiddleware);
@@ -42,6 +44,7 @@ Setiap soal harus punya 4 opsi jawaban.`,
     // FIX: Strip markdown code fences if present
     const cleaned = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
     return res.json({ exercises: JSON.parse(cleaned) });
+    logAiRequest({ userId: req.user?.id, endpoint: "generate-exercises", model: "gemini-3.1-flash-lite", latencyMs: Date.now() - startTime, success: true });
   } catch (e: any) {
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }

@@ -1,7 +1,9 @@
+import { logAiRequest } from "../lib/ai-logger.js";
 import { runMiddleware, authMiddleware, getAiClient } from '../lib/api-utils.js';
 import { Type } from "@google/genai";
 
 export default async function handler(req: any, res: any) {
+  const startTime = Date.now();
   if (req.method !== 'POST') return res.status(405).end();
   try {
     await runMiddleware(req, res, authMiddleware);

@@ -1,4 +1,5 @@
 import { runMiddleware, authMiddleware, getDb, getAiClient } from '../lib/api-utils.js';
+import { logAiRequest } from '../lib/ai-logger.js';
 
 const MODEL = "gemini-3.1-flash-lite";
 
@@ -15,6 +16,8 @@ Regeln:
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).end();
+  const startTime = Date.now();
+  
   try {
     await runMiddleware(req, res, authMiddleware);
 
@@ -91,9 +94,6 @@ export default async function handler(req: any, res: any) {
     const ai = await getAiClient();
     const { message, history, level } = req.body;
     
-    // FIX: Use direct generateContent instead of chats.create()
-    // This eliminates ~2-3s overhead from chat session creation
-    
     // Build conversation context (last 6 messages for speed)
     const recentHistory = Array.isArray(history) ? history.slice(-6) : [];
     const chatHistory = recentHistory.map((msg: any) => ({
@@ -101,7 +101,6 @@ export default async function handler(req: any, res: any) {
       parts: [{ text: msg.text || msg.content || '' }]
     }));
 
-    // Add current message
     const contents = [
       ...chatHistory,
       { role: 'user', parts: [{ text: message }] }
@@ -113,15 +112,36 @@ export default async function handler(req: any, res: any) {
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
         temperature: 0.7,
-        maxOutputTokens: 200, // Short responses for speed
+        maxOutputTokens: 200,
       }
     });
 
     const reply = response.text || 'Entschuldigung, ich konnte keine Antwort generieren.';
+    
+    // Log successful request
+    logAiRequest({
+      userId: uid,
+      endpoint: 'chat',
+      model: MODEL,
+      latencyMs: Date.now() - startTime,
+      success: true,
+    });
+    
     return res.json({ text: reply, model: MODEL, tier });
 
   } catch (e: any) {
     console.error('[CHAT] Error:', e.message);
+    
+    // Log failed request
+    logAiRequest({
+      userId: req.user?.id,
+      endpoint: 'chat',
+      model: MODEL,
+      latencyMs: Date.now() - startTime,
+      success: false,
+      errorMessage: e.message,
+    });
+    
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }
 }
