@@ -42,6 +42,7 @@ export default async function handler(req: any, res: any) {
         callback_url: `${APP_URL}/api/payment?action=callback`,
         redirect_url: `${APP_URL}/dashboard?payment=success`,
         payment_method: 'qris',
+        payment_url: 'https://www.bayar.gg/pay',
       };
 
       console.log('[BAYARGG REQUEST]', JSON.stringify(payload, null, 2));
