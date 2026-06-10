@@ -1,150 +1,153 @@
-import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../lib/api-utils.js';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { runMiddleware, authMiddleware, getSupabaseAdminClient } from '../lib/api-utils.js';
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     return res.status(200).end();
   }
 
-  const action = req.query.action;
-
-  // === action=debug (unprotected, just auth) ===
-  if (action === 'debug') {
-    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
-
-    try {
-      await runMiddleware(req, res, authMiddleware);
-      const user = req.user;
-      const adminEmailEnv = process.env.ADMIN_EMAIL;
-
-      let dbRole = 'unknown';
-      let dbError = null;
-      if (user?.id) {
-        try {
-          const { data, error } = await getDb().from('profiles').select('role').eq('id', user.id).single();
-          if (error) dbError = error.message;
-          else dbRole = data?.role || 'not found';
-        } catch (e: any) {
-          dbError = e.message;
-        }
-      }
-
-      return res.json({
-        status: 'Debug',
-        auth: {
-          isAuthenticated: !!user,
-          userEmail: user?.email || 'No email',
-          userId: user?.id || 'No ID',
-        },
-        env: {
-          adminEmailSet: !!adminEmailEnv,
-          adminEmailValue: adminEmailEnv
-            ? `${adminEmailEnv.substring(0, 3)}...${adminEmailEnv.slice(-4)}`
-            : 'NOT SET',
-        },
-        database: { role: dbRole, error: dbError },
-        logic: {
-          emailMatch:
-            adminEmailEnv &&
-            user?.email &&
-            adminEmailEnv.toLowerCase().trim() === user.email.toLowerCase().trim(),
-          isDbAdmin: dbRole === 'admin',
-          finalDecision:
-            (adminEmailEnv && user?.email && adminEmailEnv.toLowerCase().trim() === user.email.toLowerCase().trim()) ||
-            dbRole === 'admin'
-              ? 'GRANTED'
-              : 'DENIED',
-        },
-      });
-    } catch (e: any) {
-      return res.status(500).json({ error: e.message });
-    }
-  }
-
-  // === Protected actions ===
   try {
     await runMiddleware(req, res, authMiddleware);
-    await runMiddleware(req, res, adminMiddleware);
+  } catch {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
+  const action = req.query.action as string;
+
+  switch (action) {
+    case 'env-check':
+      return handleEnvCheck(req, res);
+    case 'system-health':
+      return handleSystemHealth(req, res);
+    case 'stats':
+      return handleStats(req, res);
+    case 'update-role':
+      return handleUpdateRole(req, res);
+    case 'toggle-pro':
+      return handleTogglePro(req, res);
+    default:
+      return res.status(400).json({ error: 'Invalid admin action' });
+  }
+}
+
+function handleEnvCheck(_req: VercelRequest, res: VercelResponse) {
+  return res.json({
+    bayarConfigured: !!(process.env.BAYAR_GG_API_KEY && process.env.BAYAR_GG_API_KEY.length > 10),
+    appUrlConfigured: !!(process.env.APP_URL && process.env.APP_URL.length > 0),
+    supabaseConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+    webhookSecretConfigured: !!process.env.BAYARGG_WEBHOOK_SECRET,
+    testPaymentMode: process.env.TEST_PAYMENT_MODE === 'true',
+    bayarKeyLength: process.env.BAYAR_GG_API_KEY?.length || 0,
+    appUrl: process.env.APP_URL || 'NOT SET',
+  });
+}
+
+function handleSystemHealth(_req: VercelRequest, res: VercelResponse) {
+  return res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    config: {
+      paymentConfigured: !!(process.env.BAYAR_GG_API_KEY && process.env.BAYAR_GG_API_KEY.length > 10),
+      aiConfigured: !!(process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY),
+      databaseConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+      webhookConfigured: !!process.env.BAYARGG_WEBHOOK_SECRET,
+    },
+    version: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
+  });
+}
+
+async function handleStats(_req: VercelRequest, res: VercelResponse) {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const today = new Date().toISOString().split('T')[0];
+    
+    const { data: todayStats } = await supabase
+      .from('ai_requests')
+      .select('*')
+      .gte('created_at', `${today}T00:00:00Z`);
+
+    const { data: recentOrders } = await supabase
+      .from('orders')
+      .select('id, status, amount, created_at')
+      .order('created_at', { ascending: false })
+      .limit(10);
+
+    const { data: userStats } = await supabase
+      .from('profiles')
+      .select('id, tier, subscription');
+
+    return res.json({
+      today: {
+        requests: todayStats?.length || 0,
+        errors: todayStats?.filter(r => !r.success).length || 0,
+      },
+      recentOrders: recentOrders || [],
+      users: {
+        total: userStats?.length || 0,
+        pro: userStats?.filter(u => u.subscription === 'pro').length || 0,
+      },
+    });
   } catch (e: any) {
-    if (!res.headersSent) return res.status(401).json({ error: e.message });
-    return;
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleUpdateRole(req: VercelRequest, res: VercelResponse) {
+  const { userId, role } = req.body;
+  if (!userId || !role) {
+    return res.status(400).json({ error: 'userId and role required' });
   }
 
-  // === action=users ===
-  if (action === 'users') {
-    if (req.method === 'GET') {
-      const { data: profiles, error } = await getDb()
-        .from('profiles')
-        .select('id, tier, tier_expiry, role, subscription, pro_expires_at, created_at')
-        .order('created_at', { ascending: false });
-      if (error) return res.status(500).json({ error: error.message });
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { error } = await supabase
+      .from('profiles')
+      .update({ role })
+      .eq('id', userId);
 
-      // Filter out admin users from list
-      const filtered = profiles || [];
+    if (error) throw error;
+    return res.json({ success: true, userId, role });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
 
-      return res.json(filtered);
-    }
-
-    if (req.method === 'POST') {
-      const { targetUserId, tier, role, subscription } = req.body;
-      const updateData: any = {};
-      if (tier) {
-        updateData.tier = tier;
-        updateData.tier_expiry =
-          tier !== 'free'
-            ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-            : null;
-        // Also sync new subscription fields
-        updateData.subscription = tier === 'pro' ? 'pro' : 'free';
-        updateData.pro_expires_at =
-          tier === 'pro'
-            ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-            : null;
-      }
-      if (subscription) {
-        updateData.subscription = subscription;
-        if (subscription === 'free') updateData.pro_expires_at = null;
-      }
-      if (role) updateData.role = role;
-      updateData.updated_at = new Date().toISOString();
-      const { error } = await getDb()
-        .from('profiles')
-        .update(updateData)
-        .eq('id', targetUserId);
-      if (error) return res.status(500).json({ error: error.message });
-      return res.json({ success: true });
-    }
+async function handleTogglePro(req: VercelRequest, res: VercelResponse) {
+  const { userId } = req.body;
+  if (!userId) {
+    return res.status(400).json({ error: 'userId required' });
   }
 
-  // === action=config ===
-  if (action === 'config') {
-    if (req.method === 'GET') {
-      const { data, error } = await getDb()
-        .from('config')
-        .select('*')
-        .eq('key', 'global')
-        .single();
-      if (error) return res.status(500).json({ error: error.message });
-      return res.json(data);
-    }
+  try {
+    const supabase = getSupabaseAdminClient();
+    
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('subscription')
+      .eq('id', userId)
+      .single();
 
-    if (req.method === 'POST') {
-      const { geminiApiKey } = req.body;
-      const { error } = await getDb()
-        .from('config')
-        .upsert({ key: 'global', geminiApiKey });
-      if (error) return res.status(500).json({ error: error.message });
-      return res.json({ success: true });
-    }
+    const newTier = profile?.subscription === 'pro' ? 'free' : 'pro';
+    const expiry = newTier === 'pro' 
+      ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+      : null;
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        tier: newTier,
+        tier_expiry: expiry,
+        subscription: newTier,
+        pro_expires_at: expiry,
+      })
+      .eq('id', userId);
+
+    if (error) throw error;
+    return res.json({ success: true, userId, subscription: newTier });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
   }
-
-  // === action=check ===
-  if (!action || action === 'check') {
-    if (req.method === 'GET') return res.json({ ok: true });
-  }
-
-  return res
-    .status(404)
-    .json({ error: 'Admin endpoint not found', debug: { action, method: req.method, url: req.url } });
 }
