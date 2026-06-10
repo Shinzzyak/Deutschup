@@ -7,11 +7,13 @@ export default async function handler(req: any, res: any) {
     await runMiddleware(req, res, authMiddleware);
     const ai = await getAiClient();
     const { level, xp, lessonsCompleted } = req.body;
+
+    // FIX: Simplified prompt + switched to Gemini for reliability
     const response = await ai.models.generateContent({
-      model: "gemma-4-31b-it",
-      contents: `Saya adalah siswa bahasa Jerman di level ${level}. Saya memiliki ${xp} XP dan telah menyelesaikan pelajaran berikut: ${lessonsCompleted.join(", ")}.
-Buatkan rencana belajar berupa 10 poin fokus (checklist) yang spesifik dan actionable untuk sesi saya selanjutnya.
-Gunakan bahasa Indonesia. Output harus JSON array of objects dengan keys "id", "text", dan "completed" (selalu false).`,
+      model: "gemini-3.1-flash-lite",
+      contents: `Buat 5 poin rencana belajar Bahasa Jerman untuk siswa level ${level} dengan ${xp} XP.
+Pelajaran sudah selesai: ${lessonsCompleted?.join(", ") || "belum ada"}.
+Buat poin yang belum dikuasai.`,
       config: {
         responseMimeType: "application/json",
         responseSchema: {
@@ -19,16 +21,23 @@ Gunakan bahasa Indonesia. Output harus JSON array of objects dengan keys "id", "
            items: {
              type: Type.OBJECT,
              properties: {
-               id: { type: Type.STRING },
-               text: { type: Type.STRING },
-               completed: { type: Type.BOOLEAN, description: "Set to false" }
+               text: { type: Type.STRING }
              },
-             required: ["id", "text", "completed"]
+             required: ["text"]
            }
         }
       }
     });
-    return res.json({ tasks: JSON.parse(response.text?.trim() || "[]") });
+
+    const raw = response.text?.trim() || "[]";
+    const cleaned = raw.replace(/^```json\s*/i, '').replace(/\s*```$/i, '').trim();
+    const tasks = JSON.parse(cleaned).map((t: any, i: number) => ({
+      id: String(i + 1),
+      text: t.text,
+      completed: false
+    }));
+
+    return res.json({ tasks });
   } catch (e: any) {
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }

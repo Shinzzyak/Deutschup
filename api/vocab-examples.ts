@@ -1,6 +1,14 @@
 import { runMiddleware, authMiddleware, getAiClient } from '../lib/api-utils.js';
 import { Type } from "@google/genai";
 
+function extractJson(text: string): any {
+  let cleaned = text.trim();
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+  }
+  return JSON.parse(cleaned);
+}
+
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).end();
   try {
@@ -25,7 +33,7 @@ export default async function handler(req: any, res: any) {
         }
       }
     });
-    return res.json({ examples: JSON.parse(response.text?.trim() || "[]") });
+    return res.json({ examples: extractJson(response.text || "[]") });
   } catch (e: any) {
     if (!res.headersSent) res.status(500).json({ error: e.message });
   }
