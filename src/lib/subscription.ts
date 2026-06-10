@@ -4,8 +4,8 @@
  */
 
 export interface SubscriptionData {
-  subscription: 'free' | 'pro';
-  pro_expires_at: string | null;
+  subscription?: 'free' | 'pro';
+  pro_expires_at?: string | null;
 }
 
 /**
