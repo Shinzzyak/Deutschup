@@ -52,7 +52,7 @@ export default function Pricing() {
           .eq('user_id', user.id)
           .eq('status', 'paid')
           .order('created_at', { ascending: false });
-        if (!error && data) setOrders(data);
+        console.log("[PAYMENT-HISTORY] user.id:", user.id, "rows:", data?.length, "error:", error); if (!error && data) setOrders(data);
       } catch (e) {
         console.error('Failed to fetch orders:', e);
       } finally {

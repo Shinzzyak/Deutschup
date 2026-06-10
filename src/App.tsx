@@ -18,6 +18,7 @@ const Simulasi = lazy(() => import('./pages/Simulasi'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Admin = lazy(() => import('./pages/Admin'));
 import ChatWidget from './components/ChatWidget';
+import DebugAuthOverlay from "./components/DebugAuthOverlay";
 import QuickNoteWidget from './components/QuickNoteWidget';
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
@@ -233,6 +234,7 @@ export default function App() {
           <Layout>
             <AnimatedRoutes />
             <ChatWidget />
+            <DebugAuthOverlay />
             <QuickNoteWidget />
           </Layout>
         </AuthWrapper>
