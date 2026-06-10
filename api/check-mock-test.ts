@@ -1,10 +1,10 @@
-import { getAiClient } from '../lib/api-utils.js';
-import { withAiLogging } from '../lib/ai-logger.js';
+import { runMiddleware, authMiddleware, getAiClient } from '../lib/api-utils.js';
 import { Type } from "@google/genai";
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).end();
   try {
+    await runMiddleware(req, res, authMiddleware);
     const ai = await getAiClient();
     const { level, wrongAnswers } = req.body;
     // wrongAnswers: array of { question, userAnswer, correctAnswer }
@@ -12,30 +12,25 @@ export default async function handler(req: any, res: any) {
       return res.json({ feedback: [] });
     }
     
-    const response = await withAiLogging(
-      'check-mock-test',
-      'gemini-3-flash-preview',
-      undefined,
-      () => ai.models.generateContent({
-        model: "gemini-3-flash-preview",
-        contents: `Seorang siswa bahasa Jerman level ${level} baru saja menyelesaikan simulasi ujian. Berikut ini daftar soal yang dijawab salah olehnya (format JSON): ${JSON.stringify(wrongAnswers)}.
+    const response = await ai.models.generateContent({
+      model: "gemma-4-31b-it",
+      contents: `Seorang siswa bahasa Jerman level ${level} baru saja menyelesaikan simulasi ujian. Berikut ini daftar soal yang dijawab salah olehnya (format JSON): ${JSON.stringify(wrongAnswers)}.
 Tolong berikan penjelasan singkat (1-2 kalimat) bahasa Indonesia untuk tiap soal salah: MENGAPA jawaban yang benar itu benar, dan mengapa pilihan siswa salah.`,
-        config: {
-          responseMimeType: "application/json",
-          responseSchema: {
-            type: Type.ARRAY,
-            items: {
-              type: Type.OBJECT,
-              properties: {
-                question: { type: Type.STRING },
-                explanation: { type: Type.STRING }
-              },
-              required: ["question", "explanation"]
-            }
+      config: {
+        responseMimeType: "application/json",
+        responseSchema: {
+          type: Type.ARRAY,
+          items: {
+            type: Type.OBJECT,
+            properties: {
+              question: { type: Type.STRING },
+              explanation: { type: Type.STRING }
+            },
+            required: ["question", "explanation"]
           }
         }
-      })
-    );
+      }
+    });
     return res.json({ feedback: JSON.parse(response.text?.trim() || "[]") });
   } catch (e: any) {
     if (!res.headersSent) res.status(500).json({ error: e.message });

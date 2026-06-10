@@ -20,7 +20,7 @@ import ChatWidget from './components/ChatWidget';
 import QuickNoteWidget from './components/QuickNoteWidget';
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { user, loading: authLoading } = useAuthStore();
+  const { user, loading: authLoading, profileLoaded } = useAuthStore();
   const { loadProgress, initialized, loading: progressLoading } = useProgressStore();
   const [timeout, setTimeoutState] = useState(false);
 
@@ -31,12 +31,13 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   }, [user, initialized, loadProgress]);
 
   useEffect(() => {
-    // Safety fallback: if loading takes too long, force render
     const timer = setTimeout(() => setTimeoutState(true), 5000);
     return () => clearTimeout(timer);
   }, []);
 
-  if (authLoading && !timeout) {
+  // P1: Always render children — profile loads in background
+  // Show subtle loading indicator only if no cached profile yet
+  if (authLoading && !timeout && !profileLoaded) {
     return (
       <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 animate-spin text-red-600" />
@@ -44,7 +45,17 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
     );
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      {children}
+      {/* P1: Background profile refresh indicator */}
+      {authLoading && profileLoaded && (
+        <div className="fixed top-2 right-2 z-50">
+          <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
+        </div>
+      )}
+    </>
+  );
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
@@ -212,14 +223,8 @@ function PublicRoutes() {
 export default function App() {
   const { user, loading } = useAuthStore();
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-neutral-50 flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-red-600" />
-      </div>
-    );
-  }
-
+  // P1: Show landing immediately for unauthenticated users
+  // For authenticated users, render shell immediately with cached data
   return (
     <BrowserRouter>
       {user ? (

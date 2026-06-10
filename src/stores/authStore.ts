@@ -23,11 +23,40 @@ interface AuthState {
   tierData: TierData;
   profileData: ProfileData;
   loading: boolean;
+  profileLoaded: boolean; // P1: tracks if profile has been hydrated
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
 
 const SESSION_CACHE = 'deutschup_session';
+const PROFILE_CACHE_PREFIX = 'deutschup_profile_';
+
+// P3: Cache profile in localStorage
+function cacheProfile(userId: string, tierData: TierData, profileData: ProfileData) {
+  try {
+    localStorage.setItem(`${PROFILE_CACHE_PREFIX}${userId}`, JSON.stringify({
+      tierData,
+      profileData,
+      cachedAt: Date.now(),
+    }));
+  } catch {}
+}
+
+function loadCachedProfile(userId: string): { tierData: TierData; profileData: ProfileData } | null {
+  try {
+    const raw = localStorage.getItem(`${PROFILE_CACHE_PREFIX}${userId}`);
+    if (!raw) return null;
+    const { tierData, profileData, cachedAt } = JSON.parse(raw);
+    // Use cache if less than 24h old
+    if (Date.now() - cachedAt > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
+      return null;
+    }
+    return { tierData, profileData };
+  } catch {
+    return null;
+  }
+}
 
 function cacheSession(session: any) {
   try {
@@ -48,31 +77,58 @@ function loadCachedUser(): User | null {
     if (!raw) return null;
     const { user, expires_at } = JSON.parse(raw);
     if (!user || !expires_at) return null;
-    // Only use cache if not expired
     if (Date.now() > expires_at * 1000) {
       localStorage.removeItem(SESSION_CACHE);
       return null;
     }
-    console.log('[AUTH] cache hit:', user.email);
     return user;
   } catch {
     return null;
   }
 }
 
-export const useAuthStore = create<AuthState>((set) => {
-  const updateAuthState = async (session: any) => {
-    console.log('[AUTH] updateAuthState called, session:', session?.user?.email ?? 'null');
+function parseProfileData(data: any): { tierData: TierData; profileData: ProfileData } {
+  const now = Date.now();
+  const isPro = data.subscription === 'pro' && data.pro_expires_at && new Date(data.pro_expires_at).getTime() > now;
+  const effectiveTier = isPro ? 'pro' : 'free';
 
+  return {
+    tierData: {
+      tier: effectiveTier,
+      tierExpiry: data.tier_expiry,
+      subscription: data.subscription || 'free',
+      pro_expires_at: data.pro_expires_at,
+    },
+    profileData: {
+      full_name: data.full_name,
+      avatar_url: data.avatar_url,
+      role: data.role,
+    },
+  };
+}
+
+export const useAuthStore = create<AuthState>((set, get) => {
+  const updateAuthState = async (session: any, isInitial = false) => {
     const user = session?.user ?? null;
     let tierData: TierData = { tier: 'free' };
     let profileData: ProfileData = {};
 
-    const PROFILE_TIMEOUT_MS = 10000;
+    // P3: Instant cache hydration on initial load
+    if (user && isInitial) {
+      const cached = loadCachedProfile(user.id);
+      if (cached) {
+        tierData = cached.tierData;
+        profileData = cached.profileData;
+        // P1: Render immediately with cached data, don't block
+        cacheSession(session);
+        set({ user, session, tierData, profileData, loading: false, profileLoaded: true });
+      }
+    }
 
     try {
       if (user) {
-        console.log('[AUTH] fetching profile for:', user.id);
+        // P2: 3s timeout instead of 10s
+        const PROFILE_TIMEOUT_MS = 3000;
 
         const profilePromise = supabase
           .from('profiles')
@@ -92,7 +148,6 @@ export const useAuthStore = create<AuthState>((set) => {
 
         if (error) {
           console.error('[AUTH] profile fetch error:', error.message);
-          // Only try insert if it wasn't a timeout (timeout = unknown state)
           if (error.message !== '[AUTH] profile fetch timeout') {
             try {
               const { error: createError } = await supabase
@@ -104,19 +159,11 @@ export const useAuthStore = create<AuthState>((set) => {
             }
           }
         } else if (data) {
-          // Compute effective subscription: if pro_expires_at is past, treat as free
-          const now = Date.now();
-          const isPro = data.subscription === 'pro' && data.pro_expires_at && new Date(data.pro_expires_at).getTime() > now;
-          const effectiveTier = isPro ? 'pro' : 'free';
-
-          tierData = {
-            tier: effectiveTier,
-            tierExpiry: data.tier_expiry,
-            subscription: data.subscription || 'free',
-            pro_expires_at: data.pro_expires_at,
-          };
-          profileData = { full_name: data.full_name, avatar_url: data.avatar_url, role: data.role };
-          console.log('[AUTH] profile loaded:', profileData.role, tierData.tier, 'pro_expires_at:', data.pro_expires_at);
+          const parsed = parseProfileData(data);
+          tierData = parsed.tierData;
+          profileData = parsed.profileData;
+          // P3: Cache fresh profile data
+          cacheProfile(user.id, tierData, profileData);
         }
       }
     } catch (e) {
@@ -127,53 +174,60 @@ export const useAuthStore = create<AuthState>((set) => {
     if (user?.email === import.meta.env.VITE_ADMIN_EMAIL) {
       tierData = { ...tierData, tier: 'pro' };
       profileData = { ...profileData, role: 'admin' };
-      console.log('[AUTH] admin override applied');
     }
 
     cacheSession(session);
-    console.log('[AUTH] final state -> user:', user?.email ?? 'null', 'role:', profileData.role ?? 'none', 'loading: false');
-    set({ user, session, tierData, profileData, loading: false });
+    set({ user, session, tierData, profileData, loading: false, profileLoaded: true });
   };
 
   // BOOT: instant restore from cache
   const cachedUser = loadCachedUser();
   if (cachedUser) {
-    console.log('[AUTH] boot: cache user set immediately');
-    set({ user: cachedUser, loading: true });
+    // P1: Start with cached profile if available
+    const cached = loadCachedProfile(cachedUser.id);
+    if (cached) {
+      set({
+        user: cachedUser,
+        loading: false, // P1: Don't block render
+        profileLoaded: true,
+        tierData: cached.tierData,
+        profileData: cached.profileData,
+      });
+    } else {
+      set({ user: cachedUser, loading: true, profileLoaded: false });
+    }
   }
 
-  // getSession() triggers Supabase internal session recovery from localStorage.
-  // Its result is DISCARDED — onAuthStateChange is the only state setter.
-  supabase.auth.getSession().then(({ data }) => {
-    console.log('[AUTH] getSession resolved:', data.session?.user?.email ?? 'null', '(IGNORED — waiting for onAuthStateChange)');
-  });
+  // getSession() triggers Supabase internal session recovery
+  supabase.auth.getSession().then(() => {});
 
-  // SINGLE SOURCE OF TRUTH — only onAuthStateChange updates state
-  // Safety: force loading=false after 15s even if onAuthStateChange never fires
+  // Safety: force loading=false after 5s (reduced from 15s)
   setTimeout(() => {
     const state = useAuthStore.getState();
     if (state.loading) {
-      console.warn('[AUTH] SAFETY TIMEOUT — forcing loading=false after 15s');
-      set({ loading: false });
+      console.warn('[AUTH] SAFETY TIMEOUT — forcing loading=false after 5s');
+      set({ loading: false, profileLoaded: state.profileLoaded });
     }
-  }, 15000);
+  }, 5000);
 
   supabase.auth.onAuthStateChange(async (event, session) => {
-    console.log('[AUTH] onAuthStateChange:', event, session?.user?.email ?? 'null');
-    await updateAuthState(session);
+    await updateAuthState(session, true);
   });
 
   return {
     user: cachedUser,
     session: null,
-    tierData: { tier: 'free' },
-    profileData: {},
-    loading: true,
+    tierData: cachedUser ? (loadCachedProfile(cachedUser.id)?.tierData || { tier: 'free' }) : { tier: 'free' },
+    profileData: cachedUser ? (loadCachedProfile(cachedUser.id)?.profileData || {}) : {},
+    loading: !cachedUser,
+    profileLoaded: !!cachedUser && !!loadCachedProfile(cachedUser.id),
     loginWithGoogle: async () => { await supabase.auth.signInWithOAuth({ provider: 'google' }); },
     logout: async () => {
       await supabase.auth.signOut();
       cacheSession(null);
-      set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false });
+      const userId = get().user?.id;
+      if (userId) localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
+      set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
     },
   };
 });
