@@ -1,4 +1,5 @@
 import { runMiddleware, authMiddleware, getDb, getAiClient } from '../lib/api-utils.js';
+import { withAiLogging } from '../lib/ai-logger.js';
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'POST') return res.status(405).end();
@@ -63,9 +64,12 @@ Jawablah SEMUA pertanyaan dalam Bahasa Indonesia, tapi berikan istilah dan conto
       }
     });
     
-    const response = await chat.sendMessage({
-      message: message,
-    });
+    const response = await withAiLogging(
+      'chat',
+      'gemini-3-flash-preview',
+      uid,
+      () => chat.sendMessage({ message: message })
+    );
     return res.json({ text: response.text });
   } catch (e: any) {
     if (!res.headersSent) res.status(500).json({ error: e.message });

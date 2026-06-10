@@ -1,4 +1,5 @@
 import { getAiClient } from '../lib/api-utils.js';
+import { withAiLogging } from '../lib/ai-logger.js';
 import { Type } from "@google/genai";
 
 export default async function handler(req: any, res: any) {
@@ -7,31 +8,36 @@ export default async function handler(req: any, res: any) {
     const ai = await getAiClient();
     const { level, grammarTopic, vocabulary } = req.body;
     
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Buatkan persis 3 soal kuis mini pilihan ganda (multiple_choice) Bahasa Jerman untuk level ${level} berdasarkan materi: ${grammarTopic}. Gunakan kosa kata berikut jika relevan: ${vocabulary?.map((v:any) => v.word).join(', ')}. Soal HARUS berupa pilihan ganda dengan 4 opsi jawaban.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.ARRAY,
-          items: {
-            type: Type.OBJECT,
-            properties: {
-              question: { type: Type.STRING, description: "Pertanyaan atau soal" },
-              type: { type: Type.STRING, description: "'multiple_choice' atau 'free_text'" },
-              options: { 
-                type: Type.ARRAY, 
-                items: { type: Type.STRING },
-                description: "Pilihan jawaban jika type multiple_choice" 
+    const response = await withAiLogging(
+      'generate-exercises',
+      'gemini-3-flash-preview',
+      undefined,
+      () => ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Buatkan persis 3 soal kuis mini pilihan ganda (multiple_choice) Bahasa Jerman untuk level ${level} berdasarkan materi: ${grammarTopic}. Gunakan kosa kata berikut jika relevan: ${vocabulary?.map((v:any) => v.word).join(', ')}. Soal HARUS berupa pilihan ganda dengan 4 opsi jawaban.`,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                question: { type: Type.STRING, description: "Pertanyaan atau soal" },
+                type: { type: Type.STRING, description: "'multiple_choice' atau 'free_text'" },
+                options: { 
+                  type: Type.ARRAY, 
+                  items: { type: Type.STRING },
+                  description: "Pilihan jawaban jika type multiple_choice" 
+                },
+                correctAnswerStr: { type: Type.STRING, description: "Kunci jawaban persis (untuk string matching di text free_text, atau nilai teks di multiple_choice)" },
+                hint: { type: Type.STRING, description: "Petunjuk dalam bahasa Indonesia" }
               },
-              correctAnswerStr: { type: Type.STRING, description: "Kunci jawaban persis (untuk string matching di text free_text, atau nilai teks di multiple_choice)" },
-              hint: { type: Type.STRING, description: "Petunjuk dalam bahasa Indonesia" }
-            },
-            required: ["question", "type", "correctAnswerStr"]
+              required: ["question", "type", "correctAnswerStr"]
+            }
           }
         }
-      }
-    });
+      })
+    );
     
     return res.json({ exercises: JSON.parse(response.text?.trim() || "[]") });
   } catch (e: any) {

@@ -1,4 +1,5 @@
 import { getAiClient } from '../lib/api-utils.js';
+import { withAiLogging } from '../lib/ai-logger.js';
 import { Type } from "@google/genai";
 
 export default async function handler(req: any, res: any) {
@@ -6,22 +7,27 @@ export default async function handler(req: any, res: any) {
   try {
     const ai = await getAiClient();
     const { question, answer, level } = req.body;
-    const response = await ai.models.generateContent({
-      model: "gemini-3-flash-preview",
-      contents: `Soal: ${question}\nJawaban siswa (${level}): ${answer}\n\nKoreksi jawaban ini. Apakah maknanya benar dan grammar/artikelnya tepat? Berikan skor benar/salah, penjelasan dalam bahasa Indonesia, dan perbaikannya bila ada kesalahan.`,
-      config: {
-        responseMimeType: "application/json",
-        responseSchema: {
-          type: Type.OBJECT,
-          properties: {
-            isCorrect: { type: Type.BOOLEAN, description: "Bisa diterima benar atau tidak." },
-            feedback: { type: Type.STRING, description: "Penjelasan mengapa benar/salah." },
-            correctedSentence: { type: Type.STRING, description: "Versi sempurna bahasa Jerman." }
-          },
-          required: ["isCorrect", "feedback"]
+    const response = await withAiLogging(
+      'check-answer',
+      'gemini-3-flash-preview',
+      undefined,
+      () => ai.models.generateContent({
+        model: "gemini-3-flash-preview",
+        contents: `Soal: ${question}\nJawaban siswa (${level}): ${answer}\n\nKoreksi jawaban ini. Apakah maknanya benar dan grammar/artikelnya tepat? Berikan skor benar/salah, penjelasan dalam bahasa Indonesia, dan perbaikannya bila ada kesalahan.`,
+        config: {
+          responseMimeType: "application/json",
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              isCorrect: { type: Type.BOOLEAN, description: "Bisa diterima benar atau tidak." },
+              feedback: { type: Type.STRING, description: "Penjelasan mengapa benar/salah." },
+              correctedSentence: { type: Type.STRING, description: "Versi sempurna bahasa Jerman." }
+            },
+            required: ["isCorrect", "feedback"]
+          }
         }
-      }
-    });
+      })
+    );
     return res.json(JSON.parse(response.text?.trim() || "{}"));
   } catch (e: any) {
     if (!res.headersSent) res.status(500).json({ error: e.message });
