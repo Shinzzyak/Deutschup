@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from 'motion/react';
 
 // Lazy load Pages
 const Dashboard = lazy(() => import('./pages/Dashboard'));
+const DashboardWithPaymentRefresh = lazy(() => import("./pages/DashboardWithPaymentRefresh"));
 const LessonView = lazy(() => import('./pages/LessonView'));
 const VocabTrainer = lazy(() => import('./pages/VocabTrainer'));
 const VerbTrainer = lazy(() => import('./pages/VerbTrainer'));
