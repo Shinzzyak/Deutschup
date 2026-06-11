@@ -17,13 +17,17 @@ export default function DebugAuthOverlay() {
           .from('profiles')
           .select('*')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
         
         if (error) {
           setQueryError(error.message);
           setQuerySuccess(false);
+        } else if (!data) {
+          setQueryError('Profile not found (0 rows)');
+          setQuerySuccess(false);
         } else {
           setRawProfile(data);
+          setQueryError(null);
           setQuerySuccess(true);
         }
       } catch (e: any) {

@@ -134,7 +134,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
           .from('profiles')
           .select('tier, tier_expiry, full_name, avatar_url, role, subscription, pro_expires_at')
           .eq('id', user.id)
-          .single();
+          .maybeSingle();
 
         const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
           setTimeout(
@@ -145,9 +145,6 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
         const result = await Promise.race([profilePromise, timeoutPromise]);
         const { data, error } = result;
-
-        // [REG-005 INSTRUMENTATION] Log raw Supabase response
-        console.log('[PROFILE QUERY]', JSON.stringify({ userId: user.id, data, error }, null, 2));
 
         if (error) {
           console.error('[AUTH] profile fetch error:', error.message);
@@ -162,10 +159,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
             }
           }
         } else if (data) {
-          // [REG-005 INSTRUMENTATION] Log parseProfileData input and output
-          console.log('[PARSE INPUT]', JSON.stringify(data, null, 2));
           const parsed = parseProfileData(data);
-          console.log('[PARSE OUTPUT]', JSON.stringify(parsed, null, 2));
           tierData = parsed.tierData;
           profileData = parsed.profileData;
           // P3: Cache fresh profile data
