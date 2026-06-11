@@ -24,6 +24,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return handleSystemHealth(req, res);
     case 'stats':
       return handleStats(req, res);
+    case 'users':
+      return req.method === 'POST'
+        ? handleUpdateUser(req, res)
+        : handleGetUsers(req, res);
+    case 'config':
+      return req.method === 'POST'
+        ? handleUpdateConfig(req, res)
+        : handleGetConfig(req, res);
     case 'update-role':
       return handleUpdateRole(req, res);
     case 'toggle-pro':
@@ -147,6 +155,88 @@ async function handleTogglePro(req: VercelRequest, res: VercelResponse) {
 
     if (error) throw error;
     return res.json({ success: true, userId, subscription: newTier });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+// --- REG-006: New handlers for Admin Cockpit ---
+
+async function handleGetUsers(_req: VercelRequest, res: VercelResponse) {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return res.json(data || []);
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleUpdateUser(req: VercelRequest, res: VercelResponse) {
+  const { targetUserId, tier, subscription, role } = req.body;
+  if (!targetUserId) {
+    return res.status(400).json({ error: 'targetUserId required' });
+  }
+
+  try {
+    const supabase = getSupabaseAdminClient();
+    const updates: Record<string, any> = {};
+    
+    if (tier !== undefined) updates.tier = tier;
+    if (subscription !== undefined) updates.subscription = subscription;
+    if (role !== undefined) updates.role = role;
+    updates.updated_at = new Date().toISOString();
+
+    const { error } = await supabase
+      .from('profiles')
+      .update(updates)
+      .eq('id', targetUserId);
+
+    if (error) throw error;
+    return res.json({ success: true, userId: targetUserId, ...updates });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleGetConfig(_req: VercelRequest, res: VercelResponse) {
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { data, error } = await supabase
+      .from('config')
+      .select('*')
+      .eq('key', 'global')
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+    return res.json(data || { key: 'global', geminiApiKey: '' });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleUpdateConfig(req: VercelRequest, res: VercelResponse) {
+  const { geminiApiKey } = req.body;
+  if (geminiApiKey === undefined) {
+    return res.status(400).json({ error: 'geminiApiKey required' });
+  }
+
+  try {
+    const supabase = getSupabaseAdminClient();
+    const { error } = await supabase
+      .from('config')
+      .upsert(
+        { key: 'global', geminiApiKey },
+        { onConflict: 'key' }
+      );
+
+    if (error) throw error;
+    return res.json({ success: true, geminiApiKey });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
   }
