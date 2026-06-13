@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
+import SecretList from '../components/admin/SecretList';
 import {
   Loader2, Save, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
-  Server, Cpu, Activity, Zap, ArrowLeft, Settings, BarChart3
+  Server, Cpu, Activity, Zap, ArrowLeft, Settings, BarChart3, Key
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -49,7 +50,7 @@ export default function AdminAI() {
   const [usageStats, setUsageStats] = useState<UsageStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'providers' | 'models' | 'stats'>('providers');
+  const [activeTab, setActiveTab] = useState<'providers' | 'models' | 'stats' | 'secrets'>('providers');
 
   // Redirect if not admin
   useEffect(() => {
@@ -226,9 +227,65 @@ export default function AdminAI() {
         </div>
       </div>
 
+      {/* Routing Diagnostics */}
+      <div className="bg-white p-6 rounded-3xl border border-slate-200 mb-8">
+        <h3 className="font-bold text-lg mb-4 flex items-center">
+          <Activity className="w-5 h-5 mr-2 text-blue-600" />
+          Routing Diagnostics
+        </h3>
+        <div className="space-y-3">
+          {providers
+             .sort((a, b) => a.priority - b.priority)
+             .map((provider, idx) => {
+               const hasModel = models.some(m => m.provider_id === provider.id && m.enabled);
+               const isPrimary = models.some(m => m.provider_id === provider.id && m.is_primary);
+               const isFallback = models.some(m => m.provider_id === provider.id && m.is_fallback);
+               
+               let status = 'Missing Key';
+               let result = 'Skipped';
+               let statusColor = 'text-red-600';
+               
+               if (!provider.enabled) {
+                 status = 'Disabled';
+                 result = 'Skipped';
+                 statusColor = 'text-slate-400';
+               } else if (isPrimary) {
+                 status = 'Active';
+                 result = 'Serving Traffic';
+                 statusColor = 'text-green-600';
+               } else if (isFallback) {
+                 status = 'Available';
+                 result = 'Standby';
+                 statusColor = 'text-amber-600';
+               } else if (hasModel) {
+                 status = 'Available';
+                 result = 'Standby';
+                 statusColor = 'text-blue-600';
+               }
+               
+               return (
+                 <div key={provider.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                   <div className="flex items-center space-x-3">
+                     <span className="text-sm font-bold text-slate-500 w-6">{idx + 1}.</span>
+                     <span className="font-medium">{provider.name}</span>
+                   </div>
+                   <div className="flex items-center space-x-4">
+                     <span className={cn("text-sm font-medium", statusColor)}>
+                       Status: {status}
+                     </span>
+                     <span className="text-sm text-slate-500">
+                       Result: {result}
+                     </span>
+                   </div>
+                 </div>
+               );
+             })}
+        </div>
+      </div>
+
       {/* Tabs */}
       <div className="flex space-x-2 mb-8">
-        {(['providers', 'models', 'stats'] as const).map(tab => (
+        {(['providers', 'models', 'stats', 'secrets'] as const).map(tab => (
           <Button
             key={tab}
             variant={activeTab === tab ? 'default' : 'outline'}
@@ -241,6 +298,7 @@ export default function AdminAI() {
             {tab === 'providers' && <Server className="w-4 h-4 mr-2" />}
             {tab === 'models' && <Cpu className="w-4 h-4 mr-2" />}
             {tab === 'stats' && <BarChart3 className="w-4 h-4 mr-2" />}
+            {tab === 'secrets' && <Key className="w-4 h-4 mr-2" />}
             {tab.charAt(0).toUpperCase() + tab.slice(1)}
           </Button>
         ))}
@@ -445,6 +503,11 @@ export default function AdminAI() {
             </div>
           )}
         </div>
+      )}
+
+      {/* Secrets Tab */}
+      {activeTab === 'secrets' && (
+        <SecretList />
       )}
     </div>
   );

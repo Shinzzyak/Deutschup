@@ -138,18 +138,17 @@ export function invalidateCache() {
 async function getApiKey(providerId: string): Promise<string | null> {
   const supabase = getSupabaseAdmin();
 
-  // Check config table first (legacy support)
-  if (providerId === 'gemini') {
-    const { data } = await supabase
-      .from('config')
-      .select('geminiApiKey')
-      .eq('key', 'global')
-      .single();
+  // Check provider_secrets table first (database)
+  const { data: secret } = await supabase
+    .from('provider_secrets')
+    .select('secret_value')
+    .eq('provider_id', providerId)
+    .eq('secret_key', 'api_key')
+    .single();
 
-    if (data?.geminiApiKey) return data.geminiApiKey;
-  }
+  if (secret?.secret_value) return secret.secret_value;
 
-  // Check env vars
+  // Check env vars (fallback)
   const envKey = `${providerId.toUpperCase()}_API_KEY`;
   return process.env[envKey] || null;
 }

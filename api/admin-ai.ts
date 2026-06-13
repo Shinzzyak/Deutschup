@@ -50,6 +50,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     case 'routing-config':
       return handleRoutingConfig(req, res, supabase);
 
+    // Secret management
+    case 'secrets':
+      return handleSecrets(req, res, supabase);
+    case 'secret-add':
+      return handleSecretAdd(req, res, supabase);
+    case 'secret-update':
+      return handleSecretUpdate(req, res, supabase);
+    case 'secret-delete':
+      return handleSecretDelete(req, res, supabase);
+
     default:
       return res.status(400).json({ error: 'Invalid action' });
   }
@@ -365,6 +375,110 @@ async function handleRoutingConfig(_req: VercelRequest, res: VercelResponse, sup
       primaryModel,
       fallbackModel: fallbackModel || primaryModel,
     });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+// ============================================================
+// Secret Management Handlers
+// ============================================================
+
+async function handleSecrets(_req: VercelRequest, res: VercelResponse, supabase: any) {
+  try {
+    const { data, error } = await supabase
+      .from('provider_secrets')
+      .select('id, provider_id, secret_key, created_at, updated_at')
+      .order('provider_id');
+
+    if (error) throw error;
+    return res.json(data || []);
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleSecretAdd(req: VercelRequest, res: VercelResponse, supabase: any) {
+  const { provider_id, secret_key, secret_value } = req.body;
+  if (!provider_id || !secret_key || !secret_value) {
+    return res.status(400).json({ error: 'provider_id, secret_key, and secret_value required' });
+  }
+
+  try {
+    // Check if secret already exists
+    const { data: existing } = await supabase
+      .from('provider_secrets')
+      .select('id')
+      .eq('provider_id', provider_id)
+      .eq('secret_key', secret_key)
+      .single();
+
+    if (existing) {
+      // Update existing
+      const { error } = await supabase
+        .from('provider_secrets')
+        .update({ 
+          secret_value, 
+          updated_at: new Date().toISOString() 
+        })
+        .eq('id', existing.id);
+
+      if (error) throw error;
+    } else {
+      // Insert new
+      const { error } = await supabase
+        .from('provider_secrets')
+        .insert({
+          provider_id,
+          secret_key,
+          secret_value,
+        });
+
+      if (error) throw error;
+    }
+
+    return res.json({ success: true });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleSecretUpdate(req: VercelRequest, res: VercelResponse, supabase: any) {
+  const { id, secret_value } = req.body;
+  if (!id || !secret_value) {
+    return res.status(400).json({ error: 'id and secret_value required' });
+  }
+
+  try {
+    const { error } = await supabase
+      .from('provider_secrets')
+      .update({ 
+        secret_value, 
+        updated_at: new Date().toISOString() 
+      })
+      .eq('id', id);
+
+    if (error) throw error;
+    return res.json({ success: true });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleSecretDelete(req: VercelRequest, res: VercelResponse, supabase: any) {
+  const { id } = req.body;
+  if (!id) {
+    return res.status(400).json({ error: 'id required' });
+  }
+
+  try {
+    const { error } = await supabase
+      .from('provider_secrets')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+    return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
   }
