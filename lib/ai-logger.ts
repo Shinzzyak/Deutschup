@@ -1,28 +1,42 @@
-// lib/ai-logger.ts — Lightweight AI request logger
-import { getDb } from './api-utils.js';
+import { getSupabaseAdminClient } from './api-utils.js';
 
-interface LogRequest {
+interface AiLogParams {
   userId?: string;
-  endpoint: string;
-  model: string;
-  latencyMs: number;
-  success: boolean;
-  errorMessage?: string;
+  endpoint?: string;
+  model?: string;
+  latencyMs?: number;
+  success?: boolean;
+  errorMessage?: string | null;
+  providerId?: string;
+  modelId?: string;
+  tokensIn?: number;
+  tokensOut?: number;
+  costUsd?: number;
 }
 
-export async function logAiRequest(req: LogRequest): Promise<void> {
+/**
+ * Log AI request to ai_usage_log table.
+ * Non-blocking — errors are caught and logged to console only.
+ */
+export async function logAiRequest(params: AiLogParams): Promise<void> {
   try {
-    await getDb().from('ai_requests').insert({
-      user_id: req.userId || null,
-      endpoint: req.endpoint,
-      model: req.model,
-      latency_ms: req.latencyMs,
-      success: req.success,
-      error_message: req.errorMessage || null,
-      created_at: new Date().toISOString(),
+    const supabase = getSupabaseAdminClient();
+
+    // Use new ai_usage_log table
+    await supabase.from('ai_usage_log').insert({
+      user_id: params.userId || 'anonymous',
+      provider_id: params.providerId || 'unknown',
+      model_id: params.modelId || params.model || 'unknown',
+      endpoint: params.endpoint || 'unknown',
+      latency_ms: params.latencyMs || 0,
+      tokens_in: params.tokensIn || 0,
+      tokens_out: params.tokensOut || 0,
+      cost_usd: params.costUsd || 0,
+      success: params.success !== false,
+      error_message: params.errorMessage || null,
     });
-  } catch (err) {
-    // Silent fail — logging should never break the app
-    console.warn('[AI-LOG] Failed to log request:', err);
+  } catch (error) {
+    // Non-blocking: just log to console
+    console.error('[AI-LOGGER] Failed to log AI request:', error);
   }
 }
