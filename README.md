@@ -69,3 +69,4 @@ Pastikan environment variables berikut diset di Vercel Project Settings:
 ## License
 
 Private — DeutschUp
+
