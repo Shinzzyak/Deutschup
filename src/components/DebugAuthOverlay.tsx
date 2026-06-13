@@ -39,7 +39,13 @@ export default function DebugAuthOverlay() {
     fetchRawProfile();
   }, [user?.id]);
   
-  if (import.meta.env.VITE_DEBUG_AUTH !== 'true' && import.meta.env.MODE !== 'development') return null;
+  // Runtime check: cannot be optimized away by Vite
+  const debugEnabled = typeof window !== 'undefined' && (
+    (window as any).__VITE_DEBUG_AUTH__ === true ||
+    (import.meta as any).env?.VITE_DEBUG_AUTH === 'true' ||
+    (import.meta as any).env?.MODE === 'development'
+  );
+  if (!debugEnabled) return null;
   
   return (
     <div className="fixed bottom-0 right-0 bg-black text-white p-4 text-xs z-50 max-w-sm max-h-96 overflow-y-auto">
