@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import React, { isValidElement } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, Link } from 'react-router';
 import { courseData } from '../data/lessons';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
-import { CheckCircle2, ChevronRight, Brain, Trophy, Loader2, PlayCircle, Star, AlertTriangle, Target, Mic, Headphones, Globe, MessageSquare } from 'lucide-react';
+import { CheckCircle2, ChevronRight, Brain, Trophy, Loader2, PlayCircle, Star, AlertTriangle, Target, Mic, Headphones, Globe, MessageSquare, ArrowLeft } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../components/ui/tooltip';
@@ -234,6 +234,11 @@ export default function LessonView() {
 
   return (
     <div className="max-w-3xl mx-auto pb-20">
+      {/* Back nav */}
+      <Link to={lesson?.level ? `/level/${lesson.level}` : '/'} className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-800 mb-6 transition-colors">
+        <ArrowLeft className="w-4 h-4 mr-1" /> Kembali ke {lesson?.level || 'Peta'}
+      </Link>
+
       <div className="mb-8">
         <div className="flex items-center space-x-2 text-sm font-bold text-slate-500 uppercase tracking-wider mb-2">
            <span>{lesson.level}</span>
@@ -452,8 +457,8 @@ export default function LessonView() {
               <p className="text-slate-500 text-lg">Kamu luar biasa. Lanjutkan ke langkah berikutnya.</p>
               
               <div className="pt-8 flex gap-4 justify-center">
-                <Button variant="outline" size="lg" className="rounded-2xl" onClick={() => navigate('/')}>
-                  Kembali ke Peta
+                <Button variant="outline" size="lg" className="rounded-2xl" onClick={() => navigate(`/level/${lesson?.level || 'A1'}`)}>
+                  Kembali ke Level
                 </Button>
                 {nextLessonId && (
                   <Button size="lg" className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate(`/lesson/${nextLessonId}`)}>

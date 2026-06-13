@@ -7,3 +7,16 @@ coverage/
 .env*
 !.env.example
 .vercel
+.env
+
+# Supabase CLI artifacts
+supabase/.temp/
+supabase/migrations/
+
+# Local deployment scripts
+supabase_migrate.sh
+verify_nav.sh
+migrate.js
+
+# Secrets
+.secrets/

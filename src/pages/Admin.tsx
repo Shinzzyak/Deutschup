@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/authStore';
-import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert } from 'lucide-react';
+import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert, Settings } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 export default function Admin() {
@@ -132,8 +133,19 @@ export default function Admin() {
   return (
     <div className="max-w-6xl mx-auto py-12 px-6">
       <header className="mb-10">
-        <h1 className="text-4xl font-black text-slate-900 mb-2">Admin Cockpit 🧠</h1>
-        <p className="text-slate-500">Manage users, system configuration, and AI settings.</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-black text-slate-900 mb-2">Admin Cockpit 🧠</h1>
+            <p className="text-slate-500">Manage users, system configuration, and AI settings.</p>
+          </div>
+          <Button
+            onClick={() => navigate('/admin/ai')}
+            variant="outline"
+            className="rounded-2xl"
+          >
+            <Settings className="w-4 h-4 mr-2" /> AI Settings
+          </Button>
+        </div>
       </header>
 
       {/* Stats */}

@@ -10,6 +10,9 @@ import { AnimatePresence, motion } from 'motion/react';
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const DashboardWithPaymentRefresh = lazy(() => import("./pages/DashboardWithPaymentRefresh"));
 const LessonView = lazy(() => import('./pages/LessonView'));
+const LevelView = lazy(() => import('./pages/LevelView'));
+const CheckpointView = lazy(() => import('./pages/CheckpointView'));
+const AdminAI = lazy(() => import('./pages/AdminAI'));
 const VocabTrainer = lazy(() => import('./pages/VocabTrainer'));
 const VerbTrainer = lazy(() => import('./pages/VerbTrainer'));
 const Koreksi = lazy(() => import('./pages/Koreksi'));
@@ -184,6 +187,8 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageWrapper><DashboardWithPaymentRefresh /></PageWrapper>} />
+        <Route path="/level/:id" element={<PageWrapper><LevelView /></PageWrapper>} />
+        <Route path="/checkpoint/:id" element={<PageWrapper><CheckpointView /></PageWrapper>} />
         <Route path="/lesson/:id" element={<PageWrapper><LessonView /></PageWrapper>} />
         <Route path="/vocab" element={<PageWrapper><VocabTrainer /></PageWrapper>} />
         <Route path="/verbs" element={<PageWrapper><VerbTrainer /></PageWrapper>} />
@@ -192,6 +197,7 @@ function AnimatedRoutes() {
         <Route path="/simulasi" element={<PageWrapper><Simulasi /></PageWrapper>} />
         <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
+        <Route path="/admin/ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );
