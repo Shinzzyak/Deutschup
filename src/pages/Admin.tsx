@@ -5,6 +5,7 @@ import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert, Settings 
 import { Button } from '../components/ui/button';
 
 export default function Admin() {
+  const navigate = useNavigate();
   const { session, loading, profileData } = useAuthStore();
   const [users, setUsers] = useState<any[]>([]);
   const [apiKey, setApiKey] = useState('');
