@@ -70,3 +70,4 @@ Pastikan environment variables berikut diset di Vercel Project Settings:
 
 Private — DeutschUp
 
+force rebuild
