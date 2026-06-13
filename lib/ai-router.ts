@@ -74,7 +74,7 @@ export async function getRoutingConfig(): Promise<RoutingConfig> {
   const supabase = getSupabaseAdmin();
 
   // Get enabled providers ordered by priority
-  const { data: providers, error: pError } = await supabase
+  const { data: allProviders, error: pError } = await supabase
     .from('ai_providers')
     .select('*')
     .eq('enabled', true)
@@ -82,42 +82,44 @@ export async function getRoutingConfig(): Promise<RoutingConfig> {
 
   if (pError) throw pError;
 
+  // Filter providers by API key availability
+  const providers: ProviderConfig[] = [];
+  for (const provider of allProviders || []) {
+    const apiKey = await getApiKey(provider.id);
+    if (apiKey) {
+      providers.push(provider);
+    } else {
+      console.warn(`[AI-ROUTING] Skipping ${provider.id}: no API key`);
+    }
+  }
+
   // Get enabled models
-  const { data: models, error: mError } = await supabase
+  const { data: allModels, error: mError } = await supabase
     .from('ai_models')
     .select('*')
     .eq('enabled', true);
 
   if (mError) throw mError;
 
-  if (!models || models.length === 0) {
-    throw new Error('No enabled AI models found in database');
+  // Filter models to only include those from available providers
+  const availableProviderIds = new Set(providers.map(p => p.id));
+  const models = (allModels || []).filter(m => availableProviderIds.has(m.provider_id));
+
+  if (models.length === 0) {
+    throw new Error('No available AI models (no providers with API keys)');
   }
 
-  // Find primary model
-  const primary = models.find(m => m.is_primary);
-  if (!primary) {
-    // Fallback to first model from highest priority provider
-    const firstProvider = providers?.[0];
-    const firstModel = models.find(m => m.provider_id === firstProvider?.id);
-    if (!firstModel) throw new Error('No primary model configured');
-    cachedConfig = {
-      primary: firstModel,
-      fallback: firstModel,
-      providers: providers || [],
-      models,
-    };
-    cacheTimestamp = now;
-    return cachedConfig;
-  }
+  // Find primary model (first available by priority)
+  const primary = models[0];
+  if (!primary) throw new Error('No primary model configured');
 
-  // Find fallback model
-  const fallback = models.find(m => m.is_fallback) || primary;
+  // Find fallback model (second available, or primary if only one)
+  const fallback = models.length > 1 ? models[1] : primary;
 
   cachedConfig = {
     primary,
     fallback,
-    providers: providers || [],
+    providers,
     models,
   };
   cacheTimestamp = now;
@@ -470,61 +472,48 @@ export async function executeWithRouting<T>(
 ): Promise<{ result: T; providerId: string; modelId: string; latencyMs: number }> {
   const startTime = Date.now();
   const config = await getRoutingConfig();
+  const errors: string[] = [];
 
-  // Try primary
-  try {
-    const client = await createProviderClient(config.primary);
-    const result = await withRetry(() => primaryFn(client));
-    const latencyMs = Date.now() - startTime;
+  // Try all available models in priority order
+  for (let i = 0; i < config.models.length; i++) {
+    const model = config.models[i];
+    const fn = i === 0 ? primaryFn : fallbackFn;
 
-    // Log success
-    logUsage({
-      userId,
-      providerId: config.primary.provider_id,
-      modelId: config.primary.id,
-      endpoint,
-      latencyMs,
-      success: true,
-    }).catch(() => {});
-
-    return { result, providerId: config.primary.provider_id, modelId: config.primary.id, latencyMs };
-  } catch (primaryError: any) {
-    console.warn(`[AI-ROUTING] Primary failed (${config.primary.provider_id}/${config.primary.name}):`, primaryError.message);
-
-    // Try fallback
     try {
-      const client = await createProviderClient(config.fallback);
-      const result = await withRetry(() => fallbackFn(client), 1, 500);
+      const client = await createProviderClient(model);
+      const result = await withRetry(() => fn(client), i === 0 ? 2 : 1, 1000);
       const latencyMs = Date.now() - startTime;
 
-      // Log fallback success
+      // Log success
       logUsage({
         userId,
-        providerId: config.fallback.provider_id,
-        modelId: config.fallback.id,
+        providerId: model.provider_id,
+        modelId: model.id,
         endpoint,
         latencyMs,
         success: true,
       }).catch(() => {});
 
-      return { result, providerId: config.fallback.provider_id, modelId: config.fallback.id, latencyMs };
-    } catch (fallbackError: any) {
-      const latencyMs = Date.now() - startTime;
-
-      // Log failure
-      logUsage({
-        userId,
-        providerId: config.primary.provider_id,
-        modelId: config.primary.id,
-        endpoint,
-        latencyMs,
-        success: false,
-        errorMessage: `Primary: ${primaryError.message}, Fallback: ${fallbackError.message}`,
-      }).catch(() => {});
-
-      throw primaryError;
+      return { result, providerId: model.provider_id, modelId: model.id, latencyMs };
+    } catch (error: any) {
+      errors.push(`${model.provider_id}/${model.name}: ${error.message}`);
+      console.warn(`[AI-ROUTING] ${model.provider_id}/${model.name} failed:`, error.message);
     }
   }
+
+  // All providers failed
+  const latencyMs = Date.now() - startTime;
+  logUsage({
+    userId,
+    providerId: config.models[0]?.provider_id || 'unknown',
+    modelId: config.models[0]?.id || 'unknown',
+    endpoint,
+    latencyMs,
+    success: false,
+    errorMessage: errors.join('; '),
+  }).catch(() => {});
+
+  throw new Error(`All AI providers failed: ${errors.join('; ')}`);
 }
 
 // ============================================================

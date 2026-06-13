@@ -97,14 +97,14 @@ CREATE TRIGGER ai_models_updated_at
   BEFORE UPDATE ON ai_models
   FOR EACH ROW EXECUTE FUNCTION update_ai_timestamp();
 
--- 8. Seed providers (priority order: DeepSeek > Mimo > Gemini > future)
+-- 8. Seed providers (priority order: DeepSeek > Mimo > Gemini > Qwen)
 INSERT INTO ai_providers (id, name, enabled, priority, status, config) VALUES
   ('deepseek', 'DeepSeek', true, 1, 'active', '{"baseUrl": "https://api.deepseek.com"}'),
   ('mimo', 'Xiaomi MiMo', true, 2, 'active', '{"baseUrl": "https://api.xiaomimimo.com/v1"}'),
-  ('gemini', 'Google Gemini', false, 3, 'disabled', '{"baseUrl": "https://generativelanguage.googleapis.com"}'),
+  ('gemini', 'Google Gemini', true, 3, 'active', '{"baseUrl": "https://generativelanguage.googleapis.com"}'),
   ('openai', 'OpenAI', false, 4, 'disabled', '{"baseUrl": "https://api.openai.com"}'),
   ('claude', 'Anthropic Claude', false, 5, 'disabled', '{"baseUrl": "https://api.anthropic.com"}'),
-  ('qwen', 'Qwen (Alibaba)', false, 6, 'disabled', '{"baseUrl": "https://dashscope.aliyuncs.com"}')
+  ('qwen', 'Qwen (Alibaba)', true, 6, 'active', '{"baseUrl": "https://dashscope.aliyuncs.com"}')
 ON CONFLICT (id) DO NOTHING;
 
 -- 9. Seed models
@@ -113,15 +113,15 @@ INSERT INTO ai_models (id, provider_id, name, display_name, enabled, is_primary,
   ('deepseek-v4-flash', 'deepseek', 'deepseek-v4-flash', 'DeepSeek V4 Flash', true, true, false, '{"temperature": 0.7}'),
   -- Mimo models (fallback)
   ('mimo-v2.5', 'mimo', 'mimo-v2-pro', 'Mimo v2.5', true, false, true, '{"temperature": 0.7}'),
-  -- Gemini models (disabled by default)
-  ('gemini-3-flash', 'gemini', 'gemini-3-flash-preview', 'Gemini 3 Flash', false, false, false, '{"temperature": 0.7}'),
-  ('gemini-2-flash', 'gemini', 'gemini-2.0-flash', 'Gemini 2.0 Flash', false, false, false, '{"temperature": 0.7}'),
-  ('gemma-3-1b', 'gemini', 'gemma-3-1b-it', 'Gemma 3 1B', false, false, false, '{"temperature": 0.5}'),
+  -- Gemini models (enabled as fallback)
+  ('gemini-3-flash', 'gemini', 'gemini-3-flash-preview', 'Gemini 3 Flash', true, false, false, '{"temperature": 0.7}'),
+  ('gemini-2-flash', 'gemini', 'gemini-2.0-flash', 'Gemini 2.0 Flash', true, false, false, '{"temperature": 0.7}'),
+  ('gemma-3-1b', 'gemini', 'gemma-3-1b-it', 'Gemma 3 1B', true, false, false, '{"temperature": 0.5}'),
   -- OpenAI models (disabled by default)
   ('gpt-4o', 'openai', 'gpt-4o', 'GPT-4o', false, false, false, '{"temperature": 0.7}'),
   ('gpt-4o-mini', 'openai', 'gpt-4o-mini', 'GPT-4o Mini', false, false, false, '{"temperature": 0.7}'),
   -- Claude models (disabled by default)
   ('claude-4-sonnet', 'claude', 'claude-4-sonnet-20250514', 'Claude 4 Sonnet', false, false, false, '{"temperature": 0.7}'),
-  -- Qwen models (disabled by default)
-  ('qwen-max', 'qwen', 'qwen-max', 'Qwen Max', false, false, false, '{"temperature": 0.7}')
+  -- Qwen models (enabled as emergency fallback)
+  ('qwen-max', 'qwen', 'qwen-max', 'Qwen Max', true, false, false, '{"temperature": 0.7}')
 ON CONFLICT (id) DO NOTHING;
