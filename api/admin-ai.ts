@@ -60,6 +60,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     case 'secret-delete':
       return handleSecretDelete(req, res, supabase);
 
+    // Health check
+    case 'health-check':
+      return handleHealthCheck(req, res, supabase);
+    case 'validate-provider':
+      return handleValidateProvider(req, res, supabase);
+
     default:
       return res.status(400).json({ error: 'Invalid action' });
   }
@@ -479,6 +485,271 @@ async function handleSecretDelete(req: VercelRequest, res: VercelResponse, supab
 
     if (error) throw error;
     return res.json({ success: true });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+// ============================================================
+// Provider Health Check
+// ============================================================
+
+type ProviderRuntimeStatus = 'ACTIVE' | 'MISSING_KEY' | 'INVALID_KEY' | 'UNREACHABLE' | 'RATE_LIMITED' | 'DISABLED';
+
+interface HealthCheckResult {
+  provider: string;
+  name: string;
+  enabled: boolean;
+  key_exists: boolean;
+  runtime_status: ProviderRuntimeStatus;
+  latency_ms: number | null;
+  checked_at: string;
+  error_message: string | null;
+}
+
+const PROVIDER_ENDPOINTS: Record<string, string> = {
+  deepseek: 'https://api.deepseek.com/v1/chat/completions',
+  mimo: 'https://api.xiaomimimo.com/v1/chat/completions',
+  gemini: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+  openai: 'https://api.openai.com/v1/chat/completions',
+  claude: 'https://api.anthropic.com/v1/messages',
+  qwen: 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions',
+};
+
+async function validateProviderKey(providerId: string, apiKey: string): Promise<{ success: boolean; latency_ms: number; error: string | null }> {
+  const startTime = Date.now();
+  const endpoint = PROVIDER_ENDPOINTS[providerId];
+  
+  if (!endpoint) {
+    return { success: false, latency_ms: 0, error: 'Unknown provider endpoint' };
+  }
+
+  try {
+    let response: Response;
+    
+    if (providerId === 'gemini') {
+      // Gemini uses GET with key param
+      response = await fetch(`${endpoint}?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: 'Hi' }] }],
+          generationConfig: { maxOutputTokens: 5 }
+        }),
+        signal: AbortSignal.timeout(10000),
+      });
+    } else if (providerId === 'claude') {
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: 'claude-4-sonnet',
+          messages: [{ role: 'user', content: 'Hi' }],
+          max_tokens: 5,
+        }),
+        signal: AbortSignal.timeout(10000),
+      });
+    } else {
+      // OpenAI-compatible (DeepSeek, MiMo, OpenAI, Qwen)
+      response = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: providerId === 'deepseek' ? 'deepseek-v4-flash' :
+                 providerId === 'mimo' ? 'mimo-v2-flash' :
+                 providerId === 'qwen' ? 'qwen-turbo' : 'gpt-4o-mini',
+          messages: [{ role: 'user', content: 'Hi' }],
+          max_tokens: 5,
+        }),
+        signal: AbortSignal.timeout(10000),
+      });
+    }
+
+    const latency_ms = Date.now() - startTime;
+    
+    if (response.status === 429) {
+      return { success: false, latency_ms, error: 'Rate limited (429)' };
+    }
+    
+    if (response.status === 401 || response.status === 403) {
+      return { success: false, latency_ms, error: `Auth error (${response.status})` };
+    }
+    
+    if (!response.ok) {
+      return { success: false, latency_ms, error: `HTTP ${response.status}` };
+    }
+
+    return { success: true, latency_ms, error: null };
+  } catch (error: any) {
+    const latency_ms = Date.now() - startTime;
+    if (error.name === 'TimeoutError' || error.code === 'ABORT_ERR') {
+      return { success: false, latency_ms, error: 'Timeout (10s)' };
+    }
+    return { success: false, latency_ms, error: error.message };
+  }
+}
+
+async function handleHealthCheck(_req: VercelRequest, res: VercelResponse, supabase: any) {
+  try {
+    // Get all providers
+    const { data: providers, error: pError } = await supabase
+      .from('ai_providers')
+      .select('*')
+      .order('priority', { ascending: true });
+
+    if (pError) throw pError;
+
+    const results: HealthCheckResult[] = [];
+
+    for (const provider of providers || []) {
+      // Check if key exists
+      const { data: secret } = await supabase
+        .from('provider_secrets')
+        .select('secret_value')
+        .eq('provider_id', provider.id)
+        .eq('secret_key', 'api_key')
+        .single();
+
+      const key_exists = !!secret?.secret_value;
+      
+      if (!provider.enabled) {
+        results.push({
+          provider: provider.id,
+          name: provider.name,
+          enabled: false,
+          key_exists,
+          runtime_status: 'DISABLED',
+          latency_ms: null,
+          checked_at: new Date().toISOString(),
+          error_message: null,
+        });
+        continue;
+      }
+
+      if (!key_exists) {
+        results.push({
+          provider: provider.id,
+          name: provider.name,
+          enabled: true,
+          key_exists: false,
+          runtime_status: 'MISSING_KEY',
+          latency_ms: null,
+          checked_at: new Date().toISOString(),
+          error_message: 'No API key configured',
+        });
+        continue;
+      }
+
+      // Validate key
+      const validation = await validateProviderKey(provider.id, secret.secret_value);
+      
+      let runtime_status: ProviderRuntimeStatus;
+      if (validation.success) {
+        runtime_status = 'ACTIVE';
+      } else if (validation.error?.includes('429')) {
+        runtime_status = 'RATE_LIMITED';
+      } else if (validation.error?.includes('Auth') || validation.error?.includes('401') || validation.error?.includes('403')) {
+        runtime_status = 'INVALID_KEY';
+      } else {
+        runtime_status = 'UNREACHABLE';
+      }
+
+      results.push({
+        provider: provider.id,
+        name: provider.name,
+        enabled: true,
+        key_exists: true,
+        runtime_status,
+        latency_ms: validation.latency_ms,
+        checked_at: new Date().toISOString(),
+        error_message: validation.error,
+      });
+    }
+
+    // Summary
+    const summary = {
+      total: results.length,
+      active: results.filter(r => r.runtime_status === 'ACTIVE').length,
+      missing_key: results.filter(r => r.runtime_status === 'MISSING_KEY').length,
+      invalid_key: results.filter(r => r.runtime_status === 'INVALID_KEY').length,
+      unreachable: results.filter(r => r.runtime_status === 'UNREACHABLE').length,
+      rate_limited: results.filter(r => r.runtime_status === 'RATE_LIMITED').length,
+      disabled: results.filter(r => r.runtime_status === 'DISABLED').length,
+      avg_latency_ms: results.filter(r => r.latency_ms).length > 0
+        ? Math.round(results.filter(r => r.latency_ms).reduce((sum, r) => sum + (r.latency_ms || 0), 0) / results.filter(r => r.latency_ms).length)
+        : null,
+    };
+
+    return res.json({ providers: results, summary });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleValidateProvider(req: VercelRequest, res: VercelResponse, supabase: any) {
+  const { provider_id } = req.body;
+  if (!provider_id) {
+    return res.status(400).json({ error: 'provider_id required' });
+  }
+
+  try {
+    // Get provider
+    const { data: provider, error: pError } = await supabase
+      .from('ai_providers')
+      .select('*')
+      .eq('id', provider_id)
+      .single();
+
+    if (pError || !provider) {
+      return res.status(404).json({ error: 'Provider not found' });
+    }
+
+    // Get key
+    const { data: secret } = await supabase
+      .from('provider_secrets')
+      .select('secret_value')
+      .eq('provider_id', provider_id)
+      .eq('secret_key', 'api_key')
+      .single();
+
+    if (!secret?.secret_value) {
+      return res.json({
+        provider: provider_id,
+        runtime_status: 'MISSING_KEY',
+        latency_ms: null,
+        checked_at: new Date().toISOString(),
+        error_message: 'No API key configured',
+      });
+    }
+
+    // Validate
+    const validation = await validateProviderKey(provider_id, secret.secret_value);
+    
+    let runtime_status: ProviderRuntimeStatus;
+    if (validation.success) {
+      runtime_status = 'ACTIVE';
+    } else if (validation.error?.includes('429')) {
+      runtime_status = 'RATE_LIMITED';
+    } else if (validation.error?.includes('Auth') || validation.error?.includes('401') || validation.error?.includes('403')) {
+      runtime_status = 'INVALID_KEY';
+    } else {
+      runtime_status = 'UNREACHABLE';
+    }
+
+    return res.json({
+      provider: provider_id,
+      runtime_status,
+      latency_ms: validation.latency_ms,
+      checked_at: new Date().toISOString(),
+      error_message: validation.error,
+    });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
   }

@@ -9,6 +9,8 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
+type RuntimeStatus = 'ACTIVE' | 'MISSING_KEY' | 'INVALID_KEY' | 'UNREACHABLE' | 'RATE_LIMITED' | 'DISABLED';
+
 interface Provider {
   id: string;
   name: string;
@@ -16,6 +18,17 @@ interface Provider {
   priority: number;
   status: 'active' | 'degraded' | 'down' | 'disabled';
   config: Record<string, any>;
+}
+
+interface HealthCheckResult {
+  provider: string;
+  name: string;
+  enabled: boolean;
+  key_exists: boolean;
+  runtime_status: RuntimeStatus;
+  latency_ms: number | null;
+  checked_at: string;
+  error_message: string | null;
 }
 
 interface Model {
@@ -46,6 +59,9 @@ export default function AdminAI() {
   const navigate = useNavigate();
 
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [healthData, setHealthData] = useState<HealthCheckResult[]>([]);
+  const [healthSummary, setHealthSummary] = useState<any>(null);
+  const [validating, setValidating] = useState<string | null>(null);
   const [models, setModels] = useState<Model[]>([]);
   const [usageStats, setUsageStats] = useState<UsageStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +85,7 @@ export default function AdminAI() {
     if (!session) return;
     setLoading(true);
     try {
-      const [providersRes, modelsRes, statsRes] = await Promise.all([
+      const [providersRes, modelsRes, statsRes, healthRes] = await Promise.all([
         fetch('/api/admin-ai?action=providers', {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
         }),
@@ -78,12 +94,20 @@ export default function AdminAI() {
         }),
         fetch('/api/admin-ai?action=usage-stats&days=7', {
           headers: { 'Authorization': `Bearer ${session.access_token}` }
+        }),
+        fetch('/api/admin-ai?action=health-check', {
+          headers: { 'Authorization': `Bearer ${session.access_token}` }
         })
       ]);
 
       if (providersRes.ok) setProviders(await providersRes.json());
       if (modelsRes.ok) setModels(await modelsRes.json());
       if (statsRes.ok) setUsageStats(await statsRes.json());
+      if (healthRes.ok) {
+        const health = await healthRes.json();
+        setHealthData(health.providers || []);
+        setHealthSummary(health.summary || null);
+      }
     } catch (e) {
       console.error('Fetch AI data failed:', e);
     } finally {
@@ -185,12 +209,62 @@ export default function AdminAI() {
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status: RuntimeStatus) => {
     switch (status) {
-      case 'active': return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-      case 'degraded': return <AlertTriangle className="w-4 h-4 text-amber-500" />;
-      case 'down': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'ACTIVE': return <CheckCircle2 className="w-4 h-4 text-green-500" />;
+      case 'MISSING_KEY': return <AlertTriangle className="w-4 h-4 text-amber-500" />;
+      case 'INVALID_KEY': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'UNREACHABLE': return <XCircle className="w-4 h-4 text-red-500" />;
+      case 'RATE_LIMITED': return <AlertTriangle className="w-4 h-4 text-amber-500" />;
+      case 'DISABLED': return <XCircle className="w-4 h-4 text-slate-400" />;
       default: return <XCircle className="w-4 h-4 text-slate-400" />;
+    }
+  };
+
+  const getStatusColor = (status: RuntimeStatus) => {
+    switch (status) {
+      case 'ACTIVE': return 'text-green-600 bg-green-50';
+      case 'MISSING_KEY': return 'text-amber-600 bg-amber-50';
+      case 'INVALID_KEY': return 'text-red-600 bg-red-50';
+      case 'UNREACHABLE': return 'text-red-600 bg-red-50';
+      case 'RATE_LIMITED': return 'text-amber-600 bg-amber-50';
+      case 'DISABLED': return 'text-slate-500 bg-slate-50';
+      default: return 'text-slate-500 bg-slate-50';
+    }
+  };
+
+  const getProviderHealth = (providerId: string): HealthCheckResult | undefined => {
+    return healthData.find(h => h.provider === providerId);
+  };
+
+  const validateProvider = async (providerId: string) => {
+    if (!session) return;
+    setValidating(providerId);
+    try {
+      const res = await fetch('/api/admin-ai?action=validate-provider', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ provider_id: providerId })
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setHealthData(prev => {
+          const existing = prev.findIndex(h => h.provider === providerId);
+          if (existing >= 0) {
+            const updated = [...prev];
+            updated[existing] = { ...updated[existing], ...result };
+            return updated;
+          }
+          return [...prev, result];
+        });
+      }
+    } catch (e) {
+      console.error('Validate failed:', e);
+    } finally {
+      setValidating(null);
     }
   };
 
@@ -312,20 +386,53 @@ export default function AdminAI() {
               key={provider.id}
               className={cn(
                 "bg-white p-6 rounded-3xl border-2 transition-all",
-                provider.enabled ? "border-green-200" : "border-slate-200 opacity-60"
+                getProviderHealth(provider.id)?.runtime_status === 'ACTIVE' ? "border-green-200" :
+                getProviderHealth(provider.id)?.runtime_status === 'MISSING_KEY' ? "border-amber-200" :
+                provider.enabled ? "border-red-200" : "border-slate-200 opacity-60"
               )}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
-                  {getStatusIcon(provider.status)}
+                  {getStatusIcon(getProviderHealth(provider.id)?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED'))}
                   <div>
                     <h3 className="font-bold text-lg">{provider.name}</h3>
-                    <p className="text-sm text-slate-500">
-                      Priority: {provider.priority} • Status: {provider.status}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm text-slate-500">
+                        Priority: {provider.priority}
+                      </span>
+                      <span className={cn(
+                        "text-xs px-2 py-0.5 rounded-full font-medium",
+                        getStatusColor(getProviderHealth(provider.id)?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED'))
+                      )}>
+                        {getProviderHealth(provider.id)?.runtime_status || (provider.enabled ? 'Checking...' : 'DISABLED')}
+                      </span>
+                    </div>
+                    {getProviderHealth(provider.id)?.latency_ms && (
+                      <p className="text-xs text-slate-400 mt-1">
+                        Latency: {getProviderHealth(provider.id)?.latency_ms}ms
+                      </p>
+                    )}
+                    {getProviderHealth(provider.id)?.error_message && (
+                      <p className="text-xs text-red-500 mt-1">
+                        {getProviderHealth(provider.id)?.error_message}
+                      </p>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => validateProvider(provider.id)}
+                    disabled={validating === provider.id}
+                    className="rounded-xl"
+                  >
+                    {validating === provider.id ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <RefreshCw className="w-4 h-4" />
+                    )}
+                  </Button>
                   <Button
                     variant={provider.enabled ? 'default' : 'outline'}
                     size="sm"
