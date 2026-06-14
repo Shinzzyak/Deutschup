@@ -207,7 +207,7 @@ export default function AdminAI() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto pb-20">
+    <div className="max-w-6xl mx-auto pb-20 px-4 md:px-6 overflow-x-hidden">
       {/* Back nav */}
       <button
         onClick={() => navigate('/admin')}
@@ -437,7 +437,7 @@ export default function AdminAI() {
 
                 {/* Stats */}
                 {stats && (
-                  <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-4 gap-4 text-sm">
+                  <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
                       <p className="text-slate-500">Requests</p>
                       <p className="font-bold">{stats.total_requests}</p>
