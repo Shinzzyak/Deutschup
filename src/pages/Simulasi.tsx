@@ -160,7 +160,7 @@ export default function MockTest() {
              Waktu pengerjaan: 30 menit.
            </p>
 
-           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+           <div className="grid grid-cols-2 gap-3 md:gap-4 mb-8">
               {(['A1', 'A2', 'B1', 'B2'] as const).map(l => (
                  <button 
                    key={l}

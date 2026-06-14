@@ -4,6 +4,7 @@ import type { Level } from '../data/course';
 import { courseIndex } from '../data/lessonIndex';
 import { useProgressStore } from '../stores/progressStore';
 import { useLearningStore } from '../stores/learningStore';
+import { useTheme } from "../hooks/useTheme";
 import { useAuthStore } from '../stores/authStore';
 import { isUserPro } from '../lib/subscription';
 import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock } from 'lucide-react';

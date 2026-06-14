@@ -62,7 +62,7 @@ export default function Catatan() {
   };
 
   return (
-    <div className="max-w-5xl mx-auto pb-20">
+    <div className="max-w-5xl mx-auto pb-20 px-4">
       <div className="mb-12">
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 flex items-center space-x-3">
           <BookOpen className="w-8 h-8 text-blue-600" />

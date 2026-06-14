@@ -221,7 +221,7 @@ export default function VocabTrainer() {
                 </div>
               </div>
 
-              <div className={cn("mt-12 grid grid-cols-2 gap-4 transition-opacity duration-300", isFlipped ? "opacity-100" : "opacity-0 pointer-events-none")}>
+              <div className={cn("mt-8 md:mt-12 grid grid-cols-2 gap-3 md:gap-4 transition-opacity duration-300", isFlipped ? "opacity-100" : "opacity-0 pointer-events-none")}>
                 <Button 
                   onClick={() => handleAnswer(false)} 
                   size="lg" 

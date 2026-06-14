@@ -150,7 +150,7 @@ export default function Admin() {
       </header>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-10">
         <div className="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center">
           <div className="p-3 bg-blue-50 rounded-2xl mr-4"><Users className="w-6 h-6 text-blue-600" /></div>
           <div>
