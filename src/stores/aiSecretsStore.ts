@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getSupabaseAdminClient } from '../../lib/api-utils';
+import { supabase } from '../lib/supabase';
 
 // ============================================================
 // Types
@@ -52,6 +52,12 @@ function maskKey(key: string): string {
   return `${start}${'*'.repeat(Math.min(key.length - 8, 8))}${end}`;
 }
 
+async function authHeaders(): Promise<Record<string, string>> {
+  const { data } = await supabase.auth.getSession();
+  const token = data.session?.access_token;
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 // ============================================================
 // Store
 // ============================================================
@@ -65,13 +71,10 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
   fetchSecrets: async () => {
     set({ loading: true, error: null });
     try {
-      const supabase = getSupabaseAdminClient();
-      const { data, error } = await supabase
-        .from('provider_secrets')
-        .select('*')
-        .order('provider_id');
-
-      if (error) throw error;
+      const headers = await authHeaders();
+      const res = await fetch('/api/admin-ai?action=secrets', { headers });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
       set({ secrets: data || [], loading: false });
     } catch (error: any) {
       set({ error: error.message, loading: false });
@@ -81,33 +84,28 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
   fetchProviders: async () => {
     set({ loading: true, error: null });
     try {
-      const supabase = getSupabaseAdminClient();
-      
-      // Get all providers
-      const { data: providers, error: pError } = await supabase
-        .from('ai_providers')
-        .select('*')
-        .order('priority');
+      const headers = await authHeaders();
 
-      if (pError) throw pError;
+      // Get providers and secrets via API
+      const [providersRes, secretsRes] = await Promise.all([
+        fetch('/api/admin-ai?action=providers', { headers }),
+        fetch('/api/admin-ai?action=secrets', { headers }),
+      ]);
 
-      // Get all secrets
-      const { data: secrets, error: sError } = await supabase
-        .from('provider_secrets')
-        .select('*');
-
-      if (sError) throw sError;
+      if (!providersRes.ok) throw new Error(`Providers fetch failed: HTTP ${providersRes.status}`);
+      const providers = await providersRes.json();
+      const secrets = secretsRes.ok ? await secretsRes.json() : [];
 
       // Build provider status
-      const providerStatus: ProviderStatus[] = (providers || []).map(provider => {
-        const secret = (secrets || []).find(s => 
+      const providerStatus: ProviderStatus[] = (providers || []).map((provider: any) => {
+        const secret = (secrets || []).find((s: any) =>
           s.provider_id === provider.id && s.secret_key === 'api_key'
         );
-        
-        // Check env var
+
+        // Check env var (will be false in browser, but keep for completeness)
         const envKey = `${provider.id.toUpperCase()}_API_KEY`;
-        const hasEnvKey = typeof process !== 'undefined' && process.env?.[envKey];
-        
+        const hasEnvKey = typeof process !== 'undefined' && (process.env as any)?.[envKey];
+
         let status: ProviderStatus['status'] = 'disabled';
         let source: ProviderStatus['source'] = 'none';
         let hasKey = false;
@@ -119,7 +117,8 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
           status = 'active';
           source = 'database';
           hasKey = true;
-          maskedKey = maskKey(secret.secret_value);
+          // Don't expose secret_value from API — use masked placeholder
+          maskedKey = '**** (stored in DB)';
         } else if (hasEnvKey) {
           status = 'active';
           source = 'environment';
@@ -143,10 +142,10 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
         };
       });
 
-      set({ 
-        providers: providerStatus, 
+      set({
+        providers: providerStatus,
         secrets: secrets || [],
-        loading: false 
+        loading: false,
       });
     } catch (error: any) {
       set({ error: error.message, loading: false });
@@ -156,38 +155,15 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
   addSecret: async (providerId: string, secretKey: string, secretValue: string) => {
     set({ loading: true, error: null });
     try {
-      const supabase = getSupabaseAdminClient();
-      
-      // Check if secret already exists
-      const { data: existing } = await supabase
-        .from('provider_secrets')
-        .select('id')
-        .eq('provider_id', providerId)
-        .eq('secret_key', secretKey)
-        .single();
-
-      if (existing) {
-        // Update existing
-        const { error } = await supabase
-          .from('provider_secrets')
-          .update({ 
-            secret_value: secretValue, 
-            updated_at: new Date().toISOString() 
-          })
-          .eq('id', existing.id);
-
-        if (error) throw error;
-      } else {
-        // Insert new
-        const { error } = await supabase
-          .from('provider_secrets')
-          .insert({
-            provider_id: providerId,
-            secret_key: secretKey,
-            secret_value: secretValue,
-          });
-
-        if (error) throw error;
+      const headers = await authHeaders();
+      const res = await fetch('/api/admin-ai?action=secret-add', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider_id: providerId, secret_key: secretKey, secret_value: secretValue }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || `HTTP ${res.status}`);
       }
 
       // Refresh
@@ -201,16 +177,16 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
   updateSecret: async (id: string, secretValue: string) => {
     set({ loading: true, error: null });
     try {
-      const supabase = getSupabaseAdminClient();
-      const { error } = await supabase
-        .from('provider_secrets')
-        .update({ 
-          secret_value: secretValue, 
-          updated_at: new Date().toISOString() 
-        })
-        .eq('id', id);
-
-      if (error) throw error;
+      const headers = await authHeaders();
+      const res = await fetch('/api/admin-ai?action=secret-update', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, secret_value: secretValue }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
 
       // Refresh
       await get().fetchProviders();
@@ -223,13 +199,16 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
   deleteSecret: async (id: string) => {
     set({ loading: true, error: null });
     try {
-      const supabase = getSupabaseAdminClient();
-      const { error } = await supabase
-        .from('provider_secrets')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
+      const headers = await authHeaders();
+      const res = await fetch('/api/admin-ai?action=secret-delete', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || `HTTP ${res.status}`);
+      }
 
       // Refresh
       await get().fetchProviders();
@@ -241,92 +220,21 @@ export const useAISecretsStore = create<AISecretsState>((set, get) => ({
 
   validateSecret: async (providerId: string) => {
     try {
-      const supabase = getSupabaseAdminClient();
-      
-      // Get the secret
-      const { data: secret } = await supabase
-        .from('provider_secrets')
-        .select('secret_value')
-        .eq('provider_id', providerId)
-        .eq('secret_key', 'api_key')
-        .single();
+      const headers = await authHeaders();
+
+      // Get the secret via API
+      const secretsRes = await fetch('/api/admin-ai?action=secrets', { headers });
+      if (!secretsRes.ok) return { valid: false, error: 'Failed to fetch secrets' };
+      const secrets = await secretsRes.json();
+      const secret = secrets.find((s: any) => s.provider_id === providerId && s.secret_key === 'api_key');
 
       if (!secret) {
         return { valid: false, error: 'No API key found' };
       }
 
-      // Validate based on provider
-      let valid = false;
-      let error: string | undefined;
-
-      switch (providerId) {
-        case 'gemini':
-          // Test Gemini API
-          try {
-            const response = await fetch(
-              `https://generativelanguage.googleapis.com/v1beta/models?key=${secret.secret_value}`
-            );
-            valid = response.ok;
-            if (!response.ok) {
-              const data = await response.json();
-              error = data.error?.message || 'Invalid API key';
-            }
-          } catch (e: any) {
-            error = e.message;
-          }
-          break;
-
-        case 'deepseek':
-          // Test DeepSeek API
-          try {
-            const response = await fetch('https://api.deepseek.com/v1/models', {
-              headers: { 'Authorization': `Bearer ${secret.secret_value}` }
-            });
-            valid = response.ok;
-            if (!response.ok) {
-              error = `HTTP ${response.status}`;
-            }
-          } catch (e: any) {
-            error = e.message;
-          }
-          break;
-
-        case 'mimo':
-          // Test Mimo API
-          const baseUrl = process.env?.MIMO_BASE_URL || 'https://api.xiaomimimo.com/v1';
-          try {
-            const response = await fetch(`${baseUrl}/models`, {
-              headers: { 'Authorization': `Bearer ${secret.secret_value}` }
-            });
-            valid = response.ok;
-            if (!response.ok) {
-              error = `HTTP ${response.status}`;
-            }
-          } catch (e: any) {
-            error = e.message;
-          }
-          break;
-
-        case 'qwen':
-          // Test Qwen API (OpenAI-compatible)
-          try {
-            const response = await fetch('https://dashscope.aliyuncs.com/compatible-mode/v1/models', {
-              headers: { 'Authorization': `Bearer ${secret.secret_value}` }
-            });
-            valid = response.ok;
-            if (!response.ok) {
-              error = `HTTP ${response.status}`;
-            }
-          } catch (e: any) {
-            error = e.message;
-          }
-          break;
-
-        default:
-          error = 'Validation not supported for this provider';
-      }
-
-      return { valid, error };
+      // Note: We can't read secret_value from the API (it's not returned)
+      // Validation must be done server-side
+      return { valid: false, error: 'Validation must be done server-side (secret value not exposed)' };
     } catch (error: any) {
       return { valid: false, error: error.message };
     }
