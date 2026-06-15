@@ -34,7 +34,7 @@ export default function QuickNoteWidget() {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-28 right-6 w-14 h-14 rounded-full bg-yellow-400 text-yellow-900 flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-40 border-4 border-white",
+          "fixed bottom-28 right-6 w-14 h-14 rounded-full bg-yellow-400 text-yellow-900 flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-40 border-4 border-background",
           isOpen && "hidden"
         )}
         aria-label={isOpen ? "Tutup quick note" : "Buka quick note"}

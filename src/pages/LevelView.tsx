@@ -48,7 +48,7 @@ export default function LevelView() {
   return (
     <div className="max-w-3xl mx-auto pb-20">
       {/* Back nav */}
-      <Link to="/" className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-800 mb-6 transition-colors">
+      <Link to="/" className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-foreground mb-6 transition-colors">
         <ArrowLeft className="w-4 h-4 mr-1" /> Kembali ke Peta
       </Link>
 
@@ -66,16 +66,16 @@ export default function LevelView() {
             <span>{completedCount}/{levelLessons.length} Pelajaran</span>
             <span>{progressPercent}%</span>
           </div>
-          <Progress value={progressPercent} className="h-2 bg-white/20" />
+          <Progress value={progressPercent} className="h-2 bg-card/20" />
         </div>
       </div>
 
       {/* Level locked */}
       {!isLevelUnlocked && (
-        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-8 text-center">
+        <div className="bg-muted border border-border rounded-3xl p-8 text-center">
           <Lock className="w-12 h-12 text-slate-300 mx-auto mb-4" />
-          <h2 className="text-xl font-bold text-slate-600 mb-2">Level Terkunci</h2>
-          <p className="text-slate-500">Selesaikan level sebelumnya untuk membuka {levelId}.</p>
+          <h2 className="text-xl font-bold text-muted-foreground mb-2">Level Terkunci</h2>
+          <p className="text-muted-foreground">Selesaikan level sebelumnya untuk membuka {levelId}.</p>
         </div>
       )}
 
@@ -95,8 +95,8 @@ export default function LevelView() {
                 className={cn(
                   "flex items-center justify-between p-4 rounded-2xl border-2 transition-all",
                   isCompleted ? "bg-green-50 border-green-200" :
-                  isUnlocked ? "bg-white border-blue-200 hover:border-blue-400 shadow-sm" :
-                  "bg-slate-50 border-slate-100 opacity-60 cursor-not-allowed",
+                  isUnlocked ? "bg-card border-blue-200 hover:border-blue-400 shadow-sm" :
+                  "bg-muted border-border opacity-60 cursor-not-allowed",
                   isCheckpoint && "border-amber-200 bg-amber-50/50"
                 )}
                 aria-disabled={!isUnlocked}
@@ -106,7 +106,7 @@ export default function LevelView() {
                     "w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm",
                     isCompleted ? "bg-green-500 text-white" :
                     isUnlocked ? "bg-blue-500 text-white" :
-                    "bg-slate-200 text-slate-400",
+                    "bg-muted text-muted-foreground",
                     isCheckpoint && "bg-amber-500 text-white"
                   )}>
                     {isCompleted ? <CheckCircle2 className="w-5 h-5" /> :
@@ -114,15 +114,15 @@ export default function LevelView() {
                      <Lock className="w-4 h-4" />}
                   </div>
                   <div>
-                    <p className={cn("font-bold", !isUnlocked && "text-slate-400")}>
+                    <p className={cn("font-bold", !isUnlocked && "text-muted-foreground")}>
                       {isCheckpoint ? `Checkpoint ${idx + 1}` : `Pelajaran ${idx + 1}`}
                     </p>
-                    <p className={cn("text-sm", isUnlocked ? "text-slate-600" : "text-slate-400")}>
+                    <p className={cn("text-sm", isUnlocked ? "text-muted-foreground" : "text-muted-foreground")}>
                       {lesson.title}
                     </p>
                   </div>
                 </div>
-                {isUnlocked && <ChevronRight className="w-5 h-5 text-slate-400" />}
+                {isUnlocked && <ChevronRight className="w-5 h-5 text-muted-foreground" />}
               </Link>
             );
           })}

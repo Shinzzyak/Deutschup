@@ -124,7 +124,7 @@ export default function CheckpointView() {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {reviewLessons.map(lesson => lesson && (
-            <div key={lesson.id} className="bg-white p-3 rounded-xl border border-amber-100">
+            <div key={lesson.id} className="bg-card p-3 rounded-xl border border-amber-100">
               <p className="font-bold text-sm text-amber-900">{lesson.title}</p>
               <p className="text-xs text-amber-600 mt-1">
                 {lesson.vocabulary?.slice(0, 3).map(v => v.word).join(', ')}
@@ -139,7 +139,7 @@ export default function CheckpointView() {
   return (
     <div className="max-w-3xl mx-auto pb-20">
       {/* Back nav */}
-      <Link to={`/level/${level}`} className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-800 mb-6 transition-colors">
+      <Link to={`/level/${level}`} className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-foreground mb-6 transition-colors">
         <ArrowLeft className="w-4 h-4 mr-1" /> Kembali ke Level {level}
       </Link>
 
@@ -155,7 +155,7 @@ export default function CheckpointView() {
         <div className="mt-4 flex items-center space-x-4 text-sm">
           <span>🎯 Target: {Math.round(requiredScore * 100)}%</span>
           <span>📝 {totalQuestions} Soal</span>
-          {alreadyPassed && <span className="bg-white/20 px-2 py-1 rounded-lg">✅ Sudah Lulus</span>}
+          {alreadyPassed && <span className="bg-card/20 px-2 py-1 rounded-lg">✅ Sudah Lulus</span>}
         </div>
       </div>
 
@@ -167,11 +167,11 @@ export default function CheckpointView() {
 
           {/* Progress bar */}
           <div className="mb-6">
-            <div className="flex justify-between text-sm font-bold text-slate-500 mb-2">
+            <div className="flex justify-between text-sm font-bold text-muted-foreground mb-2">
               <span>Soal {currentQuestionIndex + 1} / {totalQuestions}</span>
               <span>{Math.round((currentQuestionIndex / totalQuestions) * 100)}%</span>
             </div>
-            <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-muted rounded-full overflow-hidden">
               <div
                 className="h-full bg-amber-500 transition-all duration-300"
                 style={{ width: `${(currentQuestionIndex / totalQuestions) * 100}%` }}
@@ -181,7 +181,7 @@ export default function CheckpointView() {
 
           {/* Question */}
           {currentQuestion && (
-            <div className="bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-slate-100">
+            <div className="bg-card p-6 md:p-8 rounded-3xl shadow-sm border border-border">
               <p className="text-lg font-bold mb-6">{currentQuestion.question}</p>
 
               <div className="space-y-3">
@@ -197,7 +197,7 @@ export default function CheckpointView() {
                             ? "border-green-500 bg-green-50"
                             : "border-red-500 bg-red-50"
                           : "border-blue-500 bg-blue-50"
-                        : "border-slate-200 hover:border-slate-300"
+                        : "border-border hover:border-border"
                     )}
                     disabled={isAnswerChecked}
                   >
@@ -240,7 +240,7 @@ export default function CheckpointView() {
         </>
       ) : (
         /* Result */
-        <div className="bg-white p-8 md:p-10 rounded-3xl shadow-sm border border-slate-100 text-center">
+        <div className="bg-card p-8 md:p-10 rounded-3xl shadow-sm border border-border text-center">
           <div className={cn(
             "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6",
             passed ? "bg-green-100" : "bg-amber-100"
@@ -256,7 +256,7 @@ export default function CheckpointView() {
             {passed ? "Lulus! 🎉" : "Belum Cukup 😅"}
           </h2>
 
-          <p className="text-slate-500 text-lg mb-6">
+          <p className="text-muted-foreground text-lg mb-6">
             Skor kamu: <span className="font-bold text-2xl">{Math.round(finalScore * 100)}%</span>
             <br />
             Target: {Math.round(requiredScore * 100)}%

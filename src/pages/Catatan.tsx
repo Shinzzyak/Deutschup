@@ -68,14 +68,14 @@ export default function Catatan() {
           <BookOpen className="w-8 h-8 text-blue-600" />
           <span>Catatan Belajar & Rencana</span>
         </h1>
-        <p className="text-slate-500 text-lg md:text-xl">Kelola catatan pribadi Anda dan dapatkan rencana belajar AI.</p>
+        <p className="text-muted-foreground text-lg md:text-xl">Kelola catatan pribadi Anda dan dapatkan rencana belajar AI.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         
         {/* Kolom 1: Rencana Belajar */}
         <div className="space-y-6">
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
+          <div className="bg-card p-6 md:p-8 rounded-3xl border border-border shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center">
                  <CalendarCheck2 className="w-6 h-6 mr-2 text-indigo-500" />
@@ -89,7 +89,7 @@ export default function Catatan() {
                   <Sparkles className="w-8 h-8 text-indigo-500" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Belum ada rencana!</h3>
-                <p className="text-slate-500 mb-6">Minta Herr Deutsch membuatkan daftar fokus belajar berdasarkan level pencapaianmu.</p>
+                <p className="text-muted-foreground mb-6">Minta Herr Deutsch membuatkan daftar fokus belajar berdasarkan level pencapaianmu.</p>
                 <Button 
                    onClick={handleGeneratePlan} 
                    disabled={generatingPlan}
@@ -101,7 +101,7 @@ export default function Catatan() {
               </div>
             ) : (
               <div className="space-y-4">
-                <div className="flex justify-between items-center text-sm font-semibold text-slate-500 bg-slate-50 p-4 rounded-xl">
+                <div className="flex justify-between items-center text-sm font-semibold text-muted-foreground bg-muted p-4 rounded-xl">
                    <span>Progres: {studyPlan.tasks.filter(t => t.completed).length}/{studyPlan.tasks.length} Selesai</span>
                    <Button onClick={handleGeneratePlan} disabled={generatingPlan} variant="ghost" size="sm" className="text-indigo-600 hover:text-indigo-700 h-8">
                      {generatingPlan ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />} Update
@@ -110,11 +110,11 @@ export default function Catatan() {
                 
                 <ul className="space-y-3 mt-4">
                   {studyPlan.tasks.map(task => (
-                    <li key={task.id} className="flex items-start space-x-3 p-3 bg-white hover:bg-slate-50 rounded-xl transition-colors cursor-pointer border border-transparent hover:border-slate-200" onClick={() => user && toggleTask(user.id, task.id)}>
+                    <li key={task.id} className="flex items-start space-x-3 p-3 bg-card hover:bg-muted rounded-xl transition-colors cursor-pointer border border-transparent hover:border-border" onClick={() => user && toggleTask(user.id, task.id)}>
                       <button className="flex-shrink-0 mt-0.5" aria-label={task.completed ? "Tandai belum selesai" : "Tandai selesai"}>
                          {task.completed ? <CheckCircle2 className="w-6 h-6 text-green-500" /> : <Circle className="w-6 h-6 text-slate-300" />}
                       </button>
-                      <span className={cn("text-slate-700 leading-relaxed", task.completed && "line-through text-slate-400")}>
+                      <span className={cn("text-foreground leading-relaxed", task.completed && "line-through text-muted-foreground")}>
                         {task.text}
                       </span>
                     </li>
@@ -127,7 +127,7 @@ export default function Catatan() {
 
         {/* Kolom 2: Catatan Pribadi */}
         <div className="space-y-6">
-          <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col h-full">
+          <div className="bg-card p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col h-full">
             <h2 className="text-2xl font-bold mb-6">Catatan Pribadi</h2>
             
             <div className="mb-8">
@@ -135,7 +135,7 @@ export default function Catatan() {
                  value={newNote}
                  onChange={(e) => setNewNote(e.target.value)}
                  placeholder="Tulis hal penting untuk diingat..."
-                 className="w-full h-24 bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all resize-none mb-3"
+                 className="w-full h-24 bg-muted border-2 border-border rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all resize-none mb-3"
                />
                <div className="flex justify-between items-center">
                   <div className="flex gap-2">
@@ -145,7 +145,7 @@ export default function Catatan() {
                           onClick={() => setNewNoteTag(tag)}
                           className={cn(
                             "px-3 py-1.5 rounded-full text-xs font-bold transition-colors",
-                            newNoteTag === tag ? "bg-slate-800 text-white" : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                            newNoteTag === tag ? "bg-slate-800 text-white" : "bg-muted text-muted-foreground hover:bg-accent"
                           )}
                           aria-pressed={newNoteTag === tag}
                           aria-label={`Tag: ${tag}`}
@@ -164,23 +164,23 @@ export default function Catatan() {
                {loading && notes.length === 0 && <div className="text-center py-10"><Loader2 className="w-8 h-8 text-blue-500 animate-spin mx-auto" /></div>}
                {!loading && notes.length === 0 && (
                  <div className="text-center py-10 opacity-70">
-                   <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4 grayscale">
-                     <BookOpen className="w-8 h-8 text-slate-400" />
+                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4 grayscale">
+                     <BookOpen className="w-8 h-8 text-muted-foreground" />
                    </div>
-                   <h3 className="text-lg font-bold text-slate-600 mb-1">Catatan Kosong</h3>
-                   <p className="text-slate-500 text-sm">Tuliskan pengingat, rule grammar, atau kosa kata baru di sini.</p>
+                   <h3 className="text-lg font-bold text-muted-foreground mb-1">Catatan Kosong</h3>
+                   <p className="text-muted-foreground text-sm">Tuliskan pengingat, rule grammar, atau kosa kata baru di sini.</p>
                  </div>
                )}
                
                {notes.map(note => (
-                 <div key={note.id} className="p-4 bg-slate-50 border border-slate-100 rounded-2xl relative group">
+                 <div key={note.id} className="p-4 bg-muted border border-border rounded-2xl relative group">
                     <div className="flex justify-between items-start mb-2">
-                       <span className="px-2 py-1 bg-white border border-slate-200 rounded-lg text-xs font-bold text-slate-600">{note.tag}</span>
+                       <span className="px-2 py-1 bg-card border border-border rounded-lg text-xs font-bold text-muted-foreground">{note.tag}</span>
                        <button onClick={() => user && deleteNote(user.id, note.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Hapus catatan">
                          <Trash2 className="w-4 h-4" />
                        </button>
                     </div>
-                    <p className="text-slate-700 text-sm whitespace-pre-wrap">{note.text}</p>
+                    <p className="text-foreground text-sm whitespace-pre-wrap">{note.text}</p>
                  </div>
                ))}
             </div>

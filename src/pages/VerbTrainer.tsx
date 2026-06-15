@@ -78,17 +78,17 @@ export default function VerbTrainer() {
     <div className="max-w-4xl mx-auto pb-20">
       <div className="mb-12">
         <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Kamus Mini (Semua Kata)</h1>
-        <p className="text-slate-500 text-lg md:text-xl">Cari kata sifat, kata benda, maupun kata kerja. Bahasa Indonesia atau Jerman!</p>
+        <p className="text-muted-foreground text-lg md:text-xl">Cari kata sifat, kata benda, maupun kata kerja. Bahasa Indonesia atau Jerman!</p>
       </div>
 
       <div className="relative mb-12">
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-          <Search className="h-6 w-6 text-slate-400" />
+          <Search className="h-6 w-6 text-muted-foreground" />
         </div>
         <input 
           type="text" 
           placeholder="Cari kata (misal: rumah, gehen, schön)..."
-          className="w-full bg-white border-2 border-slate-200 rounded-2xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium"
+          className="w-full bg-card border-2 border-border rounded-2xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -96,11 +96,11 @@ export default function VerbTrainer() {
 
       {searchTerm && (filteredVerbs.length > 0 || filteredVocab.length > 0) && (
          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-6 text-slate-900 border-b border-slate-100 pb-4">Hasil Pencarian ({filteredVerbs.length + filteredVocab.length})</h2>
+            <h2 className="text-2xl font-bold mb-6 text-foreground border-b border-border pb-4">Hasil Pencarian ({filteredVerbs.length + filteredVocab.length})</h2>
             
             <div className="space-y-4">
               {filteredVocab.map(v => (
-                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow">
+                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
                   <div>
                     <div className="flex items-center space-x-3 mb-1">
                       {v.article && (
@@ -110,13 +110,13 @@ export default function VerbTrainer() {
                           v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
                         )}>{v.article}</span>
                       )}
-                      <span className="font-bold text-xl text-slate-900">{v.word}</span>
+                      <span className="font-bold text-xl text-foreground">{v.word}</span>
                     </div>
-                    <p className="text-slate-500 text-lg mb-2">{v.translation}</p>
-                    <p className="text-slate-400 italic font-medium whitespace-pre-wrap">{v.exampleSentence}</p>
+                    <p className="text-muted-foreground text-lg mb-2">{v.translation}</p>
+                    <p className="text-muted-foreground italic font-medium whitespace-pre-wrap">{v.exampleSentence}</p>
                   </div>
                   <div className="mt-3 sm:mt-0 text-left sm:text-right">
-                    <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-full text-xs font-bold uppercase">{v.level}</span>
+                    <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs font-bold uppercase">{v.level}</span>
                   </div>
                 </div>
               ))}
@@ -126,22 +126,22 @@ export default function VerbTrainer() {
 
       {searchTerm && filteredVerbs.length > 0 && (
           <div className="mb-8 mt-12">
-            <h2 className="text-2xl font-bold mb-6 text-slate-900 border-b border-slate-100 pb-4">Tabel Konjugasi Verba Terkait</h2>
+            <h2 className="text-2xl font-bold mb-6 text-foreground border-b border-border pb-4">Tabel Konjugasi Verba Terkait</h2>
           </div>
       )}
 
       <div className="space-y-8">
         {!searchTerm && (
-          <div className="text-center py-12 text-slate-500">
+          <div className="text-center py-12 text-muted-foreground">
             Ketik kata di kotak pencarian untuk melihat hasil dari pelajaran A1 sampai B2.
           </div>
         )}
         {(searchTerm && filteredVerbs.map(verb => (
-            <div key={verb.infinitive} className="bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
-              <div className="p-6 md:p-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div key={verb.infinitive} className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm">
+              <div className="p-6 md:p-8 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center space-x-3 mb-1">
-                    <h2 className="text-3xl font-extrabold text-slate-900">{verb.infinitive}</h2>
+                    <h2 className="text-3xl font-extrabold text-foreground">{verb.infinitive}</h2>
                     <span className={cn(
                       "text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider",
                       verb.type === 'irregular' ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
@@ -149,38 +149,38 @@ export default function VerbTrainer() {
                       {verb.type === 'irregular' ? 'Kuat / Tidak Beraturan' : 'Lemah / Beraturan'}
                     </span>
                   </div>
-                  <p className="text-slate-500 text-lg">{verb.translation}</p>
+                  <p className="text-muted-foreground text-lg">{verb.translation}</p>
                 </div>
                 
-                <div className="flex flex-col text-sm border border-slate-100 p-3 rounded-xl bg-slate-50">
-                  <span className="text-slate-500 font-medium">Perfekt</span>
+                <div className="flex flex-col text-sm border border-border p-3 rounded-xl bg-muted">
+                  <span className="text-muted-foreground font-medium">Perfekt</span>
                   <span className="font-bold">{verb.perfekt}</span>
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 bg-slate-50">
-                <div className="p-6 border-b md:border-b-0 md:border-r border-slate-200">
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Präsens</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 bg-muted">
+                <div className="p-6 border-b md:border-b-0 md:border-r border-border">
+                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Präsens</h3>
                   <div className="space-y-3">
                     {Object.entries(verb.present).map(([pronoun, conj]) => (
-                      <div key={pronoun} className="flex justify-between items-center border-b border-slate-100 pb-2 last:border-0 last:pb-0">
-                        <span className="text-slate-500">{pronoun}</span>
-                        <span className="font-bold text-slate-900">{conj}</span>
+                      <div key={pronoun} className="flex justify-between items-center border-b border-border pb-2 last:border-0 last:pb-0">
+                        <span className="text-muted-foreground">{pronoun}</span>
+                        <span className="font-bold text-foreground">{conj}</span>
                       </div>
                     ))}
                   </div>
                 </div>
                 
                 <div className="p-6">
-                  <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4">Präteritum (Lampu)</h3>
+                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Präteritum (Lampu)</h3>
                   <div className="space-y-3">
                     {Object.entries(verb.prateritum).map(([pronoun, conj]) => (
-                      <div key={pronoun} className="flex justify-between items-center border-b border-slate-100 pb-2 last:border-0 last:pb-0">
-                        <span className="text-slate-500">{pronoun}</span>
-                        <span className="font-bold text-slate-900">{conj}</span>
+                      <div key={pronoun} className="flex justify-between items-center border-b border-border pb-2 last:border-0 last:pb-0">
+                        <span className="text-muted-foreground">{pronoun}</span>
+                        <span className="font-bold text-foreground">{conj}</span>
                       </div>
                     ))}
-                    <div className="pt-2 text-xs text-slate-400 italic">
+                    <div className="pt-2 text-xs text-muted-foreground italic">
                       Bentuk untuk subjek lain dapat diturunkan.
                     </div>
                   </div>

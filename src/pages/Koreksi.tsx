@@ -36,16 +36,16 @@ export default function Koreksi() {
           <Sparkles className="w-8 h-8 text-yellow-500" />
           <span>Koreksi Kalimat Pintar</span>
         </h1>
-        <p className="text-slate-500 text-lg md:text-xl">Tuliskan kalimat bahasa Jermanmu, AI kami akan memeriksa tata bahasa dan strukturnya.</p>
+        <p className="text-muted-foreground text-lg md:text-xl">Tuliskan kalimat bahasa Jermanmu, AI kami akan memeriksa tata bahasa dan strukturnya.</p>
       </div>
 
-      <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm mb-8">
-        <label className="block text-slate-700 font-bold mb-4 text-lg">Kalimat Kamu:</label>
+      <div className="bg-card p-6 md:p-8 rounded-3xl border border-border shadow-sm mb-8">
+        <label className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Misal: Ich habe einen auto gekauft..."
-          className="w-full min-h-[120px] bg-slate-50 border-2 border-slate-200 rounded-2xl p-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium resize-none mb-6"
+          className="w-full min-h-[120px] bg-muted border-2 border-border rounded-2xl p-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium resize-none mb-6"
         />
         <Button 
           onClick={handleKoreksi} 
@@ -86,7 +86,7 @@ export default function Koreksi() {
                  {result.isPerfect ? "Sempurna!" : "Bisa Diperbaiki"}
                </h3>
                {!result.isPerfect && (
-                 <div className="mb-4 text-2xl font-extrabold text-slate-900">
+                 <div className="mb-4 text-2xl font-extrabold text-foreground">
                     {result.correctedSentence}
                  </div>
                )}

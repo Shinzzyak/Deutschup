@@ -216,8 +216,8 @@ export default function AdminAI() {
       case 'INVALID_KEY': return <XCircle className="w-4 h-4 text-red-500" />;
       case 'UNREACHABLE': return <XCircle className="w-4 h-4 text-red-500" />;
       case 'RATE_LIMITED': return <AlertTriangle className="w-4 h-4 text-amber-500" />;
-      case 'DISABLED': return <XCircle className="w-4 h-4 text-slate-400" />;
-      default: return <XCircle className="w-4 h-4 text-slate-400" />;
+      case 'DISABLED': return <XCircle className="w-4 h-4 text-muted-foreground" />;
+      default: return <XCircle className="w-4 h-4 text-muted-foreground" />;
     }
   };
 
@@ -228,8 +228,8 @@ export default function AdminAI() {
       case 'INVALID_KEY': return 'text-red-600 bg-red-50';
       case 'UNREACHABLE': return 'text-red-600 bg-red-50';
       case 'RATE_LIMITED': return 'text-amber-600 bg-amber-50';
-      case 'DISABLED': return 'text-slate-500 bg-slate-50';
-      default: return 'text-slate-500 bg-slate-50';
+      case 'DISABLED': return 'text-muted-foreground bg-muted';
+      default: return 'text-muted-foreground bg-muted';
     }
   };
 
@@ -285,7 +285,7 @@ export default function AdminAI() {
       {/* Back nav */}
       <button
         onClick={() => navigate('/admin')}
-        className="inline-flex items-center text-sm font-bold text-slate-500 hover:text-slate-800 mb-6 transition-colors"
+        className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-foreground mb-6 transition-colors"
       >
         <ArrowLeft className="w-4 h-4 mr-1" /> Kembali ke Admin
       </button>
@@ -302,7 +302,7 @@ export default function AdminAI() {
       </div>
 
       {/* Routing Diagnostics */}
-      <div className="bg-white p-6 rounded-3xl border border-slate-200 mb-8">
+      <div className="bg-card p-6 rounded-3xl border border-border mb-8">
         <h3 className="font-bold text-lg mb-4 flex items-center">
           <Activity className="w-5 h-5 mr-2 text-blue-600" />
           Routing Diagnostics
@@ -322,7 +322,7 @@ export default function AdminAI() {
                if (!provider.enabled) {
                  status = 'Disabled';
                  result = 'Skipped';
-                 statusColor = 'text-slate-400';
+                 statusColor = 'text-muted-foreground';
                } else if (isPrimary) {
                  status = 'Active';
                  result = 'Serving Traffic';
@@ -338,16 +338,16 @@ export default function AdminAI() {
                }
                
                return (
-                 <div key={provider.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+                 <div key={provider.id} className="flex items-center justify-between p-3 bg-muted rounded-xl">
                    <div className="flex items-center space-x-3">
-                     <span className="text-sm font-bold text-slate-500 w-6">{idx + 1}.</span>
+                     <span className="text-sm font-bold text-muted-foreground w-6">{idx + 1}.</span>
                      <span className="font-medium">{provider.name}</span>
                    </div>
                    <div className="flex items-center space-x-4">
                      <span className={cn("text-sm font-medium", statusColor)}>
                        Status: {status}
                      </span>
-                     <span className="text-sm text-slate-500">
+                     <span className="text-sm text-muted-foreground">
                        Result: {result}
                      </span>
                    </div>
@@ -385,10 +385,10 @@ export default function AdminAI() {
             <div
               key={provider.id}
               className={cn(
-                "bg-white p-6 rounded-3xl border-2 transition-all",
+                "bg-card p-6 rounded-3xl border-2 transition-all",
                 getProviderHealth(provider.id)?.runtime_status === 'ACTIVE' ? "border-green-200" :
                 getProviderHealth(provider.id)?.runtime_status === 'MISSING_KEY' ? "border-amber-200" :
-                provider.enabled ? "border-red-200" : "border-slate-200 opacity-60"
+                provider.enabled ? "border-red-200" : "border-border opacity-60"
               )}
             >
               <div className="flex items-center justify-between">
@@ -397,7 +397,7 @@ export default function AdminAI() {
                   <div>
                     <h3 className="font-bold text-lg">{provider.name}</h3>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-slate-500">
+                      <span className="text-sm text-muted-foreground">
                         Priority: {provider.priority}
                       </span>
                       <span className={cn(
@@ -408,7 +408,7 @@ export default function AdminAI() {
                       </span>
                     </div>
                     {getProviderHealth(provider.id)?.latency_ms && (
-                      <p className="text-xs text-slate-400 mt-1">
+                      <p className="text-xs text-muted-foreground mt-1">
                         Latency: {getProviderHealth(provider.id)?.latency_ms}ms
                       </p>
                     )}
@@ -446,8 +446,8 @@ export default function AdminAI() {
               </div>
 
               {/* Models for this provider */}
-              <div className="mt-4 pt-4 border-t border-slate-100">
-                <p className="text-sm font-bold text-slate-500 mb-2">Models:</p>
+              <div className="mt-4 pt-4 border-t border-border">
+                <p className="text-sm font-bold text-muted-foreground mb-2">Models:</p>
                 <div className="flex flex-wrap gap-2">
                   {models
                     .filter(m => m.provider_id === provider.id)
@@ -458,8 +458,8 @@ export default function AdminAI() {
                           "px-3 py-1 rounded-lg text-sm font-medium",
                           model.is_primary ? "bg-blue-100 text-blue-800" :
                           model.is_fallback ? "bg-amber-100 text-amber-800" :
-                          model.enabled ? "bg-slate-100 text-slate-700" :
-                          "bg-slate-50 text-slate-400"
+                          model.enabled ? "bg-muted text-foreground" :
+                          "bg-muted text-muted-foreground"
                         )}
                       >
                         {model.display_name}
@@ -483,15 +483,15 @@ export default function AdminAI() {
               <div
                 key={model.id}
                 className={cn(
-                  "bg-white p-6 rounded-3xl border-2 transition-all",
-                  model.enabled ? "border-green-200" : "border-slate-200 opacity-60"
+                  "bg-card p-6 rounded-3xl border-2 transition-all",
+                  model.enabled ? "border-green-200" : "border-border opacity-60"
                 )}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-4">
                     <div>
                       <h3 className="font-bold text-lg">{model.display_name}</h3>
-                      <p className="text-sm text-slate-500">
+                      <p className="text-sm text-muted-foreground">
                         {model.name} • {model.provider_id}
                       </p>
                     </div>
@@ -544,13 +544,13 @@ export default function AdminAI() {
 
                 {/* Stats */}
                 {stats && (
-                  <div className="mt-4 pt-4 border-t border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                  <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <p className="text-slate-500">Requests</p>
+                      <p className="text-muted-foreground">Requests</p>
                       <p className="font-bold">{stats.total_requests}</p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Success Rate</p>
+                      <p className="text-muted-foreground">Success Rate</p>
                       <p className="font-bold">
                         {stats.total_requests > 0
                           ? Math.round((stats.successful_requests / stats.total_requests) * 100)
@@ -558,7 +558,7 @@ export default function AdminAI() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Avg Latency</p>
+                      <p className="text-muted-foreground">Avg Latency</p>
                       <p className="font-bold">
                         {stats.total_requests > 0
                           ? Math.round(stats.total_latency_ms / stats.total_requests)
@@ -566,7 +566,7 @@ export default function AdminAI() {
                       </p>
                     </div>
                     <div>
-                      <p className="text-slate-500">Tokens</p>
+                      <p className="text-muted-foreground">Tokens</p>
                       <p className="font-bold">
                         {(stats.total_tokens_in + stats.total_tokens_out).toLocaleString()}
                       </p>
@@ -581,17 +581,17 @@ export default function AdminAI() {
 
       {/* Stats Tab */}
       {activeTab === 'stats' && (
-        <div className="bg-white p-6 rounded-3xl border border-slate-200">
+        <div className="bg-card p-6 rounded-3xl border border-border">
           <h3 className="font-bold text-lg mb-4">Usage Stats (7 days)</h3>
           {usageStats.length === 0 ? (
-            <p className="text-slate-500 text-center py-8">No usage data yet</p>
+            <p className="text-muted-foreground text-center py-8">No usage data yet</p>
           ) : (
             <div className="space-y-4">
               {usageStats.map((stat, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                <div key={idx} className="flex items-center justify-between p-4 bg-muted rounded-2xl">
                   <div>
                     <p className="font-bold">{stat.provider_id} / {stat.model_id}</p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-muted-foreground">
                       {stat.total_requests} requests • {stat.successful_requests} successful
                     </p>
                   </div>
@@ -601,7 +601,7 @@ export default function AdminAI() {
                         ? Math.round(stat.total_latency_ms / stat.total_requests)
                         : 0}ms avg
                     </p>
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-muted-foreground">
                       {(stat.total_tokens_in + stat.total_tokens_out).toLocaleString()} tokens
                     </p>
                   </div>

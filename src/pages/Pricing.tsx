@@ -128,8 +128,8 @@ export default function Pricing() {
   return (
     <div className="max-w-6xl mx-auto py-8 md:py-12 px-4">
       <div className="text-center mb-16">
-         <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Pilih Paket Belajarmu</h1>
-         <p className="text-lg text-slate-600">Investasi terbaik untuk masa depan bahasamu. Mulai gratis, upgrade kapan saja.</p>
+         <h1 className="text-4xl font-extrabold text-foreground mb-4 tracking-tight">Pilih Paket Belajarmu</h1>
+         <p className="text-lg text-muted-foreground">Investasi terbaik untuk masa depan bahasamu. Mulai gratis, upgrade kapan saja.</p>
          {activePro && (
            <div className="mt-4 inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium border border-green-200">
              <Check className="w-4 h-4" />
@@ -140,7 +140,7 @@ export default function Pricing() {
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
-          <div key={plan.id} className={`relative bg-white rounded-3xl p-8 border ${plan.popular ? 'border-blue-500 shadow-xl scale-105 z-10' : 'border-slate-200 shadow-sm'} flex flex-col`}>
+          <div key={plan.id} className={`relative bg-card rounded-3xl p-8 border ${plan.popular ? 'border-blue-500 shadow-xl scale-105 z-10' : 'border-border shadow-sm'} flex flex-col`}>
             {plan.popular && (
               <div className="absolute -top-4 inset-x-0 flex justify-center">
                  <span className="bg-blue-500 flex items-center shadow-lg text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
@@ -150,18 +150,18 @@ export default function Pricing() {
             )}
 
             <h2 className="text-2xl font-bold mb-2">{plan.name}</h2>
-            <p className="text-slate-500 mb-6 min-h-12">{plan.description}</p>
+            <p className="text-muted-foreground mb-6 min-h-12">{plan.description}</p>
 
             <div className="mb-8">
               <span className="text-4xl font-black">{plan.price}</span>
-              {plan.period && <span className="text-slate-500 font-medium">{plan.period}</span>}
+              {plan.period && <span className="text-muted-foreground font-medium">{plan.period}</span>}
             </div>
 
             <ul className="mb-8 space-y-4 flex-1">
               {plan.features.map((feature, i) => (
                 <li key={i} className="flex items-start">
                   <Check className="w-5 h-5 text-green-500 mr-3 shrink-0" />
-                  <span className="text-slate-700">{feature}</span>
+                  <span className="text-foreground">{feature}</span>
                 </li>
               ))}
             </ul>
@@ -182,43 +182,43 @@ export default function Pricing() {
       {user && (
         <div className="max-w-4xl mx-auto mt-16">
           <div className="flex items-center gap-2 mb-6">
-            <Receipt className="w-5 h-5 text-slate-600" />
-            <h2 className="text-xl font-bold text-slate-900">Riwayat Pembayaran</h2>
+            <Receipt className="w-5 h-5 text-muted-foreground" />
+            <h2 className="text-xl font-bold text-foreground">Riwayat Pembayaran</h2>
           </div>
 
           {ordersLoading ? (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 text-muted-foreground">
               <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
               Memuat riwayat...
             </div>
           ) : orders.length === 0 ? (
-            <div className="text-center py-8 bg-slate-50 rounded-2xl border border-slate-200">
-              <Clock className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-              <p className="text-slate-500">Belum ada riwayat pembayaran.</p>
+            <div className="text-center py-8 bg-muted rounded-2xl border border-border">
+              <Clock className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+              <p className="text-muted-foreground">Belum ada riwayat pembayaran.</p>
             </div>
           ) : (
-            <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden">
+            <div className="bg-card rounded-2xl border border-border overflow-hidden">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-slate-100 bg-slate-50">
-                    <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Invoice</th>
-                    <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Tanggal</th>
-                    <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Jumlah</th>
-                    <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Metode</th>
-                    <th className="text-left text-xs font-semibold text-slate-500 uppercase tracking-wider px-6 py-3">Status</th>
+                  <tr className="border-b border-border bg-muted">
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Invoice</th>
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Tanggal</th>
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Jumlah</th>
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Metode</th>
+                    <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Status</th>
                   </tr>
                 </thead>
                 <tbody>
                   {orders.map((order) => (
                     <tr key={order.id} className="border-b border-slate-50 last:border-0">
-                      <td className="px-6 py-4 text-sm font-mono text-slate-700">{order.id}</td>
-                      <td className="px-6 py-4 text-sm text-slate-600">
+                      <td className="px-6 py-4 text-sm font-mono text-foreground">{order.id}</td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground">
                         {new Date(order.paid_at || order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </td>
-                      <td className="px-6 py-4 text-sm font-semibold text-slate-900">
+                      <td className="px-6 py-4 text-sm font-semibold text-foreground">
                         Rp {(order.amount || 0).toLocaleString('id-ID')}
                       </td>
-                      <td className="px-6 py-4 text-sm text-slate-600 uppercase">{order.payment_method}</td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground uppercase">{order.payment_method}</td>
                       <td className="px-6 py-4">
                         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                           Lunas

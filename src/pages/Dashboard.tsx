@@ -236,8 +236,8 @@ export default function Dashboard() {
       )}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
         <div>
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-slate-800 dark:text-white">Peta Pembelajaran</h1>
-          <p className="text-slate-500 text-lg md:text-xl dark:text-slate-400">Lanjutkan perjalanan belajarmu dari A1 hingga B2.</p>
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 text-foreground dark:text-white">Peta Pembelajaran</h1>
+          <p className="text-muted-foreground text-lg md:text-xl dark:text-muted-foreground">Lanjutkan perjalanan belajarmu dari A1 hingga B2.</p>
         </div>
         <div className="flex flex-col items-start md:items-end w-full md:w-auto">
           <Button onClick={exportPDF} disabled={exporting} variant="outline" className="flex items-center space-x-2 rounded-xl dark:border-slate-700 dark:text-slate-300 w-full md:w-auto">
@@ -245,7 +245,7 @@ export default function Dashboard() {
             <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan PDF'}</span>
           </Button>
           {!pdfBlobUrl && (
-            <span className="text-[11px] text-slate-400 mt-2 max-w-[200px] text-left md:text-right">
+            <span className="text-[11px] text-muted-foreground mt-2 max-w-[200px] text-left md:text-right">
               *Buka aplikasi di <b>tab/jendela baru</b> jika unduhan tidak muncul.
             </span>
           )}
@@ -261,7 +261,7 @@ export default function Dashboard() {
       {loading && (
         <div className="flex items-center justify-center py-12">
           <Loader2 className="w-8 h-8 animate-spin text-blue-500 mr-3" />
-          <span className="text-slate-500 font-medium">Memuat progres belajar...</span>
+          <span className="text-muted-foreground font-medium">Memuat progres belajar...</span>
         </div>
       )}
 
@@ -269,8 +269,8 @@ export default function Dashboard() {
       {!loading && completedLessons.length === 0 && (
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-100 rounded-3xl p-8 text-center">
           <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
-          <p className="text-slate-500 mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
+          <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
+          <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
           <Link to="/lesson/a1-1">
             <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold text-lg">
               <PlayCircle className="w-5 h-5 mr-2" /> Mulai Pelajaran Pertama
@@ -292,7 +292,7 @@ export default function Dashboard() {
               <p className="text-blue-200 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1}</p>
             </div>
             <Link to={`/lesson/${currentLesson.id}`}>
-              <Button className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold">
+              <Button className="bg-card text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold">
                 <PlayCircle className="w-5 h-5 mr-2" /> Lanjutkan
               </Button>
             </Link>
@@ -302,19 +302,19 @@ export default function Dashboard() {
 
       {/* TODAY'S TASKS */}
       {!loading && todayTask && (
-        <div className="bg-white border border-slate-200 rounded-3xl p-6">
+        <div className="bg-card border border-border rounded-3xl p-6">
           <div className="flex items-center space-x-2 mb-4">
             <Target className="w-5 h-5 text-emerald-500" />
-            <h3 className="text-lg font-bold text-slate-800">Tugas Hari Ini</h3>
+            <h3 className="text-lg font-bold text-foreground">Tugas Hari Ini</h3>
           </div>
-          <div className="flex items-center justify-between bg-slate-50 rounded-2xl p-4">
+          <div className="flex items-center justify-between bg-muted rounded-2xl p-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-xl bg-emerald-500 flex items-center justify-center">
                 <BookOpen className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="font-bold text-slate-800">{todayTask.title}</p>
-                <p className="text-sm text-slate-500">{todayTask.level}</p>
+                <p className="font-bold text-foreground">{todayTask.title}</p>
+                <p className="text-sm text-muted-foreground">{todayTask.level}</p>
               </div>
             </div>
             <Link to={`/lesson/${todayTask.id}`}>
@@ -348,10 +348,10 @@ export default function Dashboard() {
 
       {/* CHECKPOINT STATUS */}
       {!loading && checkpointProgress.length > 0 && (
-        <div className="bg-white border border-slate-200 rounded-3xl p-6">
+        <div className="bg-card border border-border rounded-3xl p-6">
           <div className="flex items-center space-x-2 mb-4">
             <Trophy className="w-5 h-5 text-amber-500" />
-            <h3 className="text-lg font-bold text-slate-800">Status Checkpoint</h3>
+            <h3 className="text-lg font-bold text-foreground">Status Checkpoint</h3>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="bg-green-50 rounded-2xl p-4 text-center">
@@ -362,9 +362,9 @@ export default function Dashboard() {
               <span className="text-3xl font-black text-amber-600">{checkpointStats.total - checkpointStats.passed}</span>
               <p className="text-sm font-bold text-amber-700 mt-1">Dikerjakan</p>
             </div>
-            <div className="bg-slate-50 rounded-2xl p-4 text-center">
-              <span className="text-3xl font-black text-slate-400">{checkpointStats.available}</span>
-              <p className="text-sm font-bold text-slate-500 mt-1">Tersedia</p>
+            <div className="bg-muted rounded-2xl p-4 text-center">
+              <span className="text-3xl font-black text-muted-foreground">{checkpointStats.available}</span>
+              <p className="text-sm font-bold text-muted-foreground mt-1">Tersedia</p>
             </div>
           </div>
         </div>
@@ -406,15 +406,15 @@ export default function Dashboard() {
                          <Link to="/pricing" className="ml-2 underline text-sm text-blue-600 font-semibold" aria-label="Upgrade ke Premium">Upgrade</Link>
                        </p>
                     ) : isLevelUnlocked ? (
-                       <p className="text-slate-500 font-medium">Terbuka • {levelLessons.length} Pelajaran</p>
+                       <p className="text-muted-foreground font-medium">Terbuka • {levelLessons.length} Pelajaran</p>
                     ) : (
-                       <p className="text-slate-500 font-medium flex items-center space-x-1"><Lock className="w-4 h-4" /> <span>Terkunci</span></p>
+                       <p className="text-muted-foreground font-medium flex items-center space-x-1"><Lock className="w-4 h-4" /> <span>Terkunci</span></p>
                     )}
                   </div>
                 </div>
               </div>
               
-              <Progress value={progressPercent} className="h-3 mb-8 bg-slate-100" />
+              <Progress value={progressPercent} className="h-3 mb-8 bg-muted" />
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {levelLessons.map((lesson, idx) => {
@@ -428,21 +428,21 @@ export default function Dashboard() {
                       onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
                       className={cn(
                         "flex flex-col p-6 rounded-3xl border-2 transition-all duration-200 relative overflow-hidden",
-                        isCompleted ? "bg-slate-50 border-slate-200 hover:border-slate-300" :
-                        isUnlocked ? "bg-white border-blue-500 shadow-lg hover:-translate-y-1" :
-                        "bg-slate-50 border-slate-100 opacity-60 cursor-not-allowed"
+                        isCompleted ? "bg-muted border-border hover:border-border" :
+                        isUnlocked ? "bg-card border-blue-500 shadow-lg hover:-translate-y-1" :
+                        "bg-muted border-border opacity-60 cursor-not-allowed"
                       )}
                       aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
                       aria-disabled={!isUnlocked}
                     >
-                      <div className="absolute top-0 left-0 w-full h-1.5 bg-slate-100">
+                      <div className="absolute top-0 left-0 w-full h-1.5 bg-muted">
                          <div 
                            className={cn("h-full transition-all duration-500", isCompleted ? "bg-green-500" : isUnlocked ? "bg-blue-500" : "")} 
                            style={{ width: isCompleted ? '100%' : '0%' }}
                          />
                       </div>
                       <div className="flex justify-between items-start mb-4 mt-2">
-                        <span className="text-xs font-bold px-2 py-1 bg-slate-100 rounded-md text-slate-500 uppercase tracking-widest">
+                        <span className="text-xs font-bold px-2 py-1 bg-muted rounded-md text-muted-foreground uppercase tracking-widest">
                           Pelajaran {idx + 1}
                         </span>
                         {isCompleted ? (
@@ -453,12 +453,12 @@ export default function Dashboard() {
                           <Lock className="w-5 h-5 text-slate-300 flex-shrink-0 ml-2" />
                         )}
                       </div>
-                      <h3 className={cn("text-lg font-bold mb-4", !isUnlocked && "text-slate-400")}>{lesson.title}</h3>
+                      <h3 className={cn("text-lg font-bold mb-4", !isUnlocked && "text-muted-foreground")}>{lesson.title}</h3>
                       
                       {lesson.canDoGoals && lesson.canDoGoals.length > 0 && (
-                        <div className="mt-auto space-y-1 pt-4 border-t border-slate-100/80">
-                          <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-2", !isUnlocked ? "text-slate-400" : "text-indigo-500")}>Sub-bab & Kompetensi:</p>
-                          <ul className={cn("text-sm space-y-1.5", !isUnlocked ? "text-slate-400" : "text-slate-600")}>
+                        <div className="mt-auto space-y-1 pt-4 border-t border-border/80">
+                          <p className={cn("text-[10px] font-bold uppercase tracking-widest mb-2", !isUnlocked ? "text-muted-foreground" : "text-indigo-500")}>Sub-bab & Kompetensi:</p>
+                          <ul className={cn("text-sm space-y-1.5", !isUnlocked ? "text-muted-foreground" : "text-muted-foreground")}>
                             {lesson.canDoGoals.slice(0, 3).map((goal, gidx) => (
                               <li key={gidx} className="flex items-start">
                                 <span className="mr-2 opacity-50 text-xs mt-0.5">•</span>

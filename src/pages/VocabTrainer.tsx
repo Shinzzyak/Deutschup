@@ -121,15 +121,15 @@ export default function VocabTrainer() {
       <div className="mb-8 text-center sm:text-left flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-2">Latihan Kosakata</h1>
-          <p className="text-slate-500 text-lg">Tingkatkan penguasaan kata-kata baru.</p>
+          <p className="text-muted-foreground text-lg">Tingkatkan penguasaan kata-kata baru.</p>
         </div>
         
-        <div className="flex bg-slate-100 p-1 rounded-2xl">
+        <div className="flex bg-muted p-1 rounded-2xl">
           <button 
             onClick={() => setActiveTab('flashcard')}
             className={cn(
               "px-4 py-2 flex items-center space-x-2 rounded-xl text-sm font-bold transition-all",
-              activeTab === 'flashcard' ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+              activeTab === 'flashcard' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Brain className="w-4 h-4" />
@@ -139,7 +139,7 @@ export default function VocabTrainer() {
             onClick={() => setActiveTab('list')}
             className={cn(
               "px-4 py-2 flex items-center space-x-2 rounded-xl text-sm font-bold transition-all",
-              activeTab === 'list' ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-700"
+              activeTab === 'list' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
             )}
           >
             <List className="w-4 h-4" />
@@ -156,11 +156,11 @@ export default function VocabTrainer() {
                 <Check className="w-12 h-12 text-green-500" />
               </div>
               <h2 className="text-4xl font-extrabold tracking-tight mb-4">Selesai untuk saat ini!</h2>
-              <p className="text-slate-500 text-lg">Kamu telah ulas {cardsReviewed} kata. Silakan kembali besok.</p>
+              <p className="text-muted-foreground text-lg">Kamu telah ulas {cardsReviewed} kata. Silakan kembali besok.</p>
             </div>
           ) : (
             <>
-              <p className="text-slate-500 text-center mb-6">Tersisa {dueCards.length} kata untuk diulas hari ini.</p>
+              <p className="text-muted-foreground text-center mb-6">Tersisa {dueCards.length} kata untuk diulas hari ini.</p>
               
               <div className="relative perspective-1000 h-80 w-full cursor-pointer group" onClick={handleFlip}>
                 <div className={cn(
@@ -168,7 +168,7 @@ export default function VocabTrainer() {
                   isFlipped ? "rotate-y-180" : ""
                 )}>
                   {/* Front */}
-                  <div className="absolute inset-0 backface-hidden bg-white border-2 border-slate-200 rounded-3xl p-8 flex flex-col items-center justify-center shadow-lg hover:border-slate-300 transition-colors">
+                  <div className="absolute inset-0 backface-hidden bg-card border-2 border-border rounded-3xl p-8 flex flex-col items-center justify-center shadow-lg hover:border-border transition-colors">
                     {currentCard.article && (
                       <span className={cn(
                         "text-sm font-bold px-3 py-1.5 rounded-lg text-white mb-4 uppercase tracking-widest",
@@ -176,14 +176,14 @@ export default function VocabTrainer() {
                         currentCard.article === 'die' ? 'bg-red-500' : 'bg-green-500'
                       )}>{currentCard.article}</span>
                     )}
-                    <h2 className="text-5xl font-extrabold text-slate-900">{currentCard.word}</h2>
-                    <p className="text-slate-400 mt-8 flex items-center"><RotateCcw className="w-4 h-4 mr-2" /> Ketuk untuk membalik</p>
+                    <h2 className="text-5xl font-extrabold text-foreground">{currentCard.word}</h2>
+                    <p className="text-muted-foreground mt-8 flex items-center"><RotateCcw className="w-4 h-4 mr-2" /> Ketuk untuk membalik</p>
                   </div>
 
                   {/* Back */}
                   <div className="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center shadow-xl overflow-y-auto">
                     <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2">{currentCard.translation}</h2>
-                    <p className="text-slate-400 text-lg mb-6">Level: {currentCard.level}</p>
+                    <p className="text-muted-foreground text-lg mb-6">Level: {currentCard.level}</p>
                     
                     <div className="w-full space-y-4 text-left">
                       {!pronunciation && (
@@ -194,7 +194,7 @@ export default function VocabTrainer() {
                       )}
                       {pronunciation && (
                         <div className="bg-slate-800 border border-slate-700 p-4 rounded-2xl text-white">
-                          <p className="text-sm text-slate-400 mb-1">Ejaan IPA / Fonetik:</p>
+                          <p className="text-sm text-muted-foreground mb-1">Ejaan IPA / Fonetik:</p>
                           <p className="text-xl font-mono text-yellow-400 mb-2">{pronunciation.phonetic}</p>
                           <p className="text-sm italic text-slate-300">💡 {pronunciation.tip}</p>
                         </div>
@@ -211,7 +211,7 @@ export default function VocabTrainer() {
                           {examples.map((ex, i) => (
                             <div key={i} className="space-y-1">
                                 <p className="font-medium text-blue-300">"{ex.german}"</p>
-                                <p className="text-sm text-slate-400">{ex.indonesian}</p>
+                                <p className="text-sm text-muted-foreground">{ex.indonesian}</p>
                             </div>
                           ))}
                         </div>
@@ -246,14 +246,14 @@ export default function VocabTrainer() {
 
       {activeTab === 'list' && (
         <div>
-          <div className="bg-white p-4 rounded-2xl border border-slate-200 mb-6 flex flex-col sm:flex-row gap-4 items-center">
+          <div className="bg-card p-4 rounded-2xl border border-border mb-6 flex flex-col sm:flex-row gap-4 items-center">
              <div className="flex-1 flex gap-4 w-full">
                <div className="flex-1 space-y-2">
-                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center"><Filter className="w-3 h-3 mr-1" /> Filter</label>
+                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center"><Filter className="w-3 h-3 mr-1" /> Filter</label>
                  <select 
                    value={filter}
                    onChange={(e) => setFilter(e.target.value as FilterType)}
-                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   className="w-full bg-muted border border-border rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
                  >
                    <option value="all">Semua Kata</option>
                    <option value="learned">Sudah Dipelajari</option>
@@ -263,11 +263,11 @@ export default function VocabTrainer() {
                </div>
                
                <div className="flex-1 space-y-2">
-                 <label className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center"><ArrowUpDown className="w-3 h-3 mr-1" /> Urutkan</label>
+                 <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center"><ArrowUpDown className="w-3 h-3 mr-1" /> Urutkan</label>
                  <select 
                    value={sort}
                    onChange={(e) => setSort(e.target.value as SortType)}
-                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   className="w-full bg-muted border border-border rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
                  >
                    <option value="default">Default</option>
                    <option value="german">Abjad Jerman (A-Z)</option>
@@ -278,13 +278,13 @@ export default function VocabTrainer() {
           </div>
 
           <div className="space-y-3">
-             <p className="text-slate-500 text-sm font-bold mb-4 px-1">Menampilkan {listData.length} kata</p>
+             <p className="text-muted-foreground text-sm font-bold mb-4 px-1">Menampilkan {listData.length} kata</p>
              {listData.map(v => {
                 const status = vocab[v.id]?.status;
                 return (
-                  <div key={v.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition-shadow gap-4">
+                  <div key={v.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-slate-50 flex items-center justify-center border border-slate-100 flex-shrink-0">
+                      <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center border border-border flex-shrink-0">
                          {status === 'known' ? (
                            <Check className="w-6 h-6 text-green-500" />
                          ) : status === 'learning' ? (
@@ -302,14 +302,14 @@ export default function VocabTrainer() {
                               v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
                             )}>{v.article}</span>
                           )}
-                          <span className="font-extrabold text-lg text-slate-900">{v.word}</span>
+                          <span className="font-extrabold text-lg text-foreground">{v.word}</span>
                         </div>
-                        <p className="text-slate-500">{v.translation}</p>
+                        <p className="text-muted-foreground">{v.translation}</p>
                       </div>
                     </div>
                     <div className="text-left sm:text-right flex items-center gap-2 sm:flex-col sm:items-end sm:gap-1">
-                       <span className="bg-slate-100 text-slate-500 px-2 py-1 rounded-md text-xs font-bold uppercase">{v.level}</span>
-                       <span className="text-xs font-medium text-slate-400">
+                       <span className="bg-muted text-muted-foreground px-2 py-1 rounded-md text-xs font-bold uppercase">{v.level}</span>
+                       <span className="text-xs font-medium text-muted-foreground">
                          {status === 'known' ? 'Dipelajari' : status === 'learning' ? 'Sedang belajar' : 'Baru'}
                        </span>
                     </div>
@@ -318,8 +318,8 @@ export default function VocabTrainer() {
              })}
              
              {listData.length === 0 && (
-                <div className="text-center py-12 bg-white rounded-2xl border border-slate-200 border-dashed">
-                  <p className="text-slate-500">Tidak ada kosakata yang cocok dengan filter.</p>
+                <div className="text-center py-12 bg-card rounded-2xl border border-border border-dashed">
+                  <p className="text-muted-foreground">Tidak ada kosakata yang cocok dengan filter.</p>
                 </div>
              )}
           </div>

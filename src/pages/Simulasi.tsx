@@ -152,10 +152,10 @@ export default function MockTest() {
   if (testState === 'SETUP') {
     return (
       <div className="max-w-3xl mx-auto pb-20 text-center space-y-8">
-        <div className="bg-white p-12 rounded-3xl border border-slate-200 shadow-sm">
+        <div className="bg-card p-12 rounded-3xl border border-border shadow-sm">
            <FileText className="w-16 h-16 mx-auto mb-6 text-blue-600" />
            <h1 className="text-4xl font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
-           <p className="text-slate-500 text-lg mb-8 max-w-lg mx-auto">
+           <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
              Ikuti simulasi ujian berstandar TELC/Goethe. Terdiri dari sesi Reading, Grammar, dan Vocabulary. 
              Waktu pengerjaan: 30 menit.
            </p>
@@ -167,7 +167,7 @@ export default function MockTest() {
                    onClick={() => setLevel(l)}
                    className={cn(
                       "w-full py-4 rounded-2xl text-2xl font-bold border-2 transition-all",
-                      level === l ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm" : "border-slate-200 text-slate-500 hover:border-slate-300 hover:bg-slate-50"
+                      level === l ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm" : "border-border text-muted-foreground hover:border-border hover:bg-muted"
                    )}
                  >
                    {l}
@@ -188,7 +188,7 @@ export default function MockTest() {
        <div className="max-w-2xl mx-auto text-center py-20 px-6">
          <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />
          <h2 className="text-3xl font-bold mb-4">Merakit Ujian...</h2>
-         <p className="text-slate-500">Herr Deutsch sedang menyiapkan pertanyaan berstandar untuk tingkat {level}.</p>
+         <p className="text-muted-foreground">Herr Deutsch sedang menyiapkan pertanyaan berstandar untuk tingkat {level}.</p>
        </div>
     );
   }
@@ -203,23 +203,23 @@ export default function MockTest() {
 
     return (
        <div className="max-w-3xl mx-auto pb-20">
-         <div className="flex items-center justify-between mb-6 bg-white p-4 rounded-xl shadow-sm border border-slate-200">
+         <div className="flex items-center justify-between mb-6 bg-card p-4 rounded-xl shadow-sm border border-border">
             <div className="flex space-x-2">
-               <span className="bg-slate-100 text-slate-700 font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
-               <span className="text-slate-500 font-medium px-3 py-1 text-sm">Soal {currentIdx + 1} dari {questions.length}</span>
+               <span className="bg-muted text-foreground font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
+               <span className="text-muted-foreground font-medium px-3 py-1 text-sm">Soal {currentIdx + 1} dari {questions.length}</span>
             </div>
             <div className="flex items-center text-red-600 font-bold bg-red-50 px-3 py-1 rounded-lg">
                <Timer className="w-5 h-5 mr-2" /> {formatTime(timeLeft)}
             </div>
          </div>
 
-         <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm flex flex-col min-h-[400px]">
+         <div className="bg-card p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col min-h-[400px]">
             {q.context && (
                <div className="bg-blue-50 p-4 rounded-2xl mb-6 text-blue-900 border border-blue-100 italic">
                   {q.context}
                </div>
             )}
-            <h3 className="text-2xl font-bold mb-8 text-slate-900">{q.question}</h3>
+            <h3 className="text-2xl font-bold mb-8 text-foreground">{q.question}</h3>
 
             <div className="space-y-3 flex-1">
                {q.options.map((opt, i) => {
@@ -230,7 +230,7 @@ export default function MockTest() {
                        onClick={() => setAnswers({...answers, [q.id]: opt})}
                        className={cn(
                           "w-full text-left p-4 rounded-2xl border-2 font-medium transition-all",
-                          isSelected ? "border-blue-600 bg-blue-50 text-blue-800" : "border-slate-200 hover:border-slate-300 text-slate-700 bg-white"
+                          isSelected ? "border-blue-600 bg-blue-50 text-blue-800" : "border-border hover:border-border text-foreground bg-card"
                        )}
                      >
                        {opt}
@@ -239,7 +239,7 @@ export default function MockTest() {
                })}
             </div>
             
-            <div className="mt-8 pt-6 border-t border-slate-100 flex justify-between">
+            <div className="mt-8 pt-6 border-t border-border flex justify-between">
                <Button variant="outline" disabled={currentIdx === 0} onClick={() => setCurrentIdx(prev => prev - 1)}>Sebelumnya</Button>
                {currentIdx === questions.length - 1 ? (
                  <Button onClick={submitTest} className="bg-green-600 hover:bg-green-700 text-white font-bold">Kumpulkan</Button>
@@ -255,12 +255,12 @@ export default function MockTest() {
   // EVALUATING & RESULT
   return (
     <div className="max-w-4xl mx-auto pb-20">
-      <div className="bg-white p-8 md:p-12 rounded-3xl border border-slate-200 shadow-sm text-center mb-8">
+      <div className="bg-card p-8 md:p-12 rounded-3xl border border-border shadow-sm text-center mb-8">
         {testState === 'EVALUATING' ? (
            <>
              <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />
              <h2 className="text-3xl font-bold mb-2">Mengevaluasi Hasil...</h2>
-             <p className="text-slate-500">Menilai jawaban kamu dan membuat penjelasan koreksi.</p>
+             <p className="text-muted-foreground">Menilai jawaban kamu dan membuat penjelasan koreksi.</p>
            </>
         ) : (
            <>
@@ -268,7 +268,7 @@ export default function MockTest() {
                <TrophyIcon score={scoreInfo.score} total={scoreInfo.total} />
              </div>
              <h2 className="text-4xl font-extrabold mb-2">Skor Kamu: {scoreInfo.score} / {scoreInfo.total}</h2>
-             <p className="text-slate-500 font-medium text-lg mb-8">
+             <p className="text-muted-foreground font-medium text-lg mb-8">
                 ({Math.round((scoreInfo.score / scoreInfo.total) * 100)}%) Tingkat {level}
              </p>
              <Button onClick={() => setTestState('SETUP')} variant="outline" size="lg">Kembali ke Menu Awal</Button>
@@ -292,7 +292,7 @@ export default function MockTest() {
                         <h4 className="font-bold text-lg">{i+1}. {q.question}</h4>
                      </div>
                      <div className="pl-9 space-y-2">
-                        <p className="text-sm font-medium text-slate-500">Kategori: {q.category}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Kategori: {q.category}</p>
                         <p className={cn("font-medium", isAccurate ? "text-green-800" : "text-red-800 line-through opacity-70")}>
                            Kamu: {uAns || '(Kosong)'}
                         </p>
@@ -300,7 +300,7 @@ export default function MockTest() {
                            <p className="font-bold text-green-700">Benar: {q.correctAnswer}</p>
                         )}
                         {!isAccurate && feedbacks[q.id] && (
-                           <div className="mt-4 p-4 bg-white/70 rounded-xl border border-red-100 flex items-start space-x-3 text-red-900">
+                           <div className="mt-4 p-4 bg-card/70 rounded-xl border border-red-100 flex items-start space-x-3 text-red-900">
                              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                              <div className="text-sm prose prose-sm prose-red"><ReactMarkdown>{feedbacks[q.id]}</ReactMarkdown></div>
                            </div>
