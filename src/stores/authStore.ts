@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { shouldUseClerk } from '../lib/clerk/canary';
 
 export interface TierData {
   tier: 'free' | 'pro';
@@ -221,11 +222,28 @@ export const useAuthStore = create<AuthState>((set, get) => {
     profileData: cachedUser ? (loadCachedProfile(cachedUser.id)?.profileData || {}) : {},
     loading: !cachedUser,
     profileLoaded: !!cachedUser && !!loadCachedProfile(cachedUser.id),
-    loginWithGoogle: async () => { await supabase.auth.signInWithOAuth({ provider: 'google' }); },
+    loginWithGoogle: async () => { 
+      const currentUser = get().user;
+      if (shouldUseClerk(currentUser?.email)) {
+        console.log('[AUTH] Canary user detected — Clerk login available (fallback: Supabase)');
+      }
+      await supabase.auth.signInWithOAuth({ provider: 'google' }); 
+    },
     logout: async () => {
+      const currentUser = get().user;
+      // Canary-aware logout
+      if (shouldUseClerk(currentUser?.email)) {
+        console.log('[AUTH] Canary logout — signing out from Supabase + clearing Clerk state');
+        // Also clear any Clerk localStorage keys
+        Object.keys(localStorage).forEach(key => {
+          if (key.startsWith('clerk-') || key.startsWith('__clerk')) {
+            localStorage.removeItem(key);
+          }
+        });
+      }
       await supabase.auth.signOut();
       cacheSession(null);
-      const userId = get().user?.id;
+      const userId = currentUser?.id;
       if (userId) localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
       set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
     },

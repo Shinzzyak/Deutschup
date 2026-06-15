@@ -22,6 +22,7 @@ const Simulasi = lazy(() => import('./pages/Simulasi'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Admin = lazy(() => import('./pages/Admin'));
 const ClerkTest = lazy(() => import('./pages/ClerkTest'));
+const CanaryDashboard = lazy(() => import('./pages/CanaryDashboard'));
 import ChatWidget from './components/ChatWidget';
 import DebugAuthOverlay from "./components/DebugAuthOverlay";
 import QuickNoteWidget from './components/QuickNoteWidget';
@@ -179,6 +180,7 @@ function AnimatedRoutes() {
         <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
         <Route path="/admin/ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
+        <Route path="/admin/canary" element={<PageWrapper><CanaryDashboard /></PageWrapper>} />
         <Route path="/clerk-test" element={<PageWrapper><ClerkTest /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
