@@ -43,7 +43,7 @@ export default function QuickNoteWidget() {
       </button>
 
       <div className={cn(
-        "fixed bottom-28 right-6 w-[min(300px,calc(100vw-2rem))] h-[min(300px,calc(100vh-10rem))] bg-yellow-100 rounded-tr-3xl rounded-tl-3xl rounded-bl-3xl shadow-2xl flex flex-col z-50 transition-all duration-300 transform",
+        "fixed bottom-28 right-6 w-[min(300px,calc(100vw-2rem))] h-[min(300px,calc(100vh-10rem))] bg-yellow-100 rounded-tr-3xl rounded-tl-3xl rounded-bl-3xl shadow-xl flex flex-col z-50 transition-all duration-300 transform",
         isOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0 pointer-events-none"
       )}>
         <div className="bg-yellow-200 p-3 rounded-t-3xl flex justify-between items-center text-yellow-900 font-bold border-b border-yellow-300">

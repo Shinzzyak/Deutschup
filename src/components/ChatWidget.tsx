@@ -76,7 +76,7 @@ export default function ChatWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] max-w-96 h-[500px] bg-white rounded-lg shadow-2xl border border-gray-200 flex flex-col overflow-hidden"
+            className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] max-w-96 h-[500px] bg-white rounded-lg shadow-xl border border-gray-200 flex flex-col overflow-hidden"
           >
             <div className="bg-blue-600 text-white p-4 flex items-center gap-3">
               <Bot className="w-6 h-6" />

@@ -429,7 +429,7 @@ export default function Dashboard() {
                       className={cn(
                         "flex flex-col p-6 rounded-3xl border-2 transition-all duration-200 relative overflow-hidden",
                         isCompleted ? "bg-slate-50 border-slate-200 hover:border-slate-300" :
-                        isUnlocked ? "bg-white border-blue-500 shadow-lg shadow-blue-100 hover:-translate-y-1" :
+                        isUnlocked ? "bg-white border-blue-500 shadow-lg hover:-translate-y-1" :
                         "bg-slate-50 border-slate-100 opacity-60 cursor-not-allowed"
                       )}
                       aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}

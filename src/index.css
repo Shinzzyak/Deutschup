@@ -158,41 +158,33 @@ html, body {
 }
 
 /* ============================================
-   THEME SYSTEM — Light / Dark / System
+   DESIGN SYSTEM — Semantic Colors (Foundation)
    ============================================ */
 
-/* Dark mode variables */
-.dark {
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-card: #1e293b;
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --border-color: #334155;
-  --accent: #f97316;
-}
-
-/* Light mode variables (default) */
 :root {
-  --bg-primary: #f8fafc;
-  --bg-secondary: #ffffff;
-  --bg-card: #ffffff;
-  --text-primary: #0f172a;
-  --text-secondary: #64748b;
-  --border-color: #e2e8f0;
-  --accent: #f97316;
+  /* Semantic: Success */
+  --success: oklch(0.6 0.15 145);
+  --success-foreground: oklch(0.985 0 0);
+  /* Semantic: Warning */
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.205 0 0);
+  /* Semantic: Danger */
+  --danger: oklch(0.577 0.245 27.325);
+  --danger-foreground: oklch(0.985 0 0);
+  /* Semantic: Info */
+  --info: oklch(0.55 0.15 264);
+  --info-foreground: oklch(0.985 0 0);
 }
 
-/* Auto dark mode via media query */
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) {
-    --bg-primary: #0f172a;
-    --bg-secondary: #1e293b;
-    --bg-card: #1e293b;
-    --text-primary: #f1f5f9;
-    --text-secondary: #94a3b8;
-    --border-color: #334155;
-  }
+.dark {
+  --success: oklch(0.7 0.15 145);
+  --success-foreground: oklch(0.205 0 0);
+  --warning: oklch(0.8 0.15 75);
+  --warning-foreground: oklch(0.205 0 0);
+  --danger: oklch(0.704 0.191 22.216);
+  --danger-foreground: oklch(0.985 0 0);
+  --info: oklch(0.65 0.15 264);
+  --info-foreground: oklch(0.985 0 0);
 }
 
 /* Smooth theme transition */
