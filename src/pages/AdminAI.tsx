@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useNavigate } from 'react-router';
 import { Button } from '../components/ui/button';
 import SecretList from '../components/admin/SecretList';
 import {
-  Loader2, Save, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
-  Server, Cpu, Activity, Zap, ArrowLeft, Settings, BarChart3, Key
+  Loader2, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
+  Server, Cpu, Activity, Zap, ArrowLeft, Settings, BarChart3, Key,
+  Shield, TrendingUp, Clock, AlertCircle, WifiOff, Gauge
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -54,10 +55,40 @@ interface UsageStats {
   total_cost_usd: number;
 }
 
+const STATUS_ICON: Record<RuntimeStatus, typeof CheckCircle2> = {
+  ACTIVE: CheckCircle2, MISSING_KEY: AlertTriangle, INVALID_KEY: XCircle,
+  UNREACHABLE: XCircle, RATE_LIMITED: AlertCircle, DISABLED: XCircle,
+};
+const STATUS_CLR: Record<RuntimeStatus, string> = {
+  ACTIVE: 'text-emerald-500', MISSING_KEY: 'text-amber-500', INVALID_KEY: 'text-red-500',
+  UNREACHABLE: 'text-red-500', RATE_LIMITED: 'text-yellow-500', DISABLED: 'text-slate-500',
+};
+const STATUS_BG: Record<RuntimeStatus, string> = {
+  ACTIVE: 'bg-emerald-500/15 border-emerald-500/20',
+  MISSING_KEY: 'bg-amber-500/15 border-amber-500/20',
+  INVALID_KEY: 'bg-red-500/15 border-red-500/20',
+  UNREACHABLE: 'bg-red-500/15 border-red-500/20',
+  RATE_LIMITED: 'bg-yellow-500/15 border-yellow-500/20',
+  DISABLED: 'bg-slate-500/10 border-slate-500/20',
+};
+const STATUS_LABEL: Record<RuntimeStatus, string> = {
+  ACTIVE: 'Active', MISSING_KEY: 'Missing Key', INVALID_KEY: 'Invalid Key',
+  UNREACHABLE: 'Unreachable', RATE_LIMITED: 'Rate Limited', DISABLED: 'Disabled',
+};
+const STATUS_GLOW: Record<RuntimeStatus, string> = {
+  ACTIVE: 'from-emerald-500/10 to-emerald-500/5',
+  MISSING_KEY: 'from-amber-500/10 to-amber-500/5',
+  INVALID_KEY: 'from-red-500/10 to-red-500/5',
+  UNREACHABLE: 'from-red-500/10 to-red-500/5',
+  RATE_LIMITED: 'from-yellow-500/10 to-yellow-500/5',
+  DISABLED: 'from-slate-500/5 to-slate-500/0',
+};
+
+type Tab = 'health' | 'providers' | 'routing' | 'usage' | 'secrets';
+
 export default function AdminAI() {
   const { session, profileData } = useAuthStore();
   const navigate = useNavigate();
-
   const [providers, setProviders] = useState<Provider[]>([]);
   const [healthData, setHealthData] = useState<HealthCheckResult[]>([]);
   const [healthSummary, setHealthSummary] = useState<any>(null);
@@ -66,556 +97,390 @@ export default function AdminAI() {
   const [usageStats, setUsageStats] = useState<UsageStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'providers' | 'models' | 'stats' | 'secrets'>('providers');
+  const [activeTab, setActiveTab] = useState<Tab>('health');
+  const [expandedProvider, setExpandedProvider] = useState<string | null>(null);
 
-  // Redirect if not admin
-  useEffect(() => {
-    if (profileData.role !== 'admin') {
-      navigate('/');
-    }
-  }, [profileData.role, navigate]);
-
-  // Fetch data
-  useEffect(() => {
-    if (profileData.role !== 'admin' || !session) return;
-    fetchData();
-  }, [profileData.role, session]);
+  useEffect(() => { if (profileData.role !== 'admin') navigate('/'); }, [profileData.role, navigate]);
+  useEffect(() => { if (profileData.role === 'admin' && session) fetchData(); }, [profileData.role, session]);
 
   const fetchData = async () => {
     if (!session) return;
     setLoading(true);
     try {
-      const [providersRes, modelsRes, statsRes, healthRes] = await Promise.all([
-        fetch('/api/admin-ai?action=providers', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        }),
-        fetch('/api/admin-ai?action=models', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        }),
-        fetch('/api/admin-ai?action=usage-stats&days=7', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        }),
-        fetch('/api/admin-ai?action=health-check', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        })
+      const hdr = { Authorization: `Bearer ${session.access_token}` };
+      const [pR, mR, sR, hR] = await Promise.all([
+        fetch('/api/admin-ai?action=providers', { headers: hdr }),
+        fetch('/api/admin-ai?action=models', { headers: hdr }),
+        fetch('/api/admin-ai?action=usage-stats&days=7', { headers: hdr }),
+        fetch('/api/admin-ai?action=health-check', { headers: hdr }),
       ]);
+      if (pR.ok) setProviders(await pR.json());
+      if (mR.ok) setModels(await mR.json());
+      if (sR.ok) setUsageStats(await sR.json());
+      if (hR.ok) { const h = await hR.json(); setHealthData(h.providers || []); setHealthSummary(h.summary || null); }
+    } catch (e) { console.error('Fetch AI data failed:', e); }
+    finally { setLoading(false); }
+  };
 
-      if (providersRes.ok) setProviders(await providersRes.json());
-      if (modelsRes.ok) setModels(await modelsRes.json());
-      if (statsRes.ok) setUsageStats(await statsRes.json());
-      if (healthRes.ok) {
-        const health = await healthRes.json();
-        setHealthData(health.providers || []);
-        setHealthSummary(health.summary || null);
-      }
-    } catch (e) {
-      console.error('Fetch AI data failed:', e);
-    } finally {
-      setLoading(false);
-    }
+  const post = async (action: string, body: any) => {
+    if (!session) return;
+    setSaving(true);
+    try {
+      await fetch(`/api/admin-ai?action=${action}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${session.access_token}` },
+        body: JSON.stringify(body),
+      });
+    } catch (e) { console.error(`${action} failed:`, e); }
+    finally { setSaving(false); }
   };
 
   const toggleProvider = async (id: string, enabled: boolean) => {
-    if (!session) return;
-    setSaving(true);
-    try {
-      await fetch('/api/admin-ai?action=provider-toggle', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ id, enabled })
-      });
-      setProviders(providers.map(p =>
-        p.id === id ? { ...p, enabled, status: enabled ? 'active' as const : 'disabled' as const } : p
-      ));
-    } catch (e) {
-      console.error('Toggle provider failed:', e);
-    } finally {
-      setSaving(false);
-    }
+    await post('provider-toggle', { id, enabled });
+    setProviders(ps => ps.map(p => p.id === id ? { ...p, enabled, status: enabled ? 'active' as const : 'disabled' as const } : p));
   };
 
   const toggleModel = async (id: string, enabled: boolean) => {
-    if (!session) return;
-    setSaving(true);
-    try {
-      await fetch('/api/admin-ai?action=model-toggle', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ id, enabled })
-      });
-      setModels(models.map(m =>
-        m.id === id ? { ...m, enabled } : m
-      ));
-    } catch (e) {
-      console.error('Toggle model failed:', e);
-    } finally {
-      setSaving(false);
-    }
+    await post('model-toggle', { id, enabled });
+    setModels(ms => ms.map(m => m.id === id ? { ...m, enabled } : m));
   };
 
   const setPrimary = async (id: string) => {
-    if (!session) return;
-    setSaving(true);
-    try {
-      await fetch('/api/admin-ai?action=model-set-primary', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ id })
-      });
-      // Update local state
-      setModels(models.map(m => ({
-        ...m,
-        is_primary: m.id === id,
-        enabled: m.id === id ? true : m.enabled
-      })));
-    } catch (e) {
-      console.error('Set primary failed:', e);
-    } finally {
-      setSaving(false);
-    }
+    await post('model-set-primary', { id });
+    setModels(ms => ms.map(m => ({ ...m, is_primary: m.id === id, enabled: m.id === id ? true : m.enabled })));
   };
 
   const setFallback = async (id: string) => {
+    await post('model-set-fallback', { id });
+    setModels(ms => ms.map(m => ({ ...m, is_fallback: m.id === id, enabled: m.id === id ? true : m.enabled })));
+  };
+
+  const validateProvider = async (pid: string) => {
     if (!session) return;
-    setSaving(true);
-    try {
-      await fetch('/api/admin-ai?action=model-set-fallback', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
-        },
-        body: JSON.stringify({ id })
-      });
-      // Update local state
-      setModels(models.map(m => ({
-        ...m,
-        is_fallback: m.id === id,
-        enabled: m.id === id ? true : m.enabled
-      })));
-    } catch (e) {
-      console.error('Set fallback failed:', e);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const getStatusIcon = (status: RuntimeStatus) => {
-    switch (status) {
-      case 'ACTIVE': return <CheckCircle2 className="w-4 h-4 text-green-500" />;
-      case 'MISSING_KEY': return <AlertTriangle className="w-4 h-4 text-amber-500" />;
-      case 'INVALID_KEY': return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'UNREACHABLE': return <XCircle className="w-4 h-4 text-red-500" />;
-      case 'RATE_LIMITED': return <AlertTriangle className="w-4 h-4 text-amber-500" />;
-      case 'DISABLED': return <XCircle className="w-4 h-4 text-muted-foreground" />;
-      default: return <XCircle className="w-4 h-4 text-muted-foreground" />;
-    }
-  };
-
-  const getStatusColor = (status: RuntimeStatus) => {
-    switch (status) {
-      case 'ACTIVE': return 'text-green-600 bg-green-50';
-      case 'MISSING_KEY': return 'text-amber-600 bg-amber-50';
-      case 'INVALID_KEY': return 'text-red-600 bg-red-50';
-      case 'UNREACHABLE': return 'text-red-600 bg-red-50';
-      case 'RATE_LIMITED': return 'text-amber-600 bg-amber-50';
-      case 'DISABLED': return 'text-muted-foreground bg-muted';
-      default: return 'text-muted-foreground bg-muted';
-    }
-  };
-
-  const getProviderHealth = (providerId: string): HealthCheckResult | undefined => {
-    return healthData.find(h => h.provider === providerId);
-  };
-
-  const validateProvider = async (providerId: string) => {
-    if (!session) return;
-    setValidating(providerId);
+    setValidating(pid);
     try {
       const res = await fetch('/api/admin-ai?action=validate-provider', {
         method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session.access_token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ provider_id: providerId })
+        headers: { Authorization: `Bearer ${session.access_token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ provider_id: pid }),
       });
       if (res.ok) {
-        const result = await res.json();
+        const r = await res.json();
         setHealthData(prev => {
-          const existing = prev.findIndex(h => h.provider === providerId);
-          if (existing >= 0) {
-            const updated = [...prev];
-            updated[existing] = { ...updated[existing], ...result };
-            return updated;
-          }
-          return [...prev, result];
+          const i = prev.findIndex(h => h.provider === pid);
+          if (i >= 0) { const u = [...prev]; u[i] = { ...u[i], ...r }; return u; }
+          return [...prev, r];
         });
       }
-    } catch (e) {
-      console.error('Validate failed:', e);
-    } finally {
-      setValidating(null);
-    }
+    } catch (e) { console.error('Validate failed:', e); }
+    finally { setValidating(null); }
   };
 
-  const getModelStats = (modelId: string) => {
-    return usageStats.find(s => s.model_id === modelId);
-  };
+  const getHealth = (pid: string) => healthData.find(h => h.provider === pid);
+  const getModelStats = (mid: string) => usageStats.find(s => s.model_id === mid);
+
+  const statusCounts = useMemo(() => {
+    const c: Record<RuntimeStatus, number> = { ACTIVE: 0, MISSING_KEY: 0, INVALID_KEY: 0, UNREACHABLE: 0, RATE_LIMITED: 0, DISABLED: 0 };
+    healthData.forEach(h => { if (c[h.runtime_status] !== undefined) c[h.runtime_status]++; });
+    return c;
+  }, [healthData]);
+
+  const agg = useMemo(() => {
+    const tr = usageStats.reduce((s, x) => s + x.total_requests, 0);
+    const ts = usageStats.reduce((s, x) => s + x.successful_requests, 0);
+    const tl = usageStats.reduce((s, x) => s + x.total_latency_ms, 0);
+    const tt = usageStats.reduce((s, x) => s + x.total_tokens_in + x.total_tokens_out, 0);
+    return { total: tr, success: ts, failed: tr - ts, rate: tr > 0 ? Math.round((ts / tr) * 100) : 0, avgLatency: tr > 0 ? Math.round(tl / tr) : 0, tokens: tt };
+  }, [usageStats]);
+
+  const sortedProviders = useMemo(() => [...providers].sort((a, b) => a.priority - b.priority), [providers]);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-xl animate-pulse" />
+            <Loader2 className="w-10 h-10 animate-spin text-blue-500 relative" />
+          </div>
+          <p className="text-muted-foreground text-sm">Initializing Command Center...</p>
+        </div>
       </div>
     );
   }
 
-  return (
-    <div className="max-w-6xl mx-auto pb-20 px-4 md:px-6 overflow-x-hidden">
-      {/* Back nav */}
-      <button
-        onClick={() => navigate('/admin')}
-        className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-foreground mb-6 transition-colors"
-      >
-        <ArrowLeft className="w-4 h-4 mr-1" /> Kembali ke Admin
-      </button>
+  const tabs = [
+    { id: 'health' as Tab, label: 'Health', icon: Activity },
+    { id: 'providers' as Tab, label: 'Providers', icon: Server },
+    { id: 'routing' as Tab, label: 'Routing', icon: Zap },
+    { id: 'usage' as Tab, label: 'Usage', icon: BarChart3 },
+    { id: 'secrets' as Tab, label: 'Secrets', icon: Key },
+  ];
 
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl p-6 md:p-8 text-white mb-8">
-        <div className="flex items-center space-x-3 mb-2">
-          <Settings className="w-8 h-8" />
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold">AI Settings</h1>
-            <p className="text-white/80 text-sm">Kelola provider, model, dan routing AI</p>
+  return (
+    <div className="min-h-screen bg-background pb-20">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative max-w-6xl mx-auto px-4 md:px-6">
+        <button onClick={() => navigate('/admin')} className="inline-flex items-center text-sm font-bold text-muted-foreground hover:text-foreground mt-6 mb-4 transition-colors">
+          <ArrowLeft className="w-4 h-4 mr-1" /> Kembali ke Admin
+        </button>
+
+        {/* Header */}
+        <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-6 md:p-8 text-white mb-8 overflow-hidden">
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
+          </div>
+          <div className="relative flex items-center space-x-4">
+            <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20 shrink-0">
+              <Shield className="w-7 h-7" />
+            </div>
+            <div>
+              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">AI Command Center</h1>
+              <p className="text-white/70 text-sm mt-0.5">Monitor, configure, and control AI infrastructure</p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Routing Diagnostics */}
-      <div className="bg-card p-6 rounded-3xl border border-border mb-8">
-        <h3 className="font-bold text-lg mb-4 flex items-center">
-          <Activity className="w-5 h-5 mr-2 text-blue-600" />
-          Routing Diagnostics
-        </h3>
-        <div className="space-y-3">
-          {providers
-             .sort((a, b) => a.priority - b.priority)
-             .map((provider, idx) => {
-               const hasModel = models.some(m => m.provider_id === provider.id && m.enabled);
-               const isPrimary = models.some(m => m.provider_id === provider.id && m.is_primary);
-               const isFallback = models.some(m => m.provider_id === provider.id && m.is_fallback);
-               
-               let status = 'Missing Key';
-               let result = 'Skipped';
-               let statusColor = 'text-red-600';
-               
-               if (!provider.enabled) {
-                 status = 'Disabled';
-                 result = 'Skipped';
-                 statusColor = 'text-muted-foreground';
-               } else if (isPrimary) {
-                 status = 'Active';
-                 result = 'Serving Traffic';
-                 statusColor = 'text-green-600';
-               } else if (isFallback) {
-                 status = 'Available';
-                 result = 'Standby';
-                 statusColor = 'text-amber-600';
-               } else if (hasModel) {
-                 status = 'Available';
-                 result = 'Standby';
-                 statusColor = 'text-blue-600';
-               }
-               
-               return (
-                 <div key={provider.id} className="flex items-center justify-between p-3 bg-muted rounded-xl">
-                   <div className="flex items-center space-x-3">
-                     <span className="text-sm font-bold text-muted-foreground w-6">{idx + 1}.</span>
-                     <span className="font-medium">{provider.name}</span>
-                   </div>
-                   <div className="flex items-center space-x-4">
-                     <span className={cn("text-sm font-medium", statusColor)}>
-                       Status: {status}
-                     </span>
-                     <span className="text-sm text-muted-foreground">
-                       Result: {result}
-                     </span>
-                   </div>
-                 </div>
-               );
-             })}
-        </div>
-      </div>
-
-      {/* Tabs */}
-      <div className="flex space-x-2 mb-8">
-        {(['providers', 'models', 'stats', 'secrets'] as const).map(tab => (
-          <Button
-            key={tab}
-            variant={activeTab === tab ? 'default' : 'outline'}
-            onClick={() => setActiveTab(tab)}
-            className={cn(
-              "rounded-2xl",
-              activeTab === tab && "bg-blue-600 text-white"
-            )}
-          >
-            {tab === 'providers' && <Server className="w-4 h-4 mr-2" />}
-            {tab === 'models' && <Cpu className="w-4 h-4 mr-2" />}
-            {tab === 'stats' && <BarChart3 className="w-4 h-4 mr-2" />}
-            {tab === 'secrets' && <Key className="w-4 h-4 mr-2" />}
-            {tab.charAt(0).toUpperCase() + tab.slice(1)}
-          </Button>
-        ))}
-      </div>
-
-      {/* Providers Tab */}
-      {activeTab === 'providers' && (
-        <div className="space-y-4">
-          {providers.map(provider => (
-            <div
-              key={provider.id}
-              className={cn(
-                "bg-card p-6 rounded-3xl border-2 transition-all",
-                getProviderHealth(provider.id)?.runtime_status === 'ACTIVE' ? "border-green-200" :
-                getProviderHealth(provider.id)?.runtime_status === 'MISSING_KEY' ? "border-amber-200" :
-                provider.enabled ? "border-red-200" : "border-border opacity-60"
-              )}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  {getStatusIcon(getProviderHealth(provider.id)?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED'))}
-                  <div>
-                    <h3 className="font-bold text-lg">{provider.name}</h3>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">
-                        Priority: {provider.priority}
-                      </span>
-                      <span className={cn(
-                        "text-xs px-2 py-0.5 rounded-full font-medium",
-                        getStatusColor(getProviderHealth(provider.id)?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED'))
-                      )}>
-                        {getProviderHealth(provider.id)?.runtime_status || (provider.enabled ? 'Checking...' : 'DISABLED')}
-                      </span>
-                    </div>
-                    {getProviderHealth(provider.id)?.latency_ms && (
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Latency: {getProviderHealth(provider.id)?.latency_ms}ms
-                      </p>
-                    )}
-                    {getProviderHealth(provider.id)?.error_message && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {getProviderHealth(provider.id)?.error_message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => validateProvider(provider.id)}
-                    disabled={validating === provider.id}
-                    className="rounded-xl"
-                  >
-                    {validating === provider.id ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
-                    ) : (
-                      <RefreshCw className="w-4 h-4" />
-                    )}
-                  </Button>
-                  <Button
-                    variant={provider.enabled ? 'default' : 'outline'}
-                    size="sm"
-                    onClick={() => toggleProvider(provider.id, !provider.enabled)}
-                    disabled={saving}
-                    className="rounded-xl"
-                  >
-                    {provider.enabled ? 'Enabled' : 'Disabled'}
-                  </Button>
-                </div>
-              </div>
-
-              {/* Models for this provider */}
-              <div className="mt-4 pt-4 border-t border-border">
-                <p className="text-sm font-bold text-muted-foreground mb-2">Models:</p>
-                <div className="flex flex-wrap gap-2">
-                  {models
-                    .filter(m => m.provider_id === provider.id)
-                    .map(model => (
-                      <span
-                        key={model.id}
-                        className={cn(
-                          "px-3 py-1 rounded-lg text-sm font-medium",
-                          model.is_primary ? "bg-blue-100 text-blue-800" :
-                          model.is_fallback ? "bg-amber-100 text-amber-800" :
-                          model.enabled ? "bg-muted text-foreground" :
-                          "bg-muted text-muted-foreground"
-                        )}
-                      >
-                        {model.display_name}
-                        {model.is_primary && " (Primary)"}
-                        {model.is_fallback && " (Fallback)"}
-                      </span>
-                    ))}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Models Tab */}
-      {activeTab === 'models' && (
-        <div className="space-y-4">
-          {models.map(model => {
-            const stats = getModelStats(model.id);
+        {/* Health Dashboard */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-8">
+          {(Object.keys(STATUS_ICON) as RuntimeStatus[]).map(s => {
+            const Icon = STATUS_ICON[s];
             return (
-              <div
-                key={model.id}
-                className={cn(
-                  "bg-card p-6 rounded-3xl border-2 transition-all",
-                  model.enabled ? "border-green-200" : "border-border opacity-60"
-                )}
-              >
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-4">
-                    <div>
-                      <h3 className="font-bold text-lg">{model.display_name}</h3>
-                      <p className="text-sm text-muted-foreground">
-                        {model.name} • {model.provider_id}
-                      </p>
-                    </div>
-                    {model.is_primary && (
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-lg text-xs font-bold">
-                        PRIMARY
-                      </span>
-                    )}
-                    {model.is_fallback && (
-                      <span className="px-2 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-bold">
-                        FALLBACK
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex items-center space-x-2">
-                    {!model.is_primary && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setPrimary(model.id)}
-                        disabled={saving}
-                        className="rounded-xl"
-                      >
-                        Set Primary
-                      </Button>
-                    )}
-                    {!model.is_fallback && !model.is_primary && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setFallback(model.id)}
-                        disabled={saving}
-                        className="rounded-xl"
-                      >
-                        Set Fallback
-                      </Button>
-                    )}
-                    <Button
-                      variant={model.enabled ? 'default' : 'outline'}
-                      size="sm"
-                      onClick={() => toggleModel(model.id, !model.enabled)}
-                      disabled={saving}
-                      className="rounded-xl"
-                    >
-                      {model.enabled ? 'On' : 'Off'}
-                    </Button>
-                  </div>
+              <div key={s} className={cn("relative overflow-hidden rounded-2xl border p-4 md:p-5 transition-all hover:shadow-lg", STATUS_BG[s])}>
+                <div className={cn("absolute inset-0 bg-gradient-to-br opacity-50", STATUS_GLOW[s])} />
+                <div className="relative z-10 flex flex-col items-center text-center">
+                  <Icon className={cn("w-5 h-5 mb-2", STATUS_CLR[s])} />
+                  <span className={cn("text-2xl md:text-3xl font-black", STATUS_CLR[s])}>{statusCounts[s]}</span>
+                  <span className="text-[10px] md:text-xs font-bold text-muted-foreground uppercase tracking-wider mt-1">{STATUS_LABEL[s]}</span>
                 </div>
-
-                {/* Stats */}
-                {stats && (
-                  <div className="mt-4 pt-4 border-t border-border grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <p className="text-muted-foreground">Requests</p>
-                      <p className="font-bold">{stats.total_requests}</p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Success Rate</p>
-                      <p className="font-bold">
-                        {stats.total_requests > 0
-                          ? Math.round((stats.successful_requests / stats.total_requests) * 100)
-                          : 0}%
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Avg Latency</p>
-                      <p className="font-bold">
-                        {stats.total_requests > 0
-                          ? Math.round(stats.total_latency_ms / stats.total_requests)
-                          : 0}ms
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-muted-foreground">Tokens</p>
-                      <p className="font-bold">
-                        {(stats.total_tokens_in + stats.total_tokens_out).toLocaleString()}
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
             );
           })}
         </div>
-      )}
 
-      {/* Stats Tab */}
-      {activeTab === 'stats' && (
-        <div className="bg-card p-6 rounded-3xl border border-border">
-          <h3 className="font-bold text-lg mb-4">Usage Stats (7 days)</h3>
-          {usageStats.length === 0 ? (
-            <p className="text-muted-foreground text-center py-8">No usage data yet</p>
-          ) : (
-            <div className="space-y-4">
-              {usageStats.map((stat, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 bg-muted rounded-2xl">
-                  <div>
-                    <p className="font-bold">{stat.provider_id} / {stat.model_id}</p>
-                    <p className="text-sm text-muted-foreground">
-                      {stat.total_requests} requests • {stat.successful_requests} successful
-                    </p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-bold">
-                      {stat.total_requests > 0
-                        ? Math.round(stat.total_latency_ms / stat.total_requests)
-                        : 0}ms avg
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {(stat.total_tokens_in + stat.total_tokens_out).toLocaleString()} tokens
-                    </p>
+        {/* Aggregate Stats */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
+          {[
+            { label: 'Total Requests', value: agg.total.toLocaleString(), icon: Activity, color: 'text-blue-500' },
+            { label: 'Success Rate', value: `${agg.rate}%`, icon: TrendingUp, color: 'text-emerald-500' },
+            { label: 'Avg Latency', value: `${agg.avgLatency}ms`, icon: Clock, color: 'text-amber-500' },
+            { label: 'Total Tokens', value: agg.tokens.toLocaleString(), icon: Gauge, color: 'text-purple-500' },
+          ].map(({ label, value, icon: Icon, color }) => (
+            <div key={label} className="rounded-2xl border border-border bg-card p-4 md:p-5">
+              <div className="flex items-center space-x-2 mb-2">
+                <Icon className={cn("w-4 h-4", color)} />
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">{label}</span>
+              </div>
+              <span className="text-xl md:text-2xl font-black">{value}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Tabs */}
+        <div className="flex flex-wrap gap-2 mb-8">
+          {tabs.map(t => (
+            <Button key={t.id} variant={activeTab === t.id ? 'default' : 'outline'} onClick={() => setActiveTab(t.id)}
+              className={cn("rounded-2xl", activeTab === t.id && "bg-blue-600 text-white")}>
+              <t.icon className="w-4 h-4 mr-2" />{t.label}
+            </Button>
+          ))}
+        </div>
+
+        {/* Tab: Health */}
+        {activeTab === 'health' && (
+          <div className="space-y-4">
+            {sortedProviders.map(p => {
+              const h = getHealth(p.id);
+              const st = h?.runtime_status || (p.enabled ? 'ACTIVE' : 'DISABLED');
+              const Icon = STATUS_ICON[st];
+              return (
+                <div key={p.id} className={cn("rounded-3xl border-2 bg-card overflow-hidden transition-all", STATUS_BG[st])}>
+                  <div className="p-5 flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center", STATUS_BG[st])}>
+                        <Icon className={cn("w-5 h-5", STATUS_CLR[st])} />
+                      </div>
+                      <div>
+                        <h3 className="font-bold">{p.name}</h3>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <span className="text-xs text-muted-foreground">Priority {p.priority}</span>
+                          <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold border uppercase tracking-wider", STATUS_BG[st], STATUS_CLR[st])}>
+                            {STATUS_LABEL[st]}
+                          </span>
+                          {h?.latency_ms != null && (
+                            <span className="text-xs text-muted-foreground flex items-center gap-1"><Clock className="w-3 h-3" />{h.latency_ms}ms</span>
+                          )}
+                        </div>
+                        {h?.error_message && <p className="text-xs text-red-500 mt-1">{h.error_message}</p>}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" className="rounded-xl" onClick={() => validateProvider(p.id)} disabled={validating === p.id}>
+                        {validating === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                      </Button>
+                      <Button variant={p.enabled ? 'default' : 'outline'} size="sm" className="rounded-xl" onClick={() => toggleProvider(p.id, !p.enabled)} disabled={saving}>
+                        {p.enabled ? 'On' : 'Off'}
+                      </Button>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+              );
+            })}
+          </div>
+        )}
 
-      {/* Secrets Tab */}
-      {activeTab === 'secrets' && (
-        <SecretList />
-      )}
+        {/* Tab: Providers */}
+        {activeTab === 'providers' && (
+          <div className="space-y-4">
+            {providers.map(provider => (
+              <div key={provider.id} className="rounded-3xl border border-border bg-card overflow-hidden">
+                <button onClick={() => setExpandedProvider(expandedProvider === provider.id ? null : provider.id)}
+                  className="w-full p-5 flex items-center justify-between hover:bg-muted/50 transition-colors text-left">
+                  <div className="flex items-center space-x-4">
+                    <Server className="w-5 h-5 text-muted-foreground" />
+                    <div>
+                      <h3 className="font-bold">{provider.name}</h3>
+                      <p className="text-xs text-muted-foreground mt-0.5">Priority {provider.priority} &middot; {models.filter(m => m.provider_id === provider.id).length} models</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {(() => { const h = getHealth(provider.id); return h ? (
+                      <span className={cn("text-[10px] px-2 py-0.5 rounded-full font-bold border uppercase", STATUS_BG[h.runtime_status], STATUS_CLR[h.runtime_status])}>{STATUS_LABEL[h.runtime_status]}</span>
+                    ) : null; })()}
+                    <Zap className={cn("w-4 h-4 transition-transform", expandedProvider === provider.id && "rotate-90")} />
+                  </div>
+                </button>
+                {expandedProvider === provider.id && (
+                  <div className="px-5 pb-5 border-t border-border">
+                    <div className="pt-4 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">API Key</span>
+                        <span className={cn("text-sm font-medium", provider.config?.api_key ? "text-emerald-500" : "text-red-500")}>
+                          {provider.config?.api_key ? "Configured" : "Not Set"}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-muted-foreground">Status</span>
+                        <span className="text-sm font-medium">{provider.enabled ? "Enabled" : "Disabled"}</span>
+                      </div>
+                      {getHealth(provider.id)?.error_message && (
+                        <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20">
+                          <p className="text-sm text-red-500">{getHealth(provider.id)?.error_message}</p>
+                        </div>
+                      )}
+                      <div className="pt-2">
+                        <p className="text-xs font-bold text-muted-foreground mb-2 uppercase tracking-wider">Models</p>
+                        <div className="flex flex-wrap gap-2">
+                          {models.filter(m => m.provider_id === provider.id).map(model => (
+                            <span key={model.id} className={cn("px-3 py-1 rounded-lg text-sm font-medium",
+                              model.is_primary ? "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" :
+                              model.is_fallback ? "bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300" :
+                              model.enabled ? "bg-muted" : "bg-muted text-muted-foreground"
+                            )}>
+                              {model.display_name}{model.is_primary ? ' ★' : model.is_fallback ? ' ⚡' : ''}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Tab: Routing */}
+        {activeTab === 'routing' && (
+          <div className="rounded-3xl border border-border bg-card p-6">
+            <h3 className="font-bold text-lg mb-4 flex items-center"><Zap className="w-5 h-5 mr-2 text-amber-500" />Failover Chain</h3>
+            <div className="space-y-0">
+              {sortedProviders.map((p, idx) => {
+                const h = getHealth(p.id);
+                const st = h?.runtime_status || (p.enabled ? 'ACTIVE' : 'DISABLED');
+                const isPrimary = models.some(m => m.provider_id === p.id && m.is_primary);
+                const isFallback = models.some(m => m.provider_id === p.id && m.is_fallback);
+                return (
+                  <div key={p.id}>
+                    <div className={cn("flex items-center p-4 rounded-2xl transition-all",
+                      st === 'ACTIVE' ? "bg-emerald-500/5 border border-emerald-500/10" :
+                      st === 'DISABLED' ? "bg-muted/50 opacity-60" : "bg-card border border-border"
+                    )}>
+                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shrink-0">{idx + 1}</div>
+                      <div className="ml-4 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold">{p.name}</span>
+                          {isPrimary && <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-500 font-bold border border-blue-500/20">PRIMARY</span>}
+                          {isFallback && <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 font-bold border border-amber-500/20">FALLBACK</span>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {st === 'ACTIVE' ? 'Serving traffic' : st === 'DISABLED' ? 'Skipped — disabled' : `Status: ${STATUS_LABEL[st]}`}
+                          {h?.latency_ms != null && ` · ${h.latency_ms}ms`}
+                        </p>
+                      </div>
+                      <div className={cn("w-3 h-3 rounded-full", st === 'ACTIVE' ? "bg-emerald-500" : st === 'DISABLED' ? "bg-slate-400" : "bg-amber-500")} />
+                    </div>
+                    {idx < sortedProviders.length - 1 && (
+                      <div className="flex justify-center py-1">
+                        <div className="w-px h-6 bg-border" />
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Usage */}
+        {activeTab === 'usage' && (
+          <div className="space-y-4">
+            {usageStats.length === 0 ? (
+              <div className="rounded-3xl border border-border bg-card p-12 text-center">
+                <BarChart3 className="w-12 h-12 text-muted-foreground/30 mx-auto mb-3" />
+                <p className="text-muted-foreground">No usage data yet</p>
+              </div>
+            ) : (
+              usageStats.map((stat, idx) => (
+                <div key={idx} className="rounded-3xl border border-border bg-card p-5">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <p className="font-bold">{stat.provider_id} <span className="text-muted-foreground">/</span> {stat.model_id}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{stat.total_requests} requests</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-lg">{stat.total_requests > 0 ? Math.round((stat.successful_requests / stat.total_requests) * 100) : 0}%</p>
+                      <p className="text-xs text-muted-foreground">success</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="rounded-xl bg-muted/50 p-3 text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Avg Latency</p>
+                      <p className="font-bold text-sm">{stat.total_requests > 0 ? Math.round(stat.total_latency_ms / stat.total_requests) : 0}ms</p>
+                    </div>
+                    <div className="rounded-xl bg-muted/50 p-3 text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Tokens</p>
+                      <p className="font-bold text-sm">{(stat.total_tokens_in + stat.total_tokens_out).toLocaleString()}</p>
+                    </div>
+                    <div className="rounded-xl bg-muted/50 p-3 text-center">
+                      <p className="text-xs text-muted-foreground mb-1">Failed</p>
+                      <p className="font-bold text-sm">{stat.failed_requests}</p>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        )}
+
+        {/* Tab: Secrets */}
+        {activeTab === 'secrets' && <SecretList />}
+      </div>
     </div>
   );
 }
