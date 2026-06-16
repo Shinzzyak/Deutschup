@@ -42,6 +42,7 @@ export default function DebugAuthOverlay() {
   // Only render on localhost (development)
   // This check cannot be optimized away by any build tool
   if (typeof window === 'undefined' || window.location.hostname !== 'localhost') return null;
+  if (profileData?.role !== 'admin') return null;
 
   return (
     <div className="fixed bottom-0 right-0 bg-black text-white p-4 text-xs z-50 max-w-sm max-h-96 overflow-y-auto">

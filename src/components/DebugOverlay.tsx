@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { Bug, X, ChevronDown, Trash2, RotateCcw } from 'lucide-react';
 import { getDebugLogs, clearDebugLogs, type DebugEntry } from '../stores/debugStore';
+import { useAuthStore } from '../stores/authStore';
 
 const TYPE_COLORS: Record<string, string> = {
   'window.error': '#ef4444',
@@ -24,6 +25,8 @@ export default function DebugOverlay() {
   const [tab, setTab] = useState<'all' | 'errors' | 'auth'>('all');
   const panelRef = useRef<HTMLDivElement>(null);
 
+  const { profileData } = useAuthStore();
+
   useEffect(() => {
     if (!open) return;
     const interval = setInterval(() => setLogs(getDebugLogs()), 1000);
@@ -38,6 +41,9 @@ export default function DebugOverlay() {
   });
 
   const errorCount = logs.filter(e => e.type.includes('error') || e.type === 'unhandledrejection').length;
+
+  // Only render for admin users
+  if (profileData?.role !== 'admin') return null;
 
   return (
     <>
