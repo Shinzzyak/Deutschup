@@ -39,9 +39,7 @@ export default function DebugAuthOverlay() {
     fetchRawProfile();
   }, [user?.id]);
 
-  // Only render on localhost (development)
-  // This check cannot be optimized away by any build tool
-  if (typeof window === 'undefined' || window.location.hostname !== 'localhost') return null;
+  // Admin-only: visible to admins in all environments, hidden from non-admins
   if (profileData?.role !== 'admin') return null;
 
   return (

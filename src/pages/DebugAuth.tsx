@@ -16,8 +16,7 @@ export default function DebugAuth() {
     return () => clearInterval(interval);
   }, []);
 
-  // Production guard: only render for admin users on localhost
-  if (typeof window === 'undefined' || window.location.hostname !== 'localhost') return null;
+  // Admin-only: visible to admins in all environments, hidden from non-admins
   if (profileData?.role !== 'admin') return null;
 
   const authEvents = logs.filter(e => e.type === 'auth');
