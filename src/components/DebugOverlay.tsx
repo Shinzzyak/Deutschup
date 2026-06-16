@@ -42,7 +42,8 @@ export default function DebugOverlay() {
 
   const errorCount = logs.filter(e => e.type.includes('error') || e.type === 'unhandledrejection').length;
 
-  // Only render for admin users
+  // Production guard: only render for admin users on localhost
+  if (typeof window === 'undefined' || window.location.hostname !== 'localhost') return null;
   if (profileData?.role !== 'admin') return null;
 
   return (
