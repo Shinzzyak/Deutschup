@@ -29,6 +29,7 @@ import QuickNoteWidget from './components/QuickNoteWidget';
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, loading, profileData } = useAuthStore();
+  console.log('[AUTH_WRAPPER] render:', { hasUser: !!user, loading, hasProfile: !!profileData?.full_name });
   const navigate = (window as any).__navigate || (() => {});
 
   if (loading) {
@@ -44,6 +45,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuthStore();
+  console.log('[LAYOUT] mount:', { hasUser: !!user, userId: user?.id?.substring(0, 8) });
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
@@ -165,6 +167,7 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  console.log('[ROUTE] AnimatedRoutes:', { pathname: location.pathname });
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
@@ -214,6 +217,7 @@ function PublicRoutes() {
 
 export default function App() {
   const { user, loading } = useAuthStore();
+  console.log('[ROUTE] App render:', { hasUser: !!user, loading, pathname: window.location.pathname });
 
   return (
     <ClerkProvider>

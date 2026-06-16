@@ -4,6 +4,29 @@ import App from './App.tsx';
 import './index.css';
 import { TooltipProvider } from './components/ui/tooltip';
 
+// === EVIDENCE MODE — always on, captures exact failure ===
+// Global error handlers — catch white-screen crashes
+window.addEventListener('error', (e) => {
+  console.error('[CRASH] window.error:', {
+    msg: e.message,
+    file: e.filename?.replace('https://deutschup.sintec.my.id', ''),
+    line: e.lineno,
+    col: e.colno,
+    stack: e.error?.stack?.substring(0, 500)
+  });
+});
+
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('[CRASH] unhandledrejection:', {
+    msg: e.reason?.message || String(e.reason)?.substring(0, 300),
+    stack: e.reason?.stack?.substring(0, 500)
+  });
+});
+
+console.log('[APP_START] timestamp:', new Date().toISOString());
+console.log('[APP_START] URL:', window.location.href);
+console.log('[APP_START] hostname:', window.location.hostname);
+
 // === DEBUG MODE ===
 // Set to true to enable debug overlay and build badge
 const DEBUG_MODE = false;
@@ -78,3 +101,5 @@ createRoot(document.getElementById('root')!).render(
     </TooltipProvider>
   </StrictMode>,
 );
+
+console.log('[APP_START] React root mounted');

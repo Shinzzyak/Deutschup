@@ -16,6 +16,7 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { user, profile } = useAuthStore();
+  console.log('[CHAT_WIDGET] mount:', { hasUser: !!user, hasProfile: !!profile, profileKeys: profile ? Object.keys(profile) : 'N/A' });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });

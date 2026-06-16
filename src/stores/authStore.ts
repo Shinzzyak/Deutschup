@@ -111,6 +111,7 @@ function parseProfileData(data: any): { tierData: TierData; profileData: Profile
 export const useAuthStore = create<AuthState>((set, get) => {
   const updateAuthState = async (session: any, isInitial = false) => {
     const user = session?.user ?? null;
+    console.log('[AUTH_STATE] updateAuthState called:', { isInitial, hasUser: !!user, userId: user?.id?.substring(0, 8), email: user?.email });
     let tierData: TierData = { tier: 'free' };
     let profileData: ProfileData = {};
 
@@ -178,11 +179,13 @@ export const useAuthStore = create<AuthState>((set, get) => {
     }
 
     cacheSession(session);
+    console.log('[AUTH_STATE] final set:', { hasUser: !!user, userId: user?.id?.substring(0, 8), loading: false });
     set({ user, session, tierData, profileData, loading: false, profileLoaded: true });
   };
 
   // BOOT: instant restore from cache
   const cachedUser = loadCachedUser();
+  console.log('[AUTH_STATE] boot:', { hasCachedUser: !!cachedUser, cachedUserId: cachedUser?.id?.substring(0, 8) });
   if (cachedUser) {
     // P1: Start with cached profile if available
     const cached = loadCachedProfile(cachedUser.id);
@@ -212,6 +215,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
   }, 5000);
 
   supabase.auth.onAuthStateChange(async (event, session) => {
+    console.log('[AUTH_STATE] onAuthStateChange:', { event, hasSession: !!session, hasUser: !!session?.user });
     await updateAuthState(session, true);
   });
 
@@ -224,7 +228,9 @@ export const useAuthStore = create<AuthState>((set, get) => {
     profileLoaded: !!cachedUser && !!loadCachedProfile(cachedUser.id),
     loginWithGoogle: async () => { 
       const currentUser = get().user;
-      if (shouldUseClerk(currentUser?.email)) {
+      const useClerk = shouldUseClerk(currentUser?.email);
+      console.log('[AUTH_STATE] loginWithGoogle:', { hasCurrentUser: !!currentUser, useClerk });
+      if (useClerk) {
         console.log('[AUTH] Canary user detected — Clerk login available (fallback: Supabase)');
       }
       await supabase.auth.signInWithOAuth({ provider: 'google' }); 
