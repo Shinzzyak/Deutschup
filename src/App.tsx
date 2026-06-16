@@ -47,7 +47,7 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
 }
 
 function Layout({ children }: { children: React.ReactNode }) {
-  const { user, logout } = useAuthStore();
+  const { user, logout, profileData } = useAuthStore();
   console.log('[LAYOUT] mount:', { hasUser: !!user, userId: user?.id?.substring(0, 8) });
   const location = useLocation();
   const [searchQuery, setSearchQuery] = useState('');
