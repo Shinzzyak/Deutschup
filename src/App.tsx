@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router';
-import { useEffect, Suspense, lazy, useState } from 'react';
+import { useEffect, Suspense, lazy, useState, useRef } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { useProgressStore } from './stores/progressStore';
+import { captureRoute } from './stores/debugStore';
 import { BookOpen, BrainCircuit, Search, LogOut, Loader2, Trophy, Flame, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { AnimatePresence, motion } from 'motion/react';
@@ -23,8 +24,10 @@ const Pricing = lazy(() => import('./pages/Pricing'));
 const Admin = lazy(() => import('./pages/Admin'));
 const ClerkTest = lazy(() => import('./pages/ClerkTest'));
 const CanaryDashboard = lazy(() => import('./pages/CanaryDashboard'));
+const DebugAuth = lazy(() => import('./pages/DebugAuth'));
 import ChatWidget from './components/ChatWidget';
 import DebugAuthOverlay from "./components/DebugAuthOverlay";
+import DebugOverlay from './components/DebugOverlay';
 import QuickNoteWidget from './components/QuickNoteWidget';
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
@@ -167,6 +170,15 @@ function Layout({ children }: { children: React.ReactNode }) {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const prevRoute = useRef(location.pathname);
+  
+  useEffect(() => {
+    if (prevRoute.current !== location.pathname) {
+      captureRoute(prevRoute.current, location.pathname);
+      prevRoute.current = location.pathname;
+    }
+  }, [location.pathname]);
+
   console.log('[ROUTE] AnimatedRoutes:', { pathname: location.pathname });
   return (
     <AnimatePresence mode="wait">
@@ -185,6 +197,7 @@ function AnimatedRoutes() {
         <Route path="/admin/ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
         <Route path="/admin/canary" element={<PageWrapper><CanaryDashboard /></PageWrapper>} />
         <Route path="/clerk-test" element={<PageWrapper><ClerkTest /></PageWrapper>} />
+        <Route path="/debug-auth" element={<PageWrapper><DebugAuth /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );
@@ -227,6 +240,7 @@ export default function App() {
             <Layout>
               <AnimatedRoutes />
               <ChatWidget />
+              <DebugOverlay />
               <DebugAuthOverlay />
               <QuickNoteWidget />
             </Layout>

@@ -1,6 +1,8 @@
 import {StrictMode} from 'react';
 import {createRoot} from 'react-dom/client';
 import App from './App.tsx';
+import ErrorBoundary from './components/ErrorBoundary';
+import { initDebugCapture } from './stores/debugStore';
 import './index.css';
 import { TooltipProvider } from './components/ui/tooltip';
 
@@ -26,6 +28,9 @@ window.addEventListener('unhandledrejection', (e) => {
 console.log('[APP_START] timestamp:', new Date().toISOString());
 console.log('[APP_START] URL:', window.location.href);
 console.log('[APP_START] hostname:', window.location.hostname);
+
+// Initialize debug capture for mobile debugging
+initDebugCapture();
 
 // === DEBUG MODE ===
 // Set to true to enable debug overlay and build badge
@@ -96,9 +101,11 @@ if (DEBUG_MODE) {
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <TooltipProvider>
-      <App />
-    </TooltipProvider>
+    <ErrorBoundary>
+      <TooltipProvider>
+        <App />
+      </TooltipProvider>
+    </ErrorBoundary>
   </StrictMode>,
 );
 

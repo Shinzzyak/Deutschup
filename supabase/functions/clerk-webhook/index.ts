@@ -49,22 +49,21 @@ interface WebhookAuditEvent {
  * Returns true if signature is valid.
  */
 async function verifySvixSignature(
-  payload: string,
-  headers: Record<string, string>,
+  req: Request,
   secret: string
-): Promise<{ valid: boolean; error?: string }> {
-  const svixId = headers["svix-id"];
-  const svixTimestamp = headers["svix-timestamp"];
-  const svixSignature = headers["svix-signature"];
+): Promise<{ valid: boolean; error?: string; event?: any }> {
+  const svixId = req.headers.get("svix-id");
+  const svixTimestamp = req.headers.get("svix-timestamp");
+  const svixSignature = req.headers.get("svix-signature");
 
   if (!svixId || !svixTimestamp || !svixSignature) {
     return { valid: false, error: "Missing Svix headers" };
   }
 
   try {
-    // Use Clerk's official verification
-    const verified = await verifyWebhook(payload, headers, secret);
-    return { valid: verified };
+    // Use Clerk's official verification — pass raw Request object
+    const evt = await verifyWebhook(req, { signingSecret: secret });
+    return { valid: true, event: evt };
   } catch (error) {
     return { valid: false, error: `Verification failed: ${error}` };
   }
@@ -353,17 +352,14 @@ serve(async (req) => {
   const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
   try {
-    const payload = await req.text();
-    const headers = Object.fromEntries(req.headers.entries());
-
     // ── Step 1: Verify Svix Signature ───────────────────────────────────────
-    const signatureResult = await verifySvixSignature(payload, headers, CLERK_WEBHOOK_SECRET);
+    const signatureResult = await verifySvixSignature(req, CLERK_WEBHOOK_SECRET);
 
     if (!signatureResult.valid) {
       console.error("Webhook signature invalid:", signatureResult.error);
 
       const auditEvent: WebhookAuditEvent = {
-        event_id: headers["svix-id"] || "unknown",
+        event_id: req.headers.get("svix-id") || "unknown",
         event_type: "unknown",
         clerk_user_id: null,
         internal_user_id: null,
@@ -380,13 +376,13 @@ serve(async (req) => {
     }
 
     // ── Step 2: Check Timestamp Freshness ───────────────────────────────────
-    const timestampResult = checkTimestampFreshness(headers["svix-timestamp"]);
+    const timestampResult = checkTimestampFreshness(req.headers.get("svix-timestamp")!);
 
     if (!timestampResult.fresh) {
       console.error("Webhook timestamp stale:", timestampResult.error);
 
       const auditEvent: WebhookAuditEvent = {
-        event_id: headers["svix-id"],
+        event_id: req.headers.get("svix-id"),
         event_type: "unknown",
         clerk_user_id: null,
         internal_user_id: null,
@@ -403,14 +399,10 @@ serve(async (req) => {
     }
 
     // ── Step 3: Parse Event ─────────────────────────────────────────────────
-    let event: { type: string; data: ClerkUser; id: string };
-    try {
-      event = JSON.parse(payload);
-    } catch {
-      return new Response(JSON.stringify({ error: "Invalid JSON" }), { status: 400 });
-    }
+    // If verification succeeded, use the verified event from Clerk
+    const event = signatureResult.event as { type: string; data: ClerkUser; id: string };
 
-    const eventId = event.id || headers["svix-id"];
+    const eventId = event.id || req.headers.get("svix-id");
     const clerkUserId = event.data?.id || null;
 
     // ── Step 4: Deduplication ───────────────────────────────────────────────
@@ -483,7 +475,7 @@ serve(async (req) => {
     console.error("Webhook error:", error);
 
     const auditEvent: WebhookAuditEvent = {
-      event_id: headers?.["svix-id"] || "unknown",
+      event_id: req.headers.get("svix-id") || "unknown",
       event_type: "unknown",
       clerk_user_id: null,
       internal_user_id: null,

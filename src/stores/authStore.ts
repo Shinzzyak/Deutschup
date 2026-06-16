@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
 import { shouldUseClerk } from '../lib/clerk/canary';
+import { captureAuth } from './debugStore';
 
 export interface TierData {
   tier: 'free' | 'pro';
@@ -180,6 +181,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
 
     cacheSession(session);
     console.log('[AUTH_STATE] final set:', { hasUser: !!user, userId: user?.id?.substring(0, 8), loading: false });
+    captureAuth(user ? 'SIGNED_IN' : 'SIGNED_OUT', user?.id?.substring(0, 8));
     set({ user, session, tierData, profileData, loading: false, profileLoaded: true });
   };
 
