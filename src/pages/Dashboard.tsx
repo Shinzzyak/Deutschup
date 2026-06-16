@@ -203,7 +203,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-6 md:space-y-8">
         {errorMsg && (
           <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-2xl p-4 font-medium flex items-center justify-between shadow-sm">
             <span>{errorMsg}</span>
@@ -212,7 +212,7 @@ export default function Dashboard() {
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-6 md:p-8 text-white shadow-xl">
+        <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-6 md:p-8 text-white shadow-xl">
           <div className="absolute inset-0 opacity-10">
             <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-white/20 blur-3xl" />
             <div className="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
@@ -285,33 +285,33 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 p-4 md:p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 p-4 md:p-5 flex flex-col">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-amber-500/10 blur-xl" />
-              <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <Zap className="w-6 h-6 text-amber-500 mb-2" />
                 <span className="text-2xl md:text-3xl font-black text-amber-500">{xp}</span>
                 <span className="text-[10px] md:text-xs font-bold text-amber-600/80 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 p-4 md:p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 p-4 md:p-5 flex flex-col">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-blue-500/10 blur-xl" />
-              <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <BookOpen className="w-6 h-6 text-blue-500 mb-2" />
                 <span className="text-2xl md:text-3xl font-black text-blue-500">{learningStats.totalVocab}</span>
                 <span className="text-[10px] md:text-xs font-bold text-blue-600/80 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 p-4 md:p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 p-4 md:p-5 flex flex-col">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-green-500/10 blur-xl" />
-              <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
                 <span className="text-2xl md:text-3xl font-black text-green-500">{completedLessons.length}</span>
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 p-4 md:p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 p-4 md:p-5 flex flex-col">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-purple-500/10 blur-xl" />
-              <div className="relative z-10 flex flex-col items-center text-center">
+              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <TrendingUp className="w-6 h-6 text-purple-500 mb-2" />
                 <span className="text-2xl md:text-3xl font-black text-purple-500">{overallProgress}%</span>
                 <span className="text-[10px] md:text-xs font-bold text-purple-600/80 uppercase tracking-wider mt-1">Progres</span>
@@ -323,7 +323,7 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && (
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-700 p-6 md:p-8 text-white shadow-xl shadow-blue-500/20">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 p-6 md:p-8 text-white shadow-xl shadow-purple-500/20">
             <div className="absolute inset-0 opacity-20">
               <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white/30 blur-3xl" />
               <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
@@ -352,7 +352,7 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-orange-500/10 border border-orange-500/20 p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-orange-500/10 border border-orange-500/20 p-5 md:p-6">
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-orange-500/10 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -384,7 +384,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-indigo-500/10 border border-indigo-500/20 p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-indigo-500/10 border border-indigo-500/20 p-5 md:p-6">
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-indigo-500/10 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -417,14 +417,14 @@ export default function Dashboard() {
 
         {/* SECTION E: ACHIEVEMENTS */}
         {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-amber-500/5 border border-amber-500/20 p-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-amber-500/5 border border-amber-500/20 p-5 md:p-6">
             <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-amber-500/10 blur-2xl" />
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-4">
                 <Award className="w-6 h-6 text-amber-500" />
                 <h3 className="text-lg font-bold text-foreground">Pencapaian</h3>
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {achievements.map(achievement => {
                   const Icon = achievement.icon;
                   return (
@@ -446,7 +446,7 @@ export default function Dashboard() {
 
         {/* SECTION F: LEVELS & LESSONS */}
         {!loading && (
-          <div className="space-y-16">
+          <div className="space-y-12 md:space-y-16">
             {levels.map((lvl, index) => {
               const tierLocked = !isUserPro(tierData) && lvl.id !== 'A1';
               const isLevelUnlocked = index <= userLevelIndex && !tierLocked;
@@ -498,9 +498,9 @@ export default function Dashboard() {
                           to={isUnlocked ? `/lesson/${lesson.id}` : ''}
                           onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
                           className={cn(
-                            "flex flex-col p-6 rounded-3xl border-2 transition-all duration-200 relative overflow-hidden",
+                            "flex flex-col p-5 rounded-2xl border transition-all duration-200 relative overflow-hidden",
                             isCompleted ? "bg-muted border-border hover:border-border" :
-                            isUnlocked ? "bg-card border-blue-500 shadow-lg hover:-translate-y-1" :
+                            isUnlocked ? "bg-card border-blue-500/50 shadow-md hover:-translate-y-1" :
                             "bg-muted border-border opacity-60 cursor-not-allowed"
                           )}
                           aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
