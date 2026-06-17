@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
-import { useAuthStore } from '../stores/authStore';
-import { Send, Bot, User, Loader2 } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import { Send, Bot, User, Loader2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuthStore } from '../stores/authStore';
 import { supabase } from '../lib/supabase';
 
 interface Message {
@@ -15,8 +16,8 @@ export default function ChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const { user, profile } = useAuthStore();
-  console.log('[CHAT_WIDGET] mount:', { hasUser: !!user, hasProfile: !!profile, profileKeys: profile ? Object.keys(profile) : 'N/A' });
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -25,6 +26,23 @@ export default function ChatWidget() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  // ESC to close
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setIsOpen(false);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [isOpen]);
+
+  // Click outside to close
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+      setIsOpen(false);
+    }
+  }, []);
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
@@ -38,7 +56,7 @@ export default function ChatWidget() {
       const token = (await supabase.auth.getSession()).data.session?.access_token;
       const resp = await fetch('/api/ai?action=chat', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
@@ -63,7 +81,8 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed right-4 z-50" style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 68px)' }}>
+    <>
+      {/* Floating button — unchanged */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
@@ -71,22 +90,46 @@ export default function ChatWidget() {
         <Bot className="w-6 h-6 text-white" />
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: 20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute right-0 w-[calc(100vw-2rem)] max-w-96 h-[500px] bg-card rounded-lg shadow-xl border border-border flex flex-col overflow-hidden"
+      {/* Drawer — portal to body */}
+      {createPortal(
+        <>
+          {/* Backdrop */}
+          <div
+            className={`fixed inset-0 z-[99998] bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${
+              isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            onClick={handleBackdropClick}
+            aria-hidden="true"
+          />
+
+          {/* Drawer panel */}
+          <div
+            ref={panelRef}
+            className={`fixed top-0 right-0 bottom-0 z-[99999] bg-white dark:bg-slate-900 shadow-2xl flex flex-col transition-transform duration-200 ease-out ${
+              isOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
+            style={{
+              width: 'min(95vw, 480px)',
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+            }}
           >
-            <div className="bg-blue-600 text-white p-4 flex items-center gap-3">
+            {/* Header */}
+            <div className="bg-blue-600 text-white p-4 flex items-center gap-3 shrink-0">
               <Bot className="w-6 h-6" />
-              <div>
+              <div className="flex-1">
                 <h3 className="font-semibold">Herr Deutsch</h3>
                 <p className="text-xs text-blue-100">Tutor Bahasa Jerman AI</p>
               </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1.5 text-blue-100 hover:text-white transition-colors rounded-lg hover:bg-blue-700"
+                aria-label="Tutup chat"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
 
+            {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {messages.length === 0 && (
                 <div className="text-center text-gray-400 mt-8">
@@ -98,9 +141,9 @@ export default function ChatWidget() {
               {messages.map((msg, i) => (
                 <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                   <div className={`max-w-[80%] p-3 rounded-lg ${
-                    msg.role === 'user' 
-                      ? 'bg-blue-600 text-white rounded-br-none' 
-                      : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                    msg.role === 'user'
+                      ? 'bg-blue-600 text-white rounded-br-none'
+                      : 'bg-gray-100 dark:bg-slate-800 text-gray-800 dark:text-gray-200 rounded-bl-none'
                   }`}>
                     <p className="whitespace-pre-wrap">{msg.text}</p>
                   </div>
@@ -108,7 +151,7 @@ export default function ChatWidget() {
               ))}
               {isLoading && (
                 <div className="flex justify-start">
-                  <div className="bg-gray-100 p-3 rounded-lg rounded-bl-none">
+                  <div className="bg-gray-100 dark:bg-slate-800 p-3 rounded-lg rounded-bl-none">
                     <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
                   </div>
                 </div>
@@ -116,15 +159,16 @@ export default function ChatWidget() {
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="p-4 border-t border-border">
+            {/* Input */}
+            <div className="p-4 border-t border-gray-200 dark:border-slate-700 shrink-0">
               <div className="flex gap-2">
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
+                  onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
                   placeholder="Ketik pesan..."
-                  className="flex-1 px-4 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="flex-1 px-4 py-2 border border-gray-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-slate-800 dark:text-white"
                   disabled={isLoading}
                 />
                 <button
@@ -136,9 +180,10 @@ export default function ChatWidget() {
                 </button>
               </div>
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+          </div>
+        </>,
+        document.body
+      )}
+    </>
   );
 }
