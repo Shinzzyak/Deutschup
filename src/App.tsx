@@ -3,10 +3,11 @@ import { useEffect, Suspense, lazy, useState, useRef } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { useProgressStore } from './stores/progressStore';
 import { captureRoute } from './stores/debugStore';
-import { BookOpen, BrainCircuit, Search, LogOut, Loader2, Trophy, Flame, Sparkles, CreditCard, ShieldCheck } from 'lucide-react';
+import { BookOpen, BrainCircuit, Search, LogOut, Loader2, Trophy, Flame, Sparkles, CreditCard, ShieldCheck, Users, Check, Zap, Star, ArrowRight, GraduationCap, MessageSquare, Mic, TrendingUp, Target, ChevronRight, Globe, BookMarked, BarChart3 } from 'lucide-react';
 import { Button } from './components/ui/button';
 import { AnimatePresence, motion } from 'motion/react';
 import { ClerkProvider } from './lib/clerk';
+import LandingPage from './components/LandingPage';
 
 // Lazy-loaded pages
 const Dashboard = lazy(() => import('./pages/Dashboard'));
@@ -133,33 +134,37 @@ function Layout({ children }: { children: React.ReactNode }) {
         </div>
       )}
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 pb-24 md:pb-6" id="main-content">
         {children}
       </main>
 
       {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 z-50 safe-area-pb" aria-label="Navigasi mobile">
-        <div className="flex justify-around py-2">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border-t border-slate-200 dark:border-slate-700 z-50" style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }} aria-label="Navigasi mobile">
+        <div className="flex justify-around py-1.5">
           {navigation.map((item) => {
             const isActive = location.pathname === item.href ||
               (item.href !== '/' && location.pathname.startsWith(item.href.split('?')[0]));
             return (
               <Link key={item.name} to={item.href}
-                className={`flex flex-col items-center px-3 py-1 ${
-                  isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500 dark:text-slate-400'
+                className={`flex flex-col items-center px-2 py-1 rounded-xl transition-all ${
+                  isActive
+                    ? 'bg-blue-50 dark:bg-blue-950 text-blue-600 dark:text-blue-400'
+                    : 'text-slate-500 dark:text-slate-400'
                 }`} aria-label={item.name}>
-                <item.icon className="w-5 h-5" />
-                <span className="text-[10px] mt-0.5 font-medium">{item.name}</span>
+                <item.icon className={`w-5 h-5 ${isActive ? 'stroke-[2.5]' : 'stroke-2'}`} />
+                <span className={`text-[10px] mt-0.5 ${isActive ? 'font-bold' : 'font-medium'}`}>{item.name}</span>
               </Link>
             );
           })}
           {profileData?.role === 'admin' && (
             <Link to="/admin"
-              className={`flex flex-col items-center px-3 py-1 ${
-                location.pathname.startsWith('/admin') ? 'text-red-500' : 'text-slate-500 dark:text-slate-400'
+              className={`flex flex-col items-center px-2 py-1 rounded-xl transition-all ${
+                location.pathname.startsWith('/admin')
+                  ? 'bg-red-50 dark:bg-red-950 text-red-500'
+                  : 'text-slate-500 dark:text-slate-400'
               }`} aria-label="Admin">
-              <ShieldCheck className="w-5 h-5" />
-              <span className="text-[10px] mt-0.5 font-medium">Admin</span>
+              <ShieldCheck className={`w-5 h-5 ${location.pathname.startsWith('/admin') ? 'stroke-[2.5]' : 'stroke-2'}`} />
+              <span className={`text-[10px] mt-0.5 ${location.pathname.startsWith('/admin') ? 'font-bold' : 'font-medium'}`}>Admin</span>
             </Link>
           )}
         </div>
@@ -253,89 +258,3 @@ export default function App() {
   );
 }
 
-// Landing page for unauthenticated users
-function LandingPage() {
-  const { loginWithGoogle } = useAuthStore();
-  
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Header */}
-      <header className="w-full bg-white/80 backdrop-blur-md border-b border-slate-200 sticky top-0 z-50">
-        <nav className="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between" aria-label="Navigasi utama">
-          <div className="flex items-center space-x-2">
-            <div className="flex space-x-0.5">
-              <div className="w-3 h-5 bg-black rounded-sm"></div>
-              <div className="w-3 h-5 bg-red-600 rounded-sm"></div>
-              <div className="w-3 h-5 bg-yellow-400 rounded-sm"></div>
-            </div>
-            <span className="font-bold tracking-tight text-xl text-slate-900">DeutschUp</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <a href="/login" className="text-slate-600 hover:text-slate-900 font-medium transition-colors" aria-label="Masuk ke akun Anda">Masuk</a>
-            <Button onClick={loginWithGoogle} className="bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl">
-              Daftar Gratis
-            </Button>
-          </div>
-        </nav>
-      </header>
-
-      {/* Hero Section */}
-      <section className="max-w-6xl mx-auto px-4 py-20 text-center">
-        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-6">
-          Belajar Bahasa Jerman<br />
-          <span className="text-red-600">Lebih Cepat</span> dengan AI
-        </h1>
-        <p className="text-xl text-slate-600 mb-10 max-w-2xl mx-auto">
-          DeutschUp membantu kamu menguasai bahasa Jerman dari nol hingga mahir dengan tutor AI, latihan interaktif, dan simulasi ujian realistis.
-        </p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Button onClick={loginWithGoogle} className="bg-red-600 hover:bg-red-700 text-white text-lg px-8 py-6 rounded-2xl font-bold shadow-lg">
-            Mulai Belajar
-          </Button>
-          <a href="#fitur" className="text-slate-600 hover:text-slate-900 font-medium text-lg underline underline-offset-4" aria-label="Lihat materi pembelajaran">
-            Lihat Materi
-          </a>
-        </div>
-      </section>
-
-      {/* Features */}
-      <section id="fitur" className="max-w-6xl mx-auto px-4 py-20">
-        <h2 className="text-3xl font-bold text-center text-slate-900 mb-12">Kenapa DeutschUp?</h2>
-        <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl" role="img" aria-label="Robot AI">🤖</span>
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">Tutor AI</h3>
-            <p className="text-slate-600">Bertanya apa saja tentang bahasa Jerman, dapatkan penjelasan instan dari AI tutor kami.</p>
-          </div>
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl" role="img" aria-label="Koreksi">📝</span>
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">Koreksi Pintar</h3>
-            <p className="text-slate-600">Kirim kalimat dalam bahasa Jerman, dapatkan koreksi instan dengan penjelasan grammar.</p>
-          </div>
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 text-center">
-            <div className="w-16 h-16 bg-purple-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-              <span className="text-3xl" role="img" aria-label="Ujian">🎓</span>
-            </div>
-            <h3 className="text-xl font-bold text-slate-900 mb-3">Simulasi Ujian</h3>
-            <p className="text-slate-600">Latihan ujian seperti TestDaF, DSH, atau Goethe dengan feedback detail.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
-      <section className="max-w-6xl mx-auto px-4 py-20 text-center">
-        <div className="bg-slate-900 rounded-3xl p-12 text-white">
-          <h2 className="text-3xl font-bold mb-4">Siap Mulai?</h2>
-          <p className="text-slate-300 mb-8 max-w-xl mx-auto">Bergabung dengan ribuan pelajar yang sudah meningkatkan kemampuan bahasa Jerman mereka.</p>
-          <Button onClick={loginWithGoogle} className="bg-white text-slate-900 hover:bg-slate-100 text-lg px-8 py-6 rounded-2xl font-bold">
-            Daftar Sekarang
-          </Button>
-        </div>
-      </section>
-    </div>
-  );
-}
