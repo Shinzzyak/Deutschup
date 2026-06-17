@@ -63,7 +63,7 @@ export default function ChatWidget() {
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed right-4 z-50" style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 68px)' }}>
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
@@ -77,7 +77,7 @@ export default function ChatWidget() {
             initial={{ opacity: 0, y: 20, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="absolute bottom-20 right-0 w-[calc(100vw-2rem)] max-w-96 h-[500px] bg-card rounded-lg shadow-xl border border-border flex flex-col overflow-hidden"
+            className="absolute right-0 w-[calc(100vw-2rem)] max-w-96 h-[500px] bg-card rounded-lg shadow-xl border border-border flex flex-col overflow-hidden"
           >
             <div className="bg-blue-600 text-white p-4 flex items-center gap-3">
               <Bot className="w-6 h-6" />

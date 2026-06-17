@@ -34,16 +34,17 @@ export default function QuickNoteWidget() {
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
-          "fixed bottom-28 right-6 w-14 h-14 rounded-full bg-yellow-400 text-yellow-900 flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-40 border-4 border-background",
+          "fixed right-6 w-14 h-14 rounded-full bg-yellow-400 text-yellow-900 flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-40 border-4 border-background",
           isOpen && "hidden"
         )}
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 144px)' }}
         aria-label={isOpen ? "Tutup quick note" : "Buka quick note"}
       >
         <Edit3 className="w-6 h-6" />
       </button>
 
       <div className={cn(
-        "fixed bottom-28 right-6 w-[min(300px,calc(100vw-2rem))] h-[min(300px,calc(100vh-10rem))] bg-yellow-100 rounded-tr-3xl rounded-tl-3xl rounded-bl-3xl shadow-xl flex flex-col z-50 transition-all duration-300 transform",
+        "fixed right-6 w-[min(300px,calc(100vw-2rem))] h-[min(300px,calc(100vh-10rem))] bg-yellow-100 rounded-tr-3xl rounded-tl-3xl rounded-bl-3xl shadow-xl flex flex-col z-50 transition-all duration-300 transform",
         isOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0 pointer-events-none"
       )}>
         <div className="bg-yellow-200 p-3 rounded-t-3xl flex justify-between items-center text-yellow-900 font-bold border-b border-yellow-300">

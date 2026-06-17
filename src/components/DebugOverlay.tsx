@@ -47,16 +47,16 @@ export default function DebugOverlay() {
 
   return (
     <>
-      {/* Floating toggle button */}
+      {/* Floating toggle button — admin only, visually detached from user actions */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-20 right-3 z-[99998] w-10 h-10 rounded-full bg-slate-800/90 hover:bg-slate-700 text-slate-400 hover:text-white shadow-md flex items-center justify-center transition-all duration-200"
+        className="fixed right-3 z-[99998] w-9 h-9 rounded-full bg-slate-800/70 hover:bg-slate-700 text-slate-500 hover:text-slate-300 shadow-sm flex items-center justify-center transition-all duration-200 opacity-60 hover:opacity-100"
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)', display: open ? 'none' : undefined }}
         aria-label="Toggle debug overlay"
-        style={{ display: open ? 'none' : undefined }}
       >
-        <Bug className="w-4 h-4" />
+        <Bug className="w-3.5 h-3.5" />
         {errorCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-[9px] font-bold flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-500 text-[8px] font-bold flex items-center justify-center">
             {errorCount}
           </span>
         )}
