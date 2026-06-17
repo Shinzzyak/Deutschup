@@ -82,13 +82,15 @@ export default function ChatWidget() {
 
   return (
     <>
-      {/* Floating button — unchanged */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
-      >
-        <Bot className="w-6 h-6 text-white" />
-      </button>
+      {/* Floating button — fixed positioned */}
+      <div className="fixed right-4 z-50" style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 68px)' }}>
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+        >
+          <Bot className="w-6 h-6 text-white" />
+        </button>
+      </div>
 
       {/* Drawer — portal to body */}
       {createPortal(
