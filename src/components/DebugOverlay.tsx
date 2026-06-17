@@ -50,7 +50,7 @@ export default function DebugOverlay() {
       {/* Floating toggle button */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed bottom-20 right-3 z-[99998] w-10 h-10 rounded-full bg-slate-900 text-white shadow-lg flex items-center justify-center border border-slate-700"
+        className="fixed bottom-20 right-3 z-[99998] w-10 h-10 rounded-full bg-slate-800/90 hover:bg-slate-700 text-slate-400 hover:text-white shadow-md flex items-center justify-center transition-all duration-200"
         aria-label="Toggle debug overlay"
         style={{ display: open ? 'none' : undefined }}
       >

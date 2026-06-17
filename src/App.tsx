@@ -27,7 +27,6 @@ const ClerkTest = lazy(() => import('./pages/ClerkTest'));
 const CanaryDashboard = lazy(() => import('./pages/CanaryDashboard'));
 const DebugAuth = lazy(() => import('./pages/DebugAuth'));
 import ChatWidget from './components/ChatWidget';
-import DebugAuthOverlay from "./components/DebugAuthOverlay";
 import DebugOverlay from './components/DebugOverlay';
 import QuickNoteWidget from './components/QuickNoteWidget';
 
@@ -246,7 +245,7 @@ export default function App() {
               <AnimatedRoutes />
               <ChatWidget />
               <DebugOverlay />
-              <DebugAuthOverlay />
+
               <QuickNoteWidget />
             </Layout>
           </AuthWrapper>
