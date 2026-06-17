@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from 'react';
-import { Bug, X, ChevronDown, Trash2, RotateCcw } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
+import { Bug, X, Trash2 } from 'lucide-react';
 import { getDebugLogs, clearDebugLogs, type DebugEntry } from '../stores/debugStore';
 import { useAuthStore } from '../stores/authStore';
 
@@ -42,7 +43,24 @@ export default function DebugOverlay() {
 
   const errorCount = logs.filter(e => e.type.includes('error') || e.type === 'unhandledrejection').length;
 
-  // Admin-only: visible to admins in all environments, hidden from non-admins
+  // ESC to close
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [open]);
+
+  // Click outside to close
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
+      setOpen(false);
+    }
+  }, []);
+
+  // Admin-only
   if (profileData?.role !== 'admin') return null;
 
   return (
@@ -51,7 +69,7 @@ export default function DebugOverlay() {
       <button
         onClick={() => setOpen(!open)}
         className="fixed right-3 z-[99998] w-9 h-9 rounded-full bg-slate-800/70 hover:bg-slate-700 text-slate-500 hover:text-slate-300 shadow-sm flex items-center justify-center transition-all duration-200 opacity-60 hover:opacity-100"
-        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)', display: open ? 'none' : undefined }}
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)' }}
         aria-label="Toggle debug overlay"
       >
         <Bug className="w-3.5 h-3.5" />
@@ -62,92 +80,111 @@ export default function DebugOverlay() {
         )}
       </button>
 
-      {/* Debug panel */}
-      {open && (
-        <div
-          ref={panelRef}
-          className="fixed bottom-0 right-0 left-0 md:left-auto md:w-[380px] z-[99999] bg-slate-950 text-white border-t md:border md:rounded-t-2xl md:bottom-3 md:right-3 max-h-[70vh] flex flex-col"
-        >
-          {/* Header */}
-          <div className="flex items-center justify-between px-3 py-2 border-b border-slate-800">
-            <div className="flex items-center gap-2">
-              <Bug className="w-4 h-4 text-yellow-400" />
-              <span className="text-xs font-bold">DEBUG</span>
-              <span className="text-[10px] text-slate-500">{logs.length} entries</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => { clearDebugLogs(); setLogs([]); }}
-                className="p-1 text-slate-500 hover:text-red-400 transition-colors"
-                aria-label="Clear debug logs"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => setOpen(false)}
-                className="p-1 text-slate-500 hover:text-white transition-colors"
-                aria-label="Close debug panel"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
+      {/* Debug drawer — portal to body, right-side, full height */}
+      {createPortal(
+        <>
+          {/* Backdrop */}
+          <div
+            className={`fixed inset-0 z-[99998] bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${
+              open ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+            onClick={handleBackdropClick}
+            aria-hidden="true"
+          />
 
-          {/* Tabs */}
-          <div className="flex border-b border-slate-800">
-            {(['all', 'errors', 'auth'] as const).map(t => (
-              <button
-                key={t}
-                onClick={() => setTab(t)}
-                className={`flex-1 py-1.5 text-[11px] font-medium transition-colors ${
-                  tab === t
-                    ? 'text-white border-b-2 border-blue-500'
-                    : 'text-slate-500 hover:text-slate-300'
-                }`}
-              >
-                {t === 'all' ? 'All' : t === 'errors' ? `Errors (${errorCount})` : 'Auth'}
-              </button>
-            ))}
-          </div>
+          {/* Drawer panel */}
+          <div
+            ref={panelRef}
+            className={`fixed top-0 right-0 bottom-0 z-[99999] bg-slate-950 text-white shadow-2xl flex flex-col transition-transform duration-200 ease-out ${
+              open ? 'translate-x-0' : 'translate-x-full'
+            }`}
+            style={{
+              width: 'min(90vw, 480px)',
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+            }}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 shrink-0">
+              <div className="flex items-center gap-2">
+                <Bug className="w-4 h-4 text-yellow-400" />
+                <span className="text-sm font-bold">DEBUG</span>
+                <span className="text-[10px] text-slate-500">{logs.length} entries</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => { clearDebugLogs(); setLogs([]); }}
+                  className="p-1.5 text-slate-500 hover:text-red-400 transition-colors rounded-lg hover:bg-slate-800"
+                  aria-label="Clear debug logs"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="p-1.5 text-slate-500 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+                  aria-label="Close debug panel"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
 
-          {/* Log entries */}
-          <div className="flex-1 overflow-y-auto p-2 space-y-1">
-            {filtered.length === 0 ? (
-              <div className="text-center text-slate-600 text-xs py-8">No entries</div>
-            ) : (
-              filtered.map((e, i) => (
-                <div key={i} className="text-[11px] font-mono px-2 py-1.5 rounded bg-slate-900/50">
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="w-1.5 h-1.5 rounded-full flex-shrink-0"
-                      style={{ background: TYPE_COLORS[e.type] || '#6b7280' }}
-                    />
-                    <span className="text-slate-500">{timeAgo(e.timestamp)}</span>
-                    <span className="font-bold" style={{ color: TYPE_COLORS[e.type] || '#9ca3af' }}>
-                      {e.type}
-                    </span>
+            {/* Tabs */}
+            <div className="flex border-b border-slate-800 shrink-0">
+              {(['all', 'errors', 'auth'] as const).map(t => (
+                <button
+                  key={t}
+                  onClick={() => setTab(t)}
+                  className={`flex-1 py-2 text-xs font-medium transition-colors ${
+                    tab === t
+                      ? 'text-white border-b-2 border-blue-500'
+                      : 'text-slate-500 hover:text-slate-300'
+                  }`}
+                >
+                  {t === 'all' ? 'All' : t === 'errors' ? `Errors (${errorCount})` : 'Auth'}
+                </button>
+              ))}
+            </div>
+
+            {/* Log entries */}
+            <div className="flex-1 overflow-y-auto p-3 space-y-1">
+              {filtered.length === 0 ? (
+                <div className="text-center text-slate-600 text-xs py-8">No entries</div>
+              ) : (
+                filtered.map((e, i) => (
+                  <div key={i} className="text-xs font-mono px-2 py-2 rounded-lg bg-slate-900/50">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ background: TYPE_COLORS[e.type] || '#6b7280' }}
+                      />
+                      <span className="text-slate-500">{timeAgo(e.timestamp)}</span>
+                      <span className="font-bold" style={{ color: TYPE_COLORS[e.type] || '#9ca3af' }}>
+                        {e.type}
+                      </span>
+                    </div>
+                    {e.message && (
+                      <div className="mt-1 text-slate-300 break-all">{e.message}</div>
+                    )}
+                    {e.detail && (
+                      <div className="mt-1 text-slate-500 break-all text-[10px]">{e.detail}</div>
+                    )}
                   </div>
-                  {e.message && (
-                    <div className="mt-0.5 text-slate-300 break-all">{e.message}</div>
-                  )}
-                  {e.detail && (
-                    <div className="mt-0.5 text-slate-500 break-all text-[10px]">{e.detail}</div>
-                  )}
-                </div>
-              ))
-            )}
-          </div>
+                ))
+              )}
+            </div>
 
-          {/* Footer: quick link to /debug-auth */}
-          <div className="border-t border-slate-800 px-3 py-1.5">
-            <a
-              href="/debug-auth"
-              className="text-[11px] text-blue-400 hover:text-blue-300 font-medium"
-            >
-              Open full debug page →
-            </a>
+            {/* Footer */}
+            <div className="border-t border-slate-800 px-4 py-2 shrink-0">
+              <a
+                href="/debug-auth"
+                className="text-xs text-blue-400 hover:text-blue-300 font-medium"
+              >
+                Open full debug page →
+              </a>
+            </div>
           </div>
-        </div>
+        </>,
+        document.body
       )}
     </>
   );
