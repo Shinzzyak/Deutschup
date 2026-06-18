@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Edit3, Check, Loader2, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/authStore';
 import { useLearningStore } from '../stores/learningStore';
 
@@ -59,65 +60,73 @@ export default function QuickNoteWidget() {
         <Edit3 className="w-6 h-6" />
       </button>
 
-      {/* Drawer — portal to body */}
+      {/* Popup — portal to body */}
       {createPortal(
         <>
           {/* Backdrop */}
           <div
-            className={`fixed inset-0 z-[99998] bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${
+            className={`fixed inset-0 z-[99998] transition-opacity duration-200 ${
               isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
             onClick={handleBackdropClick}
             aria-hidden="true"
           />
 
-          {/* Drawer panel */}
-          <div
-            ref={panelRef}
-            className={`fixed top-0 right-0 bottom-0 z-[99999] bg-yellow-50 shadow-2xl flex flex-col transition-transform duration-200 ease-out ${
-              isOpen ? 'translate-x-0' : 'translate-x-full'
-            }`}
-            style={{
-              width: 'min(90vw, 420px)',
-              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-            }}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-yellow-300 shrink-0">
-              <div className="flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-yellow-700" />
-                <span className="text-sm font-bold text-yellow-900">Quick Note</span>
-              </div>
-              <button
-                onClick={() => setIsOpen(false)}
-                className="p-1.5 text-yellow-700 hover:text-yellow-900 transition-colors rounded-lg hover:bg-yellow-200"
-                aria-label="Tutup quick note"
+          {/* Floating popup — anchored above button */}
+          <AnimatePresence>
+            {isOpen && (
+              <motion.div
+                ref={panelRef}
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                transition={{ duration: 0.15, ease: 'easeOut' }}
+                className="fixed z-[99999] bg-[#FFF8E1] rounded-2xl shadow-2xl border border-yellow-300/60 flex flex-col overflow-hidden"
+                style={{
+                  bottom: 'calc(env(safe-area-inset-bottom, 0px) + 220px)',
+                  right: '16px',
+                  width: 'min(90vw, 360px)',
+                  height: 'min(420px, calc(100vh - 280px))',
+                }}
               >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
+                {/* Header */}
+                <div className="flex items-center justify-between px-4 h-12 border-b border-yellow-300/60 shrink-0 bg-[#FFF8E1]">
+                  <div className="flex items-center gap-2">
+                    <Edit3 className="w-4 h-4 text-yellow-700" />
+                    <span className="text-sm font-bold text-yellow-900">Quick Note</span>
+                  </div>
+                  <button
+                    onClick={() => setIsOpen(false)}
+                    className="p-1.5 text-yellow-700 hover:text-yellow-900 transition-colors rounded-lg hover:bg-yellow-200/60"
+                    aria-label="Tutup quick note"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
 
-            {/* Textarea */}
-            <textarea
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              placeholder="Tuliskan coretan cepat di sini..."
-              className="flex-1 bg-transparent p-4 resize-none focus:outline-none focus:ring-2 focus:ring-yellow-500 text-yellow-900 placeholder:text-yellow-700/50 text-sm"
-            />
+                {/* Textarea */}
+                <textarea
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
+                  placeholder="Tuliskan coretan cepat di sini..."
+                  className="flex-1 bg-transparent p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 text-yellow-900 placeholder:text-yellow-700/40 text-sm leading-relaxed"
+                />
 
-            {/* Footer */}
-            <div className="px-4 py-3 border-t border-yellow-300 shrink-0">
-              <button
-                onClick={handleSave}
-                disabled={saving}
-                className="w-full px-4 py-2.5 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 text-sm font-bold rounded-xl flex items-center justify-center shadow-sm transition-colors"
-                aria-label="Simpan catatan"
-              >
-                {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
-                Simpan
-              </button>
-            </div>
-          </div>
+                {/* Footer — Save button with German Gold gradient */}
+                <div className="px-4 py-3 border-t border-yellow-300/60 shrink-0 bg-[#FFF8E1]">
+                  <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="w-full px-4 py-2.5 bg-gradient-to-r from-[#F2C94C] to-yellow-500 hover:from-yellow-500 hover:to-[#F2C94C] text-yellow-900 text-sm font-bold rounded-xl flex items-center justify-center shadow-sm transition-all duration-200"
+                    aria-label="Simpan catatan"
+                  >
+                    {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}
+                    Simpan
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </>,
         document.body
       )}
