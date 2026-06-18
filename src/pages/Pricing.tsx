@@ -140,10 +140,10 @@ export default function Pricing() {
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
-          <div key={plan.id} className={`relative bg-card rounded-3xl p-8 border ${plan.popular ? 'border-blue-500 shadow-xl scale-105 z-10' : 'border-border shadow-sm'} flex flex-col`}>
+          <div key={plan.id} className={`relative bg-card rounded-3xl p-8 border ${plan.popular ? 'border-[#F2C94C] shadow-xl shadow-[#F2C94C]/20 scale-105 z-10' : 'border-border shadow-sm'} flex flex-col`}>
             {plan.popular && (
               <div className="absolute -top-4 inset-x-0 flex justify-center">
-                 <span className="bg-blue-500 flex items-center shadow-lg text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                 <span className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] flex items-center shadow-lg text-[#1F2937] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                    <Sparkles className="w-3 h-3 mr-1" /> Paling Laris
                  </span>
               </div>
@@ -170,7 +170,7 @@ export default function Pricing() {
               onClick={() => handleUpgrade(plan.id)}
               disabled={loading !== null || plan.id === 'free' || activePro}
               variant={plan.buttonVariant}
-              className={`w-full rounded-2xl py-6 text-lg font-bold shadow-md ${plan.popular && !activePro ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+              className={`w-full rounded-2xl py-6 text-lg font-bold shadow-md ${plan.popular && !activePro ? 'bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937]' : ''}`}
             >
               {loading === plan.id ? <Loader2 className="w-6 h-6 animate-spin" /> : plan.buttonText}
             </Button>

@@ -614,7 +614,7 @@ export default function AdminAI() {
         {activeTab === 'routing' && (
           <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
             <h3 className="text-lg font-bold text-white mb-6 flex items-center">
-              <Zap className="w-5 h-5 mr-2 text-purple-400" />
+              <Zap className="w-5 h-5 mr-2 text-[#F2C94C]" />
               Routing Chain — Failover Order
             </h3>
             

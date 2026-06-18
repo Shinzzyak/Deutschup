@@ -6,21 +6,21 @@ const features = [
     icon: MessageSquare,
     title: 'AI Tutor',
     description: 'Tanya apa saja tentang bahasa Jerman, dapatkan penjelasan instan dari AI tutor kami.',
-    gradient: 'from-indigo-500 to-blue-500',
+    gradient: 'from-[#F2C94C] to-[#E0B73A]',
     span: 'md:col-span-2 md:row-span-1',
   },
   {
     icon: BookOpen,
     title: 'Vocabulary Trainer',
     description: '1,600+ kata dengan spaced repetition untuk memori jangka panjang.',
-    gradient: 'from-purple-500 to-pink-500',
+    gradient: 'from-[#D32F2F] to-[#F2C94C]',
     span: 'md:col-span-1',
   },
   {
     icon: PenLine,
     title: 'Smart Grammar',
     description: 'Koreksi instan grammar dengan penjelasan detail dan contoh penggunaan.',
-    gradient: 'from-blue-500 to-cyan-500',
+    gradient: 'from-[#1F2937] to-slate-600',
     span: 'md:col-span-1',
   },
   {
@@ -59,7 +59,7 @@ export default function ProductShowcase() {
         >
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
             Semua yang Dibutuhkan untuk{' '}
-            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] bg-clip-text text-transparent">
               Belajar Bahasa Jerman
             </span>
           </h2>

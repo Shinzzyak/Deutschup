@@ -22,7 +22,7 @@ export default function SocialProof() {
         >
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
             Platform yang Dirancang untuk{' '}
-            <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] bg-clip-text text-transparent">
               Hasil
             </span>
           </h2>
@@ -42,13 +42,13 @@ export default function SocialProof() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: i * 0.08 }}
-                className="flex items-center gap-4 bg-slate-50 hover:bg-white rounded-2xl p-5 border border-transparent hover:border-indigo-100 hover:shadow-lg hover:shadow-indigo-50 transition-all"
+                className="flex items-center gap-4 bg-slate-50 hover:bg-white rounded-2xl p-5 border border-transparent hover:border-[#F2C94C]/30 hover:shadow-lg hover:shadow-[#F2C94C]/10 transition-all"
               >
-                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center shrink-0">
-                  <Icon className="w-5 h-5 text-white" />
+                <div className="w-10 h-10 bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] rounded-xl flex items-center justify-center shrink-0">
+                  <Icon className="w-5 h-5 text-[#1F2937]" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-indigo-500 shrink-0" />
+                  <Check className="w-4 h-4 text-[#F2C94C] shrink-0" />
                   <span className="text-sm font-semibold text-slate-700">{feature.label}</span>
                 </div>
               </motion.div>

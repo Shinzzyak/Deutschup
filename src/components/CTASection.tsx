@@ -7,34 +7,34 @@ export default function CTASection() {
   const { loginWithGoogle } = useAuthStore();
 
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-br from-slate-50 to-indigo-50/30">
+    <section className="py-20 md:py-28 bg-gradient-to-br from-slate-50 to-[#FFF8E1]/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-700 rounded-3xl p-10 md:p-16 text-center overflow-hidden"
+          className="relative bg-gradient-to-br from-[#1F2937] via-slate-800 to-[#1F2937] rounded-3xl p-10 md:p-16 text-center overflow-hidden"
         >
           {/* Background decoration */}
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl" />
-            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-purple-300/20 rounded-full blur-3xl" />
+            <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/5 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-64 h-64 bg-[#F2C94C]/10 rounded-full blur-3xl" />
           </div>
 
           <div className="relative z-10">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
               Siap Menguasai{' '}
-              <span className="text-indigo-200">Bahasa Jerman?</span>
+              <span className="text-[#F2C94C]">Bahasa Jerman?</span>
             </h2>
-            <p className="text-lg text-indigo-100/80 max-w-xl mx-auto mb-10">
+            <p className="text-lg text-white/60 max-w-xl mx-auto mb-10">
               Mulai perjalanan dari A1 hingga B2 dengan bantuan AI Tutor DeutschUp.
             </p>
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button
                 onClick={loginWithGoogle}
-                className="bg-white text-indigo-700 hover:bg-indigo-50 text-base px-8 py-6 rounded-2xl font-bold shadow-xl shadow-indigo-900/20 transition-all group"
+                className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937] text-base px-8 py-6 rounded-2xl font-bold shadow-xl shadow-[#F2C94C]/20 transition-all group"
               >
                 Mulai Gratis
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
