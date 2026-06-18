@@ -8,6 +8,9 @@ export interface LessonIndex {
 }
 
 export const courseIndex: LessonIndex[] = [
+  // ═══════════════════════════════════════════
+  // A1 — 26 Lessons (sesuai Netzwerk Neu A1)
+  // ═══════════════════════════════════════════
   {
     "id": "a1-1",
     "level": "A1",
@@ -67,7 +70,7 @@ export const courseIndex: LessonIndex[] = [
     "level": "A1",
     "title": "Kata Ganti Orang (ich, du, er, sie, wir...)",
     "canDoGoals": [
-      "Membedakan Kata Ganti Orang (Personalpronomen) untuk subjek (ich, du, er, sie, es, wir, ihr, sie, Sie)",
+      "Membedakan Kata Ganti Orang (Personalpronomen) untuk subjek",
       "Mampu menyebutkan orang ketiga (menunjuk orang lain)",
       "Mengerti kapan menggunakan 'Ihr' vs 'Sie'"
     ]
@@ -98,8 +101,7 @@ export const courseIndex: LessonIndex[] = [
     "canDoGoals": [
       "Menyusun kalimat pernyataan sederhana (Aussagesätze)",
       "Menyusun kalimat pertanyaan dengan kata tanya (W-Fragen)",
-      "Menyusun kalimat interogatif sederhana (Ja/Nein-Fragen)",
-      "Menempatkan struktur kata kerja pada posisi kedua (Position 2)"
+      "Memahami posisi verb di posisi kedua (V2-Stellung)"
     ]
   },
   {
@@ -107,9 +109,9 @@ export const courseIndex: LessonIndex[] = [
     "level": "A1",
     "title": "Preposisi Dasar (in, auf, an, unter)",
     "canDoGoals": [
-      "Memahami konsep preposisi tempat dasar (in, auf, an, unter)",
-      "Bisa menjelaskan posisi suatu benda yang diam",
-      "Menyusun kalimat lokasi menggunakan preposisi dan Dativ/Akkusativ (dasar)"
+      "Menggunakan preposisi tempat (Wo?) dengan kasus yang tepat",
+      "Memahami perbedaan in, auf, an, unter, neben, zwischen",
+      "Membentuk kalimat lokasi sederhana"
     ]
   },
   {
@@ -117,18 +119,18 @@ export const courseIndex: LessonIndex[] = [
     "level": "A1",
     "title": "Keluarga & Pekerjaan",
     "canDoGoals": [
-      "Menyebutkan anggota keluarga terdekat (Vater, Mutter, Geschwister)",
-      "Menceritakan siapa anggota keluarga dan apa profesinya (Berufe)",
-      "Menggunakan dasar Possessivartikel (mein, dein)"
+      "Menyebutkan anggota keluarga (die Familie)",
+      "Menyebutkan profesi/pekerjaan (der Beruf)",
+      "Mendeskripsikan keluarga dan pekerjaan sendiri"
     ]
   },
   {
     "id": "a1-checkpoint-3",
     "title": "Review Konten Sebelumnya",
     "canDoGoals": [
-      "Mengevaluasi kemampuan menyusun kalimat dengan struktur yang benar",
-      "Menguji pemahaman preposisi dasar dan kata penunjuk posisi",
-      "Mengevaluasi kosakata anggota keluarga dan nama pekerjaan"
+      "Menguji kemampuan menyusun kalimat sederhana",
+      "Menguji penguasaan preposisi dasar",
+      "Menguji kosakata keluarga dan pekerjaan"
     ]
   },
   {
@@ -136,10 +138,9 @@ export const courseIndex: LessonIndex[] = [
     "level": "A1",
     "title": "Makanan, Minuman & Belanja",
     "canDoGoals": [
-      "Menyebutkan jenis-jenis makanan dan minuman (Essen und Trinken)",
-      "Memesan makanan dan minuman di kafe atau restoran",
-      "Memahami percakapan sederhana saat berbelanja di supermarket",
-      "Menanyakan makanan spesifik dan menyatakan kelaparan / kehausan"
+      "Menyebutkan nama makanan dan minuman (Essen und Trinken)",
+      "Menyebutkan harga dan menawar (Der Preis)",
+      "Membeli barang di toko (Einkaufen)"
     ]
   },
   {
@@ -147,9 +148,9 @@ export const courseIndex: LessonIndex[] = [
     "level": "A1",
     "title": "Waktu dan Jam (Die Uhrzeit)",
     "canDoGoals": [
-      "Mampu menyebutkan jam/pukul (Die Uhrzeit) secara formal maupun informal",
-      "Mampu membuat atau mengusulkan sebuah janji temu (Termin machen)",
-      "Mampu menyampaikan kapan mereka sibuk atau punya waktu luang"
+      "Membaca dan menyebutkan jam (Die Uhrzeit)",
+      "Menyatakan waktu dalam format 24 jam",
+      "Menggunakan frasa waktu (am Morgen, am Nachmittag)"
     ]
   },
   {
@@ -157,9 +158,9 @@ export const courseIndex: LessonIndex[] = [
     "level": "A1",
     "title": "Hobi & Waktu Luang (Hobbys)",
     "canDoGoals": [
-      "Menceritakan aktivitas masa luang dan hobi (Freizeit und Hobbys)",
-      "Menggunakan kata 'gern' untuk menyatakan suatu kegiatan yang disenangi",
-      "Bertanya mengenai hobi lawan bicara"
+      "Menyebutkan hobi dan aktivitas favorit",
+      "Menggunakan verba favorit (gern, lieber, am liebsten)",
+      "Membicarakan kegiatan di waktu luang"
     ]
   },
   {
@@ -168,13 +169,14 @@ export const courseIndex: LessonIndex[] = [
     "title": "Cuaca dan Musim (Das Wetter und die Jahreszeiten)",
     "canDoGoals": [
       "Mendeskripsikan kondisi cuaca saat ini (Das Wetter)",
-      "Menyebutkan empat musim yang ada di belahan dunia Eropa (Jahreszeiten)",
-      "Mendiskusikan cuaca kesukaan beserta alasannya secara sederhana"
+      "Menyebutkan empat musim (Jahreszeiten)",
+      "Mendiskusikan cuaca kesukaan beserta alasannya"
     ]
   },
+  // ─── A1 L14-L21: Dipindahkan dari A2 (sesuai Netzwerk Neu timing) ───
   {
-    "id": "a2-1",
-    "level": "A2",
+    "id": "a1-14",
+    "level": "A1",
     "title": "Kasus Nominativ vs Akkusativ",
     "canDoGoals": [
       "Mengetahui perbedaan peran Subjek (Nominativ) dan Objek Langsung (Akkusativ)",
@@ -183,416 +185,695 @@ export const courseIndex: LessonIndex[] = [
     ]
   },
   {
-    "id": "a2-2",
-    "level": "A2",
+    "id": "a1-15",
+    "level": "A1",
     "title": "Kasus Dativ",
     "canDoGoals": [
       "Memahami fungsi Objek Tidak Langsung (Dativ)",
       "Mendeklinasikan artikel tertentu (dem, der, dem) di posisi Dativ",
       "Mendeklinasikan artikel tidak tentu (einem, einer, einem) di posisi Dativ",
-      "Mengenali kumpulan verba yang selalu diiringi objek Dativ (helfen, danken...)"
+      "Mengenali verba yang selalu diiringi objek Dativ (helfen, danken...)"
     ]
   },
   {
-    "id": "a2-3",
-    "level": "A2",
+    "id": "a1-16",
+    "level": "A1",
     "title": "Modal Verben (können, müssen, wollen, dürfen)",
     "canDoGoals": [
-      "Menggunakan Modal Verben (können, müssen, wollen, dürfen) untuk mengekspresikan kemampuan, kewajiban, dan izin",
-      "Memahami struktur 'Satzklammer', memposisikan verba infinitif di akhir kalimat",
+      "Menggunakan Modal Verben untuk mengekspresikan kemampuan, kewajiban, dan izin",
+      "Memahami struktur 'Satzklammer' — verba infinitif di akhir kalimat",
       "Konjugasi Modal Verben di semua subjek (ich, du, er/sie/es, wir, ihr, sie/Sie)"
     ]
   },
   {
-    "id": "a2-4",
-    "level": "A2",
+    "id": "a1-17",
+    "level": "A1",
     "title": "Waktu Lampau: Perfekt",
     "canDoGoals": [
-      "Bercerita kejadian masa lalu (spoken past/Perfekt)",
+      "Bercerita kejadian masa lalu (spoken past / Perfekt)",
       "Memilih antara Hilfsverben 'haben' dan 'sein' sebagai verba pendukung",
       "Membentuk Partizip II dari verba beraturan dan tidak beraturan"
     ]
   },
   {
-    "id": "a2-5",
+    "id": "a1-18",
+    "level": "A1",
+    "title": "Trennbare Verben (aufmachen, anrufen, dst)",
+    "canDoGoals": [
+      "Mengenali prefix yang memisahkan verba (auf-, an-, ein-, aus-...)",
+      "Memposisikan prefix di posisi paling akhir dalam kalimat utama",
+      "Menceritakan aktivitas sehari-hari menggunakan trennbare verben"
+    ]
+  },
+  {
+    "id": "a1-19",
+    "level": "A1",
+    "title": "Verba Refleksif (Reflexivverben)",
+    "canDoGoals": [
+      "Mengetahui daftar verba tindakan terhadap diri sendiri",
+      "Penggunaan Reflexivpronomen (mich, dich, sich) untuk Akkusativ atau Dativ",
+      "Bercerita rutinitas membersihkan diri (sich waschen, sich duschen...)"
+    ]
+  },
+  {
+    "id": "a1-20",
+    "level": "A1",
+    "title": "Nebensätze (dass, weil, wenn)",
+    "canDoGoals": [
+      "Mengetahui dasar-dasar klausa anak (Nebensätze)",
+      "Menceritakan alasan / sebab akibat menggunakan 'weil'",
+      "Menceritakan waktu terjadinya suatu hal dengan 'wenn'",
+      "Membangun pengandaian dengan 'dass'"
+    ]
+  },
+  {
+    "id": "a1-21",
+    "level": "A1",
+    "title": "Komparativ & Superlativ",
+    "canDoGoals": [
+      "Membandingkan sifat benda menggunakan Komparativ (... + -er als)",
+      "Menggambarkan tingkatan tertinggi dengan Superlativ (am ... + -sten)",
+      "Memahami bentuk irregular (gut → besser → am besten)"
+    ]
+  },
+  // ─── A1 L22-L26: Topik BARU (belum ada di DeutschUp) ───
+  {
+    "id": "a1-22",
+    "level": "A1",
+    "title": "Imperativ (Perintah)",
+    "canDoGoals": [
+      "Membentuk imperativ untuk du, ihr, Sie",
+      "Menggunakan imperativ dalam situasi sehari-hari",
+      "Memahami perbedaan imperativ formal dan informal"
+    ]
+  },
+  {
+    "id": "a1-23",
+    "level": "A1",
+    "title": "Sollen & Dürfen (Kewajiban & Izin)",
+    "canDoGoals": [
+      "Membedakan sollen (seharusnya) dan dürfen (diizinkan)",
+      "Menggunakan sollen dan dürften dalam konteks nyata",
+      "Memahami nuansa kewajiban vs izin dalam budaya Jerman"
+    ]
+  },
+  {
+    "id": "a1-24",
+    "level": "A1",
+    "title": "Konjunktion denn (Alasan)",
+    "canDoGoals": [
+      "Membedakan 'denn' (karena) dan 'weil' (karena)",
+      "Menggunakan 'denn' untuk memberikan alasan informal",
+      "Memahami posisi verb dalam kalimat dengan 'denn' (V2)"
+    ]
+  },
+  {
+    "id": "a1-25",
+    "level": "A1",
+    "title": "Indirekte Fragesätze (Pertanyaan Tidak Langsung)",
+    "canDoGoals": [
+      "Membentuk pertanyaan tidak langsung dengan ob/oder",
+      "Menggunakan W-Fragen dalam bentuk tidak langsung",
+      "Memahami posisi verb di akhir klausa tidak langsung"
+    ]
+  },
+  {
+    "id": "a1-26",
+    "level": "A1",
+    "title": "Man + Partizip I (Kalimat Umum)",
+    "canDoGoals": [
+      "Menggunakan 'man' sebagai subjek umum (orang/bisa)",
+      "Membentuk Partizip I dari verb (gehend, lesend, schreibend...)",
+      "Mendeskripsikan aktivitas umum menggunakan man + Partizip I"
+    ]
+  },
+  {
+    "id": "a1-checkpoint-4",
+    "title": "Review A1 Lengkap",
+    "canDoGoals": [
+      "Menguji semua topik grammar A1 dari L1-L26",
+      "Simulasi Goethe A1 Hören + Lesen",
+      "Simulasi Goethe A1 Schreiben + Sprechen"
+    ]
+  },
+  // ═══════════════════════════════════════════
+  // A2 — 18 Lessons (sesuai Netzwerk Neu A2)
+  // ═══════════════════════════════════════════
+  {
+    "id": "a2-1",
+    "level": "A2",
+    "title": "Wechselpräpositionen (in/an/auf + Dat vs Akk)",
+    "canDoGoals": [
+      "Mengenali 9 Wechselpräpositionen (in, an, auf, über, unter, vor, hinter, neben, zwischen)",
+      "Menggunakan kasus Dativ untuk lokasi statis (Wo?)",
+      "Menggunakan kasus Akkusativ untuk perpindahan terarah (Wohin?)"
+    ]
+  },
+  {
+    "id": "a2-2",
+    "level": "A2",
+    "title": "Kalimat Tanya W-Fragen (Lanjutan)",
+    "canDoGoals": [
+      "Membentuk kalimat pertanyaan spesifik dengan kasus (Wer vs Wen vs Wem)",
+      "Menggunakan W-Fragen untuk lokasi dan arah (Wo vs Wohin vs Woher)",
+      "Membedakan W-Fragen A1 dan A2"
+    ]
+  },
+  {
+    "id": "a2-3",
+    "level": "A2",
+    "title": "Negasi: nicht vs kein",
+    "canDoGoals": [
+      "Cara memosisikan negasi 'nicht' secara benar dalam kalimat",
+      "Cara menggunakan 'kein/keine' untuk membantah kata benda tanpa artikel",
+      "Mengenali perbedaan penekanan kalimat menggunakan 'nicht'"
+    ]
+  },
+  {
+    "id": "a2-checkpoint-1",
+    "title": "Review A2 Awal",
+    "canDoGoals": [
+      "Menguji Wechselpräpositionen (Dat vs Akk)",
+      "Menguji W-Fragen lanjutan",
+      "Menguji penggunaan nicht vs kein"
+    ]
+  },
+  {
+    "id": "a2-4",
     "level": "A2",
     "title": "Waktu Lampau: Präteritum (sein/haben/modals)",
     "canDoGoals": [
-      "Bercerita kejadian lampau (written past/Präteritum) untuk sein & haben",
+      "Bercerita kejadian lampau (written past / Präteritum) untuk sein & haben",
       "Menggunakan Präteritum untuk Modal Verben (konnte, musste...)",
       "Mengetahui perbedaan penggunaan Perfekt dan Präteritum"
     ]
   },
   {
+    "id": "a2-5",
+    "level": "A2",
+    "title": "Verba dengan Preposisi Tetap & Pronominaladverbien",
+    "canDoGoals": [
+      "Menghafal preposisi yang terkunci untuk suatu verba",
+      "Mampu merespons singkat menggunakan Pronominaladverbien (dafür, daran, womit...)",
+      "Membicarakan minat/memori terhadap subjek tertentu yang relevan dengan preposisi"
+    ]
+  },
+  {
     "id": "a2-6",
     "level": "A2",
-    "title": "Wechselpräpositionen (in/an/auf + Dat vs Akk)",
+    "title": "Passiv Präsens",
     "canDoGoals": [
-      "Mengenali 9 Wechselpräpositionen (in, an, auf, über, unter, vor, hinter, neben, zwischen)",
-      "Menggunakan kasus Dativ untuk menunjukkan lokasi statis (Wo?)",
-      "Menggunakan kasus Akkusativ untuk menunjukkan perpindahan terarah (Wohin?)"
+      "Membentuk kalimat pasif dengan werden + Partizip II",
+      "Membedakan aktif dan pasif dalam konteks nyata",
+      "Menggunakan Agent (von + Dativ) dalam kalimat pasif"
     ]
   },
   {
     "id": "a2-7",
     "level": "A2",
-    "title": "Komparativ & Superlativ",
+    "title": "Konjunktiv II — würde + Infinitiv",
     "canDoGoals": [
-      "Membandingkan sifat benda menggunakan Komparativ (... + -er als)",
-      "Menggambarkan tingkatan tertinggi dengan Superlativ (am ... + -sten)",
-      "Memahami bentuk irregular dari Adjektiv (gut, viel, gern)"
+      "Membentuk Konjunktiv II dengan würde + infinitif",
+      "Mengungkapkan permintaan sopan dan kemungkinan",
+      "Memahami perbedaan Konjunktiv II dan Indikativ"
+    ]
+  },
+  {
+    "id": "a2-checkpoint-2",
+    "title": "Review A2 Tengah",
+    "canDoGoals": [
+      "Menguji Präteritum sein/haben/modals",
+      "Menguji verba dengan preposisi tetap",
+      "Menguji Passiv dan Konjunktiv II"
     ]
   },
   {
     "id": "a2-8",
     "level": "A2",
-    "title": "Trennbare Verben (aufmachen, anrufen, dst)",
+    "title": "Konjunktiv II — sollte, müsste, könnte",
     "canDoGoals": [
-      "Mengenali prefix yang memisahkan verba (auf-, an-, ein-, aus-, dst) yaitu Trennbare Verben",
-      "Memposisikan prefix di posisi paling akhir dalam sebuah kalimat utama",
-      "Menceritakan aktivitas sehari-hari menggunakan trennbare verben (aufstehen, anziehen...)"
+      "Menggunakan sollte (seharusnya), müsste (seharusnya bisa), könnte (mungkin bisa)",
+      "Membedakan nuances antara Konjunktiv II different modal verbs",
+      "Menggunakan Konjunktiv II untuk saran dan kritik"
     ]
   },
   {
     "id": "a2-9",
     "level": "A2",
-    "title": "Kalimat Tanya W-Fragen",
+    "title": "Relativsätze (Klausa Relatif)",
     "canDoGoals": [
-      "Melanjutkan kemampuan menggunakan W-Fragen yang lebih spesifik",
-      "Membentuk kalimat pertanyaan yang relevan dengan kasus (Wer vs Wen vs Wem)",
-      "Menggunakan W-Fragen untuk lokasi dan arah (Wo vs Wohin vs Woher)"
+      "Membentuk kalimat relatif dengan der/die/das/welcher",
+      "Membedakan Relativpronomen untuk Nominativ dan Akkusativ",
+      "Menggunakan Relativsätze untuk mendeskripsikan orang dan benda"
     ]
   },
   {
     "id": "a2-10",
     "level": "A2",
-    "title": "Negasi: nicht vs kein",
+    "title": "Indefinitpronomen (jemand, niemand, etwas...)",
     "canDoGoals": [
-      "Cara memosisikan negasi 'nicht' secara benar dalam kalimat",
-      "Cara menggunakan negasi 'kein/keine' khusus untuk membantah/meniadakan kata benda yang tak memiliki instrumen tertentu",
-      "Mengenali perbedaan penekanan kalimat menggunakan 'nicht'"
+      "Menggunakan indefinitpronomen (jemand, niemand, etwas, nichts, alles)",
+      "Memahami deklinasi indefinitpronomen dalam Akkusativ dan Dativ",
+      "Menggunakan Indefinitpronomen -Self (selber/sich) untuk penekanan"
     ]
   },
   {
     "id": "a2-11",
     "level": "A2",
-    "title": "Verba Refleksif (Reflexivverben)",
+    "title": "Interrogativartikel (welcher, was für ein)",
     "canDoGoals": [
-      "Mengetahui daftar verba tindakan terhadap diri sendiri (Reflexivverben)",
-      "Penggunaan Reflexivpronomen (mich, dich, sich) untuk Accusative atau Dativ",
-      "Bercerita rutinitas membersihkan diri (sich waschen, sich duschen, sich bedanken)"
+      "Menggunakan welcher/welche/welches untuk menanyakan pilihan spesifik",
+      "Menggunakan 'was für ein/eine/ein' untuk menanyakan jenis",
+      "Memahami perbedaan was vs welcher dalam pertanyaan"
+    ]
+  },
+  {
+    "id": "a2-checkpoint-3",
+    "title": "Review A2 Lanjut",
+    "canDoGoals": [
+      "Menguji Konjunktiv II (sollte/müsste/könnte)",
+      "Menguji Relativsätze",
+      "Menguji Indefinitpronomen dan Interrogativartikel"
     ]
   },
   {
     "id": "a2-12",
     "level": "A2",
-    "title": "Verba dengan Preposisi Tetap & Pronominaladverbien",
+    "title": "Wunschsätze (Ich wünsche mir...)",
     "canDoGoals": [
-      "Menghafal preposisi yang terkunci untuk suatu verba (Verben mit festen Präpositionen)",
-      "Mampu merespons singkat menggunakan Pronominaladverbien (dafür, daran, womit, worauf)",
-      "Membicarakan sebuah minat/memori terhadap suatu subjek tertentu yang relevan dengan preposition"
+      "Membentuk kalimat keinginan dengan Konjunktiv II oder würde",
+      "Menggunakan 'ich wünsche mir', 'ich hätte gern', 'ich würde gerne'",
+      "Memahami perbedaan Wunschsätze dan Aussagesätze"
     ]
   },
   {
     "id": "a2-13",
     "level": "A2",
-    "title": "Nebensätze (dass, weil, wenn)",
+    "title": "Futur I (werden + Infinitiv)",
     "canDoGoals": [
-      "Mengetahui dasar-dasar klausa anak (Nebensätze)",
-      "Menceritakan alasan / sebab akibat menggunakan konjungsi 'weil'",
-      "Menceritakan waktu terjadinya suatu hal dengan konjungsi 'wenn'",
-      "Membangun pengandaian dengan 'dass'"
+      "Membentuk futur I dengan werden + infinitif",
+      "Menggunakan futur I untuk rencana dan prediksi",
+      "Memahami kapan present tense bisa menggantikan futur I"
     ]
   },
+  {
+    "id": "a2-14",
+    "level": "A2",
+    "title": "Temporale Präpositionen (seit, für, ab, bis...)",
+    "canDoGoals": [
+      "Membedakan temporale präposisi untuk durasi dan titik waktu",
+      "Menggunakan seit (sejak), für (selama), ab (mulai), bis (sampai)",
+      "Memahami kapan harus menggunakan Präsens vs Perfekt dengan temporale präposisi"
+    ]
+  },
+  {
+    "id": "a2-15",
+    "level": "A2",
+    "title": "Lokale Präpositionen (von, aus, zu, nach...)",
+    "canDoGoals": [
+      "Membedakan lokal präposisi untuk asal dan tujuan",
+      "Menggunakan von (dari), aus (dari), zu (ke), nach (ke)",
+      "Memahami kasus yang dibutuhkan setiap präposisi"
+    ]
+  },
+  {
+    "id": "a2-16",
+    "level": "A2",
+    "title": "Positionsverben (sitzen, liegen, stehen, gehen, fahren...)",
+    "canDoGoals": [
+      "Membedakan verba posisi (sitzen, liegen, stehen) dan verba gerak (gehen, fahren, fliegen)",
+      "Menggunakan posisi verba dalam konteks lokasi dan perpindahan",
+      "Memahami Wechselpräpositionen dengan positionsverben"
+    ]
+  },
+  {
+    "id": "a2-17",
+    "level": "A2",
+    "title": "Adjektivendungen (bestimmt/unbestimmt)",
+    "canDoGoals": [
+      "Menggunakan adjektivendungen setelah artikel pasti (-er, -e, -es)",
+      "Menggunakan adjektivendungen setelah artikel tidak pasti (-er, -e, -es)",
+      "Memahami adjektivendungen tanpa artikel (Nominativ, Akkusativ, Dativ)"
+    ]
+  },
+  {
+    "id": "a2-18",
+    "level": "A2",
+    "title": "Adjektive nach Komparativ & Superlativ",
+    "canDoGoals": [
+      "Menggunakan adjektiv dengan Komparativ (+ -er als)",
+      "Menggunakan adjektiv dengan Superlativ (am + -sten)",
+      "Memahami adjektiv irregular (gut, viel, gern, bald...)"
+    ]
+  },
+  {
+    "id": "a2-checkpoint-4",
+    "title": "Review A2 Lengkap",
+    "canDoGoals": [
+      "Menguji semua topik grammar A2 dari L1-L18",
+      "Simulasi Goethe A2 Hören + Lesen",
+      "Simulasi Goethe A2 Schreiben + Sprechen"
+    ]
+  },
+  // ═══════════════════════════════════════════
+  // B1 — 14 Lessons (sesuai Netzwerk Neu B1 + Wortbildung)
+  // ═══════════════════════════════════════════
   {
     "id": "b1-1",
     "level": "B1",
     "title": "Kasus Genitiv",
     "canDoGoals": [
       "Menerapkan kasus Genitiv untuk menyatakan kepemilikan formal",
-      "Deklinasi artikel (des, der) lengkap dengan sufiks kata benda maskulin dan netral (-s, -es)",
-      "Menggunakan preposisi yang memerlukan Genitiv (wegen, trotz, während, innerhalb)"
+      "Deklinasi artikel (des, der) dengan sufiks kata benda (-s, -es)",
+      "Menggunakan preposisi yang memerlukan Genitiv (wegen, trotz, während...)"
     ]
   },
   {
     "id": "b1-2",
     "level": "B1",
-    "title": "Relativsätze (Kalimat Relatif)",
+    "title": "Plusquamperfekt (Waktu Lampau Lanjutan)",
     "canDoGoals": [
-      "Mengidentifikasi dan membangun anak kalimat relatif (Relativsätze)",
-      "Penggunaan kata ganti relatif sesuai dengan kasusnya (der, die, das, den, dem...)",
-      "Membedakan kasus di dalam anak kalimat agar kata ganti relatif tidak keliru"
+      "Membentuk Plusquamperfekt (had + Partizip II)",
+      "Membedakan Perfekt dan Plusquamperfekt dalam konteks",
+      "Menggunakan Plusquamperfekt untuk kejadian sebelum kejadian lampau lain"
     ]
   },
   {
     "id": "b1-3",
     "level": "B1",
-    "title": "Konjunktiv II (würde, könnte, müsste)",
+    "title": "Passiv (Lanjutan) — Vorgangspassiv & Zustandspassiv",
     "canDoGoals": [
-      "Menggambarkan pengandaian atau kondisi khayal yang tak realistis saat ini (Konjunktiv II)",
-      "Membentuk Konjunktiv II dengan (würde + Infinitiv) khusus untuk sebagian besar verba",
-      "Mampu meminta tolong dengan intensi kesopanan paling tinggi secara tertulis dan lisan (könnte/dürfte ich...)"
+      "Membedakan Vorgangspassiv (werden) dan Zustandspassiv (sein)",
+      "Menggunakan Passiv dengan berbagai temporal (Präteritum, Perfekt)",
+      "Membentuk Passiv dengan Modal Verben"
     ]
   },
   {
     "id": "b1-checkpoint-1",
-    "title": "Review Konten Sebelumnya",
+    "title": "Review B1 Awal",
     "canDoGoals": [
-      "Mengevaluasi penguasaan aturan kasus Genitiv (Kepemilikan Lanjut)",
-      "Mengevaluasi penggunaan kata ganti Relatif dalam menyambung anak kalimat",
-      "Mengevaluasi kesopanan level tinggi (Konjunktiv II)"
+      "Menguji Genitiv dan deklinasi",
+      "Menguji Plusquamperfekt",
+      "Menguji Passiv (Vorgang & Zustand)"
     ]
   },
   {
     "id": "b1-4",
     "level": "B1",
-    "title": "Passiv Präsens & Präteritum",
+    "title": "Konjunktiv II (Lanjutan) — Indirekte Rede",
     "canDoGoals": [
-      "Memfokuskan subjek pada sebuah tindakan daripada pelakunya dengan konstruksi Passiv",
-      "Latihan men-transformasikan kalimat aktif menjadi kalimat Passiv",
-      "Membangun konjugasi kalimat pasif baik di tensa Präsens (werden + Partizip II) maupun Präteritum (wurden...)"
+      "Menggunakan Konjunktiv II untuk indirekte Rede (quotative subjunctive)",
+      "Membedakan Konjunktiv I dan II dalam indirekte Rede",
+      "Mengubah kalimat langsung menjadi tidak langsung"
     ]
   },
   {
     "id": "b1-5",
     "level": "B1",
-    "title": "Zweiteilige Konjunktionen",
+    "title": "Relativsätze (Lanjutan) — Kompleks",
     "canDoGoals": [
-      "Mengerti penggunaan Konjungsi ganda (Zweiteilige Konjunktionen)",
-      "Mengekspresikan pilihan alternatif (entweder... oder), atau tambahan yang menguatkan (nicht nur... sondern auch)",
-      "Mengekspresikan perlawan argumen / pengecualian ganda (zwar... aber, weder... noch)"
+      "Menggunakan Relativsätze dengan Preposisi + Pronomen",
+      "Menggunakan was untuk hal-hal umum dalam Relativsätze",
+      "Menggabungkan beberapa Relativsätze dalam satu kalimat"
     ]
   },
   {
     "id": "b1-6",
     "level": "B1",
-    "title": "Indirekte Rede",
+    "title": "Futur II (werden + Partizip II + haben/sein)",
     "canDoGoals": [
-      "Membedakan tutur langsung dan tidak langsung (Indirekte Rede level dasar)",
-      "Menyalin ucapan sumber langsung tanpa tanda kutip dengan kata ganti dan preposisi waktu yang sesuai",
-      "Mengalihkan persepsi (Er sagte, dass...)"
+      "Membentuk Futur II untuk kejadian yang akan selesai di masa depan",
+      "Membedakan Futur I dan Futur II dalam penggunaan",
+      "Menggunakan Futur II untuk asumsi dan spekulasi"
     ]
   },
   {
     "id": "b1-checkpoint-2",
-    "title": "Review Konten Sebelumnya",
+    "title": "Review B1 Tengah",
     "canDoGoals": [
-      "Berlatih mengubah pola aktif, pasif dan pasif bertensa lampau",
-      "Mengevaluasi kefasihan menyambung argumen dengan konjungsi ganda",
-      "Mengevaluasi pelaporan dari kutipan sumber"
+      "Menguji Konjunktiv II lanjutan",
+      "Menguji Relativsätze kompleks",
+      "Menguji Futur II"
     ]
   },
+  // ─── B1 L7-L10: Wortbildung (Pembentukan Kata) ───
   {
     "id": "b1-7",
     "level": "B1",
-    "title": "Infinitivkonstruktionen (zu + Infinitiv)",
+    "title": "Wortbildung: Nomen mit -ung",
     "canDoGoals": [
-      "Penguasaan Infinitivkonstruktionen (zu + Infinitiv)",
-      "Membangun struktur (um... zu, ohne... zu, anstatt... zu)",
-      "Mengekspresikan tujuan dari suatu pekerjaan tanpa modal verb"
+      "Membentuk kata benda dari verba dengan sufiks -ung (die Wohnung, die Bildung)",
+      "Memahami deklinasi kata benda -ung (die, -en)",
+      "Menggunakan kata benda -ung dalam konteks kalimat"
     ]
   },
   {
     "id": "b1-8",
     "level": "B1",
-    "title": "Adjektivdeklination lengkap",
+    "title": "Wortbildung: Nomen mit -heit, -keit, -schaft",
     "canDoGoals": [
-      "Membungkus dan mendeklinasikan kata sifat/adjektiva dari awal di struktur apa pun",
-      "Latihan menggunakan schwache Deklination (setelah artikel definitif)",
-      "Latihan menggunakan gemischte dan starke Deklination untuk benda (tidak memiliki artikel spesifik)"
+      "Membentuk kata benda abstrak dengan -heit (die Gesundheit), -keit (die Möglichkeit), -schaft (die Freundschaft)",
+      "Memahami gender dan deklinasi untuk setiap sufiks",
+      "Membedakan penggunaan -heit, -keit, -schaft dalam konteks"
     ]
   },
   {
     "id": "b1-9",
     "level": "B1",
-    "title": "Futur I & Futur II",
+    "title": "Wortbildung: Adjektive mit -ig, -lich, -isch",
     "canDoGoals": [
-      "Menjelaskan prediksi atau intensi di masa depan dengan (Futur I: werden + Infinitiv)",
-      "Memprediksi bahwa sesuatu AKAN SUDAH SELESAI di masa depan (Futur II: werden + Partizip II + haben/sein)",
-      "Menyadari frekuensi dan tingkat natural penutur bahasa Jerman dengan bentuk kalimat ini"
-    ]
-  },
-  {
-    "id": "b1-checkpoint-3",
-    "title": "Review Konten Sebelumnya",
-    "canDoGoals": [
-      "Evaluasi final untuk Infinitive dengan 'Zu'",
-      "Evaluasi final kompleksitas adjektiva bersufiks",
-      "Latihan membuat intensi tertulis dengan metode prediktif"
+      "Membentuk adjektiv dari kata dasar dengan sufiks -ig (wichtig), -lich (wöchentlich), -isch (fertisch)",
+      "Memahami nuansa perbedaan antara -ig, -lich, -isch",
+      "Menggunakan adjektiv hasil word formation dalam kalimat"
     ]
   },
   {
     "id": "b1-10",
     "level": "B1",
-    "title": "Wortbildung (Komposita, Präfixe)",
+    "title": "Wortbildung: Verben mit Vorsilben (be-, ver-, zer-, ent-, er-)",
     "canDoGoals": [
-      "Membangun ketahanan kata melalui menebak arti kata baru secara konseptual (Wortbildung)",
-      "Merakit atau mengungkap arti dari Komposita (gabungan Noun+Noun)",
-      "Identifikasi makna dari Präfixe dan Suffixe khusus"
+      "Memahami fungsi prefiks verba: be- (transitif), ver- (perubahan), zer- (perusakan), ent- (penghapusan), er- (pencapaian)",
+      "Membedakan verba dengan dan tanpa prefiks (kaufen → bekaufen, verkaufen, zerstören...)",
+      "Menggunakan verba berprefiks dalam konteks kalimat"
+    ]
+  },
+  {
+    "id": "b1-checkpoint-3",
+    "title": "Review B1 Wortbildung",
+    "canDoGoals": [
+      "Menguji pembentukan Nomen mit -ung, -heit, -keit, -schaft",
+      "Menguji Adjektive mit -ig, -lich, -isch",
+      "Menguji Verben mit Vorsilben"
     ]
   },
   {
     "id": "b1-11",
     "level": "B1",
-    "title": "Plusquamperfekt (Waktu Lampau Selesai)",
+    "title": "Wortbildung: Adjektive mit -bar, -los, -sam",
     "canDoGoals": [
-      "Menerangkan sesuatu di masa lalu (Plusquamperfekt = Past Perfect Tense)",
-      "Menggunakan 'hatten' atau 'waren' sebelum peristiwa masa lampau lainnya (mengiringi 'nachdem')",
-      "Penggunaan kronologis lampau lebih runtut"
+      "Membentuk adjektiv dengan -bar (möglich → möglich), -los (Hoffnung → hoffnungslos), -sam (Arbeit → arbeitsam)",
+      "Memahami makna setiap sufiks (-bar: bisa dilakukan, -los: tanpa, -sam: cenderung)",
+      "Menggunakan adjektiv -bar/-los/-sam dalam konteks"
     ]
   },
   {
     "id": "b1-12",
     "level": "B1",
-    "title": "n-Deklination",
+    "title": "Adverbien (Kata Keterangan)",
     "canDoGoals": [
-      "Penguasaan N-Deklination (Melihat maskulina yang selalu menerima sufiks 'n/en')",
-      "Membedakan jamak reguler versus struktur n-Deklination pada Akkusativ, Dativ, dan Genitiv",
-      "Dapat mengenali kata benda internasional berakhiran '-ent, -ist' dan penggunaanya"
+      "Membedakan Adverbien Temporal, Lokal, Modal, dan Kausal",
+      "Menggunakan Adverbien untuk menghubungkan ide dalam teks",
+      "Memahami posisi Adverbien dalam kalimat"
     ]
   },
   {
+    "id": "b1-13",
+    "level": "B1",
+    "title": "Her-/hin- Verben (herauf, hinunter...)",
+    "canDoGoals": [
+      "Memahami perbedaan her- (ke arah pembicara) dan hin- (menjauh dari pembicara)",
+      "Menggunakan her-/hin- dalam konteks lokasi dan arah",
+      "Membentuk kata kerja her-/hin- (herkommen, hingehen, heraufsteigen...)"
+    ]
+  },
+  {
+    "id": "b1-14",
+    "level": "B1",
+    "title": "Konnektoren & Indirekte Rede (obwohl, trotzdem, deshalb, indem)",
+    "canDoGoals": [
+      "Menggunakan Konnektoren adversativ (obwohl, trotzdem, trotz)",
+      "Menggunakan Konnektoren kausal (deshalb, deswegen, daher)",
+      "Menggunakan Konnektoren modal (indem, dadurch)",
+      "Memahami posisi verb setiap jenis Konnektor"
+    ]
+  },
+  {
+    "id": "b1-checkpoint-4",
+    "title": "Review B1 Lengkap",
+    "canDoGoals": [
+      "Menguji semua topik grammar B1 dari L1-L14",
+      "Simulasi Goethe B1 Hören + Lesen",
+      "Simulasi Goethe B1 Schreiben + Sprechen"
+    ]
+  },
+  // ═══════════════════════════════════════════
+  // B2 — 12 Lessons (sesuai Netzwerk Neu B2 — unchanged)
+  // ═══════════════════════════════════════════
+  {
     "id": "b2-1",
     "level": "B2",
-    "title": "Partizipalkonstruktionen",
+    "title": "Konjunktiv I (Indirekte Rede)",
     "canDoGoals": [
-      "Mampu mengubah klausa relatif panjang menjadi atribut padat bergaya akademik",
-      "Menulis dan menggunakan Partizip I untuk menandakan hal yang sedang terjadi aktif sebagai adjektif",
-      "Menulis dan menggunakan Partizip II untuk menunjukkan pasif/rampung sebagai adjektif"
+      "Menggunakan Konjunktiv I untuk melaporkan ucapan orang lain",
+      "Membedakan Konjunktiv I dan II dalam konteks berbeda",
+      "Mengubah kalimat langsung menjadi indirekte Rede dengan benar"
     ]
   },
   {
     "id": "b2-2",
     "level": "B2",
-    "title": "Erweiterte Relativsätze",
+    "title": "Passiv — Vorgangspassiv & Zustandspassiv (Kompleks)",
     "canDoGoals": [
-      "Memahami konstruksi kalimat nominal / kalimat partizipial di posisi terentang / pre-nominal",
-      "Menjabarkan struktur Partisipial (Erweiterte Relativsätze) dari kiri ke kanan sebelum masuk ranah membaca artikel resmi",
-      "Menguraikan susunan sintaksis formal"
+      "Membedakan Vorgangspassiv (werden) dan Zustandspassiv (sein)",
+      "Menggunakan Passiv dengan berbagai temporal (Präteritum, Perfekt, Plusquamperfekt)",
+      "Membentuk Passiv dengan Modal Verben"
     ]
   },
   {
     "id": "b2-3",
     "level": "B2",
-    "title": "Modalpartikeln (doch, mal, ja, eben)",
+    "title": "Nebensätze — Relativsätze, Konzessivsätze, Finalsätze",
     "canDoGoals": [
-      "Menghidupkan argumen oral/lisan dengan Modalpartikeln",
-      "Dapat merepresentasikan rasa marah / meremehkan / keyakinan diri dengan kata seperti 'halt', 'eben', 'doch', atau 'mal'",
-      "Meningkatkan aksen natural lisan bagaikan native speaker"
+      "Menggunakan Relativsätze dengan Preposisi + Pronomen",
+      "Menggunakan Konzessivsätze (obwohl, obgleich, obzwar)",
+      "Menggunakan Finalsätze (damit, um...zu)"
     ]
   },
   {
     "id": "b2-checkpoint-1",
-    "title": "Review Konten Sebelumnya",
+    "title": "Review B2 Awal",
     "canDoGoals": [
-      "Tes mengkonversikan klausa relasional pasif/aktif ke format tertulis panjang akademik Partizip",
-      "Tes penggunaan partikel nada bicara di konteks diskusi dan berdebat"
+      "Menguji Konjunktiv I dan indirekte Rede",
+      "Menguji Passiv kompleks",
+      "Menguji Nebensätze (Relativ, Konzessiv, Final)"
     ]
   },
   {
     "id": "b2-4",
     "level": "B2",
-    "title": "Wissenschaftlicher Schreibstil",
+    "title": "Partizipialkonstruktion (Partizip I & II sebagai Adjektiv)",
     "canDoGoals": [
-      "Menguasai karakteristik Wissenschaftlicher Schreibstil (gaya tulisan ilmiah dan objektif)",
-      "Mengecoh perspektif pelaku dan menggantinya dengan gaya passiversatz / impersonal (man, es, sich lassen)",
-      "Langkah pertama persiapan menulis argumen saintifik/logis di ujian B2 atau tes DaF"
+      "Menggunakan Partizip I dan II sebagai modifier kata benda",
+      "Membedakan Partizip I (aktif) dan Partizip II (pasif)",
+      "Menggantikan Nebensätze dengan Partizipialkonstruktion"
     ]
   },
   {
     "id": "b2-5",
     "level": "B2",
-    "title": "Konjunktiv I (Indirekte Rede formal)",
+    "title": "Erweitertes Partizip (erweitertes Partizipialattribut)",
     "canDoGoals": [
-      "Konjugasi lanjutan Konjunktiv I, sering dibaca di struktur koran dan surat kabar aktual",
-      "Cara melaporkan berita dengan netral/apriori menjaga klaim kutipan secara objektif",
-      "Ubah reportase dengan benar jika Konjunktiv I serupa dengan Präsens dengan lari ke Konjunktiv II"
+      "Menggunakan Partizip II dengan preposisi dan objek",
+      "Menggabungkan beberapa Partizip dalam satu konstruksi",
+      "Memahami kapan harus menghindari Partizipialkonstruktion"
     ]
   },
   {
     "id": "b2-6",
     "level": "B2",
-    "title": "Komplexe Satzstrukturen",
+    "title": "Wortbildung — Komposita (Zusammengesetzte Wörter)",
     "canDoGoals": [
-      "Mengurai labirin anak kalimat dalam jerman, alias 'Schachtelsätze' (Struktur Kalimat Boks)",
-      "Menavigasi artikel yang menggabungkan banyak Nebensätze dengan konjungsi berlapis-lapis",
-      "Meningkatkan reading comprehension pada struktur bahasa Jerman kelas literasi korporat"
+      "Membentuk kata majemuk dari dua kata benda",
+      "Menentukan gender kata majemuk (ikut kata terakhir)",
+      "Membaca dan memahami kata majemuk panjang"
     ]
   },
   {
     "id": "b2-checkpoint-2",
-    "title": "Review Konten Sebelumnya",
+    "title": "Review B2 Tengah",
     "canDoGoals": [
-      "Replik jurnalistik untuk konjunktiv I / reportase murni tak bias",
-      "Latihan menelaah artikel bacaan / komprehensi kalimat tak menentu (Schachtelsätze)"
+      "Menguji Partizipialkonstruktion",
+      "Menguji Erweitertes Partizip",
+      "Menguji Komposita"
     ]
   },
   {
     "id": "b2-7",
     "level": "B2",
-    "title": "Idiome & Redewendungen",
+    "title": "Nebensätze — Kausalsätze, Konsekutivsätze, Temporalsätze",
     "canDoGoals": [
-      "Pengenalan dan latihan Idiome dan Redewendungen populer dalam kehidupan kantor atau kultural Eropa di Jerman",
-      "Ubah pengucapan harfiah menjadi kiasan bermakna setara native speaker",
-      "Terhindar dari kebingungan terjemahan harfiah"
+      "Menggunakan Kausalsätze (weil, da, denn)",
+      "Menggunakan Konsekutivsätze (sodass, so...dass)",
+      "Menggunakan Temporalsätze (als, wenn, während, seitdem, nachdem, bevor, bis)"
     ]
   },
   {
     "id": "b2-8",
     "level": "B2",
-    "title": "Fachvokabular (Medizin, Hukum, Bisnis)",
+    "title": "Modale Partikeln (doch, mal, halt, eben, ja, schon, denn, nur)",
     "canDoGoals": [
-      "Latihan terminologi karier (Fachvokabular) dari kedokteran, ekonomi, bisnis / hukum",
-      "Berlatih membuat resume terminologi fungsional spesifik sesuai target studi",
-      "Cara menginvestigasi leksikon khusus secara mandiri"
+      "Memahami fungsi modale Partikeln untuk nuansa dan penekanan",
+      "Membedakan Partikeln dalam pertanyaan dan pernyataan",
+      "Menggunakan Partikeln secara natural dalam percakapan"
     ]
   },
   {
     "id": "b2-9",
     "level": "B2",
-    "title": "Textanalyse & Argumentation",
+    "title": "Konjunktionen — aber, sondern, sondern auch, außerdem, überdies",
     "canDoGoals": [
-      "Membangun taktik Textanalyse dan Argumentation level debat formal",
-      "Menghargai, menyangkal, merangkum, dan bernegosiasi secara rasional dari perspektif (Dafür/Dagegen)",
-      "Memulai opini tajam tanpa mengkompromikan keformalan bahasa verbal"
+      "Membedakan aber, sondern, sondern auch dalam kalimat",
+      "Menggunakan additive Konjunktionen (außerdem, überdies, zudem)",
+      "Menghubungkan ide-ide kompleks dengan Konjunktionen"
     ]
   },
   {
     "id": "b2-checkpoint-3",
-    "title": "Review Konten Sebelumnya",
+    "title": "Review B2 Lanjut",
     "canDoGoals": [
-      "Evaluasi debat asinkron dan ekspresi kiasan idiomatik",
-      "Asesmen Vokabular teknikal dari industri khusus"
+      "Menguji Nebensätze kompleks",
+      "Menguji Modale Partikeln",
+      "Menguji Konjunktionen lanjutan"
     ]
   },
   {
     "id": "b2-10",
     "level": "B2",
-    "title": "Persiapan Ujian Goethe B2",
+    "title": "Subjunktiv (Konjunktiv III) & Irrealis",
     "canDoGoals": [
-      "Meringkas taktik menaklukkan Modul Ujian Goethe-Zertifikat B2",
-      "Membedah apa yang dianalisa pemeriksa pada sesi (Lesen, Hören, Schreiben, Sprechen)",
-      "Tip menghemat waktu saat berhadapan dengan soal menjebak"
+      "Menggunakan Konjunktiv II untuk kondisi irrealis (Wenn ich reich wäre...)",
+      "Membedakan realis dan irrealis dalam kalimat",
+      "Membentuk kalimat hyphotetical dengan Konjunktiv II"
     ]
   },
   {
     "id": "b2-11",
     "level": "B2",
-    "title": "Nomen-Verb-Verbindungen",
+    "title": "Nominalisierung (Verben → Nomen)",
     "canDoGoals": [
-      "Menguasai Nomen-Verb-Verbindungen tingkat lanjut (Kombinasi Paten Noun-Verba)",
-      "Mengganti verba sederhana dengan frase tinggi. Contoh: mengganti 'fragen' menjadi 'eine Frage stellen'",
-      "Ekspektasi birokrasi dan korespondensi bisnis formal Jerman di ranah akademik."
+      "Mengubah verba menjadi kata benda (die Entwicklung, die Entscheidung)",
+      "Menggunakan Nominalisierung dalam bahasa tulis formal",
+      "Memahami deklinasi kata benda hasil Nominalisierung"
     ]
   },
   {
     "id": "b2-12",
     "level": "B2",
-    "title": "Passiversatzformen",
+    "title": "Verbmuster — Reflexiv, Reziprok, Passiv, unpersönlich",
     "canDoGoals": [
-      "Meningkatkan struktur Passiv dengan padanan moderen Passiversatzformen",
-      "Penggunaan refleksi 'sich lassen + Infinitiv', adjektif tambahan (-bar, -lich), dan frasa pengibaratan 'sein + zu + infinitive'",
-      "Fleksibilitas dan kealamian cara mengekspresikan kalimat fasih"
+      "Menggunakan Verben Reflexiv (sich) dalam konteks kompleks",
+      "Menggunakan Verben Reziprok (sich) untuk aksi timbal balik",
+      "Menggunakan Passiv unpersönlich (es wird getanzt)",
+      "Memahami Verben unpersönlich (es gibt, es scheint, es geht)"
+    ]
+  },
+  {
+    "id": "b2-checkpoint-4",
+    "title": "Review B2 Lengkap",
+    "canDoGoals": [
+      "Menguji semua topik grammar B2 dari L1-L12",
+      "Simulasi Goethe B2 Hören + Lesen",
+      "Simulasi Goethe B2 Schreiben + Sprechen"
     ]
   }
 ];
