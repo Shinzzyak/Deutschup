@@ -1,0 +1,77 @@
+{
+  "book": "Studio D A1-B1 (Cornelsen Verlag)",
+  "analysis_date": "2026-06-18",
+  "source": "Web research + publisher documentation",
+  "total_pages": 220,
+  "total_chapters": 36,
+  "levels": {
+    "A1": {
+      "chapters": 12,
+      "grammar_topics": [
+        "Nouns & Articles (der, die, das)",
+        "Personal Pronouns",
+        "Verb conjugation (regular + irregular)",
+        "sein & haben",
+        "Present tense",
+        "Sentence structure (SVO, V2)",
+        "Negation (nicht, kein)",
+        "Nominative & Accusative cases",
+        "Basic prepositions",
+        "Numbers, Time, Dates",
+        "Modal verbs (basic)",
+        "Imperative",
+        "Possessive articles"
+      ],
+      "vocab_count": 900,
+      "exercise_types": ["Fill-in-the-blank", "Dialogue", "Matching", "Listening", "Role-play", "Writing"]
+    },
+    "A2": {
+      "chapters": 12,
+      "grammar_topics": [
+        "Perfekt tense",
+        "Präteritum (sein, haben)",
+        "Dative case (full)",
+        "Wechselpräpositionen",
+        "Reflexive verbs",
+        "Comparative & Superlativ",
+        "Trennbare Verben",
+        "Nebensätze",
+        "Relative clauses (introduction)",
+        "Passive (basic)",
+        "Konjunktiv II (würde)",
+        "Adjective declension (basic)",
+        "Two-part conjunctions"
+      ],
+      "vocab_count": 1600
+    },
+    "B1": {
+      "chapters": 12,
+      "grammar_topics": [
+        "Plusquamperfekt",
+        "Konjunktiv II (extended)",
+        "Konjunktiv I",
+        "Passiv (full)",
+        "Relativsätze (full)",
+        "Infinitivkonstruktionen",
+        "Adjektivdeklination (full)",
+        "N-Deklination",
+        "Genitiv (full)",
+        "Futur I & II",
+        "Nominalisierung",
+        "Wortbildung",
+        "Modalpartikeln",
+        "Komplexe Satzstrukturen"
+      ],
+      "vocab_count": 2600
+    }
+  },
+  "total_vocab": 2600,
+  "special_features": [
+    "Video-based learning",
+    "Integrated workbook",
+    "Exam preparation (Goethe, telc)",
+    "Cultural focus on D-A-CH (Germany, Austria, Switzerland)",
+    "Communicative approach",
+    "Task-based learning"
+  ]
+}

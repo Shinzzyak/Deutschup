@@ -1,0 +1,170 @@
+{
+  "book": "Netzwerk Neu A1-B1 (Klett Verlag)",
+  "analysis_date": "2026-06-18",
+  "source": "Web research + publisher documentation + glossary extraction",
+  "total_pages": 200,
+  "total_chapters": 36,
+  "levels": {
+    "A1": {
+      "chapters": 12,
+      "chapter_list": [
+        {"id": "K1", "title": "Guten Tag!", "topics": ["Greetings", "Introductions", "Countries", "Languages"]},
+        {"id": "K2", "title": "Wir sind die Neuen", "topics": ["Personal details", "Professions", "Numbers 1-20", "Daily routines"]},
+        {"id": "K3", "title": "In Hamburg", "topics": ["City life", "Places", "Directions", "Transport", "Landmarks"]},
+        {"id": "K4", "title": "Guten Appetit!", "topics": ["Food", "Drink", "Shopping", "Restaurant ordering", "Preferences"]},
+        {"id": "K5", "title": "Alltag und Familie", "topics": ["Daily routines", "Family members", "Possessive articles", "Telling time"]},
+        {"id": "K6", "title": "Zeit mit Freunden", "topics": ["Hobbies", "Free time", "Making plans", "Invitations"]},
+        {"id": "K7", "title": "Körper und Gesundheit", "topics": ["Body parts", "Health", "Doctor visit", "Symptoms"]},
+        {"id": "K8", "title": "Wohnen", "topics": ["Housing", "Furniture", "Describing rooms", "Prepositions of place"]},
+        {"id": "K9", "title": "Kleidung", "topics": ["Clothing", "Shopping for clothes", "Colors", "Sizes"]},
+        {"id": "K10", "title": "Medien", "topics": ["Media", "Internet", "Phone", "Apps"]},
+        {"id": "K11", "title": "Reisen", "topics": ["Travel", "Booking", "Hotel", "Airport", "Means of transport"]},
+        {"id": "K12", "title": "Prüfung", "topics": ["Exam preparation", "Review", "Test strategies"]}
+      ],
+      "grammar_topics": [
+        "Personal pronouns (ich, du, er/sie/es, wir, ihr, sie/Sie)",
+        "Verb conjugation (regular + irregular)",
+        "sein & haben",
+        "Present tense (Präsens)",
+        "Sentence structure (V2 rule)",
+        "Articles (der, die, das, ein, eine)",
+        "Accusative case (basic)",
+        "Dative case (basic with prepositions)",
+        "Prepositions of place (in, auf, an, unter, neben, zwischen)",
+        "Modal verbs (können, müssen, wollen, dürfen)",
+        "Possessive articles (mein, dein, sein, ihr)",
+        "Negation (nicht, kein)",
+        "Question formation (W-Fragen, Ja/Nein-Fragen)",
+        "Numbers 1-1000",
+        "Telling time",
+        "Imperative (basic)",
+        " separable verbs (basic)"
+      ],
+      "vocab_count": 800,
+      "vocab_domains": [
+        "Greetings & introductions",
+        "Countries & nationalities",
+        "Professions",
+        "Family",
+        "Daily routines",
+        "Food & drink",
+        "City & transport",
+        "Health & body",
+        "Housing & furniture",
+        "Clothing",
+        "Media & technology",
+        "Travel"
+      ],
+      "exercise_types": ["Fill-in-the-blank", "Dialogue completion", "Matching", "Transformation", "Role-play", "Listening comprehension"],
+      "estimated_teaching_hours": 100,
+      "cefr_can_do": [
+        "Understand and use familiar everyday expressions",
+        "Introduce themselves and others",
+        "Ask and answer personal questions",
+        "Interact in a simple way",
+        "Write simple postcards/emails"
+      ]
+    },
+    "A2": {
+      "chapters": 12,
+      "chapter_list": [
+        {"id": "K13", "title": "Arbeitsalltag", "topics": ["Work life", "Office", "Email", "Telephone"]},
+        {"id": "K14", "title": "Freizeit", "topics": ["Leisure activities", "Sports", "Clubs", "Events"]},
+        {"id": "K15", "title": "Gesundheit", "topics": ["Health", "Doctor visit", "Medicine", "Wellness"]},
+        {"id": "K16", "title": "Bildung", "topics": ["Education", "School system", "University", "Courses"]},
+        {"id": "K17", "title": "Umwelt", "topics": ["Environment", "Nature", "Recycling", "Weather"]},
+        {"id": "K18", "title": "Konsum", "topics": ["Shopping", "Prices", "Comparisons", "Online shopping"]},
+        {"id": "K19", "title": "Medien", "topics": ["News", "Social media", "TV", "Radio"]},
+        {"id": "K20", "title": "Reisen", "topics": ["Travel", "Culture", "Sightseeing", "Accommodation"]},
+        {"id": "K21", "title": "Miteinander", "topics": ["Relationships", "Feelings", "Conflict resolution"]},
+        {"id": "K22", "title": "Kultur", "topics": ["German culture", "Traditions", "Festivals", "Customs"]},
+        {"id": "K23", "title": "Beruf", "topics": ["Career", "Job search", "Application", "Interview"]},
+        {"id": "K24", "title": "Prüfung", "topics": ["Exam preparation", "Goethe A2 format"]}
+      ],
+      "grammar_topics": [
+        "Perfekt tense (haben/sein + Partizip II)",
+        "Präteritum (sein, haben, modal verbs)",
+        "Accusative case (full)",
+        "Dative case (full)",
+        "Wechselpräpositionen (in/an/auf + Dat vs Akk)",
+        "Modal verbs (expanded usage)",
+        "Reflexive verbs",
+        "Comparative & Superlativ",
+        "Trennbare Verben",
+        "Nebensätze (weil, dass, wenn, obwohl)",
+        "Relative clauses (basic)",
+        "Passive voice (basic)",
+        "Konjunktiv II (würde + Infinitiv, wishes)",
+        "Adjective declension (basic)",
+        "Two-part conjunctions (weder...noch, entweder...oder)",
+        "Indirect speech (basic)",
+        "Genitive (introduction)"
+      ],
+      "vocab_count": 1600,
+      "exercise_types": ["Fill-in-the-blank", "Dialogue completion", "Transformation", "Writing tasks", "Listening comprehension", "Role-play", "Group discussion"],
+      "estimated_teaching_hours": 120,
+      "cefr_can_do": [
+        "Understand sentences on familiar topics",
+        "Communicate in simple, routine tasks",
+        "Describe background, immediate environment",
+        "Write short, simple notes and messages"
+      ]
+    },
+    "B1": {
+      "chapters": 12,
+      "chapter_list": [
+        {"id": "K25", "title": "Identität", "topics": ["Identity", "Personal development", "Values", "Goals"]},
+        {"id": "K26", "title": "Gesellschaft", "topics": ["Society", "Social issues", "Demographics", "Integration"]},
+        {"id": "K27", "title": "Bildung & Beruf", "topics": ["Education system", "Career paths", "Training"]},
+        {"id": "K28", "title": "Gesundheit", "topics": ["Mental health", "Prevention", "Lifestyle"]},
+        {"id": "K29", "title": "Medien & Technik", "topics": ["Digital media", "Privacy", "Innovation"]},
+        {"id": "K30", "title": "Umwelt & Natur", "topics": ["Climate change", "Sustainability", "Energy"]},
+        {"id": "K31", "title": "Kultur & Freizeit", "topics": ["Art", "Music", "Film", "Literature"]},
+        {"id": "K32", "title": "Reisen & Tourismus", "topics": ["Tourism", "Cultural differences", "Globalization"]},
+        {"id": "K33", "title": "Politik", "topics": ["Politics", "Democracy", "EU", "Voting"]},
+        {"id": "K34", "title": "Wirtschaft", "topics": ["Economy", "Money", "Banking", "Consumer rights"]},
+        {"id": "K35", "title": "Wissenschaft", "topics": ["Science", "Research", "Technology"]},
+        {"id": "K36", "title": "Prüfung", "topics": ["Goethe B1 exam prep", "All modules"]}
+      ],
+      "grammar_topics": [
+        "Plusquamperfekt",
+        "Konjunktiv II (extended)",
+        "Konjunktiv I (indirect speech)",
+        "Passiv (Präsens, Präteritum, Futur)",
+        "Relativsätze (full)",
+        "Infinitivkonstruktionen (zu + Infinitiv, um...zu, ohne...zu)",
+        "Adjektivdeklination (full)",
+        "N-Deklination",
+        "Genitiv (full)",
+        "Futur I & II",
+        "Nominalisierung",
+        "Partizipialkonstruktionen",
+        "Komplexe Satzstrukturen",
+        "Wortbildung (Komposita, Präfixe, Suffixe)",
+        "Modalpartikeln",
+        "Passiversatzformen"
+      ],
+      "vocab_count": 2500,
+      "exercise_types": ["Text analysis", "Writing essays", "Debate", "Presentation", "Listening comprehension", "Reading comprehension", "Role-play"],
+      "estimated_teaching_hours": 150,
+      "cefr_can_do": [
+        "Understand main points of clear standard speech",
+        "Deal with most travel situations",
+        "Produce simple connected text on familiar topics",
+        "Describe experiences, events, hopes",
+        "Give reasons and explanations"
+      ]
+    }
+  },
+  "total_vocab": 2500,
+  "special_features": [
+    "Integrated audio materials",
+    "Video content",
+    "Exam preparation (Start Deutsch, Goethe)",
+    "Cultural notes throughout",
+    "Progressive difficulty",
+    "Real-world scenarios",
+    "Collaborative learning activities",
+    "Digital resources (BlinkLearning)"
+  ]
+}

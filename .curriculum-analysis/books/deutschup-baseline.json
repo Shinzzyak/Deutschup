@@ -1,0 +1,122 @@
+{
+  "book": "DeutschUp (Current Curriculum)",
+  "source": "src/data/lessonIndex.ts + src/data/lessons.ts",
+  "analysis_date": "2026-06-18",
+  "levels": {
+    "A1": {
+      "lessons": 13,
+      "lesson_ids": ["a1-1","a1-2","a1-3","a1-checkpoint-1","a1-4","a1-5","a1-6","a1-checkpoint-2","a1-7","a1-8","a1-9","a1-checkpoint-3","a1-10","a1-11","a1-12","a1-13"],
+      "grammar_topics": [
+        "Greetings & Introductions",
+        "Articles (der, die, das)",
+        "Numbers 1-100 & Age",
+        "Colors, Days, Months",
+        "Personal Pronouns",
+        "sein & haben conjugation",
+        "Basic sentence structure (S+V+O)",
+        "Basic prepositions (in, auf, an, unter)",
+        "Family & Jobs",
+        "Food, Drink & Shopping",
+        "Telling time",
+        "Hobbies & Free time",
+        "Weather & Seasons"
+      ],
+      "vocab_count_estimate": 200,
+      "has_dialogues": true,
+      "has_listening": true,
+      "has_speaking_exercises": true,
+      "has_cultural_notes": true,
+      "has_pronunciation_tips": true,
+      "has_indonesian_mistakes": true,
+      "cefr_alignment": "A1 — comprehensive"
+    },
+    "A2": {
+      "lessons": 13,
+      "lesson_ids": ["a2-1","a2-2","a2-3","a2-4","a2-5","a2-6","a2-7","a2-8","a2-9","a2-10","a2-11","a2-12","a2-13"],
+      "grammar_topics": [
+        "Nominativ vs Akkusativ",
+        "Dativ case",
+        "Modal Verbs (können, müssen, wollen, dürfen)",
+        "Perfekt tense",
+        "Präteritum (sein/haben/modals)",
+        "Wechselpräpositionen (Dat vs Akk)",
+        "Komparativ & Superlativ",
+        "Trennbare Verben",
+        "W-Fragen",
+        "Negation (nicht vs kein)",
+        "Reflexive Verbs",
+        "Verbs with fixed prepositions",
+        "Nebensätze (dass, weil, wenn)"
+      ],
+      "vocab_count_estimate": 300,
+      "has_dialogues": true,
+      "cefr_alignment": "A2 — comprehensive"
+    },
+    "B1": {
+      "lessons": 12,
+      "lesson_ids": ["b1-1","b1-2","b1-3","b1-checkpoint-1","b1-4","b1-5","b1-6","b1-checkpoint-2","b1-7","b1-8","b1-9","b1-checkpoint-3","b1-10","b1-11","b1-12"],
+      "grammar_topics": [
+        "Genitiv case",
+        "Relativsätze",
+        "Konjunktiv II",
+        "Passiv Präsens & Präteritum",
+        "Zweiteilige Konjunktionen",
+        "Indirekte Rede",
+        "Infinitivkonstruktionen (zu + Infinitiv)",
+        "Adjektivdeklination",
+        "Futur I & Futur II",
+        "Wortbildung (Komposita, Präfixe)",
+        "Plusquamperfekt",
+        "n-Deklination"
+      ],
+      "vocab_count_estimate": 250,
+      "cefr_alignment": "B1 — comprehensive"
+    },
+    "B2": {
+      "lessons": 12,
+      "lesson_ids": ["b2-1","b2-2","b2-3","b2-checkpoint-1","b2-4","b2-5","b2-6","b2-checkpoint-2","b2-7","b2-8","b2-9","b2-checkpoint-3","b2-10","b2-11","b2-12"],
+      "grammar_topics": [
+        "Partizipalkonstruktionen",
+        "Erweiterte Relativsätze",
+        "Modalpartikeln",
+        "Wissenschaftlicher Schreibstil",
+        "Konjunktiv I",
+        "Komplexe Satzstrukturen (Schachtelsätze)",
+        "Idiome & Redewendungen",
+        "Fachvokabular",
+        "Textanalyse & Argumentation",
+        "Goethe B2 exam prep",
+        "Nomen-Verb-Verbindungen",
+        "Passiversatzformen"
+      ],
+      "vocab_count_estimate": 250,
+      "cefr_alignment": "B2 — comprehensive"
+    }
+  },
+  "total_lessons": 47,
+  "total_grammar_topics": 50,
+  "estimated_total_vocab": 1000,
+  "special_features": [
+    "Indonesian learner mistakes section",
+    "Cultural notes (German etiquette)",
+    "Pronunciation tips with minimal pairs",
+    "Listening simulations with transcripts",
+    "Sentence breakdowns",
+    "Can-do goals per lesson",
+    "Checkpoints for review"
+  ],
+  "strengths": [
+    "Comprehensive A1-B2 grammar progression",
+    "Unique Indonesian learner mistake corrections",
+    "Cultural context integrated",
+    "Pronunciation guidance",
+    "Can-do goals aligned with CEFR"
+  ],
+  "potential_gaps_vs_textbooks": [
+    "Vocabulary count may be lower than standard textbooks (Netzwerk: ~1600, Studio D: ~1800)",
+    "Exercise variety may be limited (mostly AI-driven, fewer structured drills)",
+    "No formal exam simulation (except B2 exam prep lesson)",
+    "Speaking practice is AI-based, not structured dialogue drills",
+    "Cultural notes are Germany-focused (no Austria/Switzerland)"
+  ]
+}
