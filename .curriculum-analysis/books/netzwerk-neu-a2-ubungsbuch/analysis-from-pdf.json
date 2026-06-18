@@ -1,0 +1,123 @@
+{
+  "book": "Netzwerk neu A2 Übungsbuch (Klett Verlag, 2022)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF vision extraction (179 pages, scanned)",
+  "isbn": "978-3-12-607165-9",
+  "total_pages": 179,
+  "total_chapters": 12,
+  "level": "A2",
+  "chapter_list": [
+    {
+      "id": "K1", "title": "Und was machst du?", "pages": "6-17",
+      "topics": ["Self-introduction", "Reporting on past events", "Making appointments", "Giving reasons", "Restaurant presentation", "Vocabulary learning strategies"],
+      "grammatik": ["Perfekt – unregelmäßige Verben (Partizip II)", "Perfekt mit haben oder sein"]
+    },
+    {
+      "id": "K2", "title": "Nach der Schulzeit", "pages": "18-29",
+      "topics": ["Post-school life", "School reports", "Training/apprenticeship", "Expressing opinions", "Writing emails", "Newspaper articles"],
+      "grammatik": ["Präteritum von Modalverben", "Indirekte Fragesätze"]
+    },
+    {
+      "id": "K3", "title": "Immer online?", "pages": "30-41",
+      "topics": ["Media", "Advantages/disadvantages", "Preferences", "Film reviews", "Star portraits", "Online surveys"],
+      "grammatik": ["Komparativ und Superlativ", "Vergleiche mit als/wie"]
+    },
+    {
+      "id": "K4", "title": "Große und kleine Gefühle", "pages": "46-57",
+      "topics": ["Feelings", "Describing celebrations", "Invitations", "Party descriptions", "Joy/regret", "Experiences abroad"],
+      "grammatik": ["Dativ nach Verben und Adjektiven", "Dativ mit Präpositionen"]
+    },
+    {
+      "id": "K5", "title": "Leben in der Stadt", "pages": "58-69",
+      "topics": ["City life", "Job ads", "Job interviews", "Describing things", "Bank/authority conversations", "Polite requests"],
+      "grammatik": ["Wechselpräpositionen (Akkusativ vs Dativ)", "Imperativ"]
+    },
+    {
+      "id": "K6", "title": "Arbeitswelten", "pages": "70-81",
+      "topics": ["Work and leisure", "Train station conversations", "Travel", "Work stories", "Career wishes", "Phone conversations"],
+      "grammatik": ["Plusquamperfekt", "Nebensätze mit weil, dass, wenn"]
+    },
+    {
+      "id": "K7", "title": "Ganz schön mobil", "pages": "86-97",
+      "topics": ["Transport", "Asking for information", "Directions", "Commute", "Opinions on transport"],
+      "grammatik": ["Passiv Präsens", "Man + Partizip I"]
+    },
+    {
+      "id": "K8", "title": "Gelernt ist gelernt!", "pages": "98-109",
+      "topics": ["Learning", "Exam types", "Radio shows", "Forum posts", "Advice", "Work routines", "Presentations"],
+      "grammatik": ["Passiv mit Modalverben", "Partizipialattribute"]
+    },
+    {
+      "id": "K9", "title": "Sportlich, sportlich", "pages": "110-121",
+      "topics": ["Sports", "Favorites", "Enthusiasm/hope/disappointment", "Consequences", "Travel reports"],
+      "grammatik": ["Relativsätze mit der/die/das/welcher", "Konjunktionen (obwohl, trotzdem, weil)"]
+    },
+    {
+      "id": "K10", "title": "Zusammen leben", "pages": "126-137",
+      "topics": ["Living together", "Complaints", "Apologies", "Favors", "City presentations", "Pets", "Stories"],
+      "grammatik": ["Konjunktiv II (würde + Infinitiv)", "Konjunktiv II mit Modalverben"]
+    },
+    {
+      "id": "K11", "title": "Wie die Zeit vergeht!", "pages": "138-149",
+      "topics": ["Life phases", "Wishes", "Advice", "Planning together", "Proverbs", "Poetry"],
+      "grammatik": ["Futur I", "Infinitiv mit zu", "um...zu, ohne...zu"]
+    },
+    {
+      "id": "K12", "title": "Gute Unterhaltung!", "pages": "150-161",
+      "topics": ["Partner interviews", "Buildings", "Concert tickets", "Musicians", "Art", "Describing images"],
+      "grammatik": ["Indirekter Fragesatz", "Wortbildung: Komposita, Präfixe"]
+    }
+  ],
+  "exam_training_sections": [
+    "Prüfungstraining 1 (K3) — Goethe A2 + telc A2",
+    "Prüfungstraining 2 (K6) — Goethe A2 + telc A2",
+    "Prüfungstraining 3 (K9) — Goethe A2 + telc A2",
+    "Prüfungstraining 4 (K12) — Goethe A2 + telc A2"
+  ],
+  "appendix": [
+    "Redemittel (communicative phrases)",
+    "Verben mit Präpositionen (verbs with prepositions)",
+    "Reflexive Verben (reflexive verbs)",
+    "Kurssprache (classroom language)"
+  ],
+  "grammar_topics_complete": [
+    "Perfekt – unregelmäßige Verben (Partizip II)",
+    "Perfekt mit haben oder sein",
+    "Präteritum von Modalverben",
+    "Indirekte Fragesätze",
+    "Komparativ und Superlativ",
+    "Dativ nach Verben und Adjektiven",
+    "Dativ mit Präpositionen",
+    "Wechselpräpositionen (Akkusativ vs Dativ)",
+    "Imperativ",
+    "Plusquamperfekt",
+    "Nebensätze mit weil, dass, wenn",
+    "Passiv Präsens",
+    "Man + Partizip I",
+    "Passiv mit Modalverben",
+    "Partizipialattribute",
+    "Relativsätze",
+    "Konjunktionen (obwohl, trotzdem, weil)",
+    "Konjunktiv II (würde + Infinitiv)",
+    "Konjunktiv II mit Modalverben",
+    "Futur I",
+    "Infinitiv mit zu",
+    "um...zu, ohne...zu",
+    "Indirekter Fragesatz",
+    "Wortbildung: Komposita, Präfixe"
+  ],
+  "exercise_types": [
+    "Fill-in-the-blank",
+    "Matching",
+    "Transformation",
+    "Role-play",
+    "Listening comprehension",
+    "Reading comprehension",
+    "Writing tasks",
+    "Pronunciation practice",
+    "Group discussion",
+    "Grammar exercises"
+  ],
+  "vocab_count_estimate": 800,
+  "teaching_hours_estimate": 120
+}
