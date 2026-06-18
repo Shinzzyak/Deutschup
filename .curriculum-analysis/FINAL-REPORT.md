@@ -216,3 +216,34 @@
 6. Add exercise variety
 
 **Estimated effort:** 4-6 weeks for comprehensive alignment.
+
+---
+
+## 7. WORTSCHATZ A1 — ACTUAL COUNT
+
+**Source:** Netzwerk Neu A1 WORTSCHATZ list (PDF, 2230 lines)
+
+| Chapter | Title | Words |
+|---------|-------|-------|
+| K1 | Guten Tag! | 113 |
+| K2 | Freunde, Kollegen, und ich | 195 |
+| K3 | In Hamburg | 185 |
+| K4 | Guten Appetit! | 218 |
+| K5 | Alltag und Familie | 152 |
+| K6 | Zeit mit Freunden | 181 |
+| K7 | Arbeitsalltag | 184 |
+| K8 | Fit und Gesund | 219 |
+| K9 | Meine Wohnung | 144 |
+| K10 | Studium und Beruf | 195 |
+| K11 | Medien und Technik | 192 |
+| K12 | Reisen | 192 |
+| **Total** | | **2,012** |
+
+### Updated Vocabulary Comparison
+
+| Source | A1 Words | Gap |
+|--------|----------|-----|
+| Netzwerk Neu A1 | 2,012 | — |
+| DeutschUp A1 | ~200 | **-1,812** |
+
+**Gap: DeutschUp has only 10% of Netzwerk Neu's A1 vocabulary.**
