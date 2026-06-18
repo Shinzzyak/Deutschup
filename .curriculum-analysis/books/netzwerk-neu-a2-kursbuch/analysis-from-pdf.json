@@ -1,0 +1,151 @@
+{
+  "book": "Netzwerk neu A2 — Kursbuch mit Audios und Videos (Klett Verlag, 2020)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF OCR extraction (57MB, 180 pages)",
+  "level": "A2",
+  "type": "Kursbuch",
+  "authors": "Stefanie Dengler, Paul Rusch, Helen Schmitz, Tanja Sieber",
+  "isbn": "978-3-12-607164-2",
+  "total_pages": 180,
+  "total_chapters": 12,
+  "chapter_list": [
+    {
+      "id": "K1", "title": "Und was machst du?", "pages": "8-17",
+      "grammar": ["Genitiv: Name + s", "Wiederholung: Perfekt", "Nebensatz mit weil"],
+      "topics": ["Freizeit", "Tätigkeiten", "Restaurant"],
+      "wortschatz": ["Freizeit", "Tätigkeiten", "im Restaurant"],
+      "landeskunde": ["Essen ohne Licht"]
+    },
+    {
+      "id": "K2", "title": "Nach der Schulzeit", "pages": "18-27",
+      "grammar": ["Modalverben im Präteritum", "Wiederholung: Artikel", "Possessivartikel im Dativ"],
+      "topics": ["Schulzeit", "Erfahrungen", "Schultypen"],
+      "wortschatz": ["Erfahrungen in der Schulzeit", "Schulfächer", "Schultypen"],
+      "landeskunde": ["Schultypen in Deutschland"]
+    },
+    {
+      "id": "K3", "title": "Immer online?", "pages": "28-37",
+      "grammar": ["Adjektive: Komparativ und Superlativ", "Vergleiche mit als und wie", "Nebensatz mit dass"],
+      "topics": ["Medien", "Filme", "Internet"],
+      "wortschatz": ["Medien", "Aktivitäten mit Medien", "Film"],
+      "landeskunde": ["Kino! Kino!"]
+    },
+    {
+      "id": "K4", "title": "Große und kleine Gefühle", "pages": "44-53",
+      "grammar": ["Nebensatz mit wenn", "Reflexive Verben"],
+      "topics": ["Gefühle", "Feste", "Veranstaltungen"],
+      "wortschatz": ["Feste", "Ereignisse", "Gefühle", "Glückwünsche", "Dank", "Veranstaltungen"],
+      "landeskunde": ["Ein Fest im Norden"]
+    },
+    {
+      "id": "K5", "title": "Leben in der Stadt", "pages": "54-63",
+      "grammar": ["Adjektive nach dem bestimmten Artikel", "Präpositionen ohne + Akkusativ und mit + Dativ", "Konjunktiv II: könnte"],
+      "topics": ["Stadt", "Bewerbung", "Bank", "Behörde"],
+      "wortschatz": ["Stadt", "Bewerbungsgespräch", "Bank", "Behörde"],
+      "landeskunde": ["Rund um den Ring: Wien"]
+    },
+    {
+      "id": "K6", "title": "Arbeitswelten", "pages": "64-73",
+      "grammar": ["Adjektive nach dem unbestimmten Artikel", "werden"],
+      "topics": ["Beruf", "Bahnreisen", "Veranstaltungen", "Telefon"],
+      "wortschatz": ["Tätigkeiten im Beruf", "Bahnreisen", "Veranstaltungen", "am Telefon"],
+      "landeskunde": ["Telefonieren am Arbeitsplatz", "Die moderne Arbeitswelt"]
+    },
+    {
+      "id": "K7", "title": "Ganz schön mobil", "pages": "80-89",
+      "grammar": ["Indirekte Fragesätze: W-Fragen und Ja-/Nein-Fragen", "Ortsangaben: Präpositionen"],
+      "topics": ["Öffentlicher Verkehr", "Weg zur Arbeit", "Geschichten"],
+      "wortschatz": ["Öffentlicher Verkehr", "Verkehr in der Stadt", "Weg zur Arbeit"],
+      "landeskunde": ["Der Weg zur Arbeit in D-A-CH", "Zug-Geschichten"]
+    },
+    {
+      "id": "K8", "title": "Gelernt ist gelernt!", "pages": "90-99",
+      "grammar": ["Konjunktiv II: sollte (Ratschläge)", "Interrogativartikel: Was für ein(e)?"],
+      "topics": ["Lernen", "Prüfungen", "Präsentationen"],
+      "wortschatz": ["Lernen", "Prüfungen", "Präsentationen"],
+      "landeskunde": ["Der Verein Nachbarn für Nachbarn"]
+    },
+    {
+      "id": "K9", "title": "Sportlich, sportlich", "pages": "100-109",
+      "grammar": ["Sätze verbinden: deshalb, trotzdem", "Verben mit Dativ und Akkusativ"],
+      "topics": ["Sport", "Fans", "Verabredungen"],
+      "wortschatz": ["Sport", "Fans", "Verabredungen"],
+      "landeskunde": ["Ein Ort für Sport"]
+    },
+    {
+      "id": "K10", "title": "Zusammen leben", "pages": "116-125",
+      "grammar": ["Wechselpräpositionen", "Positions- und Richtungsverben", "Nebensatz mit als und wenn"],
+      "topics": ["Wohnen", "Nachbarn", "Ortsangaben", "Umziehen", "Tiere"],
+      "wortschatz": ["Wohnen", "Nachbarn", "Ortsangaben", "Umziehen", "Tiere"],
+      "landeskunde": ["Die Deutschen und ihre Haustiere"]
+    },
+    {
+      "id": "K11", "title": "Wie die Zeit vergeht!", "pages": "126-135",
+      "grammar": ["Konjunktiv II", "Verben mit Präposition", "W-Fragen mit Präposition"],
+      "topics": ["Zeit", "Freizeit", "Wünsche", "Pläne"],
+      "wortschatz": ["Zeit", "Freizeit", "Wünsche", "Pläne"],
+      "landeskunde": ["Leben wie in einer anderen Zeit", "Sprichwörter"]
+    },
+    {
+      "id": "K12", "title": "Gute Unterhaltung!", "pages": "136-145",
+      "grammar": ["Indefinitpronomen", "Relativsätze im Nominativ und Akkusativ"],
+      "topics": ["Musik", "Bildbeschreibung", "Festival"],
+      "wortschatz": ["Musik", "Bildbeschreibung"],
+      "landeskunde": ["Malerei gestern und heute"]
+    }
+  ],
+  "grammar_topics_complete": [
+    "Genitiv: Name + s",
+    "Wiederholung: Perfekt",
+    "Nebensatz mit weil",
+    "Modalverben im Präteritum",
+    "Wiederholung: Artikel",
+    "Possessivartikel im Dativ",
+    "Adjektive: Komparativ und Superlativ",
+    "Vergleiche mit als und wie",
+    "Nebensatz mit dass",
+    "Nebensatz mit wenn",
+    "Reflexive Verben",
+    "Adjektive nach dem bestimmten Artikel",
+    "Präpositionen ohne + Akkusativ und mit + Dativ",
+    "Konjunktiv II: könnte",
+    "Adjektive nach dem unbestimmten Artikel",
+    "werden",
+    "Indirekte Fragesätze",
+    "Ortsangaben: Präpositionen",
+    "Konjunktiv II: sollte",
+    "Interrogativartikel: Was für ein(e)?",
+    "Sätze verbinden: deshalb, trotzdem",
+    "Verben mit Dativ und Akkusativ",
+    "Wechselpräpositionen",
+    "Positions- und Richtungsverben",
+    "Nebensatz mit als und wenn",
+    "Konjunktiv II",
+    "Verben mit Präposition",
+    "W-Fragen mit Präposition",
+    "Indefinitpronomen",
+    "Relativsätze im Nominativ und Akkusativ"
+  ],
+  "vocab_count_estimate": 800,
+  "appendix": {
+    "grammatikuebersicht": "p.152",
+    "unregelmassige_verben": "p.164",
+    "alphabetische_wortliste": "p.165",
+    "quellenverzeichnis": "p.175"
+  },
+  "plattform_sections": [
+    "Plattform 1: K3 (p.38)",
+    "Plattform 2: K6 (p.74)",
+    "Plattform 3: K9 (p.110)",
+    "Plattform 4: K12 (p.146)"
+  ],
+  "features": [
+    "Audio + Video integration",
+    "Klett-Augmented App",
+    "4 Plattform sections (review + training)",
+    "Netzwerk-WG storyline",
+    "Exam preparation (Goethe A2, telc A2)",
+    "Pronunciation per chapter",
+    "Strategy tips per chapter"
+  ]
+}
