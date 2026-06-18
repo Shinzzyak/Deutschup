@@ -1,0 +1,37 @@
+{
+  "book": "Deutsch intensiv Wortschatz A2 — Das Training (Klett Verlag, 2018)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF OCR extraction (64MB, 81 pages)",
+  "level": "A2",
+  "type": "Wortschatz (vocabulary)",
+  "authors": "Christiane Lemcke, Lutz Rohrmann",
+  "isbn": "978-3-12-675074-5",
+  "total_pages": 81,
+  "chapter_list": [
+    {"id": "B1", "title": "Miteinander sprechen", "pages": "7-18"},
+    {"id": "B2", "title": "Familie - Eigenschaften - Personen", "pages": "19-26"},
+    {"id": "B3", "title": "Körper und Gesundheit", "pages": "27-34"},
+    {"id": "B4", "title": "Wohnen", "pages": "35-42"},
+    {"id": "B5", "title": "Zuhause", "pages": "43-50"},
+    {"id": "B6", "title": "Auto und Verkehr", "pages": "51-58"},
+    {"id": "B7", "title": "Einkaufen: Lebensmittel, Kleidung, andere Produkte", "pages": "59-66"},
+    {"id": "B8", "title": "Wirtschaft und Politik", "pages": "67-74"},
+    {"id": "B9", "title": "Beruf und Ausbildung", "pages": "75-82"},
+    {"id": "B10", "title": "Dienstleistungen und Behörden", "pages": "83-90"},
+    {"id": "B11", "title": "Freizeit und Unterhaltung", "pages": "91-98"},
+    {"id": "B12", "title": "Reisen und Natur", "pages": "99-106"}
+  ],
+  "appendix": {
+    "worter_und_grammatik": "Zeit - Ort - Art und Weise",
+    "quizlet_integration": "www.klett-sprachen.de/deutsch-intensiv-wortschatz-A2"
+  },
+  "features": [
+    "Thematischer Wortschatz (thematic vocabulary)",
+    "Ausspracheregeln (pronunciation rules)",
+    "Quizlet integration",
+    "Grammatik reminders",
+    "12 thematic chapters",
+    "Progressive difficulty"
+  ],
+  "vocab_count_estimate": 1200
+}
