@@ -1,0 +1,39 @@
+{
+  "book": "Deutsch intensiv Wortschatz A1 — Das Training (Klett Verlag, 2021)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF OCR extraction (52MB, 79 pages)",
+  "level": "A1",
+  "type": "Wortschatz (vocabulary)",
+  "authors": "Christiane Lemcke, Lutz Rohrmann",
+  "isbn": "978-3-12-675072-1",
+  "total_pages": 79,
+  "chapter_list": [
+    {"id": "A", "title": "Tipps zu Aussprache und Rechtschreibung", "pages": "4-6"},
+    {"id": "B", "title": "Thematischer Wortschatz", "pages": "7-75"},
+    {"id": "C", "title": "Wörter und Grammatik", "pages": "70-75"},
+    {"id": "D", "title": "Zahlen - Daten - Maße - Gewichte", "pages": "76-77"},
+    {"id": "E", "title": "Anhang", "pages": "78-79"}
+  ],
+  "b_chapters": [
+    {"id": "B1", "title": "Person", "pages": "8-13"},
+    {"id": "B2", "title": "Familie und Freunde", "pages": "14-19"},
+    {"id": "B3", "title": "Körper - Hygiene - Gesundheit - Krankheit", "pages": "20-25"},
+    {"id": "B4", "title": "Post - Telefon - Bank - Ämter - Polizei", "pages": "26-33"},
+    {"id": "B5", "title": "Essen und Trinken: Einkaufen", "pages": "34-39"},
+    {"id": "B6", "title": "Essen und Trinken: Restaurant - Imbiss - Einladung", "pages": "40-45"},
+    {"id": "B7", "title": "Kommunikation - Freizeit", "pages": "46-51"},
+    {"id": "B8", "title": "Arbeit und Beruf", "pages": "52-57"},
+    {"id": "B9", "title": "Wohnen", "pages": "58-63"},
+    {"id": "B10", "title": "Zeit - Uhr - Woche", "pages": "64-67"},
+    {"id": "B11", "title": "Datum - Jahreszeiten - Wetter", "pages": "68-71"}
+  ],
+  "features": [
+    "Ausspracheregeln (pronunciation rules)",
+    "Thematischer Wortschatz (thematic vocabulary)",
+    "Quizlet integration",
+    "11 thematic chapters",
+    "Progressive difficulty",
+    "English-German vocabulary cards"
+  ],
+  "vocab_count_estimate": 1500
+}
