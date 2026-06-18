@@ -1,0 +1,108 @@
+{
+  "book": "Netzwerk neu B1 — Übungsbuch mit Audios (Klett Verlag, 2021)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF OCR extraction (47MB, scanned)",
+  "level": "B1",
+  "type": "Übungsbuch (exercise book)",
+  "total_pages": 160,
+  "total_chapters": 12,
+  "chapter_list": [
+    {
+      "id": "K1", "title": "Gute Reise!", "pages": "6-17",
+      "grammar": ["Modalverben im Präteritum", "Wortbildung: Infinitiv als Nomen"],
+      "topics": ["Reiseplanung", "Urlaub", "Vorlieben", "Abneigungen"],
+      "wortschatz": ["Reise", "Unterkunft", "Transport", "Urlaubsaktivitäten"]
+    },
+    {
+      "id": "K2", "title": "Das ist ja praktisch!", "pages": "18-27",
+      "grammar": ["Infinitiv mit zu", "Wortbildung: Nomen mit -er und -rin"],
+      "topics": ["Technik", "Dienstleistungen", "Wohnen", "Werbung"],
+      "wortschatz": ["Technik", "Service", "Werbung", "Wohnen"]
+    },
+    {
+      "id": "K3", "title": "Veränderungen", "pages": "28-37",
+      "grammar": ["Nebensätze mit weil/obwohl/denn/trotzdem/deshalb", "Wortbildung: Komposita"],
+      "topics": ["Veränderungen", "Vergangenheit", "Glück", "Zeit"],
+      "wortschatz": ["Veränderungen", "Gefühle", "Zeitangaben"]
+    },
+    {
+      "id": "K4", "title": "Arbeitswelt", "pages": "38-47",
+      "grammar": ["Relativsätze", "Wortbildung: Komposita II"],
+      "topics": ["Berufe", "Bewerbung", "Lebenslauf", "Arbeit"],
+      "wortschatz": ["Berufe", "Bewerbung", "Lebenslauf", "Arbeitswelt"]
+    },
+    {
+      "id": "K5", "title": "Umweltfreundlich?", "pages": "48-57",
+      "grammar": ["Wunschsätze (Konjunktiv II)", "Wortbildung: Nomen mit -ung"],
+      "topics": ["Umwelt", "Ressourcen", "Ökologischer Fußabdruck", "Wetter"],
+      "wortschatz": ["Umwelt", "Energie", "Wetter", "Nachhaltigkeit"]
+    },
+    {
+      "id": "K6", "title": "Blick nach vorn", "pages": "58-67",
+      "grammar": ["Futur I", "Wortbildung: Nomen mit -heit und -keit"],
+      "topics": ["Zukunft", "Pläne", "Vorsätze", "Städte", "Musik"],
+      "wortschatz": ["Zukunft", "Pläne", "Städte", "Musik"]
+    },
+    {
+      "id": "K7", "title": "Zeit für Freundschaft", "pages": "68-77",
+      "grammar": ["Wortbildung: Adjektive mit -ig und -lich"],
+      "topics": ["Freundschaft", "Konflikte", "Alltag", "Fabeln"],
+      "wortschatz": ["Freundschaft", "Konflikte", "Alltag"]
+    },
+    {
+      "id": "K8", "title": "Rund um Körper und Geist", "pages": "78-87",
+      "grammar": ["Wortbildung: Verben mit mit-, vorbe-, weg-, weiter-, zusammen-, zurück-"],
+      "topics": ["Gesundheit", "Krankheit", "Krankenhaus", "Musik", "Lernen"],
+      "wortschatz": ["Gesundheit", "Krankheit", "Lernen"]
+    },
+    {
+      "id": "K9", "title": "Kunst und Kultur", "pages": "88-97",
+      "grammar": ["Wortbildung: zusammengesetzte Adjektive"],
+      "topics": ["Kunst", "Bilder", "Film", "Theater", "Improvisation"],
+      "wortschatz": ["Kunst", "Film", "Theater", "Musik"]
+    },
+    {
+      "id": "K10", "title": "Miteinander", "pages": "98-107",
+      "grammar": ["Wortbildung: Adjektive mit -os und -bar"],
+      "topics": ["Gesellschaft", "Soziales Engagement", "Institutionen", "Präsentation"],
+      "wortschatz": ["Gesellschaft", "Soziales", "Institutionen"]
+    },
+    {
+      "id": "K11", "title": "Stadt, Land, Fluss", "pages": "108-117",
+      "grammar": ["Wortbildung: Adverbien mit einander"],
+      "topics": ["Stadt", "Land", "Diskussion", "formelle E-Mail"],
+      "wortschatz": ["Stadt", "Land", "Leben"]
+    },
+    {
+      "id": "K12", "title": "Geld regiert die Welt?", "pages": "118-127",
+      "grammar": ["Wortbildung: Verben mit her- und hin-"],
+      "topics": ["Geld", "Wirtschaft", "Banken", "Globalisierung"],
+      "wortschatz": ["Geld", "Wirtschaft", "Banken", "Globalisierung"]
+    }
+  ],
+  "wortschatz_topics": [
+    "Infinitiv als Nomen (K1)",
+    "Nomen mit -er und -rin (K2)",
+    "Komposita (K3-K4)",
+    "Nomen mit -ung (K5)",
+    "Nomen mit -heit und -keit (K6)",
+    "Adjektive mit -ig und -lich (K7)",
+    "Verben mit mit-, vorbe-, weg-, weiter-, zusammen-, zurück- (K8)",
+    "zusammengesetzte Adjektive (K9)",
+    "Adjektive mit -os und -bar (K10)",
+    "Adverbien mit einander (K11)",
+    "Verben mit her- und hin- (K12)"
+  ],
+  "appendix": {
+    "alphabetische_wortliste": "p.150",
+    "quellenverzeichnis": "p.159",
+    "prufungsvorbereitung": "p.160"
+  },
+  "features": [
+    "Audio integration",
+    "Wortbildung (word formation) per chapter",
+    "Prüfungsvorbereitung (exam preparation)",
+    "Progressive difficulty",
+    "Authentic texts (news, emails, blogs)"
+  ]
+}
