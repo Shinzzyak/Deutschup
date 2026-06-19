@@ -16,6 +16,7 @@ const navigation = [
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
   { name: 'Catatan', href: '/catatan', icon: BarChart3 },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
+  { name: 'Langganan', href: '/pricing', icon: CreditCard },
 ];
 
 export default function MobileBottomNav() {
