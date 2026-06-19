@@ -59,6 +59,7 @@ function Layout({ children }: { children: React.ReactNode }) {
     { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
     { name: 'Catatan', href: '/catatan', icon: BookOpen },
     { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
+    { name: 'Langganan', href: '/pricing', icon: CreditCard },
   ];
 
   return (
