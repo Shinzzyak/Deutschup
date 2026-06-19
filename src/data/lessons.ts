@@ -12309,6 +12309,3407 @@ export const courseData: Lesson[] = [
         "correctAnswer": 0
       }
     ]
+  },
+  {
+    "id": "a1-14",
+    "level": "A1",
+    "title": "Kasus Nominativ vs Akkusativ",
+    "grammarDescription": "• Nominatif = subjek (siapa yang melakukan aksi)\n• Akkusatif = objek langsung (apa yang dikenai aksi)\n• Artikel berubah di Akkusatif:\n•   der → den, die → die, das → das, die (pl) → die\n• Hanya maskulin yang berubah: der → den\n• Verba yang membutuhkan Akkusativ: haben, brauchen, lesen, sehen, kaufen, trinken, essen, spielen\n\nContoh:\n- Der Mann (Nominativ) liest das Buch (Akkusativ).\n- Die Frau (Nom) trinkt den Kaffee (Akk).\n- Das Kind (Nom) spielt mit dem Hund (Dat) — tidak Akkusatif karena 'mit'.\n- Ich (Nom) sehe die Katze (Akk).\n- Er (Nom) kauft ein Auto (Akk).",
+    "vocabulary": [
+      {
+        "id": "der-mann",
+        "word": "der Mann",
+        "article": "der",
+        "translation": "pria",
+        "exampleSentence": "Der Mann liest ein Buch.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-frau",
+        "word": "die Frau",
+        "article": "die",
+        "translation": "wanita",
+        "exampleSentence": "Die Frau trinkt Kaffee.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-kind",
+        "word": "das Kind",
+        "article": "das",
+        "translation": "anak",
+        "exampleSentence": "Das Kind spielt im Garten.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-buch",
+        "word": "das Buch",
+        "article": "das",
+        "translation": "buku",
+        "exampleSentence": "Ich lese ein Buch.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "der-kaffee",
+        "word": "der Kaffee",
+        "article": "der",
+        "translation": "kopi",
+        "exampleSentence": "Er trinkt den Kaffee.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-zeitung",
+        "word": "die Zeitung",
+        "article": "die",
+        "translation": "koran",
+        "exampleSentence": "Sie liest die Zeitung.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-auto",
+        "word": "das Auto",
+        "article": "das",
+        "translation": "mobil",
+        "exampleSentence": "Er fährt ein Auto.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "der-hund",
+        "word": "der Hund",
+        "article": "der",
+        "translation": "anjing",
+        "exampleSentence": "Ich sehe den Hund.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-katze",
+        "word": "die Katze",
+        "article": "die",
+        "translation": "kucing",
+        "exampleSentence": "Sie streichelt die Katze.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-wasser",
+        "word": "das Wasser",
+        "article": "das",
+        "translation": "air",
+        "exampleSentence": "Er trinkt das Wasser.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "___ Mann liest ein Buch. (Subjek)",
+        "options": [
+          "Der",
+          "Den",
+          "Dem",
+          "Das"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich sehe ___ Hund. (Objek langsung)",
+        "options": [
+          "der",
+          "den",
+          "dem",
+          "das"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Die Frau trinkt ___ Kaffee. (Akkusativ)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das Kind spielt ___ Ball. (Akkusativ)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Welcher Satz ist richtig?",
+        "options": [
+          "Der Mann kauft der Zeitung.",
+          "Der Mann kauft die Zeitung.",
+          "Der Mann kauft dem Zeitung.",
+          "Der Mann kauft den Zeitung."
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Er liest ___ Buch. (Akkusativ)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ Kinder spielen im Garten. (Subjek)",
+        "options": [
+          "Der",
+          "Den",
+          "Die",
+          "Das"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Ich kaufe ___ Auto. (Akkusativ)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Der Mann (Nominativ) liest das Buch (Akkusativ).",
+      "Die Frau (Nom) trinkt den Kaffee (Akk).",
+      "Das Kind (Nom) spielt mit dem Hund (Dat) — tidak Akkusatif karena 'mit'."
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-15",
+    "level": "A1",
+    "title": "Kasus Dativ",
+    "grammarDescription": "• Dativ = objek tidak langsung (kepada siapa, untuk siapa)\n• Artikel berubah:\n•   der → dem, die → der, das → dem, die (pl) → den\n• Artikel tidak tentu: ein → einem, eine → einer, ein → einem\n• Verba yang membutuhkan Dativ: helfen, danken, gefallen, gehören, sagen, geben, schicken\n• Präposisi selalu Dativ: mit, aus, zu, bei, nach, von, seit\n\nContoh:\n- Ich gebe dem Mann das Buch. (Akk: das Buch, Dat: dem Mann)\n- Sie hilft der Frau. (Dat: der Frau)\n- Das Buch gehört dem Kind. (Dat: dem Kind)\n- Er schickt der Lehrerin eine E-Mail. (Dat: der Lehrerin)\n- Ich komme aus Deutschland. (aus + Dat)",
+    "vocabulary": [
+      {
+        "id": "helfen-+-dat",
+        "word": "helfen + Dat",
+        "article": "dem",
+        "translation": "membantu",
+        "exampleSentence": "Ich helfe dem Mann.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "danken-+-dat",
+        "word": "danken + Dat",
+        "article": "der",
+        "translation": "berterima kasih",
+        "exampleSentence": "Ich danke der Frau.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gefallen-+-dat",
+        "word": "gefallen + Dat",
+        "article": "dem",
+        "translation": "menyenangi",
+        "exampleSentence": "Das Buch gefällt dem Kind.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gehören-+-dat",
+        "word": "gehören + Dat",
+        "article": "dem",
+        "translation": "milik",
+        "exampleSentence": "Das Auto gehört dem Mann.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "der-arzt",
+        "word": "der Arzt",
+        "article": "der",
+        "translation": "dokter",
+        "exampleSentence": "Ich gehe zum Arzt.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-ärztin",
+        "word": "die Ärztin",
+        "article": "die",
+        "translation": "dokter wanita",
+        "exampleSentence": "Die Ärztin hilft mir.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-krankenhaus",
+        "word": "das Krankenhaus",
+        "article": "das",
+        "translation": "rumah sakit",
+        "exampleSentence": "Er ist im Krankenhaus.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-adresse",
+        "word": "die Adresse",
+        "article": "die",
+        "translation": "alamat",
+        "exampleSentence": "Was ist Ihre Adresse?",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-rezept",
+        "word": "das Rezept",
+        "article": "das",
+        "translation": "resep",
+        "exampleSentence": "Der Arzt gibt mir ein Rezept.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-medizin",
+        "word": "die Medizin",
+        "article": "die",
+        "translation": "obat",
+        "exampleSentence": "Die Medizin hilft mir.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich helfe ___ Mann. (Dativ)",
+        "options": [
+          "der",
+          "den",
+          "dem",
+          "das"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Sie dankt ___ Frau. (Dativ)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das Buch gehört ___ Kind. (Dativ)",
+        "options": [
+          "der",
+          "den",
+          "dem",
+          "die"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Er schickt ___ Lehrerin eine E-Mail. (Dativ)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich komme aus ___ (Frankreich).",
+        "options": [
+          "der",
+          "den",
+          "dem",
+          "die"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das Auto gehört ___ Mann. (Dativ)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Welcher Satz ist richtig?",
+        "options": [
+          "Ich gebe den Mann das Buch.",
+          "Ich gebe dem Mann das Buch.",
+          "Ich gebe der Mann das Buch.",
+          "Ich gebe das Mann das Buch."
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Er ist im (in dem) ___. (Krankenhaus = neutrum, Dativ)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich gebe dem Mann das Buch. (Akk: das Buch, Dat: dem Mann)",
+      "Sie hilft der Frau. (Dat: der Frau)",
+      "Das Buch gehört dem Kind. (Dat: dem Kind)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-16",
+    "level": "A1",
+    "title": "Modalverben (können, müssen, wollen, dürfen)",
+    "grammarDescription": "• Modalverben selalu di posisi 2 (verb utama di akhir = Satzklammer)\n• Konjugasi irregular: ich habe Sonderform (kecuali sollen)\n• können: ich kann, du kannst, er kann, wir können, ihr könnt, sie können\n• müssen: ich muss, du musst, er muss, wir müssen, ihr müsst, sie müssen\n• wollen: ich will, du willst, er will, wir wollen, ihr wollt, sie wollen\n• dürfen: ich darf, du darfst, er darf, wir dürfen, ihr dürft, sie dürfen\n• sollen: ich soll, du sollst, er soll, wir sollen, ihr sollt, sie sollen\n\nContoh:\n- Ich kann (modal) Deutsch sprechen (verb utama di akhir).\n- Du musst (modal) die Hausaufgabe machen (di akhir).\n- Er will (modal) Arzt werden (di akhir).\n- Sie darf (modal) nicht rauchen (di akhir).\n- Wir sollen (modal) pünktlich kommen (di akhir).",
+    "vocabulary": [
+      {
+        "id": "können",
+        "word": "können",
+        "article": "",
+        "translation": "bisa/mampu",
+        "exampleSentence": "Ich kann Deutsch sprechen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "müssen",
+        "word": "müssen",
+        "article": "",
+        "translation": "harus",
+        "exampleSentence": "Du musst lernen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "wollen",
+        "word": "wollen",
+        "article": "",
+        "translation": "ingin",
+        "exampleSentence": "Er will Arzt werden.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "dürfen",
+        "word": "dürfen",
+        "article": "",
+        "translation": "boleh/diizinkan",
+        "exampleSentence": "Sie darf nicht rauchen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sollen",
+        "word": "sollen",
+        "article": "",
+        "translation": "seharusnya",
+        "exampleSentence": "Ihr sollt pünktlich sein.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-prüfung",
+        "word": "die Prüfung",
+        "article": "die",
+        "translation": "ujian",
+        "exampleSentence": "Ich muss eine Prüfung machen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-hausaufgabe",
+        "word": "die Hausaufgabe",
+        "article": "die",
+        "translation": "pekerjaan rumah",
+        "exampleSentence": "Du musst die Hausaufgabe machen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-studium",
+        "word": "das Studium",
+        "article": "das",
+        "translation": "kuliah",
+        "exampleSentence": "Er will studieren.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-arbeit",
+        "word": "die Arbeit",
+        "article": "die",
+        "translation": "pekerjaan",
+        "exampleSentence": "Ich muss arbeiten.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "der-schlaf",
+        "word": "der Schlaf",
+        "article": "der",
+        "translation": "tidur",
+        "exampleSentence": "Ich muss schlafen.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich ___ Deutsch sprechen. (bisa)",
+        "options": [
+          "kann",
+          "kannst",
+          "können",
+          "könnt"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Du ___ die Hausaufgabe machen. (harus)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ___ Arzt werden. (ingin)",
+        "options": [
+          "will",
+          "willst",
+          "wollen",
+          "wollt"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie ___ nicht rauchen. (tidak boleh)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Welcher Satz ist richtig?",
+        "options": [
+          "Ich muss arbeiten ich.",
+          "Ich muss ich arbeiten.",
+          "Ich muss arbeiten.",
+          "Ich ich muss arbeiten."
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Wir ___ pünktlich kommen. (seharusnya)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ihr ___ die Prüfung machen. (harus)",
+        "options": [
+          "müsst",
+          "musst",
+          "müssen",
+          "muss"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie (formal) ___ bitte sitzen. (boleh/silakan)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich kann (modal) Deutsch sprechen (verb utama di akhir).",
+      "Du musst (modal) die Hausaufgabe machen (di akhir).",
+      "Er will (modal) Arzt werden (di akhir)."
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-17",
+    "level": "A1",
+    "title": "Waktu Lampau: Perfekt",
+    "grammarDescription": "• Perfekt = haben/sein + Partizip II\n• Sein digunakan untuk: verba perjalanan (gehen, fahren, fliegen, kommen), verba perubahan (sterben, aufwachen, einschlafen), dan sein/bleiben\n• Haben digunakan untuk: semua verba lainnya\n• Partizip II beraturan: ge- + stem + -t (gemacht, gelernt)\n• Partizip II tidak beraturan: ge- + stem berubah + -en (gegessen, getrunken, geschrieben)\n• Partizip II selalu di posisi akhir kalimat\n\nContoh:\n- Ich habe Pizza gegessen. (haben — makan biasa)\n- Er ist nach Berlin gefahren. (sein — perjalanan)\n- Wir haben Deutsch gelernt. (haben — belajar)\n- Ich bin nach Hause gegangen. (sein — pergi)\n- Sie hat einen Brief geschrieben. (haben — menulis)",
+    "vocabulary": [
+      {
+        "id": "gegessen-(essen)",
+        "word": "gegessen (essen)",
+        "article": "",
+        "translation": "makan",
+        "exampleSentence": "Ich habe Pizza gegessen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "getrunken-(trinken)",
+        "word": "getrunken (trinken)",
+        "article": "",
+        "translation": "minum",
+        "exampleSentence": "Er hat Kaffee getrunken.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gelernt-(lernen)",
+        "word": "gelernt (lernen)",
+        "article": "",
+        "translation": "belajar",
+        "exampleSentence": "Wir haben Deutsch gelernt.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "geschrieben-(schreiben)",
+        "word": "geschrieben (schreiben)",
+        "article": "",
+        "translation": "menulis",
+        "exampleSentence": "Sie hat einen Brief geschrieben.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gelesen-(lesen)",
+        "word": "gelesen (lesen)",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Ich habe ein Buch gelesen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gefahren-(fahren)",
+        "word": "gefahren (fahren)",
+        "article": "",
+        "translation": "berkendara/pergi",
+        "exampleSentence": "Er ist nach Berlin gefahren.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gegangen-(gehen)",
+        "word": "gegangen (gehen)",
+        "article": "",
+        "translation": "pergi/jalan",
+        "exampleSentence": "Ich bin ins Kino gegangen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gewesen-(sein)",
+        "word": "gewesen (sein)",
+        "article": "",
+        "translation": "adalah/pernah",
+        "exampleSentence": "Wir sind in Berlin gewesen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "geschlafen-(schlafen)",
+        "word": "geschlafen (schlafen)",
+        "article": "",
+        "translation": "tidur",
+        "exampleSentence": "Ich habe gut geschlafen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gemacht-(machen)",
+        "word": "gemacht (machen)",
+        "article": "",
+        "translation": "melakukan",
+        "exampleSentence": "Sie hat ihre Hausaufgaben gemacht.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich ___ Pizza gegessen. (haben)",
+        "options": [
+          "habe",
+          "hat",
+          "haben",
+          "hast"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ___ nach Berlin gefahren. (sein)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Wir ___ Deutsch gelernt.",
+        "options": [
+          "haben",
+          "hat",
+          "habe",
+          "hast"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich ___ Pizza gegessen. (Partizip II von essen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie ___ einen Brief geschrieben. (Partizip II)",
+        "options": [
+          "geschrieben",
+          "geschrieben",
+          "geschrieben",
+          "geschrieben"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Wir ___ in Berlin gewohnt. (haben/sein?)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich ___ ins Kino gegangen. (haben/sein?)",
+        "options": [
+          "bin",
+          "habe",
+          "ist",
+          "hat"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ___ Fußball gespielt. (Partizip II von spielen)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich habe Pizza gegessen. (haben — makan biasa)",
+      "Er ist nach Berlin gefahren. (sein — perjalanan)",
+      "Wir haben Deutsch gelernt. (haben — belajar)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-18",
+    "level": "A1",
+    "title": "Trennbare Verben (aufmachen, anrufen, dst)",
+    "grammarDescription": "• Prefix (an-, auf-, aus-, ein-, ab-, zu-, etc.) terpisah dari verb\n• Verb utama di posisi 2, prefix di akhir kalimat\n• Satzklammer: posisi 2 ↔ akhir kalimat\n• Kalimat tidak langsung: prefix bergabung kembali (Ich weiß, dass er anruft)\n• Pertanyaan: prefix di depan (Rufst du mich an?)\n\nContoh:\n- Ich rufe (V2) dich (Akk) um 5 Uhr (Objekt) an (prefix).\n- Mach (Imperativ) das Fenster (Akk) auf (prefix)!\n- Er steht (V2) um 7 Uhr (Zeit) auf (prefix).\n- Rufst (V2) du (Subjekt) mich (Akk) an (prefix)?\n- Ich weiß, dass er um 5 Uhr anruft. (kein Satzklammer)",
+    "vocabulary": [
+      {
+        "id": "aufmachen",
+        "word": "aufmachen",
+        "article": "",
+        "translation": "membuka",
+        "exampleSentence": "Mach das Fenster auf!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "zumachen",
+        "word": "zumachen",
+        "article": "",
+        "translation": "menutup",
+        "exampleSentence": "Mach die Tür zu!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "anrufen",
+        "word": "anrufen",
+        "article": "",
+        "translation": "menelepon",
+        "exampleSentence": "Ich rufe dich an.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "einkaufen",
+        "word": "einkaufen",
+        "article": "",
+        "translation": "berbelanja",
+        "exampleSentence": "Wir kaufen im Supermarkt ein.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "aufstehen",
+        "word": "aufstehen",
+        "article": "",
+        "translation": "bangun tidur",
+        "exampleSentence": "Ich stehe um 7 Uhr auf.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "ausgehen",
+        "word": "ausgehen",
+        "article": "",
+        "translation": "keluar rumah",
+        "exampleSentence": "Wir gehen am Abend aus.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "ankommen",
+        "word": "ankommen",
+        "article": "",
+        "translation": "tiba/datang",
+        "exampleSentence": "Der Zug kommt um 10 Uhr an.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "abfahren",
+        "word": "abfahren",
+        "article": "",
+        "translation": "berangkat",
+        "exampleSentence": "Der Zug fährt um 10 Uhr ab.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "fernsehen",
+        "word": "fernsehen",
+        "article": "",
+        "translation": "menonton TV",
+        "exampleSentence": "Er sieht gern fern.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "zurückkommen",
+        "word": "zurückkommen",
+        "article": "",
+        "translation": "kembali",
+        "exampleSentence": "Ich komme um 5 Uhr zurück.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich ___ um 7 Uhr ___. (aufstehen)",
+        "options": [
+          "stehe...auf",
+          "aufstehe",
+          "auf...stehe",
+          "stehe auf"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ___ mich ___. (anrufen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ das Fenster ___! (aufmachen, Imperativ)",
+        "options": [
+          "Mach...auf",
+          "Aufmach",
+          "Mach auf",
+          "Auf...mach"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Wir ___ im Supermarkt ___. (einkaufen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ du mich ___? (anrufen, pertanyaan)",
+        "options": [
+          "Rufst...an",
+          "Anrufst...du",
+          "Ruf...an",
+          "Anrufst an"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Der Zug ___ um 10 Uhr ___. (abfahren)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich weiß, dass er um 5 Uhr ___. (anrufen, tidak langsung)",
+        "options": [
+          "anruft",
+          "ruft an",
+          "anruft an",
+          "ruft"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ___ gern ___. (fernsehen)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich rufe (V2) dich (Akk) um 5 Uhr (Objekt) an (prefix).",
+      "Mach (Imperativ) das Fenster (Akk) auf (prefix)!",
+      "Er steht (V2) um 7 Uhr (Zeit) auf (prefix)."
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-19",
+    "level": "A1",
+    "title": "Verba Refleksif (Reflexivverben)",
+    "grammarDescription": "• Reflexivpronomen Akkusativ: mich, dich, sich, uns, euch, sich\n• Reflexivpronomen Dativ: mir, dir, sich, uns, euch, sich\n• Posisi: setelah verb utama atau di belakang infinitif\n• Verba dengan Dativ: sich (etwas) vorstellen, sich (Dativ) fühlen, sich (Dativ) freuen\n• Verba dengan Akkusativ: sich waschen, sich duschen, sich setzen\n\nContoh:\n- Ich wasche mich. (Akk: mich — cuci diri sendiri)\n- Er duscht sich. (Akk: sich)\n- Ich fühle mich gut. (Akk: mich)\n- Ich freue mich auf dich. (Akk: mich)\n- Setzen Sie sich! (Akk: sich — Imperativ)\n- Ich erinnere mich an dich. (Akk: mich)\n- Er ärgert sich über den Lärm. (Akk: sich)",
+    "vocabulary": [
+      {
+        "id": "sich-waschen",
+        "word": "sich waschen",
+        "article": "",
+        "translation": "mencuci diri",
+        "exampleSentence": "Ich wasche mir die Hände.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-duschen",
+        "word": "sich duschen",
+        "article": "",
+        "translation": "mandi",
+        "exampleSentence": "Er duscht sich jeden Morgen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-fühlen",
+        "word": "sich fühlen",
+        "article": "",
+        "translation": "merasa",
+        "exampleSentence": "Ich fühle mich gut.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-freuen",
+        "word": "sich freuen",
+        "article": "",
+        "translation": "senang",
+        "exampleSentence": "Ich freue mich auf dich.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-ärgern",
+        "word": "sich ärgern",
+        "article": "",
+        "translation": "kesal",
+        "exampleSentence": "Er ärgert sich über den Lärm.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-setzen",
+        "word": "sich setzen",
+        "article": "",
+        "translation": "duduk",
+        "exampleSentence": "Bitte setzen Sie sich.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-erinnern",
+        "word": "sich erinnern",
+        "article": "",
+        "translation": "mengingat",
+        "exampleSentence": "Ich erinnere mich an dich.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-vorstellen",
+        "word": "sich vorstellen",
+        "article": "",
+        "translation": "memperkenalkan diri",
+        "exampleSentence": "Darf ich mich vorstellen?",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-beeilen",
+        "word": "sich beeilen",
+        "article": "",
+        "translation": "buru-buru",
+        "exampleSentence": "Beeil dich!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "sich-ausruhen",
+        "word": "sich ausruhen",
+        "article": "",
+        "translation": "istirahat",
+        "exampleSentence": "Ich ruhe mich aus.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich wasche ___. (reflexiv)",
+        "options": [
+          "mich",
+          "mir",
+          "sich",
+          "uns"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er duscht ___. (reflexiv)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich fühle ___. (reflexiv)",
+        "options": [
+          "mich",
+          "mir",
+          "sich",
+          "uns"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Wir freuen ___. (reflexiv)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Setzen Sie ___. (Imperativ, reflexiv)",
+        "options": [
+          "sich",
+          "mich",
+          "uns",
+          "euch"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich erinnere ___. (reflexiv)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Beeil ___. (Imperativ du, reflexiv)",
+        "options": [
+          "dich",
+          "dir",
+          "sich",
+          "euch"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie (formal) setzen ___. (reflexiv)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich wasche mich. (Akk: mich — cuci diri sendiri)",
+      "Er duscht sich. (Akk: sich)",
+      "Ich fühle mich gut. (Akk: mich)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-20",
+    "level": "A1",
+    "title": "Nebensätze (dass, weil, wenn)",
+    "grammarDescription": "• Klausa anak dipisahkan dengan koma dari klausa utama\n• Konjunksi (weil/dass/wenn) di awal klausa anak\n• Verb utama dipindahkan ke AKHIR klausa anak\n• weil = karena (alasan/sebab akibat)\n• dass = bahwa (objek kalimat, setelah verba seperti glauben, wissen, denken)\n• wenn = jika/ketika (kondisi/waktu)\n\nContoh:\n- Ich bleibe zu Hause, weil ich krank bin. (bin di akhir)\n- Ich glaube, dass er nett ist. (ist di akhir)\n- Wenn es regnet, bleibe ich zu Hause. (bleibe di akhir klausa utama)\n- Er sagt, dass er müde ist. (ist di akhir)\n- Ich komme, wenn du mich brauchst. (brauchst di akhir)",
+    "vocabulary": [
+      {
+        "id": "weil",
+        "word": "weil",
+        "article": "",
+        "translation": "karena",
+        "exampleSentence": "Ich bleibe zu Hause, weil ich krank bin.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "dass",
+        "word": "dass",
+        "article": "",
+        "translation": "bahwa",
+        "exampleSentence": "Ich glaube, dass er nett ist.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "wenn",
+        "word": "wenn",
+        "article": "",
+        "translation": "jika/ketika",
+        "exampleSentence": "Wenn es regnet, bleibe ich zu Hause.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "obwohl",
+        "word": "obwohl",
+        "article": "",
+        "translation": "meskipun",
+        "exampleSentence": "Obwohl es kalt ist, gehe ich spazieren.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "der-wetter",
+        "word": "der Wetter",
+        "article": "das",
+        "translation": "cuaca",
+        "exampleSentence": "Das Wetter ist heute schön.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-erkältung",
+        "word": "die Erkältung",
+        "article": "die",
+        "translation": "pilek",
+        "exampleSentence": "Ich habe eine Erkältung.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-fieber",
+        "word": "das Fieber",
+        "article": "das",
+        "translation": "demam",
+        "exampleSentence": "Er hat hohes Fieber.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-medizin",
+        "word": "die Medizin",
+        "article": "die",
+        "translation": "obat",
+        "exampleSentence": "Nehmen Sie die Medizin.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-bett",
+        "word": "das Bett",
+        "article": "das",
+        "translation": "tempat tidur",
+        "exampleSentence": "Ich bleibe im Bett.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-suppe",
+        "word": "die Suppe",
+        "article": "die",
+        "translation": "sup",
+        "exampleSentence": "Ich esse Suppe, weil ich krank bin.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich bleibe zu Hause, weil ich krank ___.",
+        "options": [
+          "bin",
+          "ist",
+          "sind",
+          "bist"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich glaube, dass er nett ___.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ es regnet, bleibe ich zu Hause.",
+        "options": [
+          "Weil",
+          "Dass",
+          "Wenn",
+          "Obwohl"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Er sagt, dass er müde ___.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich komme, ___ du mich brauchst.",
+        "options": [
+          "weil",
+          "dass",
+          "wenn",
+          "obwohl"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "___ es kalt ist, gehe ich spazieren.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er bleibt zu Hause, ___ er krank ist.",
+        "options": [
+          "wenn",
+          "dass",
+          "weil",
+          "obwohl"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Ich weiß, dass du Recht ___.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich bleibe zu Hause, weil ich krank bin. (bin di akhir)",
+      "Ich glaube, dass er nett ist. (ist di akhir)",
+      "Wenn es regnet, bleibe ich zu Hause. (bleibe di akhir klausa utama)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-21",
+    "level": "A1",
+    "title": "Komparativ & Superlativ",
+    "grammarDescription": "• Komparatif: adjektiv + -er + als (lebih...dari)\n• Superlativ: am + adjektiv + -sten (paling...)\n• Adjektif pendek: tambah huruf akhir (gut→besser→am besten)\n• Adjektif panjang: tambah -er / am -sten (schnell→schneller→am schnellsten)\n• Irregular: gut→besser→am besten, viel→mehr→am meisten, gern→lieber→am liebsten\n\nContoh:\n- Berlin ist größer als München. (Komparativ)\n- München ist am größten in Bayern. (Superlativ)\n- Er ist besser als ich. (Komparativ irregular: gut→besser)\n- Sie ist die Beste in der Klasse. (Superlativ irregular: gut→beste)\n- Ich fahre gern, aber ich fahre lieber Fahrrad. (Komparativ irregular: gern→lieber)",
+    "vocabulary": [
+      {
+        "id": "groß",
+        "word": "groß",
+        "article": "",
+        "translation": "besar/tinggi",
+        "exampleSentence": "Berlin ist größer als München.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "klein",
+        "word": "klein",
+        "article": "",
+        "translation": "kecil",
+        "exampleSentence": "Das Kind ist kleiner als sein Bruder.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "schnell",
+        "word": "schnell",
+        "article": "",
+        "translation": "cepat",
+        "exampleSentence": "Der Zug ist schneller als das Auto.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "langsam",
+        "word": "langsam",
+        "article": "",
+        "translation": "lambat",
+        "exampleSentence": "Die Schnecke ist langsamer als der Hund.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gut",
+        "word": "gut",
+        "article": "",
+        "translation": "bagus",
+        "exampleSentence": "Er ist besser als ich.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "schlecht",
+        "word": "schlecht",
+        "article": "",
+        "translation": "buruk",
+        "exampleSentence": "Das Wetter ist schlechter als gestern.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "teuer",
+        "word": "teuer",
+        "article": "",
+        "translation": "mahal",
+        "exampleSentence": "Das Auto ist teurer als das Fahrrad.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "billig",
+        "word": "billig",
+        "article": "",
+        "translation": "murah",
+        "exampleSentence": "Das Buch ist billiger als der Film.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "warm",
+        "word": "warm",
+        "article": "",
+        "translation": "hangat",
+        "exampleSentence": "Der Sommer ist wärmer als der Winter.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "kalt",
+        "word": "kalt",
+        "article": "",
+        "translation": "dingin",
+        "exampleSentence": "Der Winter ist kälter als der Sommer.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Berlin ist ___ als München. (groß)",
+        "options": [
+          "größer",
+          "großter",
+          "am größten",
+          "groß"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ist ___ als ich. (gut)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das ist ___ Buch. (gut, Superlativ)",
+        "options": [
+          "das beste",
+          "das besser",
+          "am besten",
+          "besser"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Der Zug ist ___ als das Auto. (schnell)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich fahre ___ Fahrrad als mit dem Bus. (gern)",
+        "options": [
+          "lieber",
+          "am liebsten",
+          "gerner",
+          "lieber als"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Der Sommer ist ___ als der Winter. (warm)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das ist ___ Hotel in der Stadt. (teuer, Superlativ)",
+        "options": [
+          "das teuerste",
+          "am teuersten",
+          "teurer",
+          "das teurere"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Berlin ist ___ als München. (alt)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Berlin ist größer als München. (Komparativ)",
+      "München ist am größten in Bayern. (Superlativ)",
+      "Er ist besser als ich. (Komparativ irregular: gut→besser)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-22",
+    "level": "A1",
+    "title": "Imperativ (Perintah)",
+    "grammarDescription": "• du: hilangkan -st dari konjugasi (du kommst → komm!)\n• ihr: gunakan bentuk konjugasi normal (ihr kommt → kommt!)\n• Sie: gunakan bentuk infinitif dengan Sie (Sie kommen → kommen Sie!)\n• Perubahan vokal: du→du gehst → geh (tidak ada perubahan)\n• Irregular: du fährst → fahr!, du liest → lies!, du sprichst → sprich!\n\nContoh:\n- Komm her! (du — hilangkan -st)\n- Kommt her! (ihr — bentuk normal)\n- Kommen Sie her! (Sie — infinitif + Sie)\n- Lies das Buch! (du irregular: du liest → lies)\n- Fahr langsam! (du irregular: du fährst → fahr)",
+    "vocabulary": [
+      {
+        "id": "komm!",
+        "word": "komm!",
+        "article": "",
+        "translation": "datang!",
+        "exampleSentence": "Komm her!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "geh!",
+        "word": "geh!",
+        "article": "",
+        "translation": "pergi!",
+        "exampleSentence": "Geh nach Hause!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lies!",
+        "word": "lies!",
+        "article": "",
+        "translation": "baca!",
+        "exampleSentence": "Lies das Buch!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "schreib!",
+        "word": "schreib!",
+        "article": "",
+        "translation": "tulis!",
+        "exampleSentence": "Schreib einen Brief!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "hör-zu!",
+        "word": "hör zu!",
+        "article": "",
+        "translation": "dengarkan!",
+        "exampleSentence": "Hör mir zu!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "setz-dich!",
+        "word": "setz dich!",
+        "article": "",
+        "translation": "duduk!",
+        "exampleSentence": "Setz dich bitte!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "kommst-du!",
+        "word": "kommst du!",
+        "article": "",
+        "translation": "datanglah!",
+        "exampleSentence": "Kommst du mit?",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "essen-sie!",
+        "word": "essen Sie!",
+        "article": "",
+        "translation": "makanlah! (formal)",
+        "exampleSentence": "Essen Sie bitte!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "ruft-an!",
+        "word": "ruft an!",
+        "article": "",
+        "translation": "teleponlah!",
+        "exampleSentence": "Ruf mich an!",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "beeil-dich!",
+        "word": "beeil dich!",
+        "article": "",
+        "translation": "cepatlah!",
+        "exampleSentence": "Beeil dich, wir haben es eilig!",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "___ her! (du, kommen)",
+        "options": [
+          "Komm",
+          "Kommst",
+          "Kommen",
+          "Kommt"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ das Buch! (du, lesen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ Sie her! (formal, kommen)",
+        "options": [
+          "Kommen",
+          "Komm",
+          "Kommt",
+          "Kommst"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ her! (ihr, kommen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ mich an! (du, anrufen)",
+        "options": [
+          "Ruf",
+          "Rufst",
+          "Rufen",
+          "Ruft"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ langsam! (du, fahren)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ bitte! (Sie, essen)",
+        "options": [
+          "Essen",
+          "Iss",
+          "Esst",
+          "Isst"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ dich! (du, beeilen)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Komm her! (du — hilangkan -st)",
+      "Kommt her! (ihr — bentuk normal)",
+      "Kommen Sie her! (Sie — infinitif + Sie)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-23",
+    "level": "A1",
+    "title": "Sollen & Dürfen (Kewajiban & Izin)",
+    "grammarDescription": "• sollen = seharusnya (kewajiban/saran dari orang lain)\n• dürfen = boleh (izin dari otoritas) / tidak boleh (larangan)\n• sollen: du sollst, er soll, wir sollen\n• dürfen: du darfst, er darf, wir dürfen\n• Negasi: du sollst nicht... (kamu tidak seharusnya), du darfst nicht... (kamu tidak boleh)\n\nContoh:\n- Du sollst mehr lernen. (kewajiban/saran)\n- Du sollst nicht so viel fernsehen. (saran negatif)\n- Darf ich fragen? (izin untuk bertanya)\n- Du darfst hier nicht rauchen. (larangan)\n- Wir sollen pünktlich kommen. (kewajiban dari guru)\n- Sie dürfen hier nicht parken. (larangan resmi)",
+    "vocabulary": [
+      {
+        "id": "sollen",
+        "word": "sollen",
+        "article": "",
+        "translation": "seharusnya",
+        "exampleSentence": "Du sollst mehr lernen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "dürfen",
+        "word": "dürfen",
+        "article": "",
+        "translation": "boleh",
+        "exampleSentence": "Darf ich fragen?",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-regel",
+        "word": "die Regel",
+        "article": "die",
+        "translation": "aturan",
+        "exampleSentence": "Du sollst die Regeln befolgen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-verbot",
+        "word": "das Verbot",
+        "article": "das",
+        "translation": "larangan",
+        "exampleSentence": "Rauchen ist hier ein Verbot.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-erlaubnis",
+        "word": "das Erlaubnis",
+        "article": "die",
+        "translation": "izin",
+        "exampleSentence": "Du hast die Erlaubnis, hier zu sein.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-schule",
+        "word": "die Schule",
+        "article": "die",
+        "translation": "sekolah",
+        "exampleSentence": "Du sollst zur Schule gehen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-hausaufgabe",
+        "word": "die Hausaufgabe",
+        "article": "die",
+        "translation": "pekerjaan rumah",
+        "exampleSentence": "Du sollst die Hausaufgabe machen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-essen",
+        "word": "das Essen",
+        "article": "das",
+        "translation": "makanan",
+        "exampleSentence": "Du sollst das Essen nicht verschwenden.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "der-arzt",
+        "word": "der Arzt",
+        "article": "der",
+        "translation": "dokter",
+        "exampleSentence": "Du sollst zum Arzt gehen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-medizin",
+        "word": "die Medizin",
+        "article": "die",
+        "translation": "obat",
+        "exampleSentence": "Du sollst die Medizin nehmen.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Du ___ mehr lernen. (sollen)",
+        "options": [
+          "sollst",
+          "soll",
+          "sollen",
+          "sollt"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ ich fragen? (dürfen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Du ___ hier nicht rauchen. (dürfen)",
+        "options": [
+          "darfst",
+          "darf",
+          "dürfen",
+          "dürft"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Wir ___ pünktlich kommen. (sollen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie ___ hier nicht parken. (dürfen)",
+        "options": [
+          "dürfen",
+          "darf",
+          "darfst",
+          "dürft"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ___ die Hausaufgabe machen. (sollen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Du ___ nicht so viel fernsehen. (sollen)",
+        "options": [
+          "sollst",
+          "soll",
+          "sollen",
+          "sollt"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ihr ___ die Regeln befolgen. (sollen)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Du sollst mehr lernen. (kewajiban/saran)",
+      "Du sollst nicht so viel fernsehen. (saran negatif)",
+      "Darf ich fragen? (izin untuk bertanya)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-24",
+    "level": "A1",
+    "title": "Konjunktion denn (Alasan)",
+    "grammarDescription": "• denn = karena (alasan, posisi V2 TETAP)\n• weil = karena (alasan, posisi verb di AKHIR)\n• denn tidak mengubah struktur kalimat\n• weil mengubah posisi verb ke akhir (Nebensatz)\n• denn lebih formal/tertulis, weil lebih umum dalam percakapan\n\nContoh:\n- Ich bleibe zu Hause, denn ich bin krank. (bin di posisi 2)\n- Ich bleibe zu Hause, weil ich krank bin. (bin di akhir)\n- Er kommt nicht, denn er hat keine Zeit. (hat di posisi 2)\n- Er kommt nicht, weil er keine Zeit hat. (hat di akhir)",
+    "vocabulary": [
+      {
+        "id": "denn",
+        "word": "denn",
+        "article": "",
+        "translation": "karena",
+        "exampleSentence": "Ich bleibe zu Hause, denn ich bin krank.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "krank",
+        "word": "krank",
+        "article": "",
+        "translation": "sakit",
+        "exampleSentence": "Er ist krank.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "müde",
+        "word": "müde",
+        "article": "",
+        "translation": "lelah",
+        "exampleSentence": "Ich bin sehr müde.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "hungrig",
+        "word": "hungrig",
+        "article": "",
+        "translation": "lapar",
+        "exampleSentence": "Das Kind ist hungrig.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "durstig",
+        "word": "durstig",
+        "article": "",
+        "translation": "haus",
+        "exampleSentence": "Ich bin durstig.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "das-wetter",
+        "word": "das Wetter",
+        "article": "das",
+        "translation": "cuaca",
+        "exampleSentence": "Das Wetter ist schlecht.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-arbeit",
+        "word": "die Arbeit",
+        "article": "die",
+        "translation": "pekerjaan",
+        "exampleSentence": "Die Arbeit ist schwer.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-prüfung",
+        "word": "die Prüfung",
+        "article": "die",
+        "translation": "ujian",
+        "exampleSentence": "Die Prüfung ist morgen.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-straße",
+        "word": "die Straße",
+        "article": "die",
+        "translation": "jalan",
+        "exampleSentence": "Die Straße ist voll.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "der-verkehr",
+        "word": "der Verkehr",
+        "article": "der",
+        "translation": "lalu lintas",
+        "exampleSentence": "Der Verkehr ist schlimm.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich bleibe zu Hause, ___ ich krank bin.",
+        "options": [
+          "denn",
+          "weil",
+          "dass",
+          "wenn"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er kommt nicht, ___ er keine Zeit hat.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich bin müde, ___ ich nicht gut geschlafen habe.",
+        "options": [
+          "denn",
+          "weil",
+          "dass",
+          "wenn"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Sie bleibt zu Hause, ___ das Wetter schlecht ist.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich komme nicht, ___ ich keine Zeit habe.",
+        "options": [
+          "denn",
+          "weil",
+          "dass",
+          "wenn"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Er bleibt zu Hause, ___ er krank ist.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Welcher Satz ist richtig mit 'denn'?",
+        "options": [
+          "Ich bin krank, denn ich habe Fieber.",
+          "Ich bin krank, denn ich Fieber habe.",
+          "Ich bin krank, denn ich Fieber hat.",
+          "Ich bin krank, denn ich habe Fieber habe."
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Wir gehen nicht ins Kino, ___ wir kein Geld haben.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich bleibe zu Hause, denn ich bin krank. (bin di posisi 2)",
+      "Ich bleibe zu Hause, weil ich krank bin. (bin di akhir)",
+      "Er kommt nicht, denn er hat keine Zeit. (hat di posisi 2)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-25",
+    "level": "A1",
+    "title": "Indirekte Fragesätze",
+    "grammarDescription": "• ob = apakah (untuk pertanyaan ya/tidak)\n• W-Fragewörter: wo, wann, wie, warum, was, wer, wie viel\n• Posisi verb di AKHIR klausa anak (seperti weil/dass)\n• Tidak ada inversi (verb tidak di posisi 2)\n• Kalimat utama + koma + ob/W-Fragewort + ... + verb di akhir\n\nContoh:\n- Ich weiß nicht, ob er kommt. (ob + verb di akhir)\n- Kannst du mir sagen, wann der Zug fährt? (wann + verb di akhir)\n- Er fragt, wie man das macht. (wie + verb di akhir)\n- Ich verstehe nicht, warum er das tut. (warum + verb di akhir)\n- Sag mir, was du denkst. (was + verb di akhir)",
+    "vocabulary": [
+      {
+        "id": "ob",
+        "word": "ob",
+        "article": "",
+        "translation": "apakah",
+        "exampleSentence": "Ich weiß nicht, ob er kommt.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "wo",
+        "word": "wo",
+        "article": "",
+        "translation": "dimana",
+        "exampleSentence": "Ich frage mich, wo er wohnt.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "wann",
+        "word": "wann",
+        "article": "",
+        "translation": "kapan",
+        "exampleSentence": "Kannst du mir sagen, wann der Zug fährt?",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "wie",
+        "word": "wie",
+        "article": "",
+        "translation": "bagaimana",
+        "exampleSentence": "Er fragt, wie man das macht.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "warum",
+        "word": "warum",
+        "article": "",
+        "translation": "mengapa",
+        "exampleSentence": "Ich verstehe nicht, warum er das tut.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "was",
+        "word": "was",
+        "article": "",
+        "translation": "apa",
+        "exampleSentence": "Sag mir, was du denkst.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "wer",
+        "word": "wer",
+        "article": "",
+        "translation": "siapa",
+        "exampleSentence": "Ich weiß nicht, wer das ist.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "wie-viel",
+        "word": "wie viel",
+        "article": "",
+        "translation": "berapa",
+        "exampleSentence": "Kannst du sagen, wie viel das kostet?",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-adresse",
+        "word": "die Adresse",
+        "article": "die",
+        "translation": "alamat",
+        "exampleSentence": "Können Sie mir sagen, wo die Adresse ist?",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "die-uhrzeit",
+        "word": "die Uhrzeit",
+        "article": "die",
+        "translation": "jam",
+        "exampleSentence": "Ich frage, wann die Uhrzeit ist.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich weiß nicht, ___ er kommt. (ya/tidak)",
+        "options": [
+          "ob",
+          "wie",
+          "wo",
+          "was"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Kannst du mir sagen, ___ der Zug fährt?",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er fragt, ___ man das macht.",
+        "options": [
+          "ob",
+          "wie",
+          "wo",
+          "was"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Ich verstehe nicht, ___ er das tut.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sag mir, ___ du denkst.",
+        "options": [
+          "ob",
+          "wie",
+          "wo",
+          "was"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "Ich weiß nicht, ___ das ist.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Können Sie mir sagen, ___ die Adresse ist?",
+        "options": [
+          "ob",
+          "wie",
+          "wo",
+          "was"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Ich frage, ___ das kostet.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich weiß nicht, ob er kommt. (ob + verb di akhir)",
+      "Kannst du mir sagen, wann der Zug fährt? (wann + verb di akhir)",
+      "Er fragt, wie man das macht. (wie + verb di akhir)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a1-26",
+    "level": "A1",
+    "title": "Man + Partizip I",
+    "grammarDescription": "• Partizip I = infinitif + -end\n• gehen → gehend, lesen → lesend, schreiben → schreibend\n• Posisi: di akhir kalimat setelah 'man' + verb utama\n• 'Man' selalu orang tunggal (verb selalu bentuk er/sie/es)\n• Digunakan untuk aktivitas umum yang dilakukan orang-orang\n\nContoh:\n- Man sieht Leute lesend im Park. (orang-orang membaca)\n- Man hört Kinder spielend im Garten. (anak-anak bermain)\n- Man findet viele Leute arbeitend im Büro. (orang-orang bekerja)\n- Man sieht Leute gehend auf der Straße. (orang-orang berjalan)",
+    "vocabulary": [
+      {
+        "id": "man",
+        "word": "man",
+        "article": "",
+        "translation": "orang/seseorang",
+        "exampleSentence": "Man liest hier viel.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "gehend",
+        "word": "gehend",
+        "article": "",
+        "translation": "berjalan",
+        "exampleSentence": "Man sieht viele Menschen gehend.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lesend",
+        "word": "lesend",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Man findet viele Menschen lesend.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "schreibend",
+        "word": "schreibend",
+        "article": "",
+        "translation": "menulis",
+        "exampleSentence": "Man hört viele Leute schreibend.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lesend",
+        "word": "lesend",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Man sieht Leute lesend im Park.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lesend",
+        "word": "lesend",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Man findet Leute lesend im Café.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lesend",
+        "word": "lesend",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Man sieht Leute lesend in der U-Bahn.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lesend",
+        "word": "lesend",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Man hört Leute lesend im Stadtpark.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lesend",
+        "word": "lesend",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Man findet Leute lesend in der Bibliothek.",
+        "phonetic": "",
+        "level": "A1"
+      },
+      {
+        "id": "lesend",
+        "word": "lesend",
+        "article": "",
+        "translation": "membaca",
+        "exampleSentence": "Man sieht Leute lesend im Wartezimmer.",
+        "phonetic": "",
+        "level": "A1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Man sieht Leute ___ im Park.",
+        "options": [
+          "lesend",
+          "lesen",
+          "gelesen",
+          "lesend"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Man hört Kinder ___ im Garten.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Man findet viele Leute ___ im Büro.",
+        "options": [
+          "arbeitend",
+          "arbeiten",
+          "gearbeitet",
+          "arbeitend"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Man sieht Leute ___ auf der Straße.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Man findet Leute ___ im Café.",
+        "options": [
+          "schreibend",
+          "schreiben",
+          "geschrieben",
+          "schreibend"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Man hört Leute ___ im Restaurant.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Man sieht Leute ___ in der U-Bahn.",
+        "options": [
+          "lesend",
+          "lesen",
+          "gelesen",
+          "lesend"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Man findet Leute ___ in der Bibliothek.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Man sieht Leute lesend im Park. (orang-orang membaca)",
+      "Man hört Kinder spielend im Garten. (anak-anak bermain)",
+      "Man findet viele Leute arbeitend im Büro. (orang-orang bekerja)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a2-14",
+    "level": "A2",
+    "title": "Temporale Präpositionen (seit, für, ab, bis)",
+    "grammarDescription": "• seit + Dativ: masa yang masih berlangsung (sejak)\n• für + Akkusativ: durasi waktu (selama)\n• ab + Dativ: titik awal waktu (mulai dari)\n• bis + Akkusativ: titik akhir waktu (sampai)\n• nachdem + Subjekt + Verb di AKHIR: setelah\n\nContoh:\n- Ich lebe seit 2020 in Berlin. (seit + Dativ)\n- Er arbeitet für 8 Stunden. (für + Akk)\n- Ab morgen bin ich im Urlaub. (ab + Dativ)\n- Ich arbeite bis 18 Uhr. (bis + Akk)\n- Nachdem ich gegessen habe, gehe ich spazieren. (verb di akhir)",
+    "vocabulary": [
+      {
+        "id": "seit",
+        "word": "seit",
+        "article": "",
+        "translation": "sejak",
+        "exampleSentence": "Ich lebe seit 5 Jahren in Berlin.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "für",
+        "word": "für",
+        "article": "",
+        "translation": "selama",
+        "exampleSentence": "Er arbeitet für 3 Stunden.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "ab",
+        "word": "ab",
+        "article": "",
+        "translation": "mulai dari",
+        "exampleSentence": "Ab morgen bin ich im Urlaub.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "bis",
+        "word": "bis",
+        "article": "",
+        "translation": "sampai",
+        "exampleSentence": "Ich arbeite bis 18 Uhr.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "nachdem",
+        "word": "nachdem",
+        "article": "",
+        "translation": "setelah",
+        "exampleSentence": "Nachdem ich gegessen habe, gehe ich spazieren.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "der-urlaub",
+        "word": "der Urlaub",
+        "article": "der",
+        "translation": "liburan",
+        "exampleSentence": "Im Urlaub fahre ich ans Meer.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "die-arbeit",
+        "word": "die Arbeit",
+        "article": "die",
+        "translation": "pekerjaan",
+        "exampleSentence": "Nach der Arbeit gehe ich nach Hause.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-wochenende",
+        "word": "das Wochenende",
+        "article": "das",
+        "translation": "akhir pekan",
+        "exampleSentence": "Am Wochenende mache ich nichts.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "der-morgen",
+        "word": "der Morgen",
+        "article": "der",
+        "translation": "pagi",
+        "exampleSentence": "Am Morgen trinke ich Kaffee.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "der-abend",
+        "word": "der Abend",
+        "article": "der",
+        "translation": "sore/malam",
+        "exampleSentence": "Am Abend sehe ich fern.",
+        "phonetic": "",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich lebe ___ 5 Jahren in Berlin.",
+        "options": [
+          "seit",
+          "für",
+          "ab",
+          "bis"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er arbeitet ___ 8 Stunden.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ morgen bin ich im Urlaub.",
+        "options": [
+          "Seit",
+          "Für",
+          "Ab",
+          "Bis"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Ich arbeite ___ 18 Uhr.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ ich gegessen habe, gehe ich spazieren.",
+        "options": [
+          "Seit",
+          "Für",
+          "Ab",
+          "Nachdem"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "Ich wohne ___ 2 Jahren hier.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Der Film dauert ___ 2 Stunden.",
+        "options": [
+          "seit",
+          "für",
+          "ab",
+          "bis"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "___ dem Essen gehe wir spazieren.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich lebe seit 2020 in Berlin. (seit + Dativ)",
+      "Er arbeitet für 8 Stunden. (für + Akk)",
+      "Ab morgen bin ich im Urlaub. (ab + Dativ)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a2-15",
+    "level": "A2",
+    "title": "Lokale Präpositionen (von, aus, zu, nach)",
+    "grammarDescription": "• von + Dativ: dari permukaan (dari meja, dari atap)\n• aus + Dativ: dari dalam (dari kota, dari negara)\n• zu + Dativ: ke tempat (ke dokter, ke sekolah)\n• nach + Dativ: ke kota/negara (nach Berlin, nach Deutschland)\n• in + Akk: ke dalam (in die Schule, in die Stadt)\n• in + Dat: di dalam (in der Schule, in der Stadt)\n\nContoh:\n- Ich komme von der Arbeit. (von + Dativ)\n- Ich komme aus Deutschland. (aus + Dativ)\n- Ich gehe zum Arzt. (zu + dem → zum)\n- Ich fahre nach Berlin. (nach + Dativ)\n- Ich gehe in die Schule. (in + Akk — ke dalam)\n- Ich bin in der Schule. (in + Dat — di dalam)",
+    "vocabulary": [
+      {
+        "id": "von",
+        "word": "von",
+        "article": "",
+        "translation": "dari",
+        "exampleSentence": "Ich komme von der Arbeit.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "aus",
+        "word": "aus",
+        "article": "",
+        "translation": "dari dalam",
+        "exampleSentence": "Ich komme aus Deutschland.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "zu",
+        "word": "zu",
+        "article": "",
+        "translation": "ke",
+        "exampleSentence": "Ich gehe zum Arzt.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "nach",
+        "word": "nach",
+        "article": "",
+        "translation": "ke (kota/negara)",
+        "exampleSentence": "Ich fahre nach Berlin.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "in",
+        "word": "in",
+        "article": "",
+        "translation": "ke dalam / di dalam",
+        "exampleSentence": "Ich gehe in die Schule.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "die-schule",
+        "word": "die Schule",
+        "article": "die",
+        "translation": "sekolah",
+        "exampleSentence": "Ich gehe zur Schule.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-haus",
+        "word": "das Haus",
+        "article": "das",
+        "translation": "rumah",
+        "exampleSentence": "Ich komme aus dem Haus.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-büro",
+        "word": "das Büro",
+        "article": "das",
+        "translation": "kantor",
+        "exampleSentence": "Ich gehe ins Büro.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "die-stadt",
+        "word": "die Stadt",
+        "article": "die",
+        "translation": "kota",
+        "exampleSentence": "Ich fahre in die Stadt.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-land",
+        "word": "das Land",
+        "article": "das",
+        "translation": "negeri",
+        "exampleSentence": "Ich komme aus einem anderen Land.",
+        "phonetic": "",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Ich komme ___ der Arbeit.",
+        "options": [
+          "von",
+          "aus",
+          "zu",
+          "nach"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich komme ___ Deutschland.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich gehe ___ Arzt.",
+        "options": [
+          "von",
+          "aus",
+          "zu",
+          "nach"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Ich fahre ___ Berlin.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich gehe ___ die Schule.",
+        "options": [
+          "von",
+          "aus",
+          "zu",
+          "in"
+        ],
+        "correctAnswer": 3
+      },
+      {
+        "question": "Ich bin ___ der Schule.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich komme ___ einem anderen Land.",
+        "options": [
+          "von",
+          "aus",
+          "zu",
+          "nach"
+        ],
+        "correctAnswer": 1
+      },
+      {
+        "question": "Ich gehe ___ das Büro.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Ich komme von der Arbeit. (von + Dativ)",
+      "Ich komme aus Deutschland. (aus + Dativ)",
+      "Ich gehe zum Arzt. (zu + dem → zum)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a2-16",
+    "level": "A2",
+    "title": "Positionsverben (sitzen, liegen, stehen, gehen, fahren)",
+    "grammarDescription": "• Positionsverben (sitzen, liegen, stehen) → Dativ (posisi statis)\n• Verba gerak (gehen, fahren, fliegen) → Akkusativ (pergerakan)\n• Wechselpräpositionen: in, an, auf, über, unter, vor, hinter, neben, zwischen\n• Pertanyaan: Wo? (Dativ) — Woher? (Dativ) — Wohin? (Akkusativ)\n\nContoh:\n- Das Buch liegt auf dem Tisch. (Dativ — posisi statis)\n- Ich lege das Buch auf den Tisch. (Akk — pergerakan)\n- Er steht an der Wand. (Dativ — posisi statis)\n- Er geht an die Wand. (Akk — pergerakan)\n- Ich sitze auf dem Sofa. (Dativ — posisi statis)",
+    "vocabulary": [
+      {
+        "id": "sitzen",
+        "word": "sitzen",
+        "article": "",
+        "translation": "duduk",
+        "exampleSentence": "Ich sitze auf dem Stuhl.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "liegen",
+        "word": "liegen",
+        "article": "",
+        "translation": "berbaring/terletak",
+        "exampleSentence": "Das Buch liegt auf dem Tisch.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "stehen",
+        "word": "stehen",
+        "article": "",
+        "translation": "berdiri",
+        "exampleSentence": "Er steht an der Bushaltestelle.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "gehen",
+        "word": "gehen",
+        "article": "",
+        "translation": "berjalan/pergi",
+        "exampleSentence": "Ich gehe in die Schule.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "fahren",
+        "word": "fahren",
+        "article": "",
+        "translation": "berkendara/pergi",
+        "exampleSentence": "Er fährt mit dem Auto.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "fliegen",
+        "word": "fliegen",
+        "article": "",
+        "translation": "terbang",
+        "exampleSentence": "Wir fliegen nach Mallorca.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "der-stuhl",
+        "word": "der Stuhl",
+        "article": "der",
+        "translation": "kursi",
+        "exampleSentence": "Der Stuhl steht im Zimmer.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "der-tisch",
+        "word": "der Tisch",
+        "article": "der",
+        "translation": "meja",
+        "exampleSentence": "Das Buch liegt auf dem Tisch.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-sofa",
+        "word": "das Sofa",
+        "article": "das",
+        "translation": "sofa",
+        "exampleSentence": "Ich sitze auf dem Sofa.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "die-bushaltestelle",
+        "word": "die Bushaltestelle",
+        "article": "die",
+        "translation": "halte bus",
+        "exampleSentence": "Er steht an der Bushaltestelle.",
+        "phonetic": "",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Das Buch liegt ___ dem Tisch. (posisi)",
+        "options": [
+          "auf dem",
+          "auf den",
+          "auf der",
+          "auf das"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich lege das Buch ___ den Tisch. (gerak)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er steht ___ der Wand. (posisi)",
+        "options": [
+          "an der",
+          "an den",
+          "an dem",
+          "an die"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er geht ___ die Wand. (gerak)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich sitze ___ dem Sofa. (posisi)",
+        "options": [
+          "auf dem",
+          "auf den",
+          "auf der",
+          "auf das"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er fährt ___ dem Auto. (gerak)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das Bild hängt ___ der Wand. (posisi)",
+        "options": [
+          "an der",
+          "an den",
+          "an dem",
+          "an die"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Wir gehen ___ das Kino. (gerak)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Das Buch liegt auf dem Tisch. (Dativ — posisi statis)",
+      "Ich lege das Buch auf den Tisch. (Akk — pergerakan)",
+      "Er steht an der Wand. (Dativ — posisi statis)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a2-17",
+    "level": "A2",
+    "title": "Adjektivendungen (bestimmt/unbestimmt)",
+    "grammarDescription": "• Artikel pasti (der, die, das): -e untuk semua kasus kecuali Akk maskulin → -en\n• Artikel tidak pasti (ein, eine): -er (Nom mask), -e (Nom fem/neut), -en (Akk/Dat)\n• Tanpa artikel: -er (Nom mask), -e (Nom fem/neut), -es (Nom/Akk neut), -en (Dat/Akk)\n• Dativ selalu -en untuk semua jenis kelamin\n\nContoh:\n- Der gute Film. (Artikel pasti, Nominativ maskulin → -e)\n- Den guten Film. (Artikel pasti, Akk maskulin → -en)\n- Ein guter Film. (Artikel tidak pasti, Nom maskulin → -er)\n- Ein guter Film. (Artikel tidak pasti, Nom maskulin → -er)\n- Guter Film. (Tanpa artikel, Nom maskulin → -er)\n- Guten Film. (Tanpa artikel, Akk maskulin → -en)",
+    "vocabulary": [
+      {
+        "id": "gut",
+        "word": "gut",
+        "article": "",
+        "translation": "bagus",
+        "exampleSentence": "Das ist ein guter Film.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "schlecht",
+        "word": "schlecht",
+        "article": "",
+        "translation": "buruk",
+        "exampleSentence": "Das ist ein schlechter Film.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "groß",
+        "word": "groß",
+        "article": "",
+        "translation": "besar",
+        "exampleSentence": "Das ist ein großes Haus.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "klein",
+        "word": "klein",
+        "article": "",
+        "translation": "kecil",
+        "exampleSentence": "Das ist ein kleines Kind.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "neu",
+        "word": "neu",
+        "article": "",
+        "translation": "baru",
+        "exampleSentence": "Das ist ein neues Auto.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "alt",
+        "word": "alt",
+        "article": "",
+        "translation": "lama/tua",
+        "exampleSentence": "Das ist ein altes Buch.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "schön",
+        "word": "schön",
+        "article": "",
+        "translation": "indah",
+        "exampleSentence": "Das ist ein schönes Bild.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "interessant",
+        "word": "interessant",
+        "article": "",
+        "translation": "menarik",
+        "exampleSentence": "Das ist ein interessantes Buch.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-film",
+        "word": "das Film",
+        "article": "der",
+        "translation": "film",
+        "exampleSentence": "Der Film ist gut.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-buch",
+        "word": "das Buch",
+        "article": "das",
+        "translation": "buku",
+        "exampleSentence": "Das Buch ist interessant.",
+        "phonetic": "",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Der ___ Film ist gut. (gut, Nom maskulin, artikel pasti)",
+        "options": [
+          "gute",
+          "guter",
+          "guten",
+          "gutes"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich sehe einen ___ Film. (gut, Akk maskulin, artikel tidak pasti)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das ist ein ___ Buch. (interessant, Nom neutrum, artikel tidak pasti)",
+        "options": [
+          "interessantes",
+          "interessanter",
+          "interessanten",
+          "interessante"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Der ___ Film ist lang. (lang, Nom maskulin, artikel pasti)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ Film ist gut. (gut, Nom maskulin, tanpa artikel)",
+        "options": [
+          "Guter",
+          "Gute",
+          "Guten",
+          "Gutes"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Ich sehe ___ Film. (gut, Akk maskulin, tanpa artikel)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das ist ___ Buch. (interessant, Nom neutrum, tanpa artikel)",
+        "options": [
+          "ein interessantes",
+          "ein interessanter",
+          "ein interessanten",
+          "ein interessante"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Der ___ Film ist lang. (alt, Nom maskulin, artikel pasti)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Der gute Film. (Artikel pasti, Nominativ maskulin → -e)",
+      "Den guten Film. (Artikel pasti, Akk maskulin → -en)",
+      "Ein guter Film. (Artikel tidak pasti, Nom maskulin → -er)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "a2-18",
+    "level": "A2",
+    "title": "Adjektive nach Komparativ & Superlativ",
+    "grammarDescription": "• Komparatif: adjektiv + -er + als (lebih...dari)\n• Superlatif: am + adjektiv + -sten (paling...)\n• Adjektif dengan e ganda: groß → größer (ganda jadi satu)\n• Adjektif dengan a/ä: alt → älter (a→ä), nackt → nackter\n• Irregular: gut→besser, viel→mehr, gern→lieber, hoch→höher, nah→näher\n\nContoh:\n- Der Zug ist schneller als das Auto. (Komparativ)\n- Das Auto ist am schnellsten. (Superlativ)\n- Er hat mehr Geld als ich. (Komparativ irregular: viel→mehr)\n- Sie fährt am liebsten Fahrrad. (Superlativ irregular: gern→liebsten)\n- Der Berg ist höher als der Hügel. (Komparativ irregular: hoch→höher)\n- Mein Haus ist näher als deins. (Komparativ irregular: nah→näher)",
+    "vocabulary": [
+      {
+        "id": "schnell",
+        "word": "schnell",
+        "article": "",
+        "translation": "cepat",
+        "exampleSentence": "Der Zug ist schneller als das Auto.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "langsam",
+        "word": "langsam",
+        "article": "",
+        "translation": "lambat",
+        "exampleSentence": "Die Schnecke ist langsamer als der Hund.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "gut",
+        "word": "gut",
+        "article": "",
+        "translation": "bagus",
+        "exampleSentence": "Er ist besser als ich.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "schlecht",
+        "word": "schlecht",
+        "article": "",
+        "translation": "buruk",
+        "exampleSentence": "Das Wetter ist schlechter als gestern.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "viel",
+        "word": "viel",
+        "article": "",
+        "translation": "banyak",
+        "exampleSentence": "Er hat mehr Geld als ich.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "gern",
+        "word": "gern",
+        "article": "",
+        "translation": "senang",
+        "exampleSentence": "Ich fahre lieber Fahrrad als Auto.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "hoch",
+        "word": "hoch",
+        "article": "",
+        "translation": "tinggi",
+        "exampleSentence": "Der Berg ist höher als der Hügel.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "nah",
+        "word": "nah",
+        "article": "",
+        "translation": "dekat",
+        "exampleSentence": "Mein Haus ist näher als deins.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-geld",
+        "word": "das Geld",
+        "article": "das",
+        "translation": "uang",
+        "exampleSentence": "Er hat mehr Geld als ich.",
+        "phonetic": "",
+        "level": "A2"
+      },
+      {
+        "id": "das-auto",
+        "word": "das Auto",
+        "article": "das",
+        "translation": "mobil",
+        "exampleSentence": "Das Auto ist teurer als das Fahrrad.",
+        "phonetic": "",
+        "level": "A2"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Der Zug ist ___ als das Auto. (schnell)",
+        "options": [
+          "schneller",
+          "am schnellsten",
+          "schnellster",
+          "schnell"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er hat ___ Geld als ich. (viel)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie fährt ___ Fahrrad als mit dem Bus. (gern)",
+        "options": [
+          "lieber",
+          "am liebsten",
+          "gerner",
+          "lieber als"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Der Berg ist ___ als der Hügel. (hoch)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das Auto ist ___ als das Fahrrad. (teuer)",
+        "options": [
+          "teurer",
+          "am teuersten",
+          "teuerster",
+          "teuer"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Mein Haus ist ___ als deins. (nah)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Das ist ___ Hotel in der Stadt. (teuer, Superlativ)",
+        "options": [
+          "das teuerste",
+          "am teuersten",
+          "teurer",
+          "das teurere"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er ist ___ als sein Bruder. (alt)",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Der Zug ist schneller als das Auto. (Komparativ)",
+      "Das Auto ist am schnellsten. (Superlativ)",
+      "Er hat mehr Geld als ich. (Komparativ irregular: viel→mehr)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "b1-13",
+    "level": "B1",
+    "title": "Konnektoren (obwohl, trotzdem, deshalb, indem)",
+    "grammarDescription": "• obwohl: verb di AKHIR (seperti weil) — obwohl es regnet, gehe ich\n• trotzdem: verb di posisi 2 — es regnet, trotzdem gehe ich\n• trotz + Dativ: preposisi — trotz des Regens\n• deshalb/deswegen/daher: verb di posisi 2 — es regnet, deshalb bleibe ich\n• indem: verb di AKHIR — indem man liest\n• dadurch: verb di posisi 2 — dadurch verbessert man sich\n\nContoh:\n- Obwohl es regnet (verb akhir), gehe ich spazieren.\n- Es regnet, trotzdem gehe ich spazieren. (trotzdem + V2)\n- Trotz des Regens (Dativ) gehe ich spazieren.\n- Es regnet, deshalb bleibe ich zu Hause. (deshalb + V2)\n- Man lernt Deutsch, indem man liest. (indem + verb akhir)\n- Man lernt Deutsch. Dadurch verbessert man sich. (dadurch + V2)",
+    "vocabulary": [
+      {
+        "id": "obwohl",
+        "word": "obwohl",
+        "article": "",
+        "translation": "meskipun",
+        "exampleSentence": "Obwohl es regnet, gehe ich spazieren.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "trotzdem",
+        "word": "trotzdem",
+        "article": "",
+        "translation": "meskipun begitu",
+        "exampleSentence": "Es regnet, trotzdem gehe ich spazieren.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "trotz",
+        "word": "trotz",
+        "article": "",
+        "translation": "meskipun (+ Dativ)",
+        "exampleSentence": "Trotz des Regens gehe ich spazieren.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "deshalb",
+        "word": "deshalb",
+        "article": "",
+        "translation": "karena itu",
+        "exampleSentence": "Es regnet, deshalb bleibe ich zu Hause.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "deswegen",
+        "word": "deswegen",
+        "article": "",
+        "translation": "karena itu",
+        "exampleSentence": "Es regnet, deswegen bleibe ich zu Hause.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "daher",
+        "word": "daher",
+        "article": "",
+        "translation": "karena itu",
+        "exampleSentence": "Es regnet, daher bleibe ich zu Hause.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "indem",
+        "word": "indem",
+        "article": "",
+        "translation": "dengan cara",
+        "exampleSentence": "Man lernt Deutsch, indem man liest.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "dadurch",
+        "word": "dadurch",
+        "article": "",
+        "translation": "dengan cara itu",
+        "exampleSentence": "Man lernt Deutsch. Dadurch verbessert man sich.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "die-wirkung",
+        "word": "die Wirkung",
+        "article": "die",
+        "translation": "dampak",
+        "exampleSentence": "Die Wirkung des Medikaments ist gut.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "die-konsequenz",
+        "word": "die Konsequenz",
+        "article": "die",
+        "translation": "konsekuensi",
+        "exampleSentence": "Die Konsequenz ist wichtig.",
+        "phonetic": "",
+        "level": "B1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "___ es regnet, gehe ich spazieren.",
+        "options": [
+          "Obwohl",
+          "Trotzdem",
+          "Deshalb",
+          "Indem"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Es regnet, ___ gehe ich spazieren.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Es regnet, ___ bleibe ich zu Hause.",
+        "options": [
+          "obwohl",
+          "trotzdem",
+          "deshalb",
+          "indem"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Man lernt Deutsch, ___ man liest.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ des Regens gehe ich spazieren.",
+        "options": [
+          "Obwohl",
+          "Trotzdem",
+          "Trotz",
+          "Deshalb"
+        ],
+        "correctAnswer": 2
+      },
+      {
+        "question": "Man lernt Deutsch. ___ verbessert man sich.",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "___ es kalt ist, gehe ich ins Schwimmbad.",
+        "options": [
+          "Obwohl",
+          "Trotzdem",
+          "Deshalb",
+          "Indem"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Es ist kalt, ___ bleibe ich zu Hause.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Obwohl es regnet (verb akhir), gehe ich spazieren.",
+      "Es regnet, trotzdem gehe ich spazieren. (trotzdem + V2)",
+      "Trotz des Regens (Dativ) gehe ich spazieren."
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
+  },
+  {
+    "id": "b1-14",
+    "level": "B1",
+    "title": "Indirekte Rede (Konjunktiv I & II)",
+    "grammarDescription": "• Konjunktiv I: laporan langsung (sagen, erzählen, berichten)\n• Konjunktiv II: keraguan atau laporan tidak langsung\n• Konjunktiv I bentuk: sei, habe, komme, wisse (hampir sama dengan Präsens)\n• Jika Konjunktiv I sama dengan Präsens, gunakan Konjunktiv II\n• Konjunktiv II: wäre, hätte, käme, wüsste (dari Präteritum)\n\nContoh:\n- Er sagt: 'Ich bin krank.' → Er sagt, er sei krank. (Konj I)\n- Sie sagt: 'Ich komme morgen.' → Sie sagt, sie komme morgen. (Konj I)\n- Er sagt: 'Ich habe Zeit.' → Er sagt, er habe Zeit. (Konj I)\n- Sie sagt: 'Ich weiß es.' → Sie sagt, sie wisse es. (Konj I)\n- Er sagt: 'Ich würde gern kommen.' → Er sagt, er würde gern kommen. (Konj II)",
+    "vocabulary": [
+      {
+        "id": "sagen",
+        "word": "sagen",
+        "article": "",
+        "translation": "mengatakan",
+        "exampleSentence": "Er sagt, er sei krank.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "meinen",
+        "word": "meinen",
+        "article": "",
+        "translation": "berpendapat",
+        "exampleSentence": "Sie meint, das Wetter sei schön.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "glauben",
+        "word": "glauben",
+        "article": "",
+        "translation": "mempercayai",
+        "exampleSentence": "Er glaubt, sie sei nett.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "erzählen",
+        "word": "erzählen",
+        "article": "",
+        "translation": "menceritakan",
+        "exampleSentence": "Sie erzählt, sie habe einen Hund.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "berichten",
+        "word": "berichten",
+        "article": "",
+        "translation": "melaporkan",
+        "exampleSentence": "Er berichtet, das Meeting sei wichtig.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "fragen",
+        "word": "fragen",
+        "article": "",
+        "translation": "bertanya",
+        "exampleSentence": "Er fragt, ob sie komme.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "antworten",
+        "word": "antworten",
+        "article": "",
+        "translation": "menjawab",
+        "exampleSentence": "Sie antwortet, sie komme morgen.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "behaupten",
+        "word": "behaupten",
+        "article": "",
+        "translation": "mengklaim",
+        "exampleSentence": "Er behauptet, er sei der Beste.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "die-behauptung",
+        "word": "die Behauptung",
+        "article": "die",
+        "translation": "klaim",
+        "exampleSentence": "Seine Behauptung ist falsch.",
+        "phonetic": "",
+        "level": "B1"
+      },
+      {
+        "id": "die-quelle",
+        "word": "die Quelle",
+        "article": "die",
+        "translation": "sumber",
+        "exampleSentence": "Die Quelle ist vertrauenswürdig.",
+        "phonetic": "",
+        "level": "B1"
+      }
+    ],
+    "exercises": [
+      {
+        "question": "Er sagt, er ___ krank. (Konjunktiv I)",
+        "options": [
+          "sei",
+          "ist",
+          "war",
+          "wäre"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie sagt, sie ___ morgen. (Konjunktiv I von kommen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er sagt, er ___ Zeit. (Konjunktiv I von haben)",
+        "options": [
+          "habe",
+          "hat",
+          "hatte",
+          "hätte"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie sagt, sie ___ es. (Konjunktiv I von wissen)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er sagt, er ___ gern kommen. (Konjunktiv II)",
+        "options": [
+          "würde",
+          "wird",
+          "will",
+          "wollte"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Sie sagt, sie ___ das nicht. (Konjunktiv I von glauben)",
+        "options": [],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er sagt, er ___ das nicht. (Konjunktiv II von können)",
+        "options": [
+          "könnte",
+          "kann",
+          "konnte",
+          "kann"
+        ],
+        "correctAnswer": 0
+      },
+      {
+        "question": "Er sagt: 'Ich habe Zeit.' → Er sagt, er ___ Zeit.",
+        "options": [],
+        "correctAnswer": 0
+      }
+    ],
+    "canDoGoals": [],
+    "culturalNotes": "",
+    "indonesianMistakes": "",
+    "sentenceBreakdowns": [
+      "Er sagt: 'Ich bin krank.' → Er sagt, er sei krank. (Konj I)",
+      "Sie sagt: 'Ich komme morgen.' → Sie sagt, sie komme morgen. (Konj I)",
+      "Er sagt: 'Ich habe Zeit.' → Er sagt, er habe Zeit. (Konj I)"
+    ],
+    "pronunciationTips": [],
+    "listeningSimulation": null
   }
+
 ];
 export const allVocab: VocabWord[] = courseData.flatMap(lesson => lesson.vocabulary || []);
