@@ -1,15 +1,15 @@
-import { Link } from 'react-router';
-import { useState, useEffect, useMemo } from 'react';
-import type { Level } from '../data/course';
-import { courseIndex } from '../data/lessonIndex';
-import { useProgressStore } from '../stores/progressStore';
-import { useLearningStore } from '../stores/learningStore';
-import { useAuthStore } from '../stores/authStore';
-import { isUserPro } from '../lib/subscription';
-import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock, Flame, Star, Brain, GraduationCap, Sparkles, Medal, TrendingUp, BarChart3, Award } from 'lucide-react';
-import { cn } from '../lib/utils';
-import { Progress } from '../components/ui/progress';
-import { Button } from '../components/ui/button';
+ import { Link } from 'react-router';
+ import { useState, useEffect, useMemo } from 'react';
+ import type { Level } from '../data/course';
+ import { courseIndex } from '../data/lessonIndex';
+ import { useProgressStore } from '../stores/progressStore';
+ import { useLearningStore } from '../stores/learningStore';
+ import { useAuthStore } from '../stores/authStore';
+ import { isUserPro } from '../lib/subscription';
+ import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock, Flame, Star, Brain, GraduationCap, Sparkles, Medal, TrendingUp, BarChart3, Award } from 'lucide-react';
+ import { cn } from '../lib/utils';
+ import { Progress } from '../components/ui/progress';
+ import { Button } from '../components/ui/button';
 
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress } = useProgressStore();
@@ -213,6 +213,12 @@ export default function Dashboard() {
 
         {/* SECTION A: WELCOME HEADER */}
         <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-6 md:p-8 text-white shadow-xl">
+          {/* German Flag Stripe */}
+          <div className="absolute top-0 left-0 right-0 flex h-1.5">
+            <div className="flex-1 bg-[#1F2937]" />
+            <div className="flex-1 bg-[#DC2626]" />
+            <div className="flex-1 bg-[#F2C94C]" />
+          </div>
           <div className="absolute inset-0 opacity-10">
             <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-white/20 blur-3xl" />
             <div className="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
@@ -285,34 +291,42 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 p-4 md:p-5 flex flex-col">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-amber-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <Zap className="w-6 h-6 text-amber-500 mb-2" />
+                <div className="w-12 h-12 rounded-xl bg-amber-500/15 flex items-center justify-center mb-2">
+                  <Zap className="w-6 h-6 text-amber-500" />
+                </div>
                 <span className="text-2xl md:text-3xl font-black text-amber-500">{xp}</span>
                 <span className="text-[10px] md:text-xs font-bold text-amber-600/80 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 p-4 md:p-5 flex flex-col">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-blue-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <BookOpen className="w-6 h-6 text-blue-500 mb-2" />
+                <div className="w-12 h-12 rounded-xl bg-blue-500/15 flex items-center justify-center mb-2">
+                  <BookOpen className="w-6 h-6 text-blue-500" />
+                </div>
                 <span className="text-2xl md:text-3xl font-black text-blue-500">{learningStats.totalVocab}</span>
                 <span className="text-[10px] md:text-xs font-bold text-blue-600/80 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 p-4 md:p-5 flex flex-col">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-green-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <CheckCircle2 className="w-6 h-6 text-green-500 mb-2" />
+                <div className="w-12 h-12 rounded-xl bg-green-500/15 flex items-center justify-center mb-2">
+                  <CheckCircle2 className="w-6 h-6 text-green-500" />
+                </div>
                 <span className="text-2xl md:text-3xl font-black text-green-500">{completedLessons.length}</span>
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 p-4 md:p-5 flex flex-col">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-purple-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <TrendingUp className="w-6 h-6 text-purple-500 mb-2" />
+                <div className="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center mb-2">
+                  <TrendingUp className="w-6 h-6 text-purple-500" />
+                </div>
                 <span className="text-2xl md:text-3xl font-black text-purple-500">{overallProgress}%</span>
                 <span className="text-[10px] md:text-xs font-bold text-purple-600/80 uppercase tracking-wider mt-1">Progres</span>
               </div>
@@ -323,7 +337,7 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 p-6 md:p-8 text-white shadow-xl shadow-purple-500/20">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 p-6 md:p-8 text-white shadow-xl shadow-purple-500/20 hover:shadow-2xl transition-shadow">
             <div className="absolute inset-0 opacity-20">
               <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white/30 blur-3xl" />
               <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
@@ -450,6 +464,7 @@ export default function Dashboard() {
             {levels.map((lvl, index) => {
               const tierLocked = !isUserPro(tierData) && lvl.id !== 'A1';
               const isLevelUnlocked = index <= userLevelIndex && !tierLocked;
+              const levelColors: Record<string, string> = { A1: 'emerald', A2: 'teal', B1: 'blue', B2: 'indigo' };
               const levelLessons = courseIndex.filter(l => l.level === lvl.id);
               const actualCompletedInLevel = levelLessons.filter(l => completedLessons.includes(l.id)).length;
               const isLevelCompleted = actualCompletedInLevel === levelLessons.length && userLevelIndex >= index;
@@ -459,7 +474,7 @@ export default function Dashboard() {
               else if (isLevelUnlocked && levelLessons.length > 0) progressPercent = Math.max(0, (actualCompletedInLevel / levelLessons.length) * 100);
 
               return (
-                <div key={lvl.id} className={cn("relative", !isLevelUnlocked && "opacity-50 grayscale")}>
+                <div key={lvl.id} className={cn("relative pl-4 border-l-4", !isLevelUnlocked && "opacity-50 grayscale", lvl.id === 'A1' && 'border-emerald-500', lvl.id === 'A2' && 'border-teal-500', lvl.id === 'B1' && 'border-blue-500', lvl.id === 'B2' && 'border-indigo-500')}>
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-4">
                       <Link to={isLevelUnlocked ? `/level/${lvl.id}` : '#'}>

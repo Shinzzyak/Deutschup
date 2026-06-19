@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Check, X, RotateCcw, ChevronRight, BookOpen, Zap } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { allVocab } from '../data/lessons';
 
@@ -57,9 +57,28 @@ const verbDictionary: VerbConjugation[] = [
   }
 ];
 
+const tenseLabels: Record<string, string> = {
+  present: 'Präsens',
+  perfekt: 'Perfekt',
+  prateritum: 'Präteritum',
+};
+
+const pronouns = ['ich', 'du', 'er/sie/es', 'wir', 'ihr', 'sie'];
+
+const articleColors: Record<string, string> = {
+  der: 'bg-blue-500',
+  die: 'bg-red-500',
+  das: 'bg-green-500',
+};
+
 export default function VerbTrainer() {
   const [searchTerm, setSearchTerm] = useState('');
-  
+  const [selectedVerb, setSelectedVerb] = useState<VerbConjugation | null>(null);
+  const [activeTense, setActiveTense] = useState<'present' | 'perfekt' | 'prateritum'>('present');
+  const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
+  const [showAnswers, setShowAnswers] = useState(false);
+  const [score, setScore] = useState({ correct: 0, total: 0 });
+
   const filteredVerbs = useMemo(() => {
     return verbDictionary.filter(v => 
       v.infinitive.toLowerCase().includes(searchTerm.toLowerCase()) || 
@@ -73,6 +92,61 @@ export default function VerbTrainer() {
       v.translation.toLowerCase().includes(searchTerm.toLowerCase())
     );
   }, [searchTerm]);
+
+  const handleSelectVerb = (verb: VerbConjugation) => {
+    setSelectedVerb(verb);
+    setActiveTense('present');
+    setUserAnswers({});
+    setShowAnswers(false);
+  };
+
+  const handleAnswerChange = (pronoun: string, value: string) => {
+    setUserAnswers(prev => ({ ...prev, [pronoun]: value }));
+  };
+
+  const handleCheckAnswers = () => {
+    if (!selectedVerb) return;
+    
+    let correct = 0;
+    let total = 0;
+    
+    const conjugations = activeTense === 'present' 
+      ? selectedVerb.present 
+      : activeTense === 'prateritum' 
+        ? selectedVerb.prateritum 
+        : null;
+    
+    if (activeTense === 'present') {
+      Object.entries(selectedVerb.present).forEach(([pronoun, correctAnswer]) => {
+        total++;
+        if (userAnswers[pronoun]?.toLowerCase().trim() === correctAnswer.toLowerCase()) {
+          correct++;
+        }
+      });
+    } else if (activeTense === 'prateritum') {
+      Object.entries(selectedVerb.prateritum).forEach(([pronoun, correctAnswer]) => {
+        total++;
+        if (userAnswers[pronoun]?.toLowerCase().trim() === correctAnswer.toLowerCase()) {
+          correct++;
+        }
+      });
+    } else {
+      // Perfekt is a single form
+      total = 1;
+      if (userAnswers['perfekt']?.toLowerCase().trim() === selectedVerb.perfekt.toLowerCase()) {
+        correct = 1;
+      }
+    }
+    
+    setScore({ correct, total });
+    setShowAnswers(true);
+  };
+
+  const handleReset = () => {
+    setUserAnswers({});
+    setShowAnswers(false);
+    setScore({ correct: 0, total: 0 });
+  };
 
   return (
     <div className="max-w-4xl mx-auto pb-20">
@@ -106,8 +180,7 @@ export default function VerbTrainer() {
                       {v.article && (
                         <span className={cn(
                           "text-xs font-bold px-2 py-1 rounded-md text-white shadow-sm",
-                          v.article === 'der' ? 'bg-blue-500' : 
-                          v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                          articleColors[v.article] || 'bg-gray-500'
                         )}>{v.article}</span>
                       )}
                       <span className="font-bold text-xl text-foreground">{v.word}</span>

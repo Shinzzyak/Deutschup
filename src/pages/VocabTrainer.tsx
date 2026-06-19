@@ -11,6 +11,19 @@ type TabType = 'flashcard' | 'list';
 type FilterType = 'all' | 'learned' | 'learning' | 'new';
 type SortType = 'default' | 'german' | 'indonesian';
 
+const levelColors: Record<string, { bg: string; text: string; border: string }> = {
+  A1: { bg: 'bg-emerald-500', text: 'text-white', border: 'border-emerald-500' },
+  A2: { bg: 'bg-teal-500', text: 'text-white', border: 'border-teal-500' },
+  B1: { bg: 'bg-blue-500', text: 'text-white', border: 'border-blue-500' },
+  B2: { bg: 'bg-indigo-500', text: 'text-white', border: 'border-indigo-500' },
+};
+
+const articleColors: Record<string, string> = {
+  der: 'bg-blue-500',
+  die: 'bg-red-500',
+  das: 'bg-green-500',
+};
+
 export default function VocabTrainer() {
   const { user } = useAuthStore();
   const { vocab, updateVocab } = useProgressStore();
@@ -28,17 +41,17 @@ export default function VocabTrainer() {
   const [pronunciationLoading, setPronunciationLoading] = useState(false);
   const [pronunciation, setPronunciation] = useState<{phonetic: string, tip: string} | null>(null);
 
-  // Simple logic to pick cards due for review or new cards
   const dueCards = useMemo(() => {
     const now = Date.now();
     return allVocab.filter(word => {
       const v = vocab[word.id];
-      if (!v) return true; // new
-      return v.nextReview <= now; // due
-    }).sort(() => Math.random() - 0.5); // shuffle
+      if (!v) return true;
+      return v.nextReview <= now;
+    }).sort(() => Math.random() - 0.5);
   }, [vocab]);
 
   const currentCard = dueCards[0];
+  const progressPercent = dueCards.length > 0 ? ((dueCards.length - dueCards.length + 1) / dueCards.length) * 100 : 0;
 
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
@@ -95,7 +108,6 @@ export default function VocabTrainer() {
   const listData = useMemo(() => {
     let result = [...allVocab];
 
-    // Filter
     if (filter !== 'all') {
       result = result.filter(v => {
         const status = vocab[v.id]?.status;
@@ -106,7 +118,6 @@ export default function VocabTrainer() {
       });
     }
 
-    // Sort
     if (sort === 'german') {
       result.sort((a, b) => a.word.localeCompare(b.word));
     } else if (sort === 'indonesian') {
@@ -172,8 +183,7 @@ export default function VocabTrainer() {
                     {currentCard.article && (
                       <span className={cn(
                         "text-sm font-bold px-3 py-1.5 rounded-lg text-white mb-4 uppercase tracking-widest",
-                        currentCard.article === 'der' ? 'bg-blue-500' : 
-                        currentCard.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                        articleColors[currentCard.article] || 'bg-gray-500'
                       )}>{currentCard.article}</span>
                     )}
                     <h2 className="text-5xl font-extrabold text-foreground">{currentCard.word}</h2>
@@ -281,6 +291,7 @@ export default function VocabTrainer() {
              <p className="text-muted-foreground text-sm font-bold mb-4 px-1">Menampilkan {listData.length} kata</p>
              {listData.map(v => {
                 const status = vocab[v.id]?.status;
+                const lc = levelColors[v.level] || levelColors.A1;
                 return (
                   <div key={v.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow gap-4">
                     <div className="flex items-center gap-4">
@@ -298,8 +309,7 @@ export default function VocabTrainer() {
                           {v.article && (
                             <span className={cn(
                               "text-[10px] font-bold px-1.5 py-0.5 rounded text-white uppercase tracking-wider",
-                              v.article === 'der' ? 'bg-blue-500' : 
-                              v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                              articleColors[v.article] || 'bg-gray-500'
                             )}>{v.article}</span>
                           )}
                           <span className="font-extrabold text-lg text-foreground">{v.word}</span>
@@ -308,7 +318,10 @@ export default function VocabTrainer() {
                       </div>
                     </div>
                     <div className="text-left sm:text-right flex items-center gap-2 sm:flex-col sm:items-end sm:gap-1">
-                       <span className="bg-muted text-muted-foreground px-2 py-1 rounded-md text-xs font-bold uppercase">{v.level}</span>
+                       <span className={cn(
+                         "px-2 py-1 rounded-md text-xs font-bold uppercase",
+                         lc.bg, lc.text
+                       )}>{v.level}</span>
                        <span className="text-xs font-medium text-muted-foreground">
                          {status === 'known' ? 'Dipelajari' : status === 'learning' ? 'Sedang belajar' : 'Baru'}
                        </span>

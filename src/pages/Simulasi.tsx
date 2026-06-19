@@ -161,18 +161,27 @@ export default function MockTest() {
            </p>
 
            <div className="grid grid-cols-2 gap-3 md:gap-4 mb-8">
-              {(['A1', 'A2', 'B1', 'B2'] as const).map(l => (
-                 <button 
-                   key={l}
-                   onClick={() => setLevel(l)}
-                   className={cn(
-                      "w-full py-4 rounded-2xl text-2xl font-bold border-2 transition-all",
-                      level === l ? "border-blue-600 bg-blue-50 text-blue-700 shadow-sm" : "border-border text-muted-foreground hover:border-border hover:bg-muted"
-                   )}
-                 >
-                   {l}
-                 </button>
-              ))}
+              {(['A1', 'A2', 'B1', 'B2'] as const).map(l => {
+                 const levelColors: Record<string, { border: string; bg: string; text: string; activeBorder: string }> = {
+                   A1: { border: 'border-emerald-300', bg: 'bg-emerald-50', text: 'text-emerald-700', activeBorder: 'border-emerald-500' },
+                   A2: { border: 'border-teal-300', bg: 'bg-teal-50', text: 'text-teal-700', activeBorder: 'border-teal-500' },
+                   B1: { border: 'border-blue-300', bg: 'bg-blue-50', text: 'text-blue-700', activeBorder: 'border-blue-500' },
+                   B2: { border: 'border-indigo-300', bg: 'bg-indigo-50', text: 'text-indigo-700', activeBorder: 'border-indigo-500' },
+                 };
+                 const c = levelColors[l];
+                 return (
+                   <button 
+                     key={l}
+                     onClick={() => setLevel(l)}
+                     className={cn(
+                        "w-full py-4 rounded-2xl text-2xl font-bold border-2 transition-all hover:scale-[1.02]",
+                        level === l ? [c.activeBorder, c.bg, c.text, "shadow-md"] : ["border-border", "text-muted-foreground", "hover:border-gray-300", "hover:bg-muted"]
+                     )}
+                   >
+                     {l}
+                   </button>
+                 );
+              })}
            </div>
            
            <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold rounded-2xl w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white">
@@ -208,8 +217,8 @@ export default function MockTest() {
                <span className="bg-muted text-foreground font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
                <span className="text-muted-foreground font-medium px-3 py-1 text-sm">Soal {currentIdx + 1} dari {questions.length}</span>
             </div>
-            <div className="flex items-center text-red-600 font-bold bg-red-50 px-3 py-1 rounded-lg">
-               <Timer className="w-5 h-5 mr-2" /> {formatTime(timeLeft)}
+            <div className="flex items-center text-orange-700 font-bold bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-2 rounded-full border border-orange-200 shadow-sm">
+               <Timer className="w-5 h-5 mr-2" /> <span className="font-mono text-lg tabular-nums">{formatTime(timeLeft)}</span>
             </div>
          </div>
 
@@ -229,8 +238,8 @@ export default function MockTest() {
                        key={i}
                        onClick={() => setAnswers({...answers, [q.id]: opt})}
                        className={cn(
-                          "w-full text-left p-4 rounded-2xl border-2 font-medium transition-all",
-                          isSelected ? "border-blue-600 bg-blue-50 text-blue-800" : "border-border hover:border-border text-foreground bg-card"
+                          "w-full text-left p-4 rounded-xl border-2 font-medium transition-all hover:scale-[1.01]",
+                          isSelected ? "border-blue-600 bg-blue-50 text-blue-800 shadow-sm" : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 text-foreground bg-card"
                        )}
                      >
                        {opt}
@@ -264,8 +273,14 @@ export default function MockTest() {
            </>
         ) : (
            <>
-             <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-               <TrophyIcon score={scoreInfo.score} total={scoreInfo.total} />
+             <div className="relative w-28 h-28 mx-auto mb-6">
+               <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
+                 <circle cx="50" cy="50" r="42" fill="none" stroke="#E5E7EB" strokeWidth="8" />
+                 <circle cx="50" cy="50" r="42" fill="none" stroke={scoreInfo.score / scoreInfo.total >= 0.5 ? '#22C55E' : '#EF4444'} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${(scoreInfo.score / scoreInfo.total) * 264} 264`} className="transition-all duration-1000" />
+               </svg>
+               <div className="absolute inset-0 flex items-center justify-center">
+                 <span className="text-2xl font-black text-foreground">{Math.round((scoreInfo.score / scoreInfo.total) * 100)}%</span>
+               </div>
              </div>
              <h2 className="text-4xl font-extrabold mb-2">Skor Kamu: {scoreInfo.score} / {scoreInfo.total}</h2>
              <p className="text-muted-foreground font-medium text-lg mb-8">
