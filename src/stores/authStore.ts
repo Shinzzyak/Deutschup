@@ -232,9 +232,15 @@ export const useAuthStore = create<AuthState>((set, get) => {
       const currentUser = get().user;
       const useClerk = shouldUseClerk(currentUser?.email);
       console.log('[AUTH_STATE] loginWithGoogle:', { hasCurrentUser: !!currentUser, useClerk });
+      
       if (useClerk) {
-        console.log('[AUTH] Canary user detected — Clerk login available (fallback: Supabase)');
+        console.log('[AUTH] Canary user detected — using Clerk login');
+        // Clerk login will be handled by ClerkSignIn component
+        // For now, redirect to sign-in page
+        window.location.href = '/sign-in';
+        return;
       }
+      
       await supabase.auth.signInWithOAuth({ provider: 'google' }); 
     },
     logout: async () => {
@@ -254,6 +260,9 @@ export const useAuthStore = create<AuthState>((set, get) => {
       const userId = currentUser?.id;
       if (userId) localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
       set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
+      
+      // Redirect to home page
+      window.location.href = '/';
     },
   };
 });

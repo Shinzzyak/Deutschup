@@ -5,6 +5,8 @@ import { captureRoute } from './stores/debugStore';
 import { Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ClerkProvider } from './lib/clerk';
+import ClerkSignIn from './pages/ClerkSignIn';
+import ClerkSignUp from './pages/ClerkSignUp';
 import LandingPage from './components/LandingPage';
 import TopNav from './components/layout/TopNav';
 import MobileBottomNav from './components/layout/MobileBottomNav';
@@ -141,6 +143,8 @@ function PublicRoutes() {
     <Routes>
       <Route path="/" element={<LandingPage />} />
       <Route path="/pricing" element={<Pricing />} />
+      <Route path="/sign-in/*" element={<ClerkSignIn />} />
+      <Route path="/sign-up/*" element={<ClerkSignUp />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
