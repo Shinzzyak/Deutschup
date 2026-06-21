@@ -5,6 +5,7 @@ import { captureRoute } from './stores/debugStore';
 import { Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ClerkProvider } from './lib/clerk';
+import { useAuthSync } from './hooks/useAuthSync';
 import ClerkSignIn from './pages/ClerkSignIn';
 import ClerkSignUp from './pages/ClerkSignUp';
 import LandingPage from './components/LandingPage';
@@ -150,6 +151,11 @@ function PublicRoutes() {
   );
 }
 
+function AuthSyncWrapper({ children }: { children: React.ReactNode }) {
+  useAuthSync();
+  return <>{children}</>;
+}
+
 export default function App() {
   const { user, loading } = useAuthStore();
   console.log('[ROUTE] App render:', { hasUser: !!user, loading, pathname: window.location.pathname });
@@ -157,19 +163,21 @@ export default function App() {
   return (
     <ClerkProvider>
       <BrowserRouter>
-        {user ? (
-          <AuthWrapper>
-            <Layout>
-              <AnimatedRoutes />
-              <ChatWidget />
-              <DebugOverlay />
+        <AuthSyncWrapper>
+          {user ? (
+            <AuthWrapper>
+              <Layout>
+                <AnimatedRoutes />
+                <ChatWidget />
+                <DebugOverlay />
 
-              <QuickNoteWidget />
-            </Layout>
-          </AuthWrapper>
-        ) : (
-          <PublicRoutes />
-        )}
+                <QuickNoteWidget />
+              </Layout>
+            </AuthWrapper>
+          ) : (
+            <PublicRoutes />
+          )}
+        </AuthSyncWrapper>
       </BrowserRouter>
     </ClerkProvider>
   );
