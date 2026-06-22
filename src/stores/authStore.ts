@@ -180,26 +180,10 @@ export const useAuthStore = create<AuthState>((set, get) => {
       if (user && (!currentUser || currentUser.id !== user.id)) {
         console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
         
-        // IMMEDIATELY set Clerk user data (no Supabase dependency)
-        set({
-          user,
-          loading: false,
-          // Use Clerk data as immediate defaults
-          tierData: {
-            tier: (user as any).publicMetadata?.tier || (user as any).publicMetadata?.subscription || 'free',
-            subscription: (user as any).publicMetadata?.subscription || 'free',
-            tierExpiry: (user as any).publicMetadata?.tierExpiry,
-            pro_expires_at: (user as any).publicMetadata?.proExpiresAt,
-            role: (user as any).publicMetadata?.role || 'user',
-          },
-          profileData: {
-            full_name: (user as any).publicMetadata?.fullName || user.user_metadata?.full_name || '',
-            avatar_url: (user as any).publicMetadata?.avatarUrl || user.user_metadata?.avatar_url || '',
-            role: (user as any).publicMetadata?.role || 'user',
-          },
-        });
+        // Set user immediately, profile will be fetched from Supabase
+        set({ user, loading: false });
         
-        // THEN fetch from Supabase in background (for fresh data)
+        // Fetch profile from Supabase (source of truth for tier/role)
         fetchProfile(user.id);
       } else if (!user && currentUser) {
         console.log('[AUTH_STATE] setUser null — signing out');
