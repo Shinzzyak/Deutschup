@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { useAuthStore } from '../stores/authStore';
 import { 
   BookOpen, 
   Target, 
@@ -33,14 +32,15 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
   const [step, setStep] = useState<Step>('welcome');
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
-  const { updateProfile } = useAuthStore();
 
-  const handleComplete = async () => {
-    // Save onboarding data to profile (fire-and-forget)
+  const handleComplete = () => {
+    // Store onboarding preferences locally (profile update optional)
     if (selectedLevel) {
-      updateProfile({ subscription: 'free' }).catch(() => {});
+      localStorage.setItem('deutschup_level', selectedLevel);
     }
-    // Always complete — don't block on profile update
+    if (selectedGoal) {
+      localStorage.setItem('deutschup_goal', selectedGoal);
+    }
     onComplete();
   };
 
