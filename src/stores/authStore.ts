@@ -177,8 +177,26 @@ export const useAuthStore = create<AuthState>((set, get) => {
       const currentUser = get().user;
       if (user && (!currentUser || currentUser.id !== user.id)) {
         console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
-        set({ user, loading: false });
-        // Fetch profile from Supabase database
+        
+        // IMMEDIATELY set Clerk user data (no Supabase dependency)
+        set({
+          user,
+          loading: false,
+          // Use Clerk data as immediate defaults
+          tierData: {
+            tier: (user as any).publicMetadata?.tier || (user as any).publicMetadata?.subscription || 'free',
+            subscription: (user as any).publicMetadata?.subscription || 'free',
+            tierExpiry: (user as any).publicMetadata?.tierExpiry,
+            pro_expires_at: (user as any).publicMetadata?.proExpiresAt,
+          },
+          profileData: {
+            full_name: (user as any).publicMetadata?.fullName || user.user_metadata?.full_name || '',
+            avatar_url: (user as any).publicMetadata?.avatarUrl || user.user_metadata?.avatar_url || '',
+            role: (user as any).publicMetadata?.role || 'user',
+          },
+        });
+        
+        // THEN fetch from Supabase in background (for fresh data)
         fetchProfile(user.id);
       } else if (!user && currentUser) {
         console.log('[AUTH_STATE] setUser null — signing out');
