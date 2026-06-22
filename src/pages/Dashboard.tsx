@@ -10,6 +10,7 @@
  import { cn } from '../lib/utils';
  import { Progress } from '../components/ui/progress';
  import { Button } from '../components/ui/button';
+import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
 
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress } = useProgressStore();
@@ -22,6 +23,14 @@ export default function Dashboard() {
       loadProgress(user.id);
     }
   }, [user?.id]);
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto p-6">
+        <DashboardSkeleton />
+      </div>
+    );
+  }
 
   const currentLesson = useMemo(() => {
     const lastUnlocked = [...unlockedLessons].reverse().find(id => !completedLessons.includes(id));
