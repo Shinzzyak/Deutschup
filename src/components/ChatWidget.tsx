@@ -87,6 +87,9 @@ export default function ChatWidget() {
         <button
           onClick={() => setIsOpen(!isOpen)}
           className="w-14 h-14 bg-blue-600 rounded-full shadow-lg flex items-center justify-center hover:bg-blue-700 transition-colors"
+          aria-label={isOpen ? 'Tutup chat Herr Deutsch' : 'Buka chat Herr Deutsch'}
+          aria-expanded={isOpen}
+          aria-controls="chat-panel"
         >
           <Bot className="w-6 h-6 text-white" />
         </button>
@@ -109,6 +112,10 @@ export default function ChatWidget() {
             {isOpen && (
               <motion.div
                 ref={panelRef}
+                id="chat-panel"
+                role="dialog"
+                aria-label="Chat dengan Herr Deutsch"
+                aria-live="polite"
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
@@ -141,7 +148,7 @@ export default function ChatWidget() {
                 </div>
 
                 {/* Messages */}
-                <div className="flex-1 overflow-y-auto p-3 space-y-3">
+                <div className="flex-1 overflow-y-auto p-3 space-y-3" aria-label="Riwayat chat" role="log">
                   {messages.length === 0 && (
                     <div className="text-center text-gray-400 mt-6">
                       <div className="w-10 h-10 mx-auto mb-2 rounded-full bg-[#F2C94C]/20 flex items-center justify-center">
@@ -152,7 +159,7 @@ export default function ChatWidget() {
                     </div>
                   )}
                   {messages.map((msg, i) => (
-                    <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                    <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`} role="article" aria-label={msg.role === 'user' ? 'Pesan Anda' : 'Balasan Herr Deutsch'}>
                       {msg.role === 'model' && (
                         <div className="w-6 h-6 rounded-full bg-[#F2C94C]/20 flex items-center justify-center mr-2 mt-1 shrink-0">
                           <Bot className="w-3 h-3 text-[#F2C94C]" />
@@ -168,7 +175,7 @@ export default function ChatWidget() {
                     </div>
                   ))}
                   {isLoading && (
-                    <div className="flex justify-start">
+                    <div className="flex justify-start" role="status" aria-label="Herr Deutsch sedang mengetik">
                       <div className="w-6 h-6 rounded-full bg-[#F2C94C]/20 flex items-center justify-center mr-2 mt-1 shrink-0">
                         <Bot className="w-3 h-3 text-[#F2C94C]" />
                       </div>
@@ -182,24 +189,28 @@ export default function ChatWidget() {
 
                 {/* Input — rounded-xl, compact */}
                 <div className="p-3 border-t border-slate-200 dark:border-slate-700 shrink-0">
-                  <div className="flex gap-2">
+                  <form onSubmit={(e) => { e.preventDefault(); sendMessage(); }} className="flex gap-2">
+                    <label htmlFor="chat-input" className="sr-only">Ketik pesan ke Herr Deutsch</label>
                     <input
+                      id="chat-input"
                       type="text"
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
-                      onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && sendMessage()}
                       placeholder="Ketik pesan..."
                       className="flex-1 px-3 py-2 border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 dark:bg-slate-800 dark:text-white text-sm"
                       disabled={isLoading}
+                      aria-describedby="chat-hint"
                     />
                     <button
-                      onClick={sendMessage}
+                      type="submit"
                       disabled={isLoading || !input.trim()}
                       className="px-3 py-2 bg-[#1F2937] text-white rounded-xl hover:bg-[#1F2937]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      aria-label="Kirim pesan"
                     >
                       <Send className="w-4 h-4" />
                     </button>
-                  </div>
+                  </form>
+                  <p id="chat-hint" className="sr-only">Tekan Enter untuk mengirim</p>
                 </div>
               </motion.div>
             )}
