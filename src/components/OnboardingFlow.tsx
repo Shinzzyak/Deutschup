@@ -36,13 +36,11 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
   const { updateProfile } = useAuthStore();
 
   const handleComplete = async () => {
-    // Save onboarding data to profile
+    // Save onboarding data to profile (fire-and-forget)
     if (selectedLevel) {
-      await updateProfile({ 
-        subscription: 'free',
-        // We'll store onboarding data in a separate field or use it for personalization
-      });
+      updateProfile({ subscription: 'free' }).catch(() => {});
     }
+    // Always complete — don't block on profile update
     onComplete();
   };
 
