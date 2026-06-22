@@ -404,12 +404,82 @@ async function createMimoClient(model: ModelConfig): Promise<AIProviderClient> {
   };
 }
 
+async function createOpenModelClient(model: ModelConfig): Promise<AIProviderClient> {
+  const apiKey = await getApiKey('openmodel');
+  if (!apiKey) throw new Error('OpenModel API key not configured');
+
+  const baseUrl = process.env.OPENMODEL_BASE_URL || 'https://api.openmodel.app/v1';
+
+  return {
+    providerId: 'openmodel',
+    modelId: model.id,
+    modelName: model.name,
+    chat: async (message, systemPrompt, history = []) => {
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...history.map(h => ({ role: h.role === 'model' ? 'assistant' : 'user', content: h.text })),
+        { role: 'user', content: message }
+      ];
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: model.name,
+          messages,
+          temperature: model.config?.temperature || 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `OpenModel API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || '';
+    },
+    generateJson: async (prompt, schema) => {
+      const messages = [
+        { role: 'system', content: `Respond in valid JSON matching this schema: ${JSON.stringify(schema)}` },
+        { role: 'user', content: prompt }
+      ];
+
+      const response = await fetch(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: model.name,
+          messages,
+          temperature: model.config?.temperature || 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `OpenModel API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const content = data.choices?.[0]?.message?.content || '{}';
+      return JSON.parse(content);
+    }
+  };
+}
+
 // Client factory by provider ID
 const CLIENT_FACTORIES: Record<string, (model: ModelConfig) => Promise<AIProviderClient>> = {
   gemini: createGeminiClient,
   deepseek: createDeepSeekClient,
   openai: createOpenAIClient,
   mimo: createMimoClient,
+  openmodel: createOpenModelClient,
 };
 
 export async function createProviderClient(model: ModelConfig): Promise<AIProviderClient> {
