@@ -17,20 +17,14 @@ export default function Dashboard() {
   const { mockTests } = useLearningStore();
   const { user, tierData } = useAuthStore();
   const [exporting, setExporting] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (user?.id && !loading) {
       loadProgress(user.id);
     }
   }, [user?.id]);
-
-  if (loading) {
-    return (
-      <div className="max-w-6xl mx-auto p-6">
-        <DashboardSkeleton />
-      </div>
-    );
-  }
 
   const currentLesson = useMemo(() => {
     const lastUnlocked = [...unlockedLessons].reverse().find(id => !completedLessons.includes(id));
@@ -93,8 +87,14 @@ export default function Dashboard() {
   const levelIndexMap = { 'A1': 0, 'A2': 1, 'B1': 2, 'B2': 3 };
   const userLevelIndex = levelIndexMap[currentLevel];
 
-  const [errorMsg, setErrorMsg] = useState("");
-  const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  // SHOW SKELETON AFTER ALL HOOKS (Rules of Hooks compliance)
+  if (loading) {
+    return (
+      <div className="max-w-6xl mx-auto p-6">
+        <DashboardSkeleton />
+      </div>
+    );
+  }
 
   const exportPDF = async () => {
     setErrorMsg("");
