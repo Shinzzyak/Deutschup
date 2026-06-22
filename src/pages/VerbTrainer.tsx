@@ -1,61 +1,8 @@
 import { useState, useMemo } from 'react';
-import { Search, Check, X, RotateCcw, ChevronRight, BookOpen, Zap } from 'lucide-react';
+import { Search, Check, X, RotateCcw, ChevronRight, BookOpen, Zap, Shuffle, Trophy } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { verbDatabase, VerbConjugation } from '../data/verbs';
 import { allVocab } from '../data/lessons';
-
-export interface VerbConjugation {
-  infinitive: string;
-  translation: string;
-  type: 'regular' | 'irregular';
-  present: {
-    ich: string;
-    du: string;
-    'er/sie/es': string;
-    wir: string;
-    ihr: string;
-    sie: string;
-  };
-  perfekt: string;
-  prateritum: {
-    ich: string;
-    'er/sie/es': string;
-  };
-}
-
-const verbDictionary: VerbConjugation[] = [
-  {
-    infinitive: 'sein',
-    translation: 'adalah (to be)',
-    type: 'irregular',
-    present: { ich: 'bin', du: 'bist', 'er/sie/es': 'ist', wir: 'sind', ihr: 'seid', sie: 'sind' },
-    perfekt: 'ist gewesen',
-    prateritum: { ich: 'war', 'er/sie/es': 'war' }
-  },
-  {
-    infinitive: 'haben',
-    translation: 'memiliki',
-    type: 'irregular',
-    present: { ich: 'habe', du: 'hast', 'er/sie/es': 'hat', wir: 'haben', ihr: 'habt', sie: 'haben' },
-    perfekt: 'hat gehabt',
-    prateritum: { ich: 'hatte', 'er/sie/es': 'hatte' }
-  },
-  {
-    infinitive: 'machen',
-    translation: 'melakukan/membuat',
-    type: 'regular',
-    present: { ich: 'mache', du: 'machst', 'er/sie/es': 'macht', wir: 'machen', ihr: 'macht', sie: 'machen' },
-    perfekt: 'hat gemacht',
-    prateritum: { ich: 'machte', 'er/sie/es': 'machte' }
-  },
-  {
-    infinitive: 'gehen',
-    translation: 'pergi',
-    type: 'irregular',
-    present: { ich: 'gehe', du: 'gehst', 'er/sie/es': 'geht', wir: 'gehen', ihr: 'geht', sie: 'gehen' },
-    perfekt: 'ist gegangen',
-    prateritum: { ich: 'ging', 'er/sie/es': 'ging' }
-  }
-];
 
 const tenseLabels: Record<string, string> = {
   present: 'Präsens',
@@ -78,9 +25,12 @@ export default function VerbTrainer() {
   const [userAnswers, setUserAnswers] = useState<Record<string, string>>({});
   const [showAnswers, setShowAnswers] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
+  const [quizMode, setQuizMode] = useState(false);
+  const [quizVerbs, setQuizVerbs] = useState<VerbConjugation[]>([]);
+  const [quizIndex, setQuizIndex] = useState(0);
 
   const filteredVerbs = useMemo(() => {
-    return verbDictionary.filter(v => 
+    return verbDatabase.filter(v => 
       v.infinitive.toLowerCase().includes(searchTerm.toLowerCase()) || 
       v.translation.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -146,6 +96,54 @@ export default function VerbTrainer() {
     setUserAnswers({});
     setShowAnswers(false);
     setScore({ correct: 0, total: 0 });
+  };
+
+  const handleStartQuiz = () => {
+    const shuffled = [...verbDatabase].sort(() => Math.random() - 0.5).slice(0, 10);
+    setQuizVerbs(shuffled);
+    setQuizIndex(0);
+    setQuizMode(true);
+    setUserAnswers({});
+    setShowAnswers(false);
+    setScore({ correct: 0, total: 0 });
+  };
+
+  const handleQuizAnswer = (pronoun: string, value: string) => {
+    setUserAnswers(prev => ({ ...prev, [pronoun]: value }));
+  };
+
+  const handleQuizCheck = () => {
+    const verb = quizVerbs[quizIndex];
+    if (!verb) return;
+    let correct = 0;
+    let total = 0;
+    
+    if (activeTense === 'present') {
+      Object.entries(verb.present).forEach(([pronoun, correctAnswer]) => {
+        total++;
+        if (userAnswers[pronoun]?.toLowerCase().trim() === correctAnswer.toLowerCase()) correct++;
+      });
+    } else if (activeTense === 'prateritum') {
+      Object.entries(verb.prateritum).forEach(([pronoun, correctAnswer]) => {
+        total++;
+        if (userAnswers[pronoun]?.toLowerCase().trim() === correctAnswer.toLowerCase()) correct++;
+      });
+    } else {
+      total = 1;
+      if (userAnswers['perfekt']?.toLowerCase().trim() === verb.perfekt.toLowerCase()) correct = 1;
+    }
+    setScore(prev => ({ correct: prev.correct + correct, total: prev.total + total }));
+    setShowAnswers(true);
+  };
+
+  const handleQuizNext = () => {
+    if (quizIndex < quizVerbs.length - 1) {
+      setQuizIndex(quizIndex + 1);
+      setUserAnswers({});
+      setShowAnswers(false);
+    } else {
+      setQuizMode(false);
+    }
   };
 
   return (
