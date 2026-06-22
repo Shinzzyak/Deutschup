@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useAuthStore } from '../../stores/authStore';
 import { useProgressStore } from '../../stores/progressStore';
+import SearchOverlay from '../search/SearchOverlay';
 import {
   Search,
   LogOut,
@@ -32,9 +33,8 @@ const navigation = [
 export default function TopNav() {
   const { user, logout, profileData } = useAuthStore();
   const location = useLocation();
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const [showUserMenu, setShowUserMenu] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const streak = useProgressStore((s) => s.streak);
@@ -56,8 +56,24 @@ export default function TopNav() {
     return location.pathname.startsWith(href.split('?')[0]);
   }
 
+  // Keyboard shortcut: Ctrl+K or / to open search
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setSearchOpen(prev => !prev);
+      } else if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) {
+        e.preventDefault();
+        setSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   return (
     <>
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
       <nav
         className="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-700/60"
         style={{
@@ -122,11 +138,11 @@ export default function TopNav() {
             <div className="flex items-center gap-1.5">
               {/* Search toggle */}
               <button
-                onClick={() => setShowSearch(!showSearch)}
+                onClick={() => setSearchOpen(true)}
                 className="p-2 text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 aria-label="Cari materi"
               >
-                {showSearch ? <X className="w-4.5 h-4.5" /> : <Search className="w-4.5 h-4.5" />}
+                <Search className="w-4.5 h-4.5" />
               </button>
 
               {/* Streak badge */}
@@ -206,28 +222,6 @@ export default function TopNav() {
         </div>
       </nav>
 
-      {/* Search bar */}
-      {showSearch && (
-        <div
-          className="border-b border-slate-200/60 dark:border-slate-700/60 px-4 py-3"
-          style={{
-            background: 'rgba(255,255,255,0.85)',
-            backdropFilter: 'blur(12px)',
-          }}
-        >
-          <div className="max-w-7xl mx-auto relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Cari materi, level, atau topik..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 bg-slate-50/80 dark:bg-slate-800/80 border border-slate-200/60 dark:border-slate-700/60 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 focus:border-blue-400 transition-all"
-              autoFocus
-            />
-          </div>
-        </div>
-      )}
     </>
   );
 }
