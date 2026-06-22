@@ -9,6 +9,7 @@ export interface TierData {
   tierExpiry?: number;
   subscription?: 'free' | 'pro';
   pro_expires_at?: string | null;
+  role?: string;
 }
 
 interface ProfileData {
@@ -99,6 +100,7 @@ function parseProfileData(data: any): { tierData: TierData; profileData: Profile
       tierExpiry: data.tier_expiry,
       subscription: data.subscription || 'free',
       pro_expires_at: data.pro_expires_at,
+      role: data.role || 'user',
     },
     profileData: {
       full_name: data.full_name,
@@ -188,6 +190,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
             subscription: (user as any).publicMetadata?.subscription || 'free',
             tierExpiry: (user as any).publicMetadata?.tierExpiry,
             pro_expires_at: (user as any).publicMetadata?.proExpiresAt,
+            role: (user as any).publicMetadata?.role || 'user',
           },
           profileData: {
             full_name: (user as any).publicMetadata?.fullName || user.user_metadata?.full_name || '',

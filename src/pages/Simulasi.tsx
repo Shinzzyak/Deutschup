@@ -24,7 +24,7 @@ type UserAnswerInfo = {
 };
 
 export default function MockTest() {
-  const { user, tierData } = useAuthStore();
+  const { user, tierData, profileData } = useAuthStore();
   const { mockTests, saveMockTest } = useLearningStore();
   const { addXp } = useProgressStore();
 
@@ -57,7 +57,7 @@ export default function MockTest() {
   }, [testState, targetTime]);
 
   const startTest = async () => {
-    if (!isUserPro(tierData)) {
+    if (!isUserPro(tierData, tierData.role || profileData?.role)) {
       const now = Date.now();
       const oneWeek = 7 * 24 * 60 * 60 * 1000;
       const recentTests = mockTests?.filter(t => (now - t.createdAt) < oneWeek) || [];

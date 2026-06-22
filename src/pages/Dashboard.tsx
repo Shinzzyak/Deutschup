@@ -15,7 +15,8 @@ import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress } = useProgressStore();
   const { mockTests } = useLearningStore();
-  const { user, tierData } = useAuthStore();
+  const { user, tierData, profileData } = useAuthStore();
+  const role = tierData.role || profileData?.role;
   const [exporting, setExporting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
@@ -100,7 +101,7 @@ export default function Dashboard() {
     setErrorMsg("");
     setPdfBlobUrl(null);
     
-    if (!isUserPro(tierData)) {
+    if (!isUserPro(tierData, role)) {
       setErrorMsg("Fitur Export PDF hanya tersedia untuk pengguna Pro.");
       return;
     }
@@ -245,7 +246,7 @@ export default function Dashboard() {
                     <GraduationCap className="w-4 h-4" />
                     Level {currentLevel}
                   </span>
-                  {isUserPro(tierData) && (
+                  {isUserPro(tierData, role) && (
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-100 text-sm font-semibold backdrop-blur-sm">
                       <Sparkles className="w-4 h-4" />
                       Pro
@@ -471,7 +472,7 @@ export default function Dashboard() {
         {!loading && (
           <div className="space-y-12 md:space-y-16">
             {levels.map((lvl, index) => {
-              const tierLocked = !isUserPro(tierData) && lvl.id !== 'A1';
+              const tierLocked = !isUserPro(tierData, role) && lvl.id !== 'A1';
               const isLevelUnlocked = index <= userLevelIndex && !tierLocked;
               const levelColors: Record<string, string> = { A1: 'emerald', A2: 'teal', B1: 'blue', B2: 'indigo' };
               const levelLessons = courseIndex.filter(l => l.level === lvl.id);

@@ -29,7 +29,7 @@ interface OrderHistory {
 }
 
 export default function Pricing() {
-  const { user, session, tierData } = useAuthStore();
+  const { user, session, tierData, profileData } = useAuthStore();
   const [loading, setLoading] = useState<string | null>(null);
   const [orders, setOrders] = useState<OrderHistory[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
@@ -38,7 +38,7 @@ export default function Pricing() {
     subscription: tierData.subscription || 'free',
     pro_expires_at: tierData.pro_expires_at || null,
   };
-  const activePro = isUserPro(subData);
+  const activePro = isUserPro(subData, tierData.role || profileData?.role);
   const daysRemaining = getProDaysRemaining(subData);
 
   // Fetch billing history
