@@ -1,22 +1,20 @@
 import { Link, useLocation } from 'react-router';
 import { useAuthStore } from '../../stores/authStore';
 import {
-  BookOpen,
+  Home,
   Trophy,
   BrainCircuit,
   Sparkles,
-  CreditCard,
+  User,
   ShieldCheck,
-  BarChart3,
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Home', href: '/', icon: BookOpen },
+  { name: 'Beranda', href: '/', icon: Home },
   { name: 'Level', href: '/level/1', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
-  { name: 'Catatan', href: '/catatan', icon: BarChart3 },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
-  { name: 'Langganan', href: '/pricing', icon: CreditCard },
+  { name: 'Profil', href: '/pricing', icon: User },
 ];
 
 export default function MobileBottomNav() {

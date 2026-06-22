@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router';
-import { useEffect, Suspense, lazy, useRef } from 'react';
+import { useEffect as useEffect2, Suspense, lazy, useRef } from 'react';
 import { useAuthStore } from './stores/authStore';
 import { captureRoute } from './stores/debugStore';
 import { Loader2 } from 'lucide-react';
@@ -33,11 +34,16 @@ const DebugAuth = lazy(() => import('./pages/DebugAuth'));
 import ChatWidget from './components/ChatWidget';
 import DebugOverlay from './components/DebugOverlay';
 import QuickNoteWidget from './components/QuickNoteWidget';
+import OnboardingFlow from './components/OnboardingFlow';
+
+// Check if user has completed onboarding
+function hasCompletedOnboarding(): boolean {
+  return localStorage.getItem('deutschup_onboarding_complete') === 'true';
+}
 
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, loading, profileData } = useAuthStore();
   console.log('[AUTH_WRAPPER] render:', { hasUser: !!user, loading, hasProfile: !!profileData?.full_name });
-  const navigate = (window as any).__navigate || (() => {});
 
   if (loading) {
     return (
@@ -156,6 +162,21 @@ function AuthSyncWrapper({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function OnboardingWrapper({ children }: { children: React.ReactNode }) {
+  const [showOnboarding, setShowOnboarding] = useState(!hasCompletedOnboarding());
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('deutschup_onboarding_complete', 'true');
+    setShowOnboarding(false);
+  };
+
+  if (showOnboarding) {
+    return <OnboardingFlow onComplete={handleOnboardingComplete} />;
+  }
+
+  return <>{children}</>;
+}
+
 export default function App() {
   const { user, loading } = useAuthStore();
   console.log('[ROUTE] App render:', { hasUser: !!user, loading, pathname: window.location.pathname });
@@ -166,13 +187,14 @@ export default function App() {
         <AuthSyncWrapper>
           {user ? (
             <AuthWrapper>
-              <Layout>
-                <AnimatedRoutes />
-                <ChatWidget />
-                <DebugOverlay />
-
-                <QuickNoteWidget />
-              </Layout>
+              <OnboardingWrapper>
+                <Layout>
+                  <AnimatedRoutes />
+                  <ChatWidget />
+                  <DebugOverlay />
+                  <QuickNoteWidget />
+                </Layout>
+              </OnboardingWrapper>
             </AuthWrapper>
           ) : (
             <PublicRoutes />
