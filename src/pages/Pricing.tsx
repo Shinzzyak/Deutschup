@@ -35,8 +35,8 @@ export default function Pricing() {
   const [ordersLoading, setOrdersLoading] = useState(true);
 
   const subData: SubscriptionData = {
-    subscription: tierData.subscription || 'free',
-    pro_expires_at: tierData.pro_expires_at || null,
+    subscription: tierData?.subscription || 'free',
+    pro_expires_at: tierData?.pro_expires_at || null,
   };
   const activePro = isUserPro(subData, tierData?.role || profileData?.role);
   const daysRemaining = getProDaysRemaining(subData);
