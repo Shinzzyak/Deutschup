@@ -15,7 +15,7 @@ export default function Admin() {
 
   // Once store confirms admin + we have a session, fetch data
   useEffect(() => {
-    if (profileData.role !== 'admin' || !session) return;
+    if (profileData?.role !== 'admin' || !session) return;
 
     async function fetchData() {
       setFetching(true);
@@ -47,7 +47,7 @@ export default function Admin() {
       }
     }
     fetchData();
-  }, [profileData.role, session]);
+  }, [profileData?.role, session]);
 
   const handleUpdateApiKey = async () => {
     if (!session) { alert('Session not ready, try again'); return; }
@@ -119,7 +119,7 @@ export default function Admin() {
     );
   }
 
-  if (!session || profileData.role !== 'admin') {
+  if (!session || profileData?.role !== 'admin') {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
         <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />

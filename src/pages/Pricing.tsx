@@ -38,7 +38,7 @@ export default function Pricing() {
     subscription: tierData.subscription || 'free',
     pro_expires_at: tierData.pro_expires_at || null,
   };
-  const activePro = isUserPro(subData, tierData.role || profileData?.role);
+  const activePro = isUserPro(subData, tierData?.role || profileData?.role);
   const daysRemaining = getProDaysRemaining(subData);
 
   // Fetch billing history

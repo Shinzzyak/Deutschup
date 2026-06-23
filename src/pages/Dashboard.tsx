@@ -16,7 +16,7 @@ export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress } = useProgressStore();
   const { mockTests } = useLearningStore();
   const { user, tierData, profileData } = useAuthStore();
-  const role = tierData.role || profileData?.role;
+  const role = tierData?.role || profileData?.role;
   const [exporting, setExporting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);

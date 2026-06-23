@@ -71,15 +71,15 @@ export default function AdminAI() {
   const [activeTab, setActiveTab] = useState<'health' | 'providers' | 'routing' | 'usage' | 'secrets'>('health');
 
   useEffect(() => {
-    if (profileData.role !== 'admin') {
+    if (profileData?.role !== 'admin') {
       navigate('/');
     }
-  }, [profileData.role, navigate]);
+  }, [profileData?.role, navigate]);
 
   useEffect(() => {
-    if (profileData.role !== 'admin' || !session) return;
+    if (profileData?.role !== 'admin' || !session) return;
     fetchData();
-  }, [profileData.role, session]);
+  }, [profileData?.role, session]);
 
   const fetchData = async () => {
     if (!session) return;
