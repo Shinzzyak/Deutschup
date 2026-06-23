@@ -28,6 +28,7 @@ const Catatan = lazy(() => import('./pages/Catatan'));
 const Simulasi = lazy(() => import('./pages/Simulasi'));
 const Pricing = lazy(() => import('./pages/Pricing'));
 const Profile = lazy(() => import('./pages/Profile'));
+const NotFound = lazy(() => import('./pages/NotFound'));
 const Admin = lazy(() => import('./pages/Admin'));
 const ClerkTest = lazy(() => import('./pages/ClerkTest'));
 const CanaryDashboard = lazy(() => import('./pages/CanaryDashboard'));
@@ -127,6 +128,7 @@ function AnimatedRoutes() {
         <Route path="/admin/canary" element={<PageWrapper><CanaryDashboard /></PageWrapper>} />
         <Route path="/clerk-test" element={<PageWrapper><ClerkTest /></PageWrapper>} />
         <Route path="/debug-auth" element={<PageWrapper><DebugAuth /></PageWrapper>} />
+        <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
       </Routes>
     </AnimatePresence>
   );

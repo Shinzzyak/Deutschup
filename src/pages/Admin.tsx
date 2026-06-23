@@ -106,7 +106,7 @@ export default function Admin() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
-        body: JSON.stringify({ targetUserId: userId, subscription: newSub })
+        body: JSON.stringify({ userId: userId, subscription: newSub })
       });
       if (res.ok) {
         setUsers(prev => prev.map(u => u.id === userId ? { ...u, subscription: newSub } : u));
