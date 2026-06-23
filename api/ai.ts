@@ -17,19 +17,19 @@ function checkRateLimit(ip: string, maxRequests = 10, windowMs = 60000): boolean
 
 const CHAT_SYSTEM = `Anda "Herr Deutsch", seorang Tutor Bahasa Jerman profesional dan ramah untuk siswa Indonesia. Siswa ini berada di level {level}. Jawablah SEMUA pertanyaan dalam Bahasa Indonesia, tapi berikan istilah dan contoh dominan dalam bahasa Jerman dengan benar.`;
 
-function getFriendlyError(error: any): string {
+function getFriendlyError(error: any): { message: string; status: number } {
   const status = String(error?.status || '');
   const message = error?.message || '';
   if (status === '429' || message.includes('RESOURCE_EXHAUSTED') || message.includes('rate limit')) {
-    return 'Terlalu banyak permintaan. Herr Deutsch sedang istirahat sebentar. Coba lagi dalam 1-2 menit.';
+    return { message: 'Terlalu banyak permintaan. Herr Deutsch sedang istirahat sebentar. Coba lagi dalam 1-2 menit.', status: 429 };
   }
   if (status === '503' || message.includes('UNAVAILABLE')) {
-    return 'Layanan sedang sibuk. Herr Deutsch akan segera kembali. Silakan coba lagi.';
+    return { message: 'Layanan sedang sibuk. Herr Deutsch akan segera kembali. Silakan coba lagi.', status: 503 };
   }
   if (message.includes('SAFETY') || message.includes('BLOCKED')) {
-    return 'Permintaan tidak dapat diproses karena batasan keamanan.';
+    return { message: 'Permintaan tidak dapat diproses karena batasan keamanan.', status: 400 };
   }
-  return 'Herr Deutsch mengalami gangguan teknis. Silakan coba lagi.';
+  return { message: 'Herr Deutsch mengalami gangguan teknis. Silakan coba lagi.', status: 500 };
 }
 
 async function handleChat(uid: string, body: any): Promise<any> {
@@ -245,7 +245,7 @@ const HANDLERS: Record<string, (uid: string, body: any) => Promise<any>> = {
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   if (req.method === 'OPTIONS') return res.status(200).end();
@@ -282,8 +282,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     const result = await HANDLERS[action](uid, req.body);
     return res.status(result.status).json(result.data);
   } catch (error: any) {
-    const friendlyMessage = getFriendlyError(error);
+    const { message: friendlyMessage, status: errorStatus } = getFriendlyError(error);
     console.error(`[AI-ERROR] ${action}:`, error.message);
-    return res.status(500).json({ error: friendlyMessage });
+    return res.status(errorStatus).json({ error: friendlyMessage });
   }
 }

@@ -3,7 +3,7 @@ import { runMiddleware, authMiddleware, getDb } from '../lib/api-utils.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
     return res.status(200).end();
   }
 
