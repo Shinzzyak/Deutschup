@@ -53,7 +53,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         description: `DeutschUp ${(planType || 'pro').toUpperCase()} Subscription`,
         customer_name: name || 'Student',
         customer_email: email || 'student@example.com',
-        callback_url: `${APP_URL}/api/payment?action=callback&secret=${process.env.BAYARGG_WEBHOOK_SECRET || ''}`,
+        callback_url: `${APP_URL}/api/payment?action=callback`,
         redirect_url: `${APP_URL}/dashboard?payment=success`,
         payment_method: 'qris',
         payment_url: 'https://www.bayar.gg/pay',
@@ -137,12 +137,38 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(429).json({ error: 'Too many requests' });
       }
 
-      // Webhook secret verification
+      // Verify webhook signature (HMAC SHA256 per Bayar.gg docs)
+      // Headers: X-Webhook-Signature, X-Webhook-Timestamp
+      // Signature data: invoice_id|status|final_amount|timestamp
       const webhookSecret = process.env.BAYARGG_WEBHOOK_SECRET;
-      const providedSecret = req.query.secret;
-      if (webhookSecret && providedSecret !== webhookSecret) {
-        console.error('[payment/callback] Invalid webhook secret from IP:', clientIp);
-        return res.status(401).json({ error: 'Invalid webhook secret' });
+      const webhookSignature = req.headers['x-webhook-signature'] as string;
+      const webhookTimestamp = req.headers['x-webhook-timestamp'] as string;
+
+      if (webhookSecret) {
+        if (!webhookSignature || !webhookTimestamp) {
+          console.error('[payment/callback] Missing signature headers from IP:', clientIp);
+          return res.status(401).json({ error: 'Missing webhook signature' });
+        }
+
+        // Verify timestamp is within 5 minutes (replay protection)
+        const timestamp = parseInt(webhookTimestamp, 10);
+        const nowSeconds = Math.floor(Date.now() / 1000);
+        if (isNaN(timestamp) || Math.abs(nowSeconds - timestamp) > 300) {
+          console.error('[payment/callback] Webhook timestamp expired from IP:', clientIp);
+          return res.status(401).json({ error: 'Webhook timestamp expired' });
+        }
+
+        const webhookPayload = req.body;
+        const signatureData = `${webhookPayload.invoice_id}|${webhookPayload.status}|${webhookPayload.final_amount}|${webhookTimestamp}`;
+        const expectedSignature = crypto.createHmac('sha256', webhookSecret).update(signatureData).digest('hex');
+
+        if (!crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(webhookSignature))) {
+          console.error('[payment/callback] Invalid webhook signature from IP:', clientIp);
+          return res.status(401).json({ error: 'Invalid webhook signature' });
+        }
+        console.log('[payment/callback] Signature verified OK');
+      } else {
+        console.warn('[payment/callback] No BAYARGG_WEBHOOK_SECRET set — skipping signature verification');
       }
 
       const webhookPayload = req.body;
