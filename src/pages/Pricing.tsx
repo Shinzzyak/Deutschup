@@ -29,7 +29,7 @@ interface OrderHistory {
 }
 
 export default function Pricing() {
-  const { user, session, tierData, profileData } = useAuthStore();
+  const { user, tierData, profileData } = useAuthStore();
   const [loading, setLoading] = useState<string | null>(null);
   const [orders, setOrders] = useState<OrderHistory[]>([]);
   const [ordersLoading, setOrdersLoading] = useState(true);
@@ -92,6 +92,7 @@ export default function Pricing() {
 
     setLoading(planId);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) return alert("Sesi tidak valid. Silakan login ulang.");
       const token = session.access_token;
 

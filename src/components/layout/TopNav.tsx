@@ -196,12 +196,20 @@ export default function TopNav() {
                     </div>
                     <div className="p-1.5">
                       <Link
+                        to="/profile"
+                        onClick={() => setShowUserMenu(false)}
+                        className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                      >
+                        <User className="w-4 h-4 text-slate-400" />
+                        Profil
+                      </Link>
+                      <Link
                         to="/pricing"
                         onClick={() => setShowUserMenu(false)}
                         className="flex items-center gap-2.5 px-3 py-2 rounded-lg text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                       >
-                        <Settings className="w-4 h-4 text-slate-400" />
-                        Settings
+                        <CreditCard className="w-4 h-4 text-slate-400" />
+                        Langganan
                       </Link>
                       <button
                         onClick={() => {

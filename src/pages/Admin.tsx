@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/authStore';
+import { supabase } from '../lib/supabase';
 import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert, Settings, BarChart3, TrendingUp, DollarSign, UserCheck, UserX, RefreshCw, Eye, EyeOff, Copy, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
@@ -18,9 +19,14 @@ interface StatsData {
   users: { total: number; pro: number };
 }
 
+async function getToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token || null;
+}
+
 export default function Admin() {
   const navigate = useNavigate();
-  const { session, loading, profileData } = useAuthStore();
+  const { loading, profileData } = useAuthStore();
   const [users, setUsers] = useState<UserData[]>([]);
   const [stats, setStats] = useState<StatsData | null>(null);
   const [apiKey, setApiKey] = useState('');
@@ -31,9 +37,11 @@ export default function Admin() {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (profileData?.role !== 'admin' || !session) return;
+    if (profileData?.role !== 'admin') return;
 
     async function fetchData() {
+      const token = await getToken();
+      if (!token) return;
       setFetching(true);
       try {
         const controller = new AbortController();
@@ -41,15 +49,15 @@ export default function Admin() {
 
         const [usersRes, statsRes, configRes] = await Promise.all([
           fetch('/api/admin?action=users', {
-            headers: { 'Authorization': `Bearer ${session.access_token}` },
+            headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           }),
           fetch('/api/admin?action=stats', {
-            headers: { 'Authorization': `Bearer ${session.access_token}` },
+            headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           }),
           fetch('/api/admin?action=config', {
-            headers: { 'Authorization': `Bearer ${session.access_token}` },
+            headers: { 'Authorization': `Bearer ${token}` },
             signal: controller.signal
           })
         ]);
@@ -68,17 +76,18 @@ export default function Admin() {
       }
     }
     fetchData();
-  }, [profileData?.role, session]);
+  }, [profileData?.role]);
 
   const handleUpdateApiKey = async () => {
-    if (!session) return;
+    const token = await getToken();
+    if (!token) return;
     setSavingKey(true);
     try {
       const res = await fetch('/api/admin?action=config', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ geminiApiKey: apiKey })
       });
@@ -97,14 +106,15 @@ export default function Admin() {
   };
 
   const handleTogglePro = async (userId: string, currentSub: string) => {
-    if (!session) return;
+    const token = await getToken();
+    if (!token) return;
     const newSub = currentSub === 'pro' ? 'free' : 'pro';
     try {
       const res = await fetch('/api/admin?action=toggle-pro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ userId: userId, subscription: newSub })
       });
@@ -134,7 +144,7 @@ export default function Admin() {
     );
   }
 
-  if (!session || profileData?.role !== 'admin') {
+  if (profileData?.role !== 'admin') {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
         <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
@@ -145,7 +155,6 @@ export default function Admin() {
   }
 
   const proCount = users.filter(u => u.subscription === 'pro').length;
-  const freeCount = users.length - proCount;
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-6">
@@ -159,14 +168,13 @@ export default function Admin() {
             <Button onClick={() => navigate('/admin/ai')} variant="outline" className="rounded-2xl">
               <Settings className="w-4 h-4 mr-2" /> AI Settings
             </Button>
-            <Button onClick={() => fetchData()} variant="outline" className="rounded-2xl">
+            <Button onClick={() => window.location.reload()} variant="outline" className="rounded-2xl">
               <RefreshCw className="w-4 h-4 mr-2" /> Refresh
             </Button>
           </div>
         </div>
       </header>
 
-      {/* Tabs */}
       <div className="flex gap-2 mb-8 border-b border-border pb-2">
         {[
           { id: 'overview', label: 'Overview', icon: BarChart3 },
@@ -188,7 +196,6 @@ export default function Admin() {
         ))}
       </div>
 
-      {/* Overview Tab */}
       {activeTab === 'overview' && (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <StatCard icon={Users} label="Total Users" value={users.length} color="text-blue-500" />
@@ -198,7 +205,6 @@ export default function Admin() {
         </div>
       )}
 
-      {/* Users Tab */}
       {activeTab === 'users' && (
         <div className="bg-card rounded-3xl border border-border overflow-hidden">
           <table className="w-full">
@@ -259,7 +265,6 @@ export default function Admin() {
         </div>
       )}
 
-      {/* Settings Tab */}
       {activeTab === 'settings' && (
         <div className="bg-card rounded-3xl border border-border p-8">
           <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
