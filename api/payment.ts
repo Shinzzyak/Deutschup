@@ -162,6 +162,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const signatureData = `${webhookPayload.invoice_id}|${webhookPayload.status}|${webhookPayload.final_amount}|${webhookTimestamp}`;
         const expectedSignature = crypto.createHmac('sha256', webhookSecret).update(signatureData).digest('hex');
 
+        // Verify signature length matches (HMAC SHA256 hex = 64 chars)
+        if (expectedSignature.length !== webhookSignature.length) {
+          console.error('[payment/callback] Invalid webhook signature length from IP:', clientIp);
+          return res.status(401).json({ error: 'Invalid webhook signature' });
+        }
+
         if (!crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(webhookSignature))) {
           console.error('[payment/callback] Invalid webhook signature from IP:', clientIp);
           return res.status(401).json({ error: 'Invalid webhook signature' });
