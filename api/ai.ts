@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { executeWithRouting, getRoutingConfig } from '../lib/ai-router.js';
+import { getSupabaseAdminClient } from '../lib/api-utils.js';
 
 const CHAT_SYSTEM = `Anda "Herr Deutsch", seorang Tutor Bahasa Jerman profesional dan ramah untuk siswa Indonesia. Siswa ini berada di level {level}. Jawablah SEMUA pertanyaan dalam Bahasa Indonesia, tapi berikan istilah dan contoh dominan dalam bahasa Jerman dengan benar.`;
 
@@ -242,7 +243,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: `Invalid action. Valid: ${Object.keys(HANDLERS).join(', ')}` });
   }
 
-  const uid = req.body?.uid || 'anonymous';
+  // Extract UID from JWT token (not request body) — prevents spoofing
+  let uid = 'anonymous';
+  const authHeader = req.headers.authorization;
+  if (authHeader?.startsWith('Bearer ')) {
+    const token = authHeader.split('Bearer ')[1];
+    try {
+      const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
+      if (!error && user) {
+        uid = user.id;
+      }
+    } catch (e) {
+      // Token invalid — fall through to anonymous
+    }
+  }
   const startTime = Date.now();
 
   try {

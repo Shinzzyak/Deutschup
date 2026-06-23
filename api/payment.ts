@@ -1,7 +1,21 @@
-import { runMiddleware, authMiddleware, getDb } from '../lib/api-utils.js';
+import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { runMiddleware, authMiddleware, getDb, getSupabaseAdminClient } from '../lib/api-utils.js';
 import crypto from 'crypto';
 
-export default async function handler(req: any, res: any) {
+// Simple in-memory rate limiter (per-IP, resets on cold start)
+const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
+function checkRateLimit(ip: string, maxRequests = 20, windowMs = 60000): boolean {
+  const now = Date.now();
+  const entry = rateLimitMap.get(ip);
+  if (!entry || now > entry.resetAt) {
+    rateLimitMap.set(ip, { count: 1, resetAt: now + windowMs });
+    return true;
+  }
+  entry.count++;
+  return entry.count <= maxRequests;
+}
+
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -39,7 +53,7 @@ export default async function handler(req: any, res: any) {
         description: `DeutschUp ${(planType || 'pro').toUpperCase()} Subscription`,
         customer_name: name || 'Student',
         customer_email: email || 'student@example.com',
-        callback_url: `${APP_URL}/api/payment?action=callback`,
+        callback_url: `${APP_URL}/api/payment?action=callback&secret=${process.env.BAYARGG_WEBHOOK_SECRET || ''}`,
         redirect_url: `${APP_URL}/dashboard?payment=success`,
         payment_method: 'qris',
         payment_url: 'https://www.bayar.gg/pay',
@@ -112,9 +126,24 @@ export default async function handler(req: any, res: any) {
       }
     }
 
-    // === action=callback (POST, no auth — called by Bayar.gg webhook) ===
+    // === action=callback (POST — called by Bayar.gg webhook) ===
     if (action === 'callback') {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+
+      // Rate limit check
+      const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
+      if (!checkRateLimit(clientIp, 20, 60000)) {
+        console.warn('[payment/callback] Rate limit exceeded for IP:', clientIp);
+        return res.status(429).json({ error: 'Too many requests' });
+      }
+
+      // Webhook secret verification
+      const webhookSecret = process.env.BAYARGG_WEBHOOK_SECRET;
+      const providedSecret = req.query.secret;
+      if (webhookSecret && providedSecret !== webhookSecret) {
+        console.error('[payment/callback] Invalid webhook secret from IP:', clientIp);
+        return res.status(401).json({ error: 'Invalid webhook secret' });
+      }
 
       const webhookPayload = req.body;
       console.log('[payment/callback] Received webhook:', JSON.stringify(webhookPayload, null, 2));
@@ -172,8 +201,8 @@ export default async function handler(req: any, res: any) {
       return res.json({ success: true });
     }
 
-    // Unknown action
-    return res.status(404).json({ error: 'Payment endpoint not found', debug: { action } });
+    // Unknown action — no debug info leaked
+    return res.status(404).json({ error: 'Payment endpoint not found' });
   } catch (e: any) {
     console.error('[payment] Unhandled error:', e);
     if (!res.headersSent) {
