@@ -1,19 +1,35 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/authStore';
-import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert, Settings } from 'lucide-react';
+import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert, Settings, BarChart3, TrendingUp, DollarSign, UserCheck, UserX, RefreshCw, Eye, EyeOff, Copy, Check } from 'lucide-react';
 import { Button } from '../components/ui/button';
+
+interface UserData {
+  id: string;
+  full_name: string;
+  subscription: string;
+  role: string;
+  created_at: string;
+}
+
+interface StatsData {
+  today: { requests: number; errors: number };
+  recentOrders: any[];
+  users: { total: number; pro: number };
+}
 
 export default function Admin() {
   const navigate = useNavigate();
   const { session, loading, profileData } = useAuthStore();
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
+  const [stats, setStats] = useState<StatsData | null>(null);
   const [apiKey, setApiKey] = useState('');
   const [savingKey, setSavingKey] = useState(false);
-  const [savingUser, setSavingUser] = useState(false);
   const [fetching, setFetching] = useState(false);
+  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'settings'>('overview');
+  const [showApiKey, setShowApiKey] = useState(false);
+  const [copied, setCopied] = useState(false);
 
-  // Once store confirms admin + we have a session, fetch data
   useEffect(() => {
     if (profileData?.role !== 'admin' || !session) return;
 
@@ -23,8 +39,12 @@ export default function Admin() {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 10000);
 
-        const [usersRes, configRes] = await Promise.all([
+        const [usersRes, statsRes, configRes] = await Promise.all([
           fetch('/api/admin?action=users', {
+            headers: { 'Authorization': `Bearer ${session.access_token}` },
+            signal: controller.signal
+          }),
+          fetch('/api/admin?action=stats', {
             headers: { 'Authorization': `Bearer ${session.access_token}` },
             signal: controller.signal
           }),
@@ -36,6 +56,7 @@ export default function Admin() {
         clearTimeout(timeoutId);
 
         if (usersRes.ok) setUsers(await usersRes.json());
+        if (statsRes.ok) setStats(await statsRes.json());
         if (configRes.ok) {
           const d = await configRes.json();
           setApiKey(d.geminiApiKey || '');
@@ -50,8 +71,7 @@ export default function Admin() {
   }, [profileData?.role, session]);
 
   const handleUpdateApiKey = async () => {
-    if (!session) { alert('Session not ready, try again'); return; }
-    if (!apiKey) { alert('API Key is empty'); return; }
+    if (!session) return;
     setSavingKey(true);
     try {
       const res = await fetch('/api/admin?action=config', {
@@ -62,7 +82,7 @@ export default function Admin() {
         },
         body: JSON.stringify({ geminiApiKey: apiKey })
       });
-      alert(res.ok ? 'API Key updated!' : `Failed: ${res.status} ${await res.text()}`);
+      alert(res.ok ? 'API Key updated!' : `Failed: ${res.status}`);
     } catch {
       alert('Error updating config');
     } finally {
@@ -70,48 +90,43 @@ export default function Admin() {
     }
   };
 
-  const handleUpdateUser = async (userId: string, updates: any) => {
+  const handleCopyApiKey = () => {
+    navigator.clipboard.writeText(apiKey);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleTogglePro = async (userId: string, currentSub: string) => {
     if (!session) return;
-    setSavingUser(true);
+    const newSub = currentSub === 'pro' ? 'free' : 'pro';
     try {
-      const res = await fetch('/api/admin?action=users', {
+      const res = await fetch('/api/admin?action=toggle-pro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
-        body: JSON.stringify({ targetUserId: userId, ...updates })
+        body: JSON.stringify({ targetUserId: userId, subscription: newSub })
       });
       if (res.ok) {
-        const updated = await fetch('/api/admin?action=users', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
-        });
-        setUsers(await updated.json());
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, subscription: newSub } : u));
       }
-      alert(res.ok ? 'User updated!' : 'Failed to update');
-    } catch {
-      alert('Error updating user');
-    } finally {
-      setSavingUser(false);
+    } catch (e) {
+      console.error('Toggle Pro failed:', e);
     }
   };
 
-  // Safety: force-resolve stuck loading state after 12s
   const [forceResolve, setForceResolve] = useState(false);
   useEffect(() => {
     if (!loading) return;
-    const t = setTimeout(() => {
-      console.warn('[Admin] FORCE RESOLVE — loading stuck >12s');
-      setForceResolve(true);
-    }, 12000);
+    const t = setTimeout(() => setForceResolve(true), 12000);
     return () => clearTimeout(t);
   }, [loading]);
 
-  // --- Render Gates ---
   if ((loading && !forceResolve) || fetching) {
     return (
       <div className="flex flex-col items-center justify-center min-h-screen gap-3">
-        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <Loader2 className="w-10 h-10 animate-spin text-[#F2C94C]" />
         <p className="text-sm text-muted-foreground">
           {loading ? 'Memeriksa autentikasi...' : 'Mengambil data admin...'}
         </p>
@@ -124,149 +139,175 @@ export default function Admin() {
       <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
         <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
         <h1 className="text-2xl font-bold text-foreground">Akses Ditolak</h1>
-        <p className="text-muted-foreground">Maaf, bre. Lo nggak punya role admin untuk masuk ke area ini.</p>
+        <p className="text-muted-foreground">Anda tidak memiliki akses admin.</p>
       </div>
     );
   }
 
-  const proCount = users.filter(u => (u.subscription || u.tier) === 'pro').length;
+  const proCount = users.filter(u => u.subscription === 'pro').length;
+  const freeCount = users.length - proCount;
 
   return (
     <div className="max-w-6xl mx-auto py-12 px-6">
       <header className="mb-10">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-4xl font-black text-foreground mb-2">Admin Cockpit 🧠</h1>
-            <p className="text-muted-foreground">Manage users, system configuration, and AI settings.</p>
+            <h1 className="text-4xl font-black text-foreground mb-2">Admin Panel 🧠</h1>
+            <p className="text-muted-foreground">Kelola pengguna, statistik, dan konfigurasi.</p>
           </div>
-          <Button
-            onClick={() => navigate('/admin/ai')}
-            variant="outline"
-            className="rounded-2xl"
-          >
-            <Settings className="w-4 h-4 mr-2" /> AI Settings
-          </Button>
+          <div className="flex gap-2">
+            <Button onClick={() => navigate('/admin/ai')} variant="outline" className="rounded-2xl">
+              <Settings className="w-4 h-4 mr-2" /> AI Settings
+            </Button>
+            <Button onClick={() => fetchData()} variant="outline" className="rounded-2xl">
+              <RefreshCw className="w-4 h-4 mr-2" /> Refresh
+            </Button>
+          </div>
         </div>
       </header>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 mb-10">
-        <div className="bg-card p-6 rounded-3xl shadow-sm border border-border flex items-center">
-          <div className="p-3 bg-blue-50 rounded-2xl mr-4"><Users className="w-6 h-6 text-blue-600" /></div>
-          <div>
-            <p className="text-sm text-muted-foreground font-medium">Total Users</p>
-            <p className="text-2xl font-bold text-foreground">{users.length}</p>
-          </div>
-        </div>
-        <div className="bg-card p-6 rounded-3xl shadow-sm border border-border flex items-center">
-          <div className="p-3 bg-indigo-50 rounded-2xl mr-4"><Activity className="w-6 h-6 text-indigo-600" /></div>
-          <div>
-            <p className="text-sm text-muted-foreground font-medium">Pro Members</p>
-            <p className="text-2xl font-bold text-foreground">{proCount}</p>
-          </div>
-        </div>
-        <div className="bg-card p-6 rounded-3xl shadow-sm border border-border flex items-center">
-          <div className="p-3 bg-emerald-50 rounded-2xl mr-4"><CreditCard className="w-6 h-6 text-emerald-600" /></div>
-          <div>
-            <p className="text-sm text-muted-foreground font-medium">Conv. Rate</p>
-            <p className="text-2xl font-bold text-foreground">
-              {users.length > 0 ? ((proCount / users.length) * 100).toFixed(1) : 0}%
-            </p>
-          </div>
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-2 mb-8 border-b border-border pb-2">
+        {[
+          { id: 'overview', label: 'Overview', icon: BarChart3 },
+          { id: 'users', label: 'Users', icon: Users },
+          { id: 'settings', label: 'Settings', icon: Settings },
+        ].map(tab => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id as any)}
+            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
+              activeTab === tab.id
+                ? 'bg-[#F2C94C] text-[#1F2937]'
+                : 'text-muted-foreground hover:bg-muted'
+            }`}
+          >
+            <tab.icon className="w-4 h-4" />
+            {tab.label}
+          </button>
+        ))}
       </div>
 
-      {/* API Key Config */}
-      <section className="bg-card p-8 rounded-3xl shadow-sm border border-border mb-10">
-        <div className="flex items-center mb-6">
-          <Key className="w-6 h-6 text-amber-500 mr-3" />
-          <h2 className="text-xl font-bold text-foreground">AI Engine Configuration</h2>
+      {/* Overview Tab */}
+      {activeTab === 'overview' && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <StatCard icon={Users} label="Total Users" value={users.length} color="text-blue-500" />
+          <StatCard icon={UserCheck} label="Pro Users" value={proCount} color="text-[#F2C94C]" />
+          <StatCard icon={TrendingUp} label="Today Requests" value={stats?.today?.requests || 0} color="text-green-500" />
+          <StatCard icon={Activity} label="Today Errors" value={stats?.today?.errors || 0} color="text-red-500" />
         </div>
-        <div className="flex flex-col md:flex-row gap-4">
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            className="flex-1 bg-muted border border-border rounded-2xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500 transition-all"
-            placeholder="Enter Gemini API Key..."
-          />
-          <Button onClick={handleUpdateApiKey} disabled={savingKey} className="rounded-2xl px-8 bg-slate-900 hover:bg-slate-800">
-            {savingKey ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
-            Update Key
-          </Button>
-        </div>
-      </section>
+      )}
 
-      {/* User Table */}
-      <section className="bg-card rounded-3xl shadow-sm border border-border overflow-hidden">
-        <div className="p-8 border-b border-border">
-          <h2 className="text-xl font-bold text-foreground">User Management</h2>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-left">
+      {/* Users Tab */}
+      {activeTab === 'users' && (
+        <div className="bg-card rounded-3xl border border-border overflow-hidden">
+          <table className="w-full">
             <thead>
-              <tr className="bg-muted text-muted-foreground text-sm font-semibold">
-                <th className="py-4 px-6">User ID</th>
-                <th className="py-4 px-6">Tier</th>
-                <th className="py-4 px-6">Role</th>
-                <th className="py-4 px-6">Joined</th>
-                <th className="py-4 px-6 text-right">Action</th>
+              <tr className="border-b border-border bg-muted">
+                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">User</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Role</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Subscription</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Joined</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
-              {users.map(u => (
-                <tr key={u.id} className="hover:bg-muted transition-colors">
-                  <td className="py-4 px-6">
-                    <div className="font-mono text-xs text-muted-foreground">{u.id}</div>
-                  </td>
-                  <td className="py-4 px-6">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                      (u.subscription || u.tier) === 'pro' ? 'bg-blue-100 text-blue-700' : 'bg-muted text-muted-foreground'
-                    }`}>
-                      {u.subscription || u.tier || 'free'}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6">
-                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                      u.role === 'admin' ? 'bg-purple-100 text-purple-700' : 'bg-muted text-muted-foreground'
-                    }`}>
-                      {u.role || 'user'}
-                    </span>
-                  </td>
-                  <td className="py-4 px-6 text-sm text-muted-foreground">
-                    {u.created_at ? new Date(u.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '-'}
-                  </td>
-                  <td className="py-4 px-6 text-right">
-                    <div className="flex justify-end gap-2">
-                      <select
-                        value={u.subscription || u.tier || 'free'}
-                        onChange={(e) => handleUpdateUser(u.id, { tier: e.target.value, subscription: e.target.value })}
-                        className="bg-muted text-xs rounded-lg px-2 py-1 border border-border outline-none"
-                      >
-                        <option value="free">Free</option>
-                        <option value="pro">Pro</option>
-                      </select>
-                      <select
-                        value={u.role || 'user'}
-                        onChange={(e) => handleUpdateUser(u.id, { role: e.target.value })}
-                        className="bg-muted text-xs rounded-lg px-2 py-1 border border-border outline-none"
-                      >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                      </select>
+            <tbody>
+              {users.map(user => (
+                <tr key={user.id} className="border-b border-slate-50 last:border-0 hover:bg-muted/50">
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-sm font-bold text-[#1F2937]">
+                        {user.full_name?.charAt(0) || '?'}
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">{user.full_name || 'No name'}</p>
+                        <p className="text-xs text-muted-foreground font-mono">{user.id.substring(0, 8)}...</p>
+                      </div>
                     </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      user.role === 'admin' ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-gray-50 text-gray-700 border border-gray-200'
+                    }`}>
+                      {user.role}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      user.subscription === 'pro' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' : 'bg-gray-50 text-gray-700 border border-gray-200'
+                    }`}>
+                      {user.subscription}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-sm text-muted-foreground">
+                    {new Date(user.created_at).toLocaleDateString('id-ID')}
+                  </td>
+                  <td className="px-6 py-4 text-right">
+                    <Button
+                      onClick={() => handleTogglePro(user.id, user.subscription)}
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl"
+                    >
+                      {user.subscription === 'pro' ? 'Revoke Pro' : 'Grant Pro'}
+                    </Button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-        {savingUser && (
-          <div className="p-4 text-center bg-blue-50 text-blue-600 text-sm font-medium animate-pulse">
-            Updating user data...
+      )}
+
+      {/* Settings Tab */}
+      {activeTab === 'settings' && (
+        <div className="bg-card rounded-3xl border border-border p-8">
+          <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
+            <Key className="w-5 h-5 text-[#F2C94C]" /> Gemini API Key
+          </h3>
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <input
+                type={showApiKey ? 'text' : 'password'}
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground pr-20"
+                placeholder="Enter Gemini API Key"
+              />
+              <button
+                onClick={() => setShowApiKey(!showApiKey)}
+                className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+              <button
+                onClick={handleCopyApiKey}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
+              </button>
+            </div>
+            <Button onClick={handleUpdateApiKey} disabled={savingKey} className="rounded-xl">
+              {savingKey ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
+              Save
+            </Button>
           </div>
-        )}
-      </section>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: number; color: string }) {
+  return (
+    <div className="bg-card rounded-3xl border border-border p-6">
+      <div className="flex items-center gap-3 mb-4">
+        <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center`}>
+          <Icon className={`w-5 h-5 ${color}`} />
+        </div>
+        <p className="text-sm text-muted-foreground">{label}</p>
+      </div>
+      <p className="text-3xl font-black text-foreground">{value}</p>
     </div>
   );
 }
