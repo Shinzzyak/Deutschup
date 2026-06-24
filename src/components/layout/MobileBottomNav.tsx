@@ -14,7 +14,7 @@ const navigation = [
   { name: 'Level', href: '/level/1', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
-  { name: 'Profil', href: '/pricing', icon: User },
+  { name: 'Profil', href: '/profile', icon: User },
 ];
 
 export default function MobileBottomNav() {

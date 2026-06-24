@@ -180,6 +180,9 @@ export const useAuthStore = create<AuthState>((set, get) => {
       if (user && (!currentUser || currentUser.id !== user.id)) {
         console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
         
+        // Clear stale profile cache on new login
+        try { localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${user.id}`); } catch {}
+        
         // Set user immediately, profile will be fetched from Supabase
         set({ user, loading: false });
         
