@@ -6,7 +6,7 @@ import { User, Mail, Calendar, Shield, CreditCard, Loader2, Save } from 'lucide-
 import { Button } from '../components/ui/button';
 
 export default function Profile() {
-  const { user, session, profileData, tierData } = useAuthStore();
+  const { user, profileData, tierData } = useAuthStore();
   const [fullName, setFullName] = useState(profileData?.full_name || '');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -25,7 +25,9 @@ export default function Profile() {
   }, [profileData?.full_name]);
 
   const handleSave = async () => {
-    if (!user || !session) return;
+    if (!user) return;
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session?.access_token) return;
     setSaving(true);
     try {
       const { error } = await supabase

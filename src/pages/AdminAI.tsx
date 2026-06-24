@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useNavigate } from 'react-router';
+import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import SecretList from '../components/admin/SecretList';
 import {
@@ -56,8 +57,14 @@ interface UsageStats {
   total_cost_usd: number;
 }
 
+
+async function getToken(): Promise<string | null> {
+  const { data: { session } } = await supabase.auth.getSession();
+  return session?.access_token || null;
+}
+
 export default function AdminAI() {
-  const { session, profileData } = useAuthStore();
+  const { profileData } = useAuthStore();
   const navigate = useNavigate();
 
   const [providers, setProviders] = useState<Provider[]>([]);
@@ -77,26 +84,26 @@ export default function AdminAI() {
   }, [profileData?.role, navigate]);
 
   useEffect(() => {
-    if (profileData?.role !== 'admin' || !session) return;
+    if (profileData?.role !== 'admin') return;
     fetchData();
-  }, [profileData?.role, session]);
+  }, [profileData?.role]);
 
   const fetchData = async () => {
-    if (!session) return;
+    
     setLoading(true);
     try {
       const [providersRes, modelsRes, statsRes, healthRes] = await Promise.all([
         fetch('/api/admin-ai?action=providers', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
         fetch('/api/admin-ai?action=models', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
         fetch('/api/admin-ai?action=usage-stats&days=7', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
         fetch('/api/admin-ai?action=health-check', {
-          headers: { 'Authorization': `Bearer ${session.access_token}` }
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
         })
       ]);
 
@@ -116,14 +123,14 @@ export default function AdminAI() {
   };
 
   const toggleProvider = async (id: string, enabled: boolean) => {
-    if (!session) return;
+    
     setSaving(true);
     try {
       await fetch('/api/admin-ai?action=provider-toggle', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${await getToken()}`
         },
         body: JSON.stringify({ id, enabled })
       });
@@ -138,14 +145,14 @@ export default function AdminAI() {
   };
 
   const toggleModel = async (id: string, enabled: boolean) => {
-    if (!session) return;
+    
     setSaving(true);
     try {
       await fetch('/api/admin-ai?action=model-toggle', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${await getToken()}`
         },
         body: JSON.stringify({ id, enabled })
       });
@@ -160,14 +167,14 @@ export default function AdminAI() {
   };
 
   const setPrimary = async (id: string) => {
-    if (!session) return;
+    
     setSaving(true);
     try {
       await fetch('/api/admin-ai?action=model-set-primary', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${await getToken()}`
         },
         body: JSON.stringify({ id })
       });
@@ -184,14 +191,14 @@ export default function AdminAI() {
   };
 
   const setFallback = async (id: string) => {
-    if (!session) return;
+    
     setSaving(true);
     try {
       await fetch('/api/admin-ai?action=model-set-fallback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`
+          'Authorization': `Bearer ${await getToken()}`
         },
         body: JSON.stringify({ id })
       });
@@ -208,13 +215,13 @@ export default function AdminAI() {
   };
 
   const validateProvider = async (providerId: string) => {
-    if (!session) return;
+    
     setValidating(providerId);
     try {
       const res = await fetch('/api/admin-ai?action=validate-provider', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${session.access_token}`,
+          'Authorization': `Bearer ${await getToken()}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({ provider_id: providerId })
