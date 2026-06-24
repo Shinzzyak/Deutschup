@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
+import { resolveInternalId } from '../lib/clerk/identity';
 import type { Level } from '../data/course';
 
 // ============================================================
@@ -67,9 +68,16 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   // --------------------------------------------------------
   // LOAD — reads from new relational tables
   // --------------------------------------------------------
-  loadProgress: async (userId: string) => {
+  loadProgress: async (clerkUserId: string) => {
     set({ loading: true });
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) {
+      console.error('[PROGRESS] Could not resolve Clerk ID:', clerkUserId.substring(0, 12));
+      set({ loading: false });
+      return;
+    }
     try {
+
       // 1. user_curriculum_progress (xp, streak, current lesson, unlocked lessons)
       const { data: curriculumProgress, error: cpError } = await supabase
         .from('user_curriculum_progress')
@@ -140,17 +148,17 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   // --------------------------------------------------------
   // ADD XP
   // --------------------------------------------------------
-  addXp: async (userId: string, amount: number) => {
+  addXp: async (clerkUserId: string, amount: number) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     const { xp } = get();
     const newXp = xp + amount;
     set({ xp: newXp });
     try {
-      if (userId) {
-        const { error } = await supabase
-          .from('user_curriculum_progress')
-          .upsert({ user_id: userId, xp: newXp }, { onConflict: 'user_id' });
-        if (error) throw error;
-      }
+      const { error } = await supabase
+        .from('user_curriculum_progress')
+        .upsert({ user_id: userId, xp: newXp }, { onConflict: 'user_id' });
+      if (error) throw error;
     } catch (e) {
       console.error(`[PROGRESS] addXp error:`, e);
     }
@@ -159,7 +167,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   // --------------------------------------------------------
   // UNLOCK LESSON
   // --------------------------------------------------------
-  unlockLesson: async (userId: string, lessonId: string) => {
+  unlockLesson: async (clerkUserId: string, lessonId: string) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     const { unlockedLessons, currentLevel } = get();
     if (unlockedLessons.includes(lessonId)) return;
 
@@ -173,15 +183,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
 
     set({ unlockedLessons: next, currentLevel: newLevel });
     try {
-      if (userId) {
-        const { error } = await supabase
-          .from('user_curriculum_progress')
-          .upsert(
-            { user_id: userId, unlocked_lessons: next, current_level_id: newLevel },
-            { onConflict: 'user_id' }
-          );
-        if (error) throw error;
-      }
+      const { error } = await supabase
+        .from('user_curriculum_progress')
+        .upsert(
+          { user_id: userId, unlocked_lessons: next, current_level_id: newLevel },
+          { onConflict: 'user_id' }
+        );
+      if (error) throw error;
     } catch (e) {
       console.error(`[PROGRESS] unlockLesson error:`, e);
     }
@@ -190,7 +198,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   // --------------------------------------------------------
   // COMPLETE LESSON — uses user_lesson_progress + updates streak
   // --------------------------------------------------------
-  completeLesson: async (userId: string, lessonId: string) => {
+  completeLesson: async (clerkUserId: string, lessonId: string) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     const { completedLessons } = get();
     if (completedLessons.includes(lessonId)) return;
 
@@ -198,33 +208,31 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     set({ completedLessons: next });
 
     try {
-      if (userId) {
-        // Upsert lesson progress
-        const { error } = await supabase
-          .from('user_lesson_progress')
-          .upsert(
-            {
-              user_id: userId,
-              lesson_id: lessonId,
-              completed: true,
-              completed_at: new Date().toISOString(),
-            },
-            { onConflict: 'user_id,lesson_id' }
-          );
-        if (error) throw error;
+      // Upsert lesson progress
+      const { error } = await supabase
+        .from('user_lesson_progress')
+        .upsert(
+          {
+            user_id: userId,
+            lesson_id: lessonId,
+            completed: true,
+            completed_at: new Date().toISOString(),
+          },
+          { onConflict: 'user_id,lesson_id' }
+        );
+      if (error) throw error;
 
-        // Update streak via RPC
-        await supabase.rpc('update_streak', { p_user_id: userId });
+      // Update streak via RPC
+      await supabase.rpc('update_streak', { p_user_id: userId });
 
-        // Update current_lesson_id in curriculum progress
-        const { error: updateErr } = await supabase
-          .from('user_curriculum_progress')
-          .upsert(
-            { user_id: userId, current_lesson_id: lessonId },
-            { onConflict: 'user_id' }
-          );
-        if (updateErr) throw updateErr;
-      }
+      // Update current_lesson_id in curriculum progress
+      const { error: updateErr } = await supabase
+        .from('user_curriculum_progress')
+        .upsert(
+          { user_id: userId, current_lesson_id: lessonId },
+          { onConflict: 'user_id' }
+        );
+      if (updateErr) throw updateErr;
     } catch (e) {
       console.error(`[PROGRESS] completeLesson error:`, e);
     }
@@ -234,7 +242,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   // SUBMIT CHECKPOINT — uses user_checkpoint_progress
   // Returns true if passed
   // --------------------------------------------------------
-  submitCheckpoint: async (userId: string, checkpointId: string, score: number, totalQuestions: number = 10) => {
+  submitCheckpoint: async (clerkUserId: string, checkpointId: string, score: number, totalQuestions: number = 10) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return false;
     try {
       const { data, error } = await supabase.rpc('submit_checkpoint', {
         p_user_id: userId,
@@ -293,7 +303,8 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   // --------------------------------------------------------
   // UPDATE STREAK
   // --------------------------------------------------------
-  updateStreak: async (userId: string) => {
+  updateStreak: async (clerkUserId: string) => {
+    const userId = await resolveInternalId(clerkUserId);
     const { lastPracticeDate, streak } = get();
     const today = new Date().toISOString().split('T')[0];
     if (lastPracticeDate === today) return;
@@ -310,16 +321,15 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
     }
 
     set({ streak: newStreak, lastPracticeDate: today });
+    if (!userId) return;
     try {
-      if (userId) {
-        const { error } = await supabase
-          .from('user_curriculum_progress')
-          .upsert(
-            { user_id: userId, streak: newStreak, last_practice_date: today },
-            { onConflict: 'user_id' }
-          );
-        if (error) throw error;
-      }
+      const { error } = await supabase
+        .from('user_curriculum_progress')
+        .upsert(
+          { user_id: userId, streak: newStreak, last_practice_date: today },
+          { onConflict: 'user_id' }
+        );
+      if (error) throw error;
     } catch (e) {
       console.error(`[PROGRESS] updateStreak error:`, e);
     }

@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { supabase } from '../lib/supabase';
+import { resolveInternalId } from '../lib/clerk/identity';
 
 export type Note = {
   id: string;
@@ -60,8 +61,10 @@ export const useLearningStore = create<LearningState>((set, get) => ({
   loading: false,
   isListening: false,
 
-  fetchData: async (userId) => {
+  fetchData: async (clerkUserId) => {
     if (get().isListening) return;
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     set({ loading: true, isListening: true });
     
     try {
@@ -108,7 +111,9 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     }
   },
 
-  addNote: async (userId, text, tag) => {
+  addNote: async (clerkUserId, text, tag) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     try {
       const { error } = await supabase
         .from('notes')
@@ -124,7 +129,9 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     }
   },
 
-  deleteNote: async (userId, noteId) => {
+  deleteNote: async (clerkUserId, noteId) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     try {
       const { error } = await supabase
         .from('notes')
@@ -137,7 +144,9 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     }
   },
 
-  saveStudyPlan: async (userId, tasks) => {
+  saveStudyPlan: async (clerkUserId, tasks) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     try {
       const { error } = await supabase
         .from('study_plans')
@@ -148,7 +157,9 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     }
   },
 
-  toggleTask: async (userId, taskId) => {
+  toggleTask: async (clerkUserId, taskId) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     const { studyPlan } = get();
     if (!studyPlan) return;
     const updatedTasks = studyPlan.tasks.map((t: StudyTask) => t.id === taskId ? { ...t, completed: !t.completed } : t);
@@ -162,7 +173,9 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     }
   },
 
-  saveQuickNote: async (userId, text) => {
+  saveQuickNote: async (clerkUserId, text) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     try {
       const { error } = await supabase
         .from('quick_notes')
@@ -173,7 +186,9 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     }
   },
 
-  saveMockTest: async (userId, result) => {
+  saveMockTest: async (clerkUserId, result) => {
+    const userId = await resolveInternalId(clerkUserId);
+    if (!userId) return;
     try {
       const { error } = await supabase
         .from('mock_tests')

@@ -2,6 +2,7 @@
 import { create } from 'zustand';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
+import { resolveInternalId } from '../lib/clerk/identity';
 import { captureAuth } from './debugStore';
 
 export interface TierData {
@@ -112,10 +113,26 @@ function parseProfileData(data: any): { tierData: TierData; profileData: Profile
 
 export const useAuthStore = create<AuthState>((set, get) => {
   // Fetch profile data from Supabase (database only)
-  const fetchProfile = async (userId: string) => {
-    console.log('[AUTH_STATE] fetchProfile:', { userId: userId.substring(0, 8) });
+  const fetchProfile = async (clerkUserId: string) => {
+    console.log('[AUTH_STATE] fetchProfile:', { clerkUserId: clerkUserId.substring(0, 12) });
     let tierData: TierData = { tier: 'free' };
     let profileData: ProfileData = {};
+
+    // Resolve Clerk ID → internal UUID
+    let userId: string;
+    try {
+      const resolved = await resolveInternalId(clerkUserId);
+      if (!resolved) {
+        console.error('[AUTH] Could not resolve Clerk ID to internal UUID:', clerkUserId.substring(0, 12));
+        set({ tierData, profileData, profileLoaded: true });
+        return;
+      }
+      userId = resolved;
+    } catch (resolveErr) {
+      console.error('[AUTH] resolveUserId error:', resolveErr);
+      set({ tierData, profileData, profileLoaded: true });
+      return;
+    }
 
     // Check cache first
     const cached = loadCachedProfile(userId);
@@ -152,7 +169,7 @@ export const useAuthStore = create<AuthState>((set, get) => {
           try {
             const { error: createError } = await supabase
               .from('profiles')
-              .insert({ id: userId, tier: 'free', role: 'user' });
+              .insert({ id: userId, full_name: '', tier: 'free', role: 'user', subscription: 'free' });
             if (createError) console.error('[AUTH] profile create error:', createError.message);
           } catch (insertErr) {
             console.error('[AUTH] profile insert exception:', insertErr);

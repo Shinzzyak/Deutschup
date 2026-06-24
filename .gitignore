@@ -20,3 +20,5 @@ migrate.js
 
 # Secrets
 .secrets/
+tests/
+playwright.config.ts

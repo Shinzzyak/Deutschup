@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
+import { resolveInternalId } from '../lib/clerk/identity';
 import { isUserPro, getProDaysRemaining, type SubscriptionData } from '../lib/subscription';
 import { Check, Loader2, Sparkles, Clock, Receipt } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -45,11 +46,13 @@ export default function Pricing() {
   useEffect(() => {
     if (!user) { setOrdersLoading(false); return; }
     const fetchOrders = async () => {
+      const userId = await resolveInternalId(user.id);
+      if (!userId) { setOrdersLoading(false); return; }
       try {
         const { data, error } = await supabase
           .from('orders')
           .select('id, status, amount, payment_method, paid_at, created_at')
-          .eq('user_id', user.id)
+          .eq('user_id', userId)
           .eq('status', 'paid')
           .order('created_at', { ascending: false });
         console.log("[PAYMENT-HISTORY] user.id:", user.id, "rows:", data?.length, "error:", error); if (!error && data) setOrders(data);
