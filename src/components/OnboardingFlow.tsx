@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
-  BookOpen, 
   Target, 
   GraduationCap, 
   ChevronRight, 
@@ -12,7 +11,7 @@ import {
   Plane
 } from 'lucide-react';
 
-type Step = 'welcome' | 'level' | 'goal' | 'complete';
+type Step = 'welcome' | 'level' | 'goal';
 
 const levels = [
   { id: 'A1', label: 'A1 — Pemula', desc: 'Baru mulai belajar Jerman', color: 'bg-green-100 text-green-700 border-green-200' },
@@ -166,7 +165,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 ))}
               </div>
               <button
-                onClick={() => selectedGoal && setStep('complete')}
+                onClick={() => selectedGoal && handleComplete()}
                 disabled={!selectedGoal}
                 className={`w-full py-3.5 rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
                   selectedGoal
@@ -178,43 +177,16 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               </button>
             </motion.div>
           )}
-
-          {step === 'complete' && (
-            <motion.div
-              key="complete"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center"
-            >
-              <div className="w-20 h-20 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <BookOpen className="w-10 h-10 text-white" />
-              </div>
-              <h2 className="text-2xl font-bold text-slate-900 mb-3">
-                Siap belajar! 🎉
-              </h2>
-              <p className="text-slate-600 mb-8">
-                Level <strong>{selectedLevel}</strong> dengan target{' '}
-                <strong>{goals.find(g => g.id === selectedGoal)?.label}</strong>.
-                <br />Kami sudah menyiapkan pelajaran pertama untuk kamu!
-              </p>
-              <button
-                onClick={handleComplete}
-                className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-8 py-3.5 rounded-xl font-semibold text-lg hover:from-amber-600 hover:to-amber-700 transition-all shadow-lg hover:shadow-xl"
-              >
-                Mulai Belajar Sekarang 🚀
-              </button>
-            </motion.div>
-          )}
         </AnimatePresence>
 
         {/* Progress dots */}
         <div className="flex justify-center gap-2 mt-8">
-          {['welcome', 'level', 'goal', 'complete'].map((s, i) => (
+          {['welcome', 'level', 'goal'].map((s, i) => (
             <div
               key={s}
               className={`w-2 h-2 rounded-full transition-all ${
                 s === step ? 'bg-amber-500 w-6' : 
-                ['welcome', 'level', 'goal', 'complete'].indexOf(step) > i ? 'bg-amber-300' : 'bg-slate-200'
+                ['welcome', 'level', 'goal'].indexOf(step) > i ? 'bg-amber-300' : 'bg-slate-200'
               }`}
             />
           ))}

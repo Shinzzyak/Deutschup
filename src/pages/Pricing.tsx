@@ -95,17 +95,25 @@ export default function Pricing() {
 
     setLoading(planId);
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session?.access_token) return alert("Sesi tidak valid. Silakan login ulang.");
-      const token = session.access_token;
+      // Get internal UUID for Clerk users
+      const internalUserId = await resolveInternalId(user.id);
+      if (!internalUserId) {
+        alert("Gagal mendapatkan user ID. Silakan login ulang.");
+        setLoading(null);
+        return;
+      }
 
       const res = await fetch('/api/payment?action=create', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ userId: user.id, planType: planId, email: user.email, name: user.user_metadata?.full_name || user.email })
+        body: JSON.stringify({ 
+          userId: internalUserId, 
+          planType: planId, 
+          email: user.email, 
+          name: profileData?.full_name || user.email 
+        })
       });
 
       const contentType = res.headers.get('content-type') || '';

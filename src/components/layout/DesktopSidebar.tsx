@@ -21,7 +21,7 @@ import {
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BookOpen },
-  { name: 'Level', href: '/level/1', icon: Trophy },
+  { name: 'Level', href: '/level/A1', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
   { name: 'Catatan', href: '/catatan', icon: BarChart3 },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },

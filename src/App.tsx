@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Link, useLocation, Navigate } from 'react-router';
 import { useEffect as useEffect2, Suspense, lazy, useRef } from 'react';
 import { useAuthStore } from './stores/authStore';
+import { useAuth } from '@clerk/clerk-react';
 import { captureRoute } from './stores/debugStore';
 import { Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -161,11 +162,6 @@ function PublicRoutes() {
   );
 }
 
-function AuthSyncWrapper({ children }: { children: React.ReactNode }) {
-  useAuthSync();
-  return <>{children}</>;
-}
-
 function OnboardingWrapper({ children }: { children: React.ReactNode }) {
   const [showOnboarding, setShowOnboarding] = useState(!hasCompletedOnboarding());
 
@@ -181,29 +177,47 @@ function OnboardingWrapper({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-export default function App() {
+function AppContent() {
   const { user, loading } = useAuthStore();
-  console.log('[ROUTE] App render:', { hasUser: !!user, loading, pathname: window.location.pathname });
+  const { isLoaded: clerkLoaded, isSignedIn } = useAuth();
+  
+  // Call useAuthSync here so it always runs (sets user when Clerk is ready)
+  useAuthSync();
+  
+  console.log('[ROUTE] App render:', { hasUser: !!user, loading, clerkLoaded, isSignedIn, pathname: window.location.pathname });
 
+  // Show loading while Clerk is initializing OR while signed in but user not set yet
+  if (!clerkLoaded || (isSignedIn && !user)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+      </div>
+    );
+  }
+
+  return (
+    <>{user ? (
+      <AuthWrapper>
+        <OnboardingWrapper>
+          <Layout>
+            <AnimatedRoutes />
+            <ChatWidget />
+            <DebugOverlay />
+            <QuickNoteWidget />
+          </Layout>
+        </OnboardingWrapper>
+      </AuthWrapper>
+    ) : (
+      <PublicRoutes />
+    )}</>
+  );
+}
+
+export default function App() {
   return (
     <ClerkProvider>
       <BrowserRouter>
-        <AuthSyncWrapper>
-          {user ? (
-            <AuthWrapper>
-              <OnboardingWrapper>
-                <Layout>
-                  <AnimatedRoutes />
-                  <ChatWidget />
-                  <DebugOverlay />
-                  <QuickNoteWidget />
-                </Layout>
-              </OnboardingWrapper>
-            </AuthWrapper>
-          ) : (
-            <PublicRoutes />
-          )}
-        </AuthSyncWrapper>
+        <AppContent />
       </BrowserRouter>
     </ClerkProvider>
   );

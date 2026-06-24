@@ -11,7 +11,7 @@ import {
 
 const navigation = [
   { name: 'Beranda', href: '/', icon: Home },
-  { name: 'Level', href: '/level/1', icon: Trophy },
+  { name: 'Level', href: '/level/A1', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
   { name: 'Profil', href: '/profile', icon: User },

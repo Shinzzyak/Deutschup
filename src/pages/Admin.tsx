@@ -1,301 +1,406 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/authStore';
-import { supabase } from '../lib/supabase';
-import { Users, CreditCard, Activity, Key, Loader2, Save, ShieldAlert, Settings, BarChart3, TrendingUp, DollarSign, UserCheck, UserX, RefreshCw, Eye, EyeOff, Copy, Check } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
+import { 
+  Users, 
+  Activity, 
+  Settings, 
+  ShieldCheck, 
+  RefreshCw, 
+  Loader2,
+  AlertTriangle,
+  CheckCircle2,
+  TrendingUp,
+  Zap,
+  Database,
+  Globe,
+  Webhook
+} from 'lucide-react';
 
-interface UserData {
-  id: string;
-  full_name: string;
-  subscription: string;
-  role: string;
-  created_at: string;
-}
-
-interface StatsData {
+interface AdminStats {
   today: { requests: number; errors: number };
-  recentOrders: any[];
+  recentOrders: Array<{ id: string; status: string; amount: number; created_at: string }>;
   users: { total: number; pro: number };
 }
 
-async function getToken(): Promise<string | null> {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.access_token || null;
+interface SystemHealth {
+  status: string;
+  timestamp: string;
+  config: {
+    paymentConfigured: boolean;
+    aiConfigured: boolean;
+    databaseConfigured: boolean;
+    webhookConfigured: boolean;
+  };
+  version: string;
 }
 
 export default function Admin() {
   const navigate = useNavigate();
-  const { loading, profileData } = useAuthStore();
-  const [users, setUsers] = useState<UserData[]>([]);
-  const [stats, setStats] = useState<StatsData | null>(null);
-  const [apiKey, setApiKey] = useState('');
-  const [savingKey, setSavingKey] = useState(false);
-  const [fetching, setFetching] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'users' | 'settings'>('overview');
-  const [showApiKey, setShowApiKey] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const { user, profileData } = useAuthStore();
+  const [stats, setStats] = useState<AdminStats | null>(null);
+  const [health, setHealth] = useState<SystemHealth | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const getAdminHeaders = async (): Promise<Record<string, string>> => {
+    if (!user) return {};
+    const { data: { session } } = await import('../lib/supabase').then(m => m.supabase.auth.getSession());
+    return {
+      'Authorization': `Bearer ${session?.access_token}`,
+      'x-user-email': user.email || '',
+    };
+  };
+
+  const fetchAll = async (silent = false) => {
+    if (!silent) setLoading(true);
+    try {
+      const headers = await getAdminHeaders();
+      const [statsRes, healthRes] = await Promise.all([
+        fetch('/api/admin?action=stats', { headers }),
+        fetch('/api/admin?action=system-health', { headers }),
+      ]);
+      if (statsRes.ok) setStats(await statsRes.json());
+      if (healthRes.ok) setHealth(await healthRes.json());
+    } catch (e) {
+      console.error('Admin fetch error:', e);
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
 
   useEffect(() => {
-    if (profileData?.role !== 'admin') return;
-
-    async function fetchData() {
-      const token = await getToken();
-      if (!token) return;
-      setFetching(true);
-      try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-        const [usersRes, statsRes, configRes] = await Promise.all([
-          fetch('/api/admin?action=users', {
-            headers: { 'Authorization': `Bearer ${token}` },
-            signal: controller.signal
-          }),
-          fetch('/api/admin?action=stats', {
-            headers: { 'Authorization': `Bearer ${token}` },
-            signal: controller.signal
-          }),
-          fetch('/api/admin?action=config', {
-            headers: { 'Authorization': `Bearer ${token}` },
-            signal: controller.signal
-          })
-        ]);
-        clearTimeout(timeoutId);
-
-        if (usersRes.ok) setUsers(await usersRes.json());
-        if (statsRes.ok) setStats(await statsRes.json());
-        if (configRes.ok) {
-          const d = await configRes.json();
-          setApiKey(d.geminiApiKey || '');
-        }
-      } catch (e) {
-        console.error('Fetch admin data failed:', e);
-      } finally {
-        setFetching(false);
-      }
-    }
-    fetchData();
+    if (profileData?.role === 'admin') fetchAll();
   }, [profileData?.role]);
 
-  const handleUpdateApiKey = async () => {
-    const token = await getToken();
-    if (!token) return;
-    setSavingKey(true);
-    try {
-      const res = await fetch('/api/admin?action=config', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ geminiApiKey: apiKey })
-      });
-      alert(res.ok ? 'API Key updated!' : `Failed: ${res.status}`);
-    } catch {
-      alert('Error updating config');
-    } finally {
-      setSavingKey(false);
-    }
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchAll(true);
   };
 
-  const handleCopyApiKey = () => {
-    navigator.clipboard.writeText(apiKey);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
-  const handleTogglePro = async (userId: string, currentSub: string) => {
-    const token = await getToken();
-    if (!token) return;
-    const newSub = currentSub === 'pro' ? 'free' : 'pro';
-    try {
-      const res = await fetch('/api/admin?action=toggle-pro', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ userId: userId, subscription: newSub })
-      });
-      if (res.ok) {
-        setUsers(prev => prev.map(u => u.id === userId ? { ...u, subscription: newSub } : u));
-      }
-    } catch (e) {
-      console.error('Toggle Pro failed:', e);
-    }
-  };
-
-  const [forceResolve, setForceResolve] = useState(false);
-  useEffect(() => {
-    if (!loading) return;
-    const t = setTimeout(() => setForceResolve(true), 12000);
-    return () => clearTimeout(t);
-  }, [loading]);
-
-  if ((loading && !forceResolve) || fetching) {
+  if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen gap-3">
-        <Loader2 className="w-10 h-10 animate-spin text-[#F2C94C]" />
-        <p className="text-sm text-muted-foreground">
-          {loading ? 'Memeriksa autentikasi...' : 'Mengambil data admin...'}
-        </p>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#F2C94C]" />
       </div>
     );
   }
-
-  if (profileData?.role !== 'admin') {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-screen p-4 text-center">
-        <ShieldAlert className="w-16 h-16 text-red-500 mb-4" />
-        <h1 className="text-2xl font-bold text-foreground">Akses Ditolak</h1>
-        <p className="text-muted-foreground">Anda tidak memiliki akses admin.</p>
-      </div>
-    );
-  }
-
-  const proCount = users.filter(u => u.subscription === 'pro').length;
 
   return (
-    <div className="max-w-6xl mx-auto py-12 px-6">
-      <header className="mb-10">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-black text-foreground mb-2">Admin Panel 🧠</h1>
-            <p className="text-muted-foreground">Kelola pengguna, statistik, dan konfigurasi.</p>
+    <div className="max-w-7xl mx-auto py-12 px-6">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="p-2 bg-[#F2C94C]/10 rounded-xl">
+              <ShieldCheck className="w-6 h-6 text-[#F2C94C]" />
+            </div>
+            <h1 className="text-4xl font-black tracking-tight text-foreground">
+              Admin <span className="text-[#F2C94C]">Panel</span>
+            </h1>
           </div>
-          <div className="flex gap-2">
-            <Button onClick={() => navigate('/admin/ai')} variant="outline" className="rounded-2xl">
-              <Settings className="w-4 h-4 mr-2" /> AI Settings
-            </Button>
-            <Button onClick={() => window.location.reload()} variant="outline" className="rounded-2xl">
-              <RefreshCw className="w-4 h-4 mr-2" /> Refresh
-            </Button>
-          </div>
+          <p className="text-muted-foreground ml-14">Kelola sistem, pengguna, dan konfigurasi DeutschUp.</p>
         </div>
-      </header>
-
-      <div className="flex gap-2 mb-8 border-b border-border pb-2">
-        {[
-          { id: 'overview', label: 'Overview', icon: BarChart3 },
-          { id: 'users', label: 'Users', icon: Users },
-          { id: 'settings', label: 'Settings', icon: Settings },
-        ].map(tab => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'bg-[#F2C94C] text-[#1F2937]'
-                : 'text-muted-foreground hover:bg-muted'
-            }`}
-          >
-            <tab.icon className="w-4 h-4" />
-            {tab.label}
-          </button>
-        ))}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={handleRefresh}
+          disabled={refreshing}
+          className="rounded-xl border-border hover:bg-muted gap-2"
+        >
+          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
+          Refresh Data
+        </Button>
       </div>
 
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <StatCard icon={Users} label="Total Users" value={users.length} color="text-blue-500" />
-          <StatCard icon={UserCheck} label="Pro Users" value={proCount} color="text-[#F2C94C]" />
-          <StatCard icon={TrendingUp} label="Today Requests" value={stats?.today?.requests || 0} color="text-green-500" />
-          <StatCard icon={Activity} label="Today Errors" value={stats?.today?.errors || 0} color="text-red-500" />
+      {/* System Health Banner */}
+      {health && (
+        <div className={`mb-8 p-4 rounded-2xl border flex items-center gap-3 ${
+          health.status === 'ok' 
+            ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-700 dark:text-emerald-400' 
+            : 'bg-destructive/5 border-destructive/20 text-destructive'
+        }`}>
+          {health.status === 'ok' ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
+          <span className="text-sm font-medium">
+            System {health.status === 'ok' ? 'Operational' : 'Degraded'} — Version {health.version.slice(0, 7)}
+          </span>
+          <span className="ml-auto text-xs opacity-70">{new Date(health.timestamp).toLocaleString('id-ID')}</span>
         </div>
       )}
 
-      {activeTab === 'users' && (
-        <div className="bg-card rounded-3xl border border-border overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-muted">
-                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">User</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Role</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Subscription</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Joined</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map(user => (
-                <tr key={user.id} className="border-b border-slate-50 last:border-0 hover:bg-muted/50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-sm font-bold text-[#1F2937]">
-                        {user.full_name?.charAt(0) || '?'}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{user.full_name || 'No name'}</p>
-                        <p className="text-xs text-muted-foreground font-mono">{user.id.substring(0, 8)}...</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      user.role === 'admin' ? 'bg-purple-50 text-purple-700 border border-purple-200' : 'bg-gray-50 text-gray-700 border border-gray-200'
-                    }`}>
-                      {user.role}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      user.subscription === 'pro' ? 'bg-yellow-50 text-yellow-700 border border-yellow-200' : 'bg-gray-50 text-gray-700 border border-gray-200'
-                    }`}>
-                      {user.subscription}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-muted-foreground">
-                    {new Date(user.created_at).toLocaleDateString('id-ID')}
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <Button
-                      onClick={() => handleTogglePro(user.id, user.subscription)}
-                      variant="outline"
-                      size="sm"
-                      className="rounded-xl"
-                    >
-                      {user.subscription === 'pro' ? 'Revoke Pro' : 'Grant Pro'}
-                    </Button>
-                  </td>
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
+        <StatCard 
+          icon={Users} 
+          label="Total Users" 
+          value={stats?.users.total || 0} 
+          accent="text-blue-500"
+          bg="bg-blue-500/10"
+        />
+        <StatCard 
+          icon={Zap} 
+          label="Pro Members" 
+          value={stats?.users.pro || 0} 
+          accent="text-[#F2C94C]"
+          bg="bg-[#F2C94C]/10"
+        />
+        <StatCard 
+          icon={Activity} 
+          label="AI Requests Hari Ini" 
+          value={stats?.today.requests || 0} 
+          accent="text-emerald-500"
+          bg="bg-emerald-500/10"
+        />
+        <StatCard 
+          icon={AlertTriangle} 
+          label="Errors Hari Ini" 
+          value={stats?.today.errors || 0} 
+          accent="text-rose-500"
+          bg="bg-rose-500/10"
+        />
+      </div>
+
+      {/* Service Status */}
+      {health && (
+        <div className="mb-10">
+          <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+            <Globe className="w-5 h-5 text-muted-foreground" />
+            Status Layanan
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            <ServicePill icon={Database} label="Database" ok={health.config.databaseConfigured} />
+            <ServicePill icon={Zap} label="AI Engine" ok={health.config.aiConfigured} />
+            <ServicePill icon={TrendingUp} label="Payment" ok={health.config.paymentConfigured} />
+            <ServicePill icon={Webhook} label="Webhooks" ok={health.config.webhookConfigured} />
+          </div>
+        </div>
+      )}
+
+      {/* Users Table */}
+      <UsersSection getAdminHeaders={getAdminHeaders} />
+
+      {/* Config Panel */}
+      <ConfigSection getAdminHeaders={getAdminHeaders} />
+
+      {/* Spacer */}
+      <div className="h-16" />
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value, accent, bg }: { 
+  icon: any; label: string; value: number; accent: string; bg: string; 
+}) {
+  return (
+    <Card className="rounded-2xl border-border bg-card hover:shadow-md transition-shadow">
+      <CardContent className="p-5">
+        <div className="flex items-center justify-between mb-3">
+          <div className={`p-2 rounded-xl ${bg}`}>
+            <Icon className={`w-5 h-5 ${accent}`} />
+          </div>
+          <TrendingUp className="w-4 h-4 text-muted-foreground/30" />
+        </div>
+        <p className="text-3xl font-black text-foreground">{value}</p>
+        <p className="text-xs text-muted-foreground font-medium mt-1">{label}</p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function ServicePill({ icon: Icon, label, ok }: { icon: any; label: string; ok: boolean }) {
+  return (
+    <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
+      ok 
+        ? 'bg-emerald-500/5 border-emerald-500/20' 
+        : 'bg-rose-500/5 border-rose-500/20'
+    }`}>
+      <Icon className={`w-4 h-4 ${ok ? 'text-emerald-500' : 'text-rose-500'}`} />
+      <span className="text-sm font-medium text-foreground">{label}</span>
+      <span className={`ml-auto text-xs font-bold ${ok ? 'text-emerald-600' : 'text-rose-600'}`}>
+        {ok ? 'ON' : 'OFF'}
+      </span>
+    </div>
+  );
+}
+
+// ==================== CHUNK 2: Users Table + Config Panel ====================
+
+interface UserProfile {
+  id: string;
+  full_name?: string;
+  tier?: string;
+  subscription?: string;
+  role?: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Record<string, string>> }) {
+  const [users, setUsers] = useState<UserProfile[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState('');
+  const [updating, setUpdating] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    setLoading(true);
+    try {
+      const headers = await getAdminHeaders();
+      const res = await fetch('/api/admin?action=users', { headers });
+      if (res.ok) setUsers(await res.json());
+    } catch (e) {
+      console.error('Fetch users error:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleTogglePro = async (userId: string) => {
+    setUpdating(userId);
+    try {
+      const headers = await getAdminHeaders();
+      const res = await fetch('/api/admin?action=toggle-pro', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId }),
+      });
+      if (res.ok) {
+        const result = await res.json();
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, subscription: result.subscription } : u));
+      }
+    } catch (e) {
+      console.error('Toggle pro error:', e);
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const handleUpdateRole = async (userId: string, role: string) => {
+    setUpdating(userId);
+    try {
+      const headers = await getAdminHeaders();
+      const res = await fetch('/api/admin?action=update-role', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, role }),
+      });
+      if (res.ok) {
+        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
+      }
+    } catch (e) {
+      console.error('Update role error:', e);
+    } finally {
+      setUpdating(null);
+    }
+  };
+
+  const filtered = users.filter(u =>
+    (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
+    u.id.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <div className="mt-10">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+          <Users className="w-5 h-5 text-muted-foreground" />
+          Pengguna
+          <span className="text-sm font-normal text-muted-foreground">({users.length})</span>
+        </h2>
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Cari nama atau ID..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="pl-4 pr-4 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 w-64"
+          />
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-border overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-muted/50">
+                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Nama</th>
+                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">ID</th>
+                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Role</th>
+                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Status</th>
+                  <th className="text-right text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Aksi</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
-
-      {activeTab === 'settings' && (
-        <div className="bg-card rounded-3xl border border-border p-8">
-          <h3 className="text-xl font-bold text-foreground mb-6 flex items-center gap-2">
-            <Key className="w-5 h-5 text-[#F2C94C]" /> Gemini API Key
-          </h3>
-          <div className="flex gap-3">
-            <div className="relative flex-1">
-              <input
-                type={showApiKey ? 'text' : 'password'}
-                value={apiKey}
-                onChange={(e) => setApiKey(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-border bg-background text-foreground pr-20"
-                placeholder="Enter Gemini API Key"
-              />
-              <button
-                onClick={() => setShowApiKey(!showApiKey)}
-                className="absolute right-12 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                {showApiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-              <button
-                onClick={handleCopyApiKey}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                {copied ? <Check className="w-4 h-4 text-green-500" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </div>
-            <Button onClick={handleUpdateApiKey} disabled={savingKey} className="rounded-xl">
-              {savingKey ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Save className="w-4 h-4 mr-2" />}
-              Save
-            </Button>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filtered.map(u => (
+                  <tr key={u.id} className="hover:bg-muted/30 transition-colors">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937]">
+                          {(u.full_name || u.id).charAt(0).toUpperCase()}
+                        </div>
+                        <span className="text-sm font-medium text-foreground">{u.full_name || 'Unnamed'}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className="text-xs font-mono text-muted-foreground">{u.id.slice(0, 8)}...</span>
+                    </td>
+                    <td className="px-5 py-4">
+                      <select
+                        value={u.role || 'user'}
+                        onChange={e => handleUpdateRole(u.id, e.target.value)}
+                        disabled={updating === u.id}
+                        className="text-xs font-medium px-3 py-1.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
+                      >
+                        <option value="user">User</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </td>
+                    <td className="px-5 py-4">
+                      <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
+                        u.subscription === 'pro' || u.tier === 'pro'
+                          ? 'bg-[#F2C94C]/15 text-[#B8952E]'
+                          : 'bg-muted text-muted-foreground'
+                      }`}>
+                        {u.subscription === 'pro' || u.tier === 'pro' ? 'Pro' : 'Free'}
+                      </span>
+                    </td>
+                    <td className="px-5 py-4 text-right">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleTogglePro(u.id)}
+                        disabled={updating === u.id}
+                        className="rounded-lg text-xs h-8"
+                      >
+                        {updating === u.id ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          u.subscription === 'pro' ? 'Set Free' : 'Set Pro'
+                        )}
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+                {filtered.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="px-5 py-12 text-center text-muted-foreground text-sm">
+                      Tidak ada pengguna ditemukan.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -303,16 +408,98 @@ export default function Admin() {
   );
 }
 
-function StatCard({ icon: Icon, label, value, color }: { icon: any; label: string; value: number; color: string }) {
-  return (
-    <div className="bg-card rounded-3xl border border-border p-6">
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`w-10 h-10 rounded-xl bg-muted flex items-center justify-center`}>
-          <Icon className={`w-5 h-5 ${color}`} />
-        </div>
-        <p className="text-sm text-muted-foreground">{label}</p>
+function ConfigSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Record<string, string>> }) {
+  const [geminiKey, setGeminiKey] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchConfig();
+  }, []);
+
+  const fetchConfig = async () => {
+    try {
+      const headers = await getAdminHeaders();
+      const res = await fetch('/api/admin?action=config', { headers });
+      if (res.ok) {
+        const data = await res.json();
+        setGeminiKey(data.geminiApiKey || '');
+      }
+    } catch (e) {
+      console.error('Fetch config error:', e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      const headers = await getAdminHeaders();
+      const res = await fetch('/api/admin?action=config', {
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ geminiApiKey: geminiKey }),
+      });
+      if (res.ok) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 2000);
+      }
+    } catch (e) {
+      console.error('Save config error:', e);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="mt-10 flex items-center justify-center py-12">
+        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
       </div>
-      <p className="text-3xl font-black text-foreground">{value}</p>
+    );
+  }
+
+  return (
+    <div className="mt-10">
+      <h2 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
+        <Settings className="w-5 h-5 text-muted-foreground" />
+        Konfigurasi Sistem
+      </h2>
+
+      <Card className="rounded-2xl border-border">
+        <CardContent className="p-6">
+          <div className="grid gap-5">
+            <div>
+              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1">
+                Gemini API Key
+              </label>
+              <div className="relative">
+                <input
+                  type="password"
+                  value={geminiKey}
+                  onChange={e => setGeminiKey(e.target.value)}
+                  placeholder="AIza..."
+                  className="w-full px-5 py-4 rounded-2xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 font-mono text-sm"
+                />
+              </div>
+              <p className="text-xs text-muted-foreground mt-2 ml-1">API key untuk Herr Deutsch AI chatbot.</p>
+            </div>
+
+            <div className="flex justify-end pt-2">
+              <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="rounded-2xl px-6 py-5 font-bold shadow-lg shadow-[#F2C94C]/20"
+              >
+                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                {saved ? 'Tersimpan!' : 'Simpan Konfigurasi'}
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 }
