@@ -289,8 +289,8 @@ export default function AdminAI() {
       case 'INVALID_KEY': return <XCircle className={cn(cls, 'text-red-500')} />;
       case 'UNREACHABLE': return <XCircle className={cn(cls, 'text-red-500')} />;
       case 'RATE_LIMITED': return <AlertTriangle className={cn(cls, 'text-amber-500')} />;
-      case 'DISABLED': return <XCircle className={cn(cls, 'text-slate-500')} />;
-      default: return <XCircle className={cn(cls, 'text-slate-500')} />;
+      case 'DISABLED': return <XCircle className={cn(cls, 'text-muted-foreground')} />;
+      default: return <XCircle className={cn(cls, 'text-muted-foreground')} />;
     }
   };
 
@@ -313,8 +313,8 @@ export default function AdminAI() {
       case 'INVALID_KEY': return 'bg-red-500/10 text-red-400 border border-red-500/20';
       case 'UNREACHABLE': return 'bg-red-500/10 text-red-400 border border-red-500/20';
       case 'RATE_LIMITED': return 'bg-yellow-500/10 text-yellow-400 border border-yellow-500/20';
-      case 'DISABLED': return 'bg-slate-500/10 text-slate-400 border border-slate-500/20';
-      default: return 'bg-slate-500/10 text-slate-400 border border-slate-500/20';
+      case 'DISABLED': return 'bg-muted/10 text-muted-foreground border border-border';
+      default: return 'bg-muted/10 text-muted-foreground border border-border';
     }
   };
 
@@ -457,7 +457,7 @@ export default function AdminAI() {
     <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20">
       {/* Decorative background */}
       <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-blue-500/5 rounded-full blur-3xl" />
+        <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#F2C94C]/5 rounded-full blur-3xl" />
         <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/[0.03] rounded-full blur-3xl" />
       </div>
@@ -569,15 +569,15 @@ export default function AdminAI() {
             {/* Summary Stats */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {[
-                { label: 'Total Requests', value: totalRequests.toLocaleString(), icon: TrendingUp, color: 'text-blue-400' },
+                { label: 'Total Requests', value: totalRequests.toLocaleString(), icon: TrendingUp, color: 'text-[#F2C94C]' },
                 { label: 'Success Rate', value: `${successRate}%`, icon: CheckCircle2, color: successRate >= 90 ? 'text-emerald-400' : successRate >= 70 ? 'text-amber-400' : 'text-red-400' },
                 { label: 'Avg Latency', value: `${avgLatency}ms`, icon: Clock, color: avgLatency < 500 ? 'text-emerald-400' : avgLatency < 1000 ? 'text-amber-400' : 'text-red-400' },
                 { label: 'Failed Requests', value: totalFailed.toLocaleString(), icon: XCircle, color: totalFailed === 0 ? 'text-emerald-400' : 'text-red-400' },
               ].map(({ label, value, icon: Icon, color }) => (
-                <div key={label} className="bg-slate-800/60 backdrop-blur-sm rounded-2xl p-4 border border-slate-700/50">
+                <div key={label} className="bg-card rounded-2xl p-4 border border-border">
                   <div className="flex items-center space-x-2 mb-2">
                     <Icon className={cn("w-4 h-4", color)} />
-                    <span className="text-xs text-slate-500">{label}</span>
+                    <span className="text-xs text-muted-foreground">{label}</span>
                   </div>
                   <p className={cn("text-xl font-bold", color)}>{value}</p>
                 </div>
@@ -585,9 +585,9 @@ export default function AdminAI() {
             </div>
 
             {/* Provider Health Cards */}
-            <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center">
-                <Activity className="w-5 h-5 mr-2 text-blue-400" />
+            <div className="bg-card rounded-3xl border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center">
+                <Activity className="w-5 h-5 mr-2 text-[#F2C94C]" />
                 Provider Fleet Status
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -598,21 +598,20 @@ export default function AdminAI() {
                     <div
                       key={provider.id}
                       className={cn(
-                        "relative bg-slate-900/60 rounded-2xl p-4 border transition-all hover:border-slate-600",
+                        "relative bg-card rounded-2xl p-4 border transition-all hover:border-border",
                         status === 'ACTIVE' ? "border-emerald-500/30" :
                         status === 'MISSING_KEY' || status === 'RATE_LIMITED' ? "border-amber-500/30" :
                         status === 'UNREACHABLE' || status === 'INVALID_KEY' ? "border-red-500/30" :
-                        "border-slate-700/50"
+                        "border-border"
                       )}
                     >
-                      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br opacity-5 rounded-full -translate-y-16 translate-x-16" />
                       <div className="relative">
                         <div className="flex items-center justify-between mb-3">
                           <div className="flex items-center space-x-3">
                             {getStatusIcon(status)}
                             <div>
-                              <h4 className="font-bold text-white">{provider.name}</h4>
-                              <p className="text-xs text-slate-500">Priority: {provider.priority}</p>
+                              <h4 className="font-bold text-foreground">{provider.name}</h4>
+                              <p className="text-xs text-muted-foreground">Priority: {provider.priority}</p>
                             </div>
                           </div>
                           <span className={cn("px-2 py-1 rounded-lg text-xs font-medium", getStatusBadge(status))}>
@@ -620,7 +619,7 @@ export default function AdminAI() {
                           </span>
                         </div>
                         {health?.latency_ms != null && (
-                          <div className="flex items-center space-x-2 text-sm text-slate-400 mb-2">
+                          <div className="flex items-center space-x-2 text-sm text-muted-foreground mb-2">
                             <Clock className="w-3 h-3" />
                             <span>{health.latency_ms}ms latency</span>
                           </div>
@@ -634,7 +633,7 @@ export default function AdminAI() {
                             size="sm"
                             onClick={() => validateProvider(provider.id)}
                             disabled={validating === provider.id}
-                            className="flex-1 bg-slate-800 border-slate-700 hover:bg-slate-700"
+                            className="flex-1 bg-background border-border hover:bg-muted"
                           >
                             {validating === provider.id ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
@@ -648,7 +647,7 @@ export default function AdminAI() {
                             size="sm"
                             onClick={() => toggleProvider(provider.id, !provider.enabled)}
                             disabled={saving}
-                            className={provider.enabled ? "bg-emerald-600 hover:bg-emerald-700" : "bg-slate-800 border-slate-700 hover:bg-slate-700"}
+                            className={provider.enabled ? "bg-emerald-600 hover:bg-emerald-700" : "bg-background border-border hover:bg-muted"}
                           >
                             {provider.enabled ? 'On' : 'Off'}
                           </Button>
@@ -672,20 +671,20 @@ export default function AdminAI() {
                 <div
                   key={provider.id}
                   className={cn(
-                    "bg-slate-800/40 backdrop-blur-sm rounded-3xl border-2 p-6 transition-all",
+                    "bg-card rounded-3xl border-2 p-6 transition-all",
                     status === 'ACTIVE' ? "border-emerald-500/30" :
                     status === 'MISSING_KEY' || status === 'RATE_LIMITED' ? "border-amber-500/30" :
                     status === 'UNREACHABLE' || status === 'INVALID_KEY' ? "border-red-500/30" :
-                    provider.enabled ? "border-slate-600/30" : "border-slate-700/30 opacity-60"
+                    provider.enabled ? "border-border" : "border-border opacity-60"
                   )}
                 >
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex items-center space-x-4">
                       {getStatusIcon(status, 'md')}
                       <div>
-                        <h3 className="font-bold text-lg text-white">{provider.name}</h3>
+                        <h3 className="font-bold text-lg text-foreground">{provider.name}</h3>
                         <div className="flex items-center gap-3 mt-1">
-                          <span className="text-sm text-slate-400">
+                          <span className="text-sm text-muted-foreground">
                             Priority: {provider.priority}
                           </span>
                           <span className={cn(
@@ -695,7 +694,7 @@ export default function AdminAI() {
                             {getStatusLabel(status)}
                           </span>
                           {health?.latency_ms != null && (
-                            <span className="text-xs text-slate-500">
+                            <span className="text-xs text-muted-foreground">
                               {health.latency_ms}ms
                             </span>
                           )}
@@ -711,7 +710,7 @@ export default function AdminAI() {
                         size="sm"
                         onClick={() => validateProvider(provider.id)}
                         disabled={validating === provider.id}
-                        className="bg-slate-800 border-slate-700 hover:bg-slate-700"
+                        className="bg-background border-border hover:bg-muted"
                       >
                         {validating === provider.id ? (
                           <Loader2 className="w-4 h-4 animate-spin mr-1" />
@@ -725,7 +724,7 @@ export default function AdminAI() {
                         size="sm"
                         onClick={() => toggleProvider(provider.id, !provider.enabled)}
                         disabled={saving}
-                        className={provider.enabled ? "bg-emerald-600 hover:bg-emerald-700" : "bg-slate-800 border-slate-700 hover:bg-slate-700"}
+                        className={provider.enabled ? "bg-emerald-600 hover:bg-emerald-700" : "bg-background border-border hover:bg-muted"}
                       >
                         {provider.enabled ? 'Enabled' : 'Disabled'}
                       </Button>
@@ -733,8 +732,8 @@ export default function AdminAI() {
                   </div>
 
                   {/* Models for this provider */}
-                  <div className="mt-4 pt-4 border-t border-slate-700/50">
-                    <p className="text-sm font-medium text-slate-400 mb-2">Models:</p>
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Models:</p>
                     <div className="flex flex-wrap gap-2">
                       {models
                         .filter(m => m.provider_id === provider.id)
@@ -743,10 +742,10 @@ export default function AdminAI() {
                             key={model.id}
                             className={cn(
                               "px-3 py-1 rounded-xl text-sm font-medium",
-                              model.is_primary ? "bg-blue-500/10 text-blue-400 border border-blue-500/20" :
+                              model.is_primary ? "bg-[#F2C94C]/10 text-[#F2C94C] border border-blue-500/20" :
                               model.is_fallback ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                              model.enabled ? "bg-slate-700/50 text-slate-300 border border-slate-600/30" :
-                              "bg-slate-800/50 text-slate-500 border border-slate-700/30"
+                              model.enabled ? "bg-muted/50 text-foreground border border-border" :
+                              "bg-card text-muted-foreground border border-border"
                             )}
                           >
                             {model.display_name}
@@ -764,8 +763,8 @@ export default function AdminAI() {
 
         {/* Routing Tab */}
         {activeTab === 'routing' && (
-          <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
-            <h3 className="text-lg font-bold text-white mb-6 flex items-center">
+          <div className="bg-card rounded-3xl border border-border p-6">
+            <h3 className="text-lg font-bold text-foreground mb-6 flex items-center">
               <Zap className="w-5 h-5 mr-2 text-[#F2C94C]" />
               Routing Chain — Failover Order
             </h3>
@@ -782,14 +781,14 @@ export default function AdminAI() {
                   
                   let chainStatus = 'Disabled';
                   let chainResult = 'Skipped';
-                  let chainColor = 'text-slate-500';
-                  let dotColor = 'bg-slate-500';
+                  let chainColor = 'text-muted-foreground';
+                  let dotColor = 'bg-muted';
                   
                   if (!provider.enabled) {
                     chainStatus = 'Disabled';
                     chainResult = 'Skipped';
-                    chainColor = 'text-slate-500';
-                    dotColor = 'bg-slate-500';
+                    chainColor = 'text-muted-foreground';
+                    dotColor = 'bg-muted';
                   } else if (isPrimary) {
                     chainStatus = 'Primary';
                     chainResult = 'Serving Traffic';
@@ -803,26 +802,26 @@ export default function AdminAI() {
                   } else if (hasModel) {
                     chainStatus = 'Available';
                     chainResult = 'Standby';
-                    chainColor = 'text-blue-400';
-                    dotColor = 'bg-blue-500';
+                    chainColor = 'text-[#F2C94C]';
+                    dotColor = 'bg-[#F2C94C]';
                   } else {
                     chainStatus = 'No Models';
                     chainResult = 'Skipped';
-                    chainColor = 'text-slate-500';
-                    dotColor = 'bg-slate-500';
+                    chainColor = 'text-muted-foreground';
+                    dotColor = 'bg-muted';
                   }
                   
                   return (
                     <div key={provider.id} className="relative">
                       {/* Connector line */}
                       {idx < providers.length - 1 && (
-                        <div className="absolute left-6 top-12 w-0.5 h-8 bg-slate-700/50" />
+                        <div className="absolute left-6 top-12 w-0.5 h-8 bg-muted/50" />
                       )}
                       <div className={cn(
                         "flex items-center justify-between p-4 rounded-2xl transition-all",
                         idx === 0 && "bg-emerald-500/5 border border-emerald-500/20",
                         idx === 1 && "bg-amber-500/5 border border-amber-500/20",
-                        idx > 1 && "bg-slate-800/40 border border-slate-700/30"
+                        idx > 1 && "bg-background/40 border border-border"
                       )}>
                         <div className="flex items-center space-x-4">
                           {/* Priority number with dot */}
@@ -830,24 +829,24 @@ export default function AdminAI() {
                             <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg", dotColor + '/10')}>
                               <span className={chainColor}>{idx + 1}</span>
                             </div>
-                            <div className={cn("absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-slate-900", dotColor)} />
+                            <div className={cn("absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-background", dotColor)} />
                           </div>
                           <div>
                             <div className="flex items-center space-x-2">
-                              <h4 className="font-bold text-white">{provider.name}</h4>
-                              <span className={cn("px-2 py-0.5 rounded-lg text-xs font-medium", chainColor === 'text-emerald-400' ? 'bg-emerald-500/10 text-emerald-400' : chainColor === 'text-amber-400' ? 'bg-amber-500/10 text-amber-400' : chainColor === 'text-blue-400' ? 'bg-blue-500/10 text-blue-400' : 'bg-slate-500/10 text-slate-500')}>
+                              <h4 className="font-bold text-foreground">{provider.name}</h4>
+                              <span className={cn("px-2 py-0.5 rounded-lg text-xs font-medium", chainColor === 'text-emerald-400' ? 'bg-emerald-500/10 text-emerald-400' : chainColor === 'text-amber-400' ? 'bg-amber-500/10 text-amber-400' : chainColor === 'text-[#F2C94C]' ? 'bg-[#F2C94C]/10 text-[#F2C94C]' : 'bg-muted/10 text-muted-foreground')}>
                                 {chainStatus}
                               </span>
                             </div>
-                            <p className="text-sm text-slate-500">{chainResult}</p>
+                            <p className="text-sm text-muted-foreground">{chainResult}</p>
                           </div>
                         </div>
                         <div className="flex items-center space-x-3">
                           {health?.latency_ms != null && (
-                            <span className="text-xs text-slate-500">{health.latency_ms}ms</span>
+                            <span className="text-xs text-muted-foreground">{health.latency_ms}ms</span>
                           )}
                           {idx < providers.length - 1 && (
-                            <ChevronRight className="w-4 h-4 text-slate-600" />
+                            <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
                           )}
                         </div>
                       </div>
@@ -856,9 +855,9 @@ export default function AdminAI() {
                 })}
             </div>
             
-            <div className="mt-6 p-4 bg-slate-900/50 rounded-2xl border border-slate-700/30">
-              <p className="text-sm text-slate-400">
-                <strong className="text-white">How routing works:</strong> Requests flow through providers in priority order. If the primary provider fails, the system automatically falls back to the next available provider in the chain.
+            <div className="mt-6 p-4 bg-card rounded-2xl border border-border">
+              <p className="text-sm text-muted-foreground">
+                <strong className="text-foreground">How routing works:</strong> Requests flow through providers in priority order. If the primary provider fails, the system automatically falls back to the next available provider in the chain.
               </p>
             </div>
           </div>
@@ -868,44 +867,44 @@ export default function AdminAI() {
         {activeTab === 'usage' && (
           <div className="space-y-6">
             {/* Overview Stats */}
-            <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
-              <h3 className="text-lg font-bold text-white mb-4 flex items-center">
+            <div className="bg-card rounded-3xl border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center">
                 <BarChart3 className="w-5 h-5 mr-2 text-cyan-400" />
                 Usage Analytics — Last 7 Days
               </h3>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-slate-900/60 rounded-2xl p-4 border border-slate-700/30">
-                  <p className="text-xs text-slate-500 mb-1">Total Requests</p>
-                  <p className="text-2xl font-bold text-white">{totalRequests.toLocaleString()}</p>
+                <div className="bg-card rounded-2xl p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">Total Requests</p>
+                  <p className="text-2xl font-bold text-foreground">{totalRequests.toLocaleString()}</p>
                 </div>
-                <div className="bg-slate-900/60 rounded-2xl p-4 border border-slate-700/30">
-                  <p className="text-xs text-slate-500 mb-1">Success Rate</p>
+                <div className="bg-card rounded-2xl p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">Success Rate</p>
                   <p className={cn("text-2xl font-bold", successRate >= 90 ? "text-emerald-400" : successRate >= 70 ? "text-amber-400" : "text-red-400")}>
                     {successRate}%
                   </p>
                 </div>
-                <div className="bg-slate-900/60 rounded-2xl p-4 border border-slate-700/30">
-                  <p className="text-xs text-slate-500 mb-1">Avg Latency</p>
+                <div className="bg-card rounded-2xl p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">Avg Latency</p>
                   <p className={cn("text-2xl font-bold", avgLatency < 500 ? "text-emerald-400" : avgLatency < 1000 ? "text-amber-400" : "text-red-400")}>
                     {avgLatency}ms
                   </p>
                 </div>
-                <div className="bg-slate-900/60 rounded-2xl p-4 border border-slate-700/30">
-                  <p className="text-xs text-slate-500 mb-1">Total Tokens</p>
-                  <p className="text-2xl font-bold text-white">{totalTokens.toLocaleString()}</p>
+                <div className="bg-card rounded-2xl p-4 border border-border">
+                  <p className="text-xs text-muted-foreground mb-1">Total Tokens</p>
+                  <p className="text-2xl font-bold text-foreground">{totalTokens.toLocaleString()}</p>
                 </div>
               </div>
             </div>
 
             {/* Per-Model Stats */}
-            <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
-              <h3 className="text-lg font-bold text-white mb-4">Model Performance</h3>
+            <div className="bg-card rounded-3xl border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4">Model Performance</h3>
               
               {usageStats.length === 0 ? (
                 <div className="text-center py-12">
-                  <Gauge className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                  <p className="text-slate-500">No usage data yet</p>
+                  <Gauge className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No usage data yet</p>
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -917,20 +916,20 @@ export default function AdminAI() {
                       ? Math.round(stat.total_latency_ms / stat.total_requests)
                       : 0;
                     return (
-                      <div key={idx} className="bg-slate-900/40 rounded-2xl p-4 border border-slate-700/30 hover:border-slate-600/50 transition-all">
+                      <div key={idx} className="bg-card rounded-2xl p-4 border border-border hover:border-border transition-all">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                           <div>
                             <div className="flex items-center space-x-2">
-                              <Cpu className="w-4 h-4 text-blue-400" />
-                              <span className="font-bold text-white">{stat.provider_id}</span>
-                              <span className="text-slate-500">/</span>
-                              <span className="text-slate-400">{stat.model_id}</span>
+                              <Cpu className="w-4 h-4 text-[#F2C94C]" />
+                              <span className="font-bold text-foreground">{stat.provider_id}</span>
+                              <span className="text-muted-foreground">/</span>
+                              <span className="text-muted-foreground">{stat.model_id}</span>
                             </div>
                           </div>
                           <div className="flex items-center gap-4 text-sm">
                             <div className="flex items-center space-x-1">
-                              <TrendingUp className="w-3 h-3 text-slate-500" />
-                              <span className="text-slate-400">{stat.total_requests} reqs</span>
+                              <TrendingUp className="w-3 h-3 text-muted-foreground" />
+                              <span className="text-muted-foreground">{stat.total_requests} reqs</span>
                             </div>
                             <div className="flex items-center space-x-1">
                               <CheckCircle2 className={cn("w-3 h-3", modelRate >= 90 ? "text-emerald-500" : modelRate >= 70 ? "text-amber-500" : "text-red-500")} />
@@ -939,10 +938,10 @@ export default function AdminAI() {
                               </span>
                             </div>
                             <div className="flex items-center space-x-1">
-                              <Clock className="w-3 h-3 text-slate-500" />
-                              <span className="text-slate-400">{modelLatency}ms</span>
+                              <Clock className="w-3 h-3 text-muted-foreground" />
+                              <span className="text-muted-foreground">{modelLatency}ms</span>
                             </div>
-                            <div className="text-slate-500">
+                            <div className="text-muted-foreground">
                               {(stat.total_tokens_in + stat.total_tokens_out).toLocaleString()} tok
                             </div>
                           </div>
@@ -962,15 +961,15 @@ export default function AdminAI() {
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
-                  <Puzzle className="w-5 h-5 text-purple-400" />
+                <div className="w-10 h-10 rounded-xl bg-[#F2C94C]/10 flex items-center justify-center">
+                  <Puzzle className="w-5 h-5 text-[#F2C94C]" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-white">Custom Providers</h3>
-                  <p className="text-sm text-slate-500">Add OpenRouter, Together, Groq, or any OpenAI-compatible provider</p>
+                  <h3 className="text-lg font-bold text-foreground">Custom Providers</h3>
+                  <p className="text-sm text-muted-foreground">Add OpenRouter, Together, Groq, or any OpenAI-compatible provider</p>
                 </div>
               </div>
-              <Button onClick={() => setShowAddProvider(true)} className="bg-purple-600 hover:bg-purple-700">
+              <Button onClick={() => setShowAddProvider(true)} className="bg-[#F2C94C] hover:bg-[#E0B73A]">
                 <Plus className="w-4 h-4 mr-1" /> Add Provider
               </Button>
             </div>
@@ -986,7 +985,7 @@ export default function AdminAI() {
                   <p className={cn("font-medium", testResult.ok ? "text-emerald-300" : "text-red-300")}>
                     {testResult.ok ? 'Connection Successful' : 'Connection Failed'}
                   </p>
-                  <p className="text-xs text-slate-400">
+                  <p className="text-xs text-muted-foreground">
                     {testResult.providerId} — {testResult.latencyMs}ms
                     {testResult.error && ` — ${testResult.error}`}
                   </p>
@@ -996,78 +995,78 @@ export default function AdminAI() {
 
             {/* Add Provider Form */}
             {showAddProvider && (
-              <div className="bg-slate-800/60 backdrop-blur-sm rounded-3xl border border-purple-500/30 p-6">
-                <h4 className="text-white font-bold mb-4">Add Custom Provider</h4>
+              <div className="bg-card rounded-3xl border border-purple-500/30 p-6">
+                <h4 className="text-foreground font-bold mb-4">Add Custom Provider</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm text-slate-400 mb-1 block">Provider ID *</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Provider ID *</label>
                     <input value={newProvider.id} onChange={e => setNewProvider(p => ({ ...p, id: e.target.value }))}
                       placeholder="e.g. openrouter, together, groq"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="text-sm text-slate-400 mb-1 block">Display Name *</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Display Name *</label>
                     <input value={newProvider.name} onChange={e => setNewProvider(p => ({ ...p, name: e.target.value }))}
                       placeholder="e.g. OpenRouter"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="text-sm text-slate-400 mb-1 block">Base URL *</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Base URL *</label>
                     <input value={newProvider.base_url} onChange={e => setNewProvider(p => ({ ...p, base_url: e.target.value }))}
                       placeholder="https://openrouter.ai/api/v1"
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="text-sm text-slate-400 mb-1 block">Auth Type</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Auth Type</label>
                     <select value={newProvider.auth_type} onChange={e => setNewProvider(p => ({ ...p, auth_type: e.target.value }))}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none">
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none">
                       <option value="bearer">Bearer Token</option>
                       <option value="x-api-key">X-API-Key Header</option>
                     </select>
                   </div>
                   <div>
-                    <label className="text-sm text-slate-400 mb-1 block">API Format</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">API Format</label>
                     <select value={newProvider.api_format} onChange={e => setNewProvider(p => ({ ...p, api_format: e.target.value }))}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none">
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none">
                       <option value="openai">OpenAI Compatible</option>
                       <option value="gemini">Gemini</option>
                     </select>
                   </div>
                   <div>
-                    <label className="text-sm text-slate-400 mb-1 block">Chat Endpoint</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Chat Endpoint</label>
                     <input value={newProvider.chat_endpoint} onChange={e => setNewProvider(p => ({ ...p, chat_endpoint: e.target.value }))}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="text-sm text-slate-400 mb-1 block">Priority</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Priority</label>
                     <input type="number" value={newProvider.priority} onChange={e => setNewProvider(p => ({ ...p, priority: Number(e.target.value) }))}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                 </div>
                 <div className="flex gap-3 mt-4">
                   <Button onClick={createCustomProvider} disabled={saving || !newProvider.id || !newProvider.name || !newProvider.base_url}
-                    className="bg-purple-600 hover:bg-purple-700">
+                    className="bg-[#F2C94C] hover:bg-[#E0B73A]">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                     Create Provider
                   </Button>
-                  <Button variant="outline" onClick={() => setShowAddProvider(false)} className="bg-slate-800 border-slate-700">Cancel</Button>
+                  <Button variant="outline" onClick={() => setShowAddProvider(false)} className="bg-background border-border">Cancel</Button>
                 </div>
               </div>
             )}
 
             {/* Provider Cards */}
             {customProviders.map(provider => (
-              <div key={provider.id} className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
+              <div key={provider.id} className="bg-card rounded-3xl border border-border p-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <Globe className="w-6 h-6 text-purple-400" />
+                    <Globe className="w-6 h-6 text-[#F2C94C]" />
                     <div>
-                      <h4 className="font-bold text-white">{provider.name}</h4>
-                      <p className="text-xs text-slate-500 font-mono">{provider.base_url}</p>
+                      <h4 className="font-bold text-foreground">{provider.name}</h4>
+                      <p className="text-xs text-muted-foreground font-mono">{provider.base_url}</p>
                       <div className="flex gap-2 mt-1">
-                        <span className="text-xs bg-slate-700/50 text-slate-300 px-2 py-0.5 rounded-lg">{provider.api_format}</span>
-                        <span className="text-xs bg-slate-700/50 text-slate-300 px-2 py-0.5 rounded-lg">{provider.auth_type}</span>
-                        <span className="text-xs bg-slate-700/50 text-slate-300 px-2 py-0.5 rounded-lg">Priority: {provider.priority}</span>
+                        <span className="text-xs bg-muted/50 text-foreground px-2 py-0.5 rounded-lg">{provider.api_format}</span>
+                        <span className="text-xs bg-muted/50 text-foreground px-2 py-0.5 rounded-lg">{provider.auth_type}</span>
+                        <span className="text-xs bg-muted/50 text-foreground px-2 py-0.5 rounded-lg">Priority: {provider.priority}</span>
                       </div>
                     </div>
                   </div>
@@ -1078,11 +1077,11 @@ export default function AdminAI() {
                       Test
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)}
-                      className="bg-slate-800 border-slate-700">
+                      className="bg-background border-border">
                       <Plus className="w-4 h-4 mr-1" /> Model
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => setShowAddKey(provider.id)}
-                      className="bg-slate-800 border-slate-700">
+                      className="bg-background border-border">
                       <Key className="w-4 h-4 mr-1" /> Key
                     </Button>
                     <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)}
@@ -1094,50 +1093,50 @@ export default function AdminAI() {
 
                 {/* Add Model Form */}
                 {showAddModel === provider.id && (
-                  <div className="mt-4 pt-4 border-t border-slate-700/50">
-                    <h5 className="text-sm font-medium text-slate-300 mb-3">Add Model</h5>
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <h5 className="text-sm font-medium text-foreground mb-3">Add Model</h5>
                     <div className="flex gap-3">
                       <input value={newModel.model_id} onChange={e => setNewModel(m => ({ ...m, model_id: e.target.value }))}
                         placeholder="Model ID (e.g. anthropic/claude-3.5-sonnet)"
-                        className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                        className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input value={newModel.display_name} onChange={e => setNewModel(m => ({ ...m, display_name: e.target.value }))}
                         placeholder="Display Name"
-                        className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                        className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <Button size="sm" onClick={() => createCustomModel(provider.id)} disabled={saving || !newModel.model_id || !newModel.display_name}
-                        className="bg-purple-600 hover:bg-purple-700">Add</Button>
-                      <Button size="sm" variant="outline" onClick={() => setShowAddModel(null)} className="bg-slate-800 border-slate-700">Cancel</Button>
+                        className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowAddModel(null)} className="bg-background border-border">Cancel</Button>
                     </div>
                   </div>
                 )}
 
                 {/* Add Key Form */}
                 {showAddKey === provider.id && (
-                  <div className="mt-4 pt-4 border-t border-slate-700/50">
-                    <h5 className="text-sm font-medium text-slate-300 mb-3">Add API Key</h5>
+                  <div className="mt-4 pt-4 border-t border-border">
+                    <h5 className="text-sm font-medium text-foreground mb-3">Add API Key</h5>
                     <div className="flex gap-3">
                       <input value={newKey.key_name} onChange={e => setNewKey(k => ({ ...k, key_name: e.target.value }))}
                         placeholder="Key Name"
-                        className="w-32 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                        className="w-32 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input type="password" value={newKey.api_key} onChange={e => setNewKey(k => ({ ...k, api_key: e.target.value }))}
                         placeholder="sk-..."
-                        className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                        className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <Button size="sm" onClick={() => createCustomKey(provider.id)} disabled={saving || !newKey.api_key}
-                        className="bg-purple-600 hover:bg-purple-700">Add</Button>
-                      <Button size="sm" variant="outline" onClick={() => setShowAddKey(null)} className="bg-slate-800 border-slate-700">Cancel</Button>
+                        className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowAddKey(null)} className="bg-background border-border">Cancel</Button>
                     </div>
                   </div>
                 )}
 
                 {/* Models & Keys */}
-                <div className="mt-4 pt-4 border-t border-slate-700/50 grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm font-medium text-slate-400 mb-2">Models ({customModels.filter(m => m.provider_id === provider.id).length})</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Models ({customModels.filter(m => m.provider_id === provider.id).length})</p>
                     <div className="space-y-1">
                       {customModels.filter(m => m.provider_id === provider.id).map(model => (
-                        <div key={model.id} className="flex items-center justify-between bg-slate-900/40 rounded-xl px-3 py-2">
+                        <div key={model.id} className="flex items-center justify-between bg-card rounded-xl px-3 py-2">
                           <div>
-                            <span className="text-sm text-white">{model.display_name}</span>
-                            <span className="text-xs text-slate-500 ml-2 font-mono">{model.model_id}</span>
+                            <span className="text-sm text-foreground">{model.display_name}</span>
+                            <span className="text-xs text-muted-foreground ml-2 font-mono">{model.model_id}</span>
                           </div>
                           <button onClick={() => deleteCustomModel(model.id)} className="text-red-400 hover:text-red-300">
                             <Trash2 className="w-3.5 h-3.5" />
@@ -1145,21 +1144,21 @@ export default function AdminAI() {
                         </div>
                       ))}
                       {customModels.filter(m => m.provider_id === provider.id).length === 0 && (
-                        <p className="text-xs text-slate-600">No models added yet</p>
+                        <p className="text-xs text-muted-foreground/50">No models added yet</p>
                       )}
                     </div>
                   </div>
                   <div>
-                    <p className="text-sm font-medium text-slate-400 mb-2">Keys ({customKeys.filter(k => k.provider_id === provider.id).length})</p>
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Keys ({customKeys.filter(k => k.provider_id === provider.id).length})</p>
                     <div className="space-y-1">
                       {customKeys.filter(k => k.provider_id === provider.id).map(key => (
-                        <div key={key.id} className="flex items-center justify-between bg-slate-900/40 rounded-xl px-3 py-2">
+                        <div key={key.id} className="flex items-center justify-between bg-card rounded-xl px-3 py-2">
                           <div>
-                            <span className="text-sm text-white">{key.key_name}</span>
+                            <span className="text-sm text-foreground">{key.key_name}</span>
                             <span className={cn("text-xs ml-2 px-1.5 py-0.5 rounded-lg",
                               key.status === 'valid' ? 'bg-emerald-500/10 text-emerald-400' :
                               key.status === 'invalid' ? 'bg-red-500/10 text-red-400' :
-                              'bg-slate-700/50 text-slate-400'
+                              'bg-muted/50 text-muted-foreground'
                             )}>{key.status}</span>
                           </div>
                           <button onClick={() => deleteCustomKey(key.id)} className="text-red-400 hover:text-red-300">
@@ -1168,7 +1167,7 @@ export default function AdminAI() {
                         </div>
                       ))}
                       {customKeys.filter(k => k.provider_id === provider.id).length === 0 && (
-                        <p className="text-xs text-slate-600">No keys added yet</p>
+                        <p className="text-xs text-muted-foreground/50">No keys added yet</p>
                       )}
                     </div>
                   </div>
@@ -1178,9 +1177,9 @@ export default function AdminAI() {
 
             {customProviders.length === 0 && !showAddProvider && (
               <div className="text-center py-12">
-                <Puzzle className="w-12 h-12 text-slate-600 mx-auto mb-3" />
-                <p className="text-slate-400">No custom providers yet</p>
-                <p className="text-sm text-slate-600">Add OpenRouter, Together, Groq, or any OpenAI-compatible API</p>
+                <Puzzle className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                <p className="text-muted-foreground">No custom providers yet</p>
+                <p className="text-sm text-muted-foreground/50">Add OpenRouter, Together, Groq, or any OpenAI-compatible API</p>
               </div>
             )}
           </div>
@@ -1188,17 +1187,17 @@ export default function AdminAI() {
 
         {/* Secrets Tab */}
         {activeTab === 'secrets' && (
-          <div className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
+          <div className="bg-card rounded-3xl border border-border p-6">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
                 <Key className="w-5 h-5 text-amber-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-white">Secrets Management</h3>
-                <p className="text-sm text-slate-500">Manage API keys and credentials for AI providers</p>
+                <h3 className="text-lg font-bold text-foreground">Secrets Management</h3>
+                <p className="text-sm text-muted-foreground">Manage API keys and credentials for AI providers</p>
               </div>
             </div>
-            <div className="bg-slate-900/40 rounded-2xl p-4 border border-slate-700/30">
+            <div className="bg-card rounded-2xl p-4 border border-border">
               <SecretList />
             </div>
           </div>
