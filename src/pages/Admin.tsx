@@ -260,9 +260,7 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
   const [search, setSearch] = useState('');
   const [updating, setUpdating] = useState<string | null>(null);
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  useEffect(() => { fetchUsers(); }, []);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -270,11 +268,8 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
       const headers = await getAdminHeaders();
       const res = await fetch('/api/admin?action=users', { headers });
       if (res.ok) setUsers(await res.json());
-    } catch (e) {
-      console.error('Fetch users error:', e);
-    } finally {
-      setLoading(false);
-    }
+    } catch (e) { console.error('Fetch users error:', e); }
+    finally { setLoading(false); }
   };
 
   const handleTogglePro = async (userId: string) => {
@@ -282,19 +277,15 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
     try {
       const headers = await getAdminHeaders();
       const res = await fetch('/api/admin?action=toggle-pro', {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId }),
       });
       if (res.ok) {
         const result = await res.json();
         setUsers(prev => prev.map(u => u.id === userId ? { ...u, subscription: result.subscription } : u));
       }
-    } catch (e) {
-      console.error('Toggle pro error:', e);
-    } finally {
-      setUpdating(null);
-    }
+    } catch (e) { console.error('Toggle pro error:', e); }
+    finally { setUpdating(null); }
   };
 
   const handleUpdateRole = async (userId: string, role: string) => {
@@ -302,18 +293,12 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
     try {
       const headers = await getAdminHeaders();
       const res = await fetch('/api/admin?action=update-role', {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
+        method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId, role }),
       });
-      if (res.ok) {
-        setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
-      }
-    } catch (e) {
-      console.error('Update role error:', e);
-    } finally {
-      setUpdating(null);
-    }
+      if (res.ok) setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
+    } catch (e) { console.error('Update role error:', e); }
+    finally { setUpdating(null); }
   };
 
   const filtered = users.filter(u =>
@@ -323,101 +308,72 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
 
   return (
     <div className="mt-10">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
           <Users className="w-5 h-5 text-muted-foreground" />
           Pengguna
           <span className="text-sm font-normal text-muted-foreground">({users.length})</span>
         </h2>
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="Cari nama atau ID..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="pl-4 pr-4 py-2 rounded-xl border border-border bg-background text-sm focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 w-64"
-          />
-        </div>
+        <input
+          type="text"
+          placeholder="Cari..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          className="pl-3 pr-3 py-1.5 rounded-lg border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 w-40"
+        />
       </div>
 
       {loading ? (
-        <div className="flex items-center justify-center py-12">
+        <div className="flex items-center justify-center py-8">
           <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
         </div>
+      ) : filtered.length === 0 ? (
+        <p className="text-sm text-muted-foreground py-6 text-center">Tidak ada pengguna.</p>
       ) : (
-        <div className="rounded-2xl border border-border overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-muted/50">
-                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Nama</th>
-                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">ID</th>
-                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Role</th>
-                  <th className="text-left text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Status</th>
-                  <th className="text-right text-xs font-bold text-muted-foreground uppercase tracking-wider px-5 py-3">Aksi</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filtered.map(u => (
-                  <tr key={u.id} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-5 py-4">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937]">
-                          {(u.full_name || u.id).charAt(0).toUpperCase()}
-                        </div>
-                        <span className="text-sm font-medium text-foreground">{u.full_name || 'Unnamed'}</span>
-                      </div>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className="text-xs font-mono text-muted-foreground">{u.id.slice(0, 8)}...</span>
-                    </td>
-                    <td className="px-5 py-4">
-                      <select
-                        value={u.role || 'user'}
-                        onChange={e => handleUpdateRole(u.id, e.target.value)}
-                        disabled={updating === u.id}
-                        className="text-xs font-medium px-3 py-1.5 rounded-lg border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
-                      >
-                        <option value="user">User</option>
-                        <option value="admin">Admin</option>
-                      </select>
-                    </td>
-                    <td className="px-5 py-4">
-                      <span className={`text-xs font-bold px-2.5 py-1 rounded-lg ${
-                        u.subscription === 'pro' || u.tier === 'pro'
-                          ? 'bg-[#F2C94C]/15 text-[#B8952E]'
-                          : 'bg-muted text-muted-foreground'
-                      }`}>
-                        {u.subscription === 'pro' || u.tier === 'pro' ? 'Pro' : 'Free'}
-                      </span>
-                    </td>
-                    <td className="px-5 py-4 text-right">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => handleTogglePro(u.id)}
-                        disabled={updating === u.id}
-                        className="rounded-lg text-xs h-8"
-                      >
-                        {updating === u.id ? (
-                          <Loader2 className="w-3 h-3 animate-spin" />
-                        ) : (
-                          u.subscription === 'pro' ? 'Set Free' : 'Set Pro'
-                        )}
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-                {filtered.length === 0 && (
-                  <tr>
-                    <td colSpan={5} className="px-5 py-12 text-center text-muted-foreground text-sm">
-                      Tidak ada pengguna ditemukan.
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+        <div className="space-y-2">
+          {filtered.map(u => {
+            const isPro = u.subscription === 'pro' || u.tier === 'pro';
+            const initial = (u.full_name || u.id).charAt(0).toUpperCase();
+            return (
+              <div key={u.id} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors">
+                {/* Avatar + Name */}
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937] shrink-0">
+                  {initial}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-foreground truncate">{u.full_name || 'Unnamed'}</p>
+                  <p className="text-[10px] text-muted-foreground font-mono">{u.id.slice(0, 8)}…</p>
+                </div>
+
+                {/* Status badge */}
+                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${
+                  isPro ? 'bg-[#F2C94C]/15 text-[#B8952E]' : 'bg-muted text-muted-foreground'
+                }`}>
+                  {isPro ? 'Pro' : 'Free'}
+                </span>
+
+                {/* Role select */}
+                <select
+                  value={u.role || 'user'}
+                  onChange={e => handleUpdateRole(u.id, e.target.value)}
+                  disabled={updating === u.id}
+                  className="text-[10px] font-medium px-2 py-1 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 shrink-0"
+                >
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+
+                {/* Toggle button */}
+                <button
+                  onClick={() => handleTogglePro(u.id)}
+                  disabled={updating === u.id}
+                  className="text-[10px] font-bold px-2.5 py-1 rounded-md border border-border hover:bg-muted transition-colors disabled:opacity-50 shrink-0"
+                >
+                  {updating === u.id ? '…' : isPro ? '↓ Free' : '↑ Pro'}
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
