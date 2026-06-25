@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   BookOpen, CheckCircle2, XCircle, ArrowRight, RotateCcw, 
-  Trophy, Target, Brain, ChevronDown, ChevronUp 
+  Trophy, Target, Brain, ChevronDown, ChevronUp, Clock,
+  GraduationCap, Zap, Star
 } from 'lucide-react';
 import { goetheExamQuestions, examLevels, examSections, ExamQuestion } from '../data/goethe-exam-questions';
+import { extendedExamQuestions } from '../data/goethe-exam-extended';
 
 type Level = 'a1' | 'a2' | 'b1' | 'b2';
 
@@ -18,8 +20,10 @@ export default function GoetheExam() {
   const [examComplete, setExamComplete] = useState(false);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
 
+  // Merge base + extended questions
+  const allQuestions = [...goetheExamQuestions, ...extendedExamQuestions];
   const filteredQuestions = selectedLevel 
-    ? goetheExamQuestions.filter(q => q.level === selectedLevel)
+    ? allQuestions.filter(q => q.level === selectedLevel)
     : [];
 
   const currentQ = filteredQuestions[currentQuestion];

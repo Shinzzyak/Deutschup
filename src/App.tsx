@@ -22,7 +22,7 @@ const LessonView = lazy(() => import('./pages/LessonView'));
 const LevelView = lazy(() => import('./pages/LevelView'));
 const CheckpointView = lazy(() => import('./pages/CheckpointView'));
 const AdminAI = lazy(() => import('./pages/AdminAI'));
-const VocabTrainer = lazy(() => import('./pages/VocabTrainer'));
+const VocabTrainer = lazy(() => import('./pages/VocabTrainerDB'));
 const VerbTrainer = lazy(() => import('./pages/VerbTrainer'));
 const Koreksi = lazy(() => import('./pages/Koreksi'));
 const Catatan = lazy(() => import('./pages/Catatan'));
