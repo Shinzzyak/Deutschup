@@ -14,6 +14,7 @@ const navigation = [
   { name: 'Level', href: '/level/A1', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
+  { name: 'Goethe', href: '/goethe', icon: Trophy },
   { name: 'Profil', href: '/profile', icon: User },
 ];
 

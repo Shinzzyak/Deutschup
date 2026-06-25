@@ -33,6 +33,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 const Admin = lazy(() => import('./pages/Admin'));
 const ClerkTest = lazy(() => import('./pages/ClerkTest'));
 const CanaryDashboard = lazy(() => import('./pages/CanaryDashboard'));
+const GoetheExam = lazy(() => import('./pages/GoetheExam'));
 const DebugAuth = lazy(() => import('./pages/DebugAuth'));
 import ChatWidget from './components/ChatWidget';
 import DebugOverlay from './components/DebugOverlay';
@@ -122,6 +123,7 @@ function AnimatedRoutes() {
         <Route path="/koreksi" element={<PageWrapper><Koreksi /></PageWrapper>} />
         <Route path="/catatan" element={<PageWrapper><Catatan /></PageWrapper>} />
         <Route path="/simulasi" element={<PageWrapper><Simulasi /></PageWrapper>} />
+        <Route path="/goethe" element={<PageWrapper><GoetheExam /></PageWrapper>} />
         <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
         <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
