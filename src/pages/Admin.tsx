@@ -73,8 +73,9 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    if (profileData?.role === 'admin') fetchAll();
-  }, [profileData?.role]);
+    // Fetch admin data — API validates admin role server-side
+    fetchAll();
+  }, []);
 
   const handleRefresh = () => {
     setRefreshing(true);
