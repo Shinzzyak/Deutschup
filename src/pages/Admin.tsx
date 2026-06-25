@@ -17,7 +17,8 @@ import {
   Database,
   Globe,
   Webhook,
-  ExternalLink
+  ExternalLink,
+  ChevronDown
 } from 'lucide-react';
 
 interface AdminStats {
@@ -256,11 +257,18 @@ interface UserProfile {
 
 function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Record<string, string>> }) {
   const [users, setUsers] = useState<UserProfile[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [updating, setUpdating] = useState<string | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
-  useEffect(() => { fetchUsers(); }, []);
+  useEffect(() => {
+    if (expanded && !loaded) {
+      fetchUsers();
+      setLoaded(true);
+    }
+  }, [expanded]);
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -308,72 +316,79 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
 
   return (
     <div className="mt-10">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-bold text-foreground flex items-center gap-2">
+      {/* Toggle header — click to expand/collapse */}
+      <button
+        onClick={() => setExpanded(v => !v)}
+        className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors"
+      >
+        <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-muted-foreground" />
-          Pengguna
-          <span className="text-sm font-normal text-muted-foreground">({users.length})</span>
-        </h2>
-        <input
-          type="text"
-          placeholder="Cari..."
-          value={search}
-          onChange={e => setSearch(e.target.value)}
-          className="pl-3 pr-3 py-1.5 rounded-lg border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 w-40"
-        />
-      </div>
-
-      {loading ? (
-        <div className="flex items-center justify-center py-8">
-          <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+          <span className="text-sm font-bold text-foreground">Pengguna</span>
+          <span className="text-xs text-muted-foreground font-normal">({users.length})</span>
         </div>
-      ) : filtered.length === 0 ? (
-        <p className="text-sm text-muted-foreground py-6 text-center">Tidak ada pengguna.</p>
-      ) : (
-        <div className="space-y-2">
-          {filtered.map(u => {
-            const isPro = u.subscription === 'pro' || u.tier === 'pro';
-            const initial = (u.full_name || u.id).charAt(0).toUpperCase();
-            return (
-              <div key={u.id} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors">
-                {/* Avatar + Name */}
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937] shrink-0">
-                  {initial}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground truncate">{u.full_name || 'Unnamed'}</p>
-                  <p className="text-[10px] text-muted-foreground font-mono">{u.id.slice(0, 8)}…</p>
-                </div>
+        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expanded ? 'rotate-180' : ''}`} />
+      </button>
 
-                {/* Status badge */}
-                <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${
-                  isPro ? 'bg-[#F2C94C]/15 text-[#B8952E]' : 'bg-muted text-muted-foreground'
-                }`}>
-                  {isPro ? 'Pro' : 'Free'}
-                </span>
+      {/* Collapsible content */}
+      {expanded && (
+        <div className="mt-3">
+          {/* Search bar */}
+          <div className="mb-3">
+            <input
+              type="text"
+              placeholder="Cari nama atau ID..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              className="w-full pl-3 pr-3 py-2 rounded-lg border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
+            />
+          </div>
 
-                {/* Role select */}
-                <select
-                  value={u.role || 'user'}
-                  onChange={e => handleUpdateRole(u.id, e.target.value)}
-                  disabled={updating === u.id}
-                  className="text-[10px] font-medium px-2 py-1 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 shrink-0"
-                >
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                </select>
-
-                {/* Toggle button */}
-                <button
-                  onClick={() => handleTogglePro(u.id)}
-                  disabled={updating === u.id}
-                  className="text-[10px] font-bold px-2.5 py-1 rounded-md border border-border hover:bg-muted transition-colors disabled:opacity-50 shrink-0"
-                >
-                  {updating === u.id ? '…' : isPro ? '↓ Free' : '↑ Pro'}
-                </button>
-              </div>
-            );
-          })}
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            </div>
+          ) : filtered.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-6 text-center">Tidak ada pengguna.</p>
+          ) : (
+            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
+              {filtered.map(u => {
+                const isPro = u.subscription === 'pro' || u.tier === 'pro';
+                const initial = (u.full_name || u.id).charAt(0).toUpperCase();
+                return (
+                  <div key={u.id} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937] shrink-0">
+                      {initial}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-medium text-foreground truncate">{u.full_name || 'Unnamed'}</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">{u.id.slice(0, 8)}…</p>
+                    </div>
+                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${
+                      isPro ? 'bg-[#F2C94C]/15 text-[#B8952E]' : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {isPro ? 'Pro' : 'Free'}
+                    </span>
+                    <select
+                      value={u.role || 'user'}
+                      onChange={e => handleUpdateRole(u.id, e.target.value)}
+                      disabled={updating === u.id}
+                      className="text-[10px] font-medium px-2 py-1 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 shrink-0"
+                    >
+                      <option value="user">User</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                    <button
+                      onClick={() => handleTogglePro(u.id)}
+                      disabled={updating === u.id}
+                      className="text-[10px] font-bold px-2.5 py-1 rounded-md border border-border hover:bg-muted transition-colors disabled:opacity-50 shrink-0"
+                    >
+                      {updating === u.id ? '…' : isPro ? '↓ Free' : '↑ Pro'}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
     </div>
