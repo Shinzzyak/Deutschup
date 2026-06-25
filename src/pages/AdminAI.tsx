@@ -1021,13 +1021,13 @@ export default function AdminAI() {
                       className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                 </div>
-                <div className="flex gap-3 mt-4">
+                <div className="flex flex-col sm:flex-row gap-3 mt-4">
                   <Button onClick={createCustomProvider} disabled={saving || !newProvider.id || !newProvider.name || !newProvider.base_url}
-                    className="bg-[#F2C94C] hover:bg-[#E0B73A]">
+                    className="bg-[#F2C94C] hover:bg-[#E0B73A] w-full sm:w-auto">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
                     Create Provider
                   </Button>
-                  <Button variant="outline" onClick={() => setShowAddProvider(false)} className="bg-background border-border">Cancel</Button>
+                  <Button variant="outline" onClick={() => setShowAddProvider(false)} className="bg-background border-border w-full sm:w-auto">Cancel</Button>
                 </div>
               </div>
             )}
@@ -1047,7 +1047,7 @@ export default function AdminAI() {
                       <p className="text-xs text-muted-foreground font-mono">{provider.base_url}</p>
                     </div>
                   </div>
-                  <div className="flex gap-1.5">
+                  <div className="flex flex-wrap gap-1.5 justify-end">
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#F2C94C]/10 text-[#B8952E]">{provider.api_format}</span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{provider.auth_type}</span>
                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">P{provider.priority}</span>
@@ -1055,14 +1055,14 @@ export default function AdminAI() {
                 </div>
 
                 {/* Key Input */}
-                <div className="flex gap-2 mb-3">
+                <div className="flex flex-col sm:flex-row gap-2 mb-3">
                   <input
                     type="password"
                     placeholder={providerKey ? '•••••••• (key saved)' : 'Paste API key...'}
-                    className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
+                    className="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
                     id={`custom-key-${provider.id}`}
                   />
-                  <Button size="sm" onClick={async () => {
+                  <div className="flex gap-2"><Button size="sm" onClick={async () => {
                     const input = document.getElementById(`custom-key-${provider.id}`) as HTMLInputElement;
                     if (!input?.value) return;
                     setSavingKey(provider.id);
@@ -1080,7 +1080,7 @@ export default function AdminAI() {
                   <Button size="sm" variant="outline" onClick={() => testCustomProvider(provider.id)} disabled={testing} className="rounded-lg">
                     {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <TestTube className="w-3 h-3" />}
                   </Button>
-                </div>
+                </div></div>
 
                 {/* Models */}
                 {providerModels.length > 0 && (
