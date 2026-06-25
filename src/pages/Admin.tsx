@@ -16,7 +16,8 @@ import {
   Zap,
   Database,
   Globe,
-  Webhook
+  Webhook,
+  ExternalLink
 } from 'lucide-react';
 
 interface AdminStats {
@@ -183,8 +184,22 @@ export default function Admin() {
       {/* Users Table */}
       <UsersSection getAdminHeaders={getAdminHeaders} />
 
-      {/* Config Panel */}
-      <ConfigSection getAdminHeaders={getAdminHeaders} />
+      {/* Quick Actions */}
+      <div className="mt-10">
+        <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+          <Settings className="w-5 h-5 text-muted-foreground" />
+          Konfigurasi Sistem
+        </h2>
+        <Button
+          onClick={() => navigate('/admin/ai')}
+          className="rounded-2xl px-6 py-5 font-bold shadow-lg shadow-[#F2C94C]/20 gap-2"
+        >
+          <Zap className="w-4 h-4" />
+          Kelola AI Provider & Model
+          <ExternalLink className="w-3.5 h-3.5 opacity-60" />
+        </Button>
+        <p className="text-xs text-muted-foreground mt-2 ml-1">Tambah provider, API key, dan model di satu tempat.</p>
+      </div>
 
       {/* Spacer */}
       <div className="h-16" />
@@ -409,98 +424,4 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
   );
 }
 
-function ConfigSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Record<string, string>> }) {
-  const [geminiKey, setGeminiKey] = useState('');
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchConfig();
-  }, []);
-
-  const fetchConfig = async () => {
-    try {
-      const headers = await getAdminHeaders();
-      const res = await fetch('/api/admin?action=config', { headers });
-      if (res.ok) {
-        const data = await res.json();
-        setGeminiKey(data.geminiApiKey || '');
-      }
-    } catch (e) {
-      console.error('Fetch config error:', e);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    setSaving(true);
-    try {
-      const headers = await getAdminHeaders();
-      const res = await fetch('/api/admin?action=config', {
-        method: 'POST',
-        headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ geminiApiKey: geminiKey }),
-      });
-      if (res.ok) {
-        setSaved(true);
-        setTimeout(() => setSaved(false), 2000);
-      }
-    } catch (e) {
-      console.error('Save config error:', e);
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="mt-10 flex items-center justify-center py-12">
-        <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
-      </div>
-    );
-  }
-
-  return (
-    <div className="mt-10">
-      <h2 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
-        <Settings className="w-5 h-5 text-muted-foreground" />
-        Konfigurasi Sistem
-      </h2>
-
-      <Card className="rounded-2xl border-border">
-        <CardContent className="p-6">
-          <div className="grid gap-5">
-            <div>
-              <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1">
-                Gemini API Key
-              </label>
-              <div className="relative">
-                <input
-                  type="password"
-                  value={geminiKey}
-                  onChange={e => setGeminiKey(e.target.value)}
-                  placeholder="AIza..."
-                  className="w-full px-5 py-4 rounded-2xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 font-mono text-sm"
-                />
-              </div>
-              <p className="text-xs text-muted-foreground mt-2 ml-1">API key untuk Herr Deutsch AI chatbot.</p>
-            </div>
-
-            <div className="flex justify-end pt-2">
-              <Button
-                onClick={handleSave}
-                disabled={saving}
-                className="rounded-2xl px-6 py-5 font-bold shadow-lg shadow-[#F2C94C]/20"
-              >
-                {saving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                {saved ? 'Tersimpan!' : 'Simpan Konfigurasi'}
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
-}
+// Admin page only — Users section
