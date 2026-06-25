@@ -3,6 +3,7 @@ import { useAuthStore } from '../stores/authStore';
 import { useNavigate } from 'react-router';
 import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
+import { Card, CardContent } from '../components/ui/card';
 import SecretList from '../components/admin/SecretList';
 import {
   Loader2, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
@@ -446,14 +447,8 @@ export default function AdminAI() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
-        <div className="flex flex-col items-center space-y-4">
-          <div className="relative">
-            <div className="absolute inset-0 rounded-full bg-blue-500/20 blur-xl animate-pulse" />
-            <Loader2 className="w-10 h-10 animate-spin text-blue-500 relative" />
-          </div>
-          <p className="text-slate-400 text-sm">Initializing Command Center...</p>
-        </div>
+      <div className="flex items-center justify-center min-h-[60vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-[#F2C94C]" />
       </div>
     );
   }
@@ -468,91 +463,98 @@ export default function AdminAI() {
       </div>
 
       <div className="relative max-w-6xl mx-auto px-4 md:px-6">
-        {/* Back nav */}
-        <button
-          onClick={() => navigate('/admin')}
-          className="inline-flex items-center text-sm font-bold text-slate-400 hover:text-white mt-6 mb-4 transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" /> Kembali ke Admin
-        </button>
-
         {/* Header */}
-        <div className="relative bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 rounded-3xl p-6 md:p-8 text-white mb-8 overflow-hidden">
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
-          </div>
-          <div className="relative flex items-center space-x-4">
-            <div className="w-14 h-14 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center border border-white/20">
-              <Shield className="w-7 h-7" />
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <div className="p-2 bg-[#F2C94C]/10 rounded-xl">
+                <Shield className="w-6 h-6 text-[#F2C94C]" />
+              </div>
+              <h1 className="text-4xl font-black tracking-tight text-foreground">
+                AI <span className="text-[#F2C94C]">Command Center</span>
+              </h1>
             </div>
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">AI Command Center</h1>
-              <p className="text-white/70 text-sm mt-0.5">Monitor, configure, and control your AI infrastructure</p>
-            </div>
+            <p className="text-muted-foreground ml-14">Monitor, configure, and control your AI infrastructure.</p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchData}
+            disabled={loading}
+            className="rounded-xl border-border hover:bg-muted gap-2"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            Refresh Data
+          </Button>
         </div>
 
         {/* Health Dashboard - Status Cards */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3 mb-8">
           {[
-            { label: 'Active', count: statusCounts.ACTIVE, icon: CheckCircle2, gradient: 'from-emerald-500 to-emerald-600', glow: 'shadow-emerald-500/20', textColor: 'text-emerald-400' },
-            { label: 'Missing Key', count: statusCounts.MISSING_KEY, icon: AlertTriangle, gradient: 'from-amber-500 to-orange-500', glow: 'shadow-amber-500/20', textColor: 'text-amber-400' },
-            { label: 'Unreachable', count: statusCounts.UNREACHABLE, icon: XCircle, gradient: 'from-red-500 to-red-600', glow: 'shadow-red-500/20', textColor: 'text-red-400' },
-            { label: 'Rate Limited', count: statusCounts.RATE_LIMITED, icon: AlertCircle, gradient: 'from-yellow-500 to-amber-500', glow: 'shadow-yellow-500/20', textColor: 'text-yellow-400' },
-            { label: 'Disabled', count: statusCounts.DISABLED, icon: EyeOff, gradient: 'from-slate-400 to-slate-500', glow: 'shadow-slate-500/20', textColor: 'text-slate-400' },
-          ].map(({ label, count, icon: Icon, gradient, glow, textColor }) => (
-            <div
-              key={label}
-              className={cn(
-                "relative rounded-3xl bg-slate-800/60 backdrop-blur-sm border border-slate-700/50 p-4 md:p-5 overflow-hidden transition-all hover:scale-[1.02] hover:border-slate-600/50",
-                `hover:shadow-lg ${glow}`
-              )}
-            >
-              <div className={cn("absolute top-0 right-0 w-20 h-20 bg-gradient-to-br opacity-10 rounded-full -translate-y-6 translate-x-6", gradient)} />
-              <div className="relative">
-                <Icon className="w-5 h-5 text-slate-400 mb-2" />
-                <p className={cn("text-2xl font-bold", textColor)}>{count}</p>
-                <p className="text-xs text-slate-500 mt-1">{label}</p>
-              </div>
-            </div>
+            { label: 'Active', count: statusCounts.ACTIVE, icon: CheckCircle2, accent: 'text-emerald-500', bg: 'bg-emerald-500/10' },
+            { label: 'Missing Key', count: statusCounts.MISSING_KEY, icon: AlertTriangle, accent: 'text-amber-500', bg: 'bg-amber-500/10' },
+            { label: 'Unreachable', count: statusCounts.UNREACHABLE, icon: XCircle, accent: 'text-rose-500', bg: 'bg-rose-500/10' },
+            { label: 'Rate Limited', count: statusCounts.RATE_LIMITED, icon: AlertCircle, accent: 'text-yellow-500', bg: 'bg-yellow-500/10' },
+            { label: 'Disabled', count: statusCounts.DISABLED, icon: EyeOff, accent: 'text-muted-foreground', bg: 'bg-muted' },
+          ].map(({ label, count, icon: Icon, accent, bg }) => (
+            <Card key={label} className="rounded-2xl border-border bg-card hover:shadow-md transition-shadow">
+              <CardContent className="p-5">
+                <div className="flex items-center justify-between mb-3">
+                  <div className={`p-2 rounded-xl ${bg}`}>
+                    <Icon className={`w-5 h-5 ${accent}`} />
+                  </div>
+                </div>
+                <p className={`text-3xl font-black ${accent}`}>{count}</p>
+                <p className="text-xs text-muted-foreground font-medium mt-1">{label}</p>
+              </CardContent>
+            </Card>
           ))}
         </div>
 
         {/* System Overview Banner */}
         {systemHealth && (
-          <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { label: 'AI', ok: systemHealth.config?.aiConfigured, detail: systemHealth.ai ? `${systemHealth.ai.totalKeys} keys, ${systemHealth.ai.enabledProviders} providers` : null },
-              { label: 'Payment', ok: systemHealth.config?.paymentConfigured },
-              { label: 'Database', ok: systemHealth.config?.databaseConfigured },
-              { label: 'Webhook', ok: systemHealth.config?.webhookConfigured },
-            ].map(({ label, ok, detail }) => (
-              <div key={label} className={cn(
-                "flex items-center gap-3 px-4 py-3 rounded-2xl border",
-                ok ? "bg-emerald-500/5 border-emerald-500/20" : "bg-slate-800/40 border-slate-700/50"
-              )}>
-                {ok ? <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> : <XCircle className="w-4 h-4 text-slate-500 shrink-0" />}
-                <div className="min-w-0">
-                  <p className={cn("text-sm font-medium", ok ? "text-emerald-300" : "text-slate-500")}>{label}</p>
-                  {detail && <p className="text-xs text-slate-500 truncate">{detail}</p>}
+          <div className="mb-10">
+            <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+              <Globe className="w-5 h-5 text-muted-foreground" />
+              Status Layanan
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[
+                { label: 'AI Engine', ok: systemHealth.config?.aiConfigured, detail: systemHealth.ai ? `${systemHealth.ai.totalKeys} keys, ${systemHealth.ai.enabledProviders} providers` : null },
+                { label: 'Payment', ok: systemHealth.config?.paymentConfigured },
+                { label: 'Database', ok: systemHealth.config?.databaseConfigured },
+                { label: 'Webhooks', ok: systemHealth.config?.webhookConfigured },
+              ].map(({ label, ok, detail }) => (
+                <div key={label} className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
+                  ok
+                    ? 'bg-emerald-500/5 border-emerald-500/20'
+                    : 'bg-rose-500/5 border-rose-500/20'
+                }`}>
+                  {ok ? <CheckCircle2 className="w-4 h-4 text-emerald-500" /> : <XCircle className="w-4 h-4 text-rose-500" />}
+                  <div className="min-w-0 flex-1">
+                    <span className="text-sm font-medium text-foreground">{label}</span>
+                    {detail && <p className="text-xs text-muted-foreground truncate">{detail}</p>}
+                  </div>
+                  <span className={`ml-auto text-xs font-bold ${ok ? 'text-emerald-600' : 'text-rose-600'}`}>
+                    {ok ? 'ON' : 'OFF'}
+                  </span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         )}
 
         {/* Navigation Tabs */}
-        <div className="flex gap-2 mb-8 p-1 bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-x-auto">
+        <div className="flex flex-wrap gap-2 mb-8 p-1 bg-card rounded-2xl border border-border">
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
               className={cn(
-                "flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0",
+                "flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
                 activeTab === id
-                  ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
-                  : "text-slate-400 hover:text-white hover:bg-slate-700/50"
+                  ? "bg-[#F2C94C] text-[#1F2937] shadow-lg shadow-[#F2C94C]/20 font-bold"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
             >
               <Icon className="w-4 h-4" />
