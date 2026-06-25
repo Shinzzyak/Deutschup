@@ -71,3 +71,4 @@ Pastikan environment variables berikut diset di Vercel Project Settings:
 Private — DeutschUp
 
 force rebuild
+# deploy trigger Thu Jun 25 20:06:56 UTC 2026
