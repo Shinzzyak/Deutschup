@@ -5,7 +5,8 @@ import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/button';
 import { 
   ChevronRight, RotateCcw, Brain, Check, X, Volume2, 
-  Search, Loader2, List, LayoutGrid, Filter, ArrowUpDown 
+  Search, Loader2, List, LayoutGrid, Filter, ArrowUpDown,
+  BookOpen, Target, Trophy
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
