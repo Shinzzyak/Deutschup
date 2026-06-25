@@ -232,6 +232,18 @@ async function handleCheckMockTest(uid: string, body: any): Promise<any> {
   return result;
 }
 
+async function handleListModels(uid: string, body: any): Promise<any> {
+  const config = await getRoutingConfig();
+  const models = config.models.map(m => ({
+    id: m.id,
+    name: m.name,
+    provider: m.provider_id,
+    isPrimary: m.id === config.primary.id,
+    isFallback: m.id === config.fallback.id,
+  }));
+  return { status: 200, data: { models, primary: config.primary.id, fallback: config.fallback.id } };
+}
+
 const HANDLERS: Record<string, (uid: string, body: any) => Promise<any>> = {
   'chat': handleChat,
   'pronunciation': handlePronunciation,
@@ -242,6 +254,7 @@ const HANDLERS: Record<string, (uid: string, body: any) => Promise<any>> = {
   'generate-study-plan': handleGenerateStudyPlan,
   'generate-mock-test': handleGenerateMockTest,
   'check-mock-test': handleCheckMockTest,
+  'list-models': handleListModels,
 };
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
