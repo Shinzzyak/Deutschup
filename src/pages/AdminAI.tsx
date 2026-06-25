@@ -922,6 +922,43 @@ export default function AdminAI() {
               </div>
             )}
 
+            {/* Quick Presets */}
+            {!showAddProvider && customProviders.length === 0 && (
+              <div className="bg-card rounded-2xl border border-border p-6">
+                <h4 className="text-foreground font-bold mb-3">Quick Add Provider</h4>
+                <p className="text-sm text-muted-foreground mb-4">Choose a popular provider or add custom:</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  {[
+                    { id: 'openrouter', name: 'OpenRouter', url: 'https://openrouter.ai/api/v1', fmt: 'openai', auth: 'bearer' },
+                    { id: 'together', name: 'Together AI', url: 'https://api.together.xyz/v1', fmt: 'openai', auth: 'bearer' },
+                    { id: 'groq', name: 'Groq', url: 'https://api.groq.com/openai/v1', fmt: 'openai', auth: 'bearer' },
+                    { id: 'deepseek', name: 'DeepSeek', url: 'https://api.deepseek.com/v1', fmt: 'openai', auth: 'bearer' },
+                  ].map(preset => (
+                    <button
+                      key={preset.id}
+                      onClick={() => {
+                        setNewProvider({
+                          id: preset.id, name: preset.name, base_url: preset.url,
+                          auth_type: preset.auth, api_format: preset.fmt,
+                          chat_endpoint: '/chat/completions', priority: 50
+                        });
+                        setShowAddProvider(true);
+                      }}
+                      className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-background hover:border-[#F2C94C]/50 hover:bg-[#F2C94C]/5 transition-all"
+                    >
+                      <Globe className="w-6 h-6 text-[#F2C94C]" />
+                      <span className="text-sm font-medium text-foreground">{preset.name}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="mt-4 pt-4 border-t border-border">
+                  <Button variant="outline" onClick={() => setShowAddProvider(true)} className="rounded-xl border-border">
+                    <Plus className="w-4 h-4 mr-1" /> Add Custom Provider
+                  </Button>
+                </div>
+              </div>
+            )}
+
             {/* Add Provider Form */}
             {showAddProvider && (
               <div className="bg-card rounded-3xl border border-purple-500/30 p-6">
@@ -955,10 +992,22 @@ export default function AdminAI() {
                   </div>
                   <div>
                     <label className="text-sm text-muted-foreground mb-1 block">API Format</label>
-                    <select value={newProvider.api_format} onChange={e => setNewProvider(p => ({ ...p, api_format: e.target.value }))}
+                    <select value={newProvider.api_format} onChange={e => {
+                      const fmt = e.target.value;
+                      setNewProvider(p => ({
+                        ...p,
+                        api_format: fmt,
+                        chat_endpoint: fmt === 'gemini' ? '/v1beta/models/{model}:generateContent' :
+                                       fmt === 'anthropic' ? '/v1/messages' :
+                                       '/chat/completions'
+                      }));
+                    }}
                       className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none">
                       <option value="openai">OpenAI Compatible</option>
-                      <option value="gemini">Gemini</option>
+                      <option value="gemini">Google Gemini</option>
+                      <option value="anthropic">Anthropic Claude</option>
+                      <option value="mistral">Mistral</option>
+                      <option value="cohere">Cohere</option>
                     </select>
                   </div>
                   <div>
@@ -984,40 +1033,74 @@ export default function AdminAI() {
             )}
 
             {/* Provider Cards */}
-            {customProviders.map(provider => (
-              <div key={provider.id} className="bg-card rounded-3xl border border-border p-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {customProviders.map(provider => {
+              const providerModels = customModels.filter(m => m.provider_id === provider.id);
+              const providerKey = customKeys.find(k => k.provider_id === provider.id);
+              return (
+              <div key={provider.id} className="bg-card rounded-2xl border border-border p-5">
+                {/* Header */}
+                <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <Globe className="w-6 h-6 text-[#F2C94C]" />
+                    <Globe className="w-5 h-5 text-[#F2C94C]" />
                     <div>
                       <h4 className="font-bold text-foreground">{provider.name}</h4>
                       <p className="text-xs text-muted-foreground font-mono">{provider.base_url}</p>
-                      <div className="flex gap-2 mt-1">
-                        <span className="text-xs bg-muted/50 text-foreground px-2 py-0.5 rounded-lg">{provider.api_format}</span>
-                        <span className="text-xs bg-muted/50 text-foreground px-2 py-0.5 rounded-lg">{provider.auth_type}</span>
-                        <span className="text-xs bg-muted/50 text-foreground px-2 py-0.5 rounded-lg">Priority: {provider.priority}</span>
-                      </div>
                     </div>
                   </div>
-                  <div className="flex gap-2">
-                    <Button size="sm" onClick={() => testCustomProvider(provider.id)} disabled={testing}
-                      className="bg-emerald-600 hover:bg-emerald-700">
-                      {testing ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <TestTube className="w-4 h-4 mr-1" />}
-                      Test
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)}
-                      className="bg-background border-border">
-                      <Plus className="w-4 h-4 mr-1" /> Model
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => setShowAddKey(provider.id)}
-                      className="bg-background border-border">
-                      <Key className="w-4 h-4 mr-1" /> Key
-                    </Button>
-                    <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)}
-                      className="bg-red-900/30 border-red-700/50 hover:bg-red-900/50 text-red-400">
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                  <div className="flex gap-1.5">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#F2C94C]/10 text-[#B8952E]">{provider.api_format}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">{provider.auth_type}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">P{provider.priority}</span>
                   </div>
+                </div>
+
+                {/* Key Input */}
+                <div className="flex gap-2 mb-3">
+                  <input
+                    type="password"
+                    placeholder={providerKey ? '•••••••• (key saved)' : 'Paste API key...'}
+                    className="flex-1 px-3 py-1.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
+                    id={`custom-key-${provider.id}`}
+                  />
+                  <Button size="sm" onClick={async () => {
+                    const input = document.getElementById(`custom-key-${provider.id}`) as HTMLInputElement;
+                    if (!input?.value) return;
+                    setSavingKey(provider.id);
+                    await fetch('/api/custom-provider?action=add-key', {
+                      method: 'POST',
+                      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+                      body: JSON.stringify({ provider_id: provider.id, key_name: 'default', api_key: input.value })
+                    });
+                    input.value = '';
+                    setSavingKey(null);
+                    await fetchData();
+                  }} disabled={savingKey === provider.id} className="bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold rounded-lg text-xs px-3">
+                    {savingKey === provider.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Save'}
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => testCustomProvider(provider.id)} disabled={testing} className="rounded-lg">
+                    {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <TestTube className="w-3 h-3" />}
+                  </Button>
+                </div>
+
+                {/* Models */}
+                {providerModels.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-3">
+                    {providerModels.map(m => (
+                      <span key={m.id} className="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
+                        {m.display_name || m.model_id}
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex gap-2">
+                  <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)} className="rounded-lg text-xs">
+                    <Plus className="w-3 h-3 mr-1" /> Model
+                  </Button>
+                  <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)} className="rounded-lg text-xs text-red-500 hover:text-red-600">
+                    <Trash2 className="w-3 h-3 mr-1" /> Delete
+                  </Button>
                 </div>
 
                 {/* Add Model Form */}
@@ -1102,7 +1185,8 @@ export default function AdminAI() {
                   </div>
                 </div>
               </div>
-            ))}
+              );
+            })}
 
             {customProviders.length === 0 && !showAddProvider && (
               <div className="text-center py-12">
