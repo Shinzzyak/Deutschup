@@ -20303,4 +20303,10 @@ export const courseData: Lesson[] = [
   }
 
 ];
-export const allVocab: VocabWord[] = courseData.flatMap(lesson => lesson.vocabulary || []);
+import { wortschatzA1Vocab } from './wortschatz-a1';
+
+// Merge lesson vocab + Wortschatz A1 (deduplicated)
+const lessonVocab = courseData.flatMap(lesson => lesson.vocabulary || []);
+const seenIds = new Set(lessonVocab.map(v => v.id));
+const additionalWortschatz = wortschatzA1Vocab.filter(v => !seenIds.has(v.id));
+export const allVocab: VocabWord[] = [...lessonVocab, ...additionalWortschatz];
