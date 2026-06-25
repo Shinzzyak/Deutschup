@@ -219,6 +219,17 @@ export const useAuthStore = create<AuthState>((set, get) => {
       
       console.log('[AUTH] logout — clearing state');
       
+      // Sign out from Clerk (if available)
+      try {
+        const clerk = (window as any).Clerk;
+        if (clerk && typeof clerk.signOut === 'function') {
+          await clerk.signOut();
+          console.log('[AUTH] Clerk signOut done');
+        }
+      } catch (e) {
+        console.warn('[AUTH] Clerk signOut failed:', e);
+      }
+      
       // Clear Clerk localStorage keys
       Object.keys(localStorage).forEach(key => {
         if (key.startsWith('clerk-') || key.startsWith('__clerk')) {
