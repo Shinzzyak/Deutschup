@@ -927,7 +927,7 @@ export default function AdminAI() {
               <div className="bg-card rounded-2xl border border-border p-6">
                 <h4 className="text-foreground font-bold mb-3">Quick Add Provider</h4>
                 <p className="text-sm text-muted-foreground mb-4">Choose a popular provider or add custom:</p>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                   {[
                     { id: 'openrouter', name: 'OpenRouter', url: 'https://openrouter.ai/api/v1', fmt: 'openai', auth: 'bearer' },
                     { id: 'together', name: 'Together AI', url: 'https://api.together.xyz/v1', fmt: 'openai', auth: 'bearer' },
@@ -1094,7 +1094,7 @@ export default function AdminAI() {
                 )}
 
                 {/* Actions */}
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)} className="rounded-lg text-xs">
                     <Plus className="w-3 h-3 mr-1" /> Model
                   </Button>
@@ -1107,16 +1107,18 @@ export default function AdminAI() {
                 {showAddModel === provider.id && (
                   <div className="mt-4 pt-4 border-t border-border">
                     <h5 className="text-sm font-medium text-foreground mb-3">Add Model</h5>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input value={newModel.model_id} onChange={e => setNewModel(m => ({ ...m, model_id: e.target.value }))}
                         placeholder="Model ID (e.g. anthropic/claude-3.5-sonnet)"
-                        className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                        className="flex-1 min-w-0 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input value={newModel.display_name} onChange={e => setNewModel(m => ({ ...m, display_name: e.target.value }))}
                         placeholder="Display Name"
-                        className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
-                      <Button size="sm" onClick={() => createCustomModel(provider.id)} disabled={saving || !newModel.model_id || !newModel.display_name}
-                        className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
-                      <Button size="sm" variant="outline" onClick={() => setShowAddModel(null)} className="bg-background border-border">Cancel</Button>
+                        className="flex-1 min-w-0 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                      <div className="flex gap-2">
+                        <Button size="sm" onClick={() => createCustomModel(provider.id)} disabled={saving || !newModel.model_id || !newModel.display_name}
+                          className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
+                        <Button size="sm" variant="outline" onClick={() => setShowAddModel(null)} className="bg-background border-border">Cancel</Button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1125,13 +1127,13 @@ export default function AdminAI() {
                 {showAddKey === provider.id && (
                   <div className="mt-4 pt-4 border-t border-border">
                     <h5 className="text-sm font-medium text-foreground mb-3">Add API Key</h5>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input value={newKey.key_name} onChange={e => setNewKey(k => ({ ...k, key_name: e.target.value }))}
                         placeholder="Key Name"
-                        className="w-32 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                        className="sm:w-32 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input type="password" value={newKey.api_key} onChange={e => setNewKey(k => ({ ...k, api_key: e.target.value }))}
                         placeholder="sk-..."
-                        className="flex-1 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                        className="flex-1 min-w-0 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <Button size="sm" onClick={() => createCustomKey(provider.id)} disabled={saving || !newKey.api_key}
                         className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
                       <Button size="sm" variant="outline" onClick={() => setShowAddKey(null)} className="bg-background border-border">Cancel</Button>
