@@ -404,6 +404,89 @@ async function createMimoClient(model: ModelConfig): Promise<AIProviderClient> {
   };
 }
 
+// ============================================================
+// Dynamic Custom Provider Client (OpenAI-compatible)
+// ============================================================
+
+async function createCustomProviderClient(model: ModelConfig): Promise<AIProviderClient> {
+  const supabase = getSupabaseAdmin();
+
+  const { data: provider } = await supabase
+    .from('custom_providers')
+    .select('*')
+    .eq('id', model.provider_id)
+    .single();
+
+  if (!provider) throw new Error(`Custom provider not found: ${model.provider_id}`);
+
+  const { data: keyRow } = await supabase
+    .from('custom_provider_keys')
+    .select('api_key')
+    .eq('provider_id', model.provider_id)
+    .eq('is_active', true)
+    .order('priority')
+    .limit(1)
+    .single();
+
+  if (!keyRow?.api_key) throw new Error(`No API key for custom provider: ${model.provider_id}`);
+  const apiKey = keyRow.api_key;
+
+  const baseUrl = provider.base_url.replace(/\/$/, '');
+  const chatUrl = `${baseUrl}${provider.chat_endpoint}`;
+
+  function buildHeaders(): Record<string, string> {
+    const h: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (provider.auth_type === 'bearer') {
+      h['Authorization'] = `Bearer ${apiKey}`;
+    } else if (provider.auth_type === 'x-api-key') {
+      h[provider.auth_header || 'X-API-Key'] = apiKey;
+    }
+    if (provider.config?.headers) Object.assign(h, provider.config.headers);
+    return h;
+  }
+
+  return {
+    providerId: model.provider_id,
+    modelId: model.id,
+    modelName: model.model_id || model.name,
+    chat: async (message, systemPrompt, history = []) => {
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...history.map(h => ({ role: h.role === 'model' ? 'assistant' : 'user', content: h.text })),
+        { role: 'user', content: message }
+      ];
+      const response = await fetch(chatUrl, {
+        method: 'POST',
+        headers: buildHeaders(),
+        body: JSON.stringify({ model: model.model_id || model.name, messages, temperature: model.config?.temperature ?? 0.7 }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Custom provider error: ${response.status}`);
+      }
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content || '';
+    },
+    generateJson: async (prompt, schema) => {
+      const messages = [
+        { role: 'system', content: `Respond in valid JSON matching this schema: ${JSON.stringify(schema)}` },
+        { role: 'user', content: prompt }
+      ];
+      const response = await fetch(chatUrl, {
+        method: 'POST',
+        headers: buildHeaders(),
+        body: JSON.stringify({ model: model.model_id || model.name, messages, temperature: model.config?.temperature ?? 0.7 }),
+      });
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error?.message || `Custom provider error: ${response.status}`);
+      }
+      const data = await response.json();
+      return JSON.parse(data.choices?.[0]?.message?.content || '{}');
+    }
+  };
+}
+
 // Client factory by provider ID
 const CLIENT_FACTORIES: Record<string, (model: ModelConfig) => Promise<AIProviderClient>> = {
   gemini: createGeminiClient,
@@ -413,11 +496,19 @@ const CLIENT_FACTORIES: Record<string, (model: ModelConfig) => Promise<AIProvide
 };
 
 export async function createProviderClient(model: ModelConfig): Promise<AIProviderClient> {
-  const factory = CLIENT_FACTORIES[model.provider_id];
-  if (!factory) {
-    throw new Error(`No client factory for provider: ${model.provider_id}`);
-  }
-  return factory(model);
+  if (CLIENT_FACTORIES[model.provider_id]) return CLIENT_FACTORIES[model.provider_id](model);
+
+  // Check custom providers table
+  const supabase = getSupabaseAdmin();
+  const { data } = await supabase
+    .from('custom_providers')
+    .select('id')
+    .eq('id', model.provider_id)
+    .eq('enabled', true)
+    .single();
+
+  if (data) return createCustomProviderClient(model);
+  throw new Error(`No client factory for provider: ${model.provider_id}`);
 }
 
 // ============================================================

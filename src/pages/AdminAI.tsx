@@ -8,7 +8,7 @@ import {
   Loader2, Save, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
   Server, Cpu, Activity, Zap, ArrowLeft, Settings, BarChart3, Key,
   Shield, TrendingUp, Clock, AlertCircle, Eye, EyeOff, ChevronRight,
-  Wifi, WifiOff, Gauge
+  Wifi, WifiOff, Gauge, Puzzle, Plus, Trash2, TestTube, Globe, ExternalLink
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -75,7 +75,20 @@ export default function AdminAI() {
   const [usageStats, setUsageStats] = useState<UsageStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'health' | 'providers' | 'routing' | 'usage' | 'secrets'>('health');
+  const [activeTab, setActiveTab] = useState<'health' | 'providers' | 'custom' | 'routing' | 'usage' | 'secrets'>('health');
+
+  // Custom providers state
+  const [customProviders, setCustomProviders] = useState<any[]>([]);
+  const [customModels, setCustomModels] = useState<any[]>([]);
+  const [customKeys, setCustomKeys] = useState<any[]>([]);
+  const [showAddProvider, setShowAddProvider] = useState(false);
+  const [showAddModel, setShowAddModel] = useState<string | null>(null);
+  const [showAddKey, setShowAddKey] = useState<string | null>(null);
+  const [testResult, setTestResult] = useState<any>(null);
+  const [testing, setTesting] = useState(false);
+  const [newProvider, setNewProvider] = useState({ id: '', name: '', base_url: '', auth_type: 'bearer', api_format: 'openai', chat_endpoint: '/chat/completions', priority: 50 });
+  const [newModel, setNewModel] = useState({ id: '', model_id: '', display_name: '' });
+  const [newKey, setNewKey] = useState({ key_name: 'default', api_key: '' });
 
   useEffect(() => {
     if (profileData?.role !== 'admin') {
@@ -92,7 +105,7 @@ export default function AdminAI() {
     
     setLoading(true);
     try {
-      const [providersRes, modelsRes, statsRes, healthRes] = await Promise.all([
+      const [providersRes, modelsRes, statsRes, healthRes, customRes] = await Promise.all([
         fetch('/api/admin-ai?action=providers', {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
@@ -104,6 +117,9 @@ export default function AdminAI() {
         }),
         fetch('/api/admin-ai?action=health-check', {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
+        }),
+        fetch('/api/custom-provider?action=full-config', {
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
         })
       ]);
 
@@ -114,6 +130,12 @@ export default function AdminAI() {
         const health = await healthRes.json();
         setHealthData(health.providers || []);
         setHealthSummary(health.summary || null);
+      }
+      if (customRes.ok) {
+        const custom = await customRes.json();
+        setCustomProviders(custom.providers || []);
+        setCustomModels(custom.models || []);
+        setCustomKeys(custom.keys || []);
       }
     } catch (e) {
       console.error('Fetch AI data failed:', e);
@@ -316,9 +338,102 @@ export default function AdminAI() {
   const totalTokens = useMemo(() => usageStats.reduce((sum, s) => sum + s.total_tokens_in + s.total_tokens_out, 0), [usageStats]);
   const totalFailed = useMemo(() => usageStats.reduce((sum, s) => sum + s.failed_requests, 0), [usageStats]);
 
+  // ── Custom Provider CRUD ──
+  const createCustomProvider = async () => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/custom-provider?action=create-provider', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+        body: JSON.stringify(newProvider)
+      });
+      if (res.ok) {
+        setShowAddProvider(false);
+        setNewProvider({ id: '', name: '', base_url: '', auth_type: 'bearer', api_format: 'openai', chat_endpoint: '/chat/completions', priority: 50 });
+        await fetchData();
+      }
+    } finally { setSaving(false); }
+  };
+
+  const deleteCustomProvider = async (id: string) => {
+    if (!confirm('Delete this provider and all its models/keys?')) return;
+    await fetch('/api/custom-provider?action=delete-provider', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+      body: JSON.stringify({ id })
+    });
+    await fetchData();
+  };
+
+  const createCustomModel = async (providerId: string) => {
+    setSaving(true);
+    try {
+      const modelId = `${providerId}/${newModel.model_id}`;
+      const res = await fetch('/api/custom-provider?action=create-model', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+        body: JSON.stringify({ ...newModel, id: modelId, provider_id: providerId })
+      });
+      if (res.ok) {
+        setShowAddModel(null);
+        setNewModel({ id: '', model_id: '', display_name: '' });
+        await fetchData();
+      }
+    } finally { setSaving(false); }
+  };
+
+  const deleteCustomModel = async (id: string) => {
+    await fetch('/api/custom-provider?action=delete-model', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+      body: JSON.stringify({ id })
+    });
+    await fetchData();
+  };
+
+  const createCustomKey = async (providerId: string) => {
+    setSaving(true);
+    try {
+      const res = await fetch('/api/custom-provider?action=add-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+        body: JSON.stringify({ ...newKey, provider_id: providerId })
+      });
+      if (res.ok) {
+        setShowAddKey(null);
+        setNewKey({ key_name: 'default', api_key: '' });
+        await fetchData();
+      }
+    } finally { setSaving(false); }
+  };
+
+  const deleteCustomKey = async (id: string) => {
+    await fetch('/api/custom-provider?action=delete-key', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+      body: JSON.stringify({ id })
+    });
+    await fetchData();
+  };
+
+  const testCustomProvider = async (providerId: string) => {
+    setTesting(true);
+    setTestResult(null);
+    try {
+      const res = await fetch('/api/custom-provider?action=test-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${await getToken()}` },
+        body: JSON.stringify({ provider_id: providerId })
+      });
+      const result = await res.json();
+      setTestResult({ providerId, ...result });
+    } finally { setTesting(false); }
+  };
+
   const tabs = [
     { id: 'health' as const, label: 'Health', icon: Activity },
     { id: 'providers' as const, label: 'Providers', icon: Server },
+    { id: 'custom' as const, label: 'Custom', icon: Puzzle },
     { id: 'routing' as const, label: 'Routing', icon: Zap },
     { id: 'usage' as const, label: 'Usage', icon: BarChart3 },
     { id: 'secrets' as const, label: 'Secrets', icon: Key },
@@ -808,6 +923,236 @@ export default function AdminAI() {
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Custom Providers Tab */}
+        {activeTab === 'custom' && (
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-500/10 flex items-center justify-center">
+                  <Puzzle className="w-5 h-5 text-purple-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-white">Custom Providers</h3>
+                  <p className="text-sm text-slate-500">Add OpenRouter, Together, Groq, or any OpenAI-compatible provider</p>
+                </div>
+              </div>
+              <Button onClick={() => setShowAddProvider(true)} className="bg-purple-600 hover:bg-purple-700">
+                <Plus className="w-4 h-4 mr-1" /> Add Provider
+              </Button>
+            </div>
+
+            {/* Test Result Banner */}
+            {testResult && (
+              <div className={cn(
+                "rounded-2xl p-4 border flex items-center gap-3",
+                testResult.ok ? "bg-emerald-500/10 border-emerald-500/30" : "bg-red-500/10 border-red-500/30"
+              )}>
+                {testResult.ok ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <XCircle className="w-5 h-5 text-red-400" />}
+                <div>
+                  <p className={cn("font-medium", testResult.ok ? "text-emerald-300" : "text-red-300")}>
+                    {testResult.ok ? 'Connection Successful' : 'Connection Failed'}
+                  </p>
+                  <p className="text-xs text-slate-400">
+                    {testResult.providerId} — {testResult.latencyMs}ms
+                    {testResult.error && ` — ${testResult.error}`}
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {/* Add Provider Form */}
+            {showAddProvider && (
+              <div className="bg-slate-800/60 backdrop-blur-sm rounded-3xl border border-purple-500/30 p-6">
+                <h4 className="text-white font-bold mb-4">Add Custom Provider</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">Provider ID *</label>
+                    <input value={newProvider.id} onChange={e => setNewProvider(p => ({ ...p, id: e.target.value }))}
+                      placeholder="e.g. openrouter, together, groq"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">Display Name *</label>
+                    <input value={newProvider.name} onChange={e => setNewProvider(p => ({ ...p, name: e.target.value }))}
+                      placeholder="e.g. OpenRouter"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                  </div>
+                  <div className="md:col-span-2">
+                    <label className="text-sm text-slate-400 mb-1 block">Base URL *</label>
+                    <input value={newProvider.base_url} onChange={e => setNewProvider(p => ({ ...p, base_url: e.target.value }))}
+                      placeholder="https://openrouter.ai/api/v1"
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">Auth Type</label>
+                    <select value={newProvider.auth_type} onChange={e => setNewProvider(p => ({ ...p, auth_type: e.target.value }))}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none">
+                      <option value="bearer">Bearer Token</option>
+                      <option value="x-api-key">X-API-Key Header</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">API Format</label>
+                    <select value={newProvider.api_format} onChange={e => setNewProvider(p => ({ ...p, api_format: e.target.value }))}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none">
+                      <option value="openai">OpenAI Compatible</option>
+                      <option value="gemini">Gemini</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">Chat Endpoint</label>
+                    <input value={newProvider.chat_endpoint} onChange={e => setNewProvider(p => ({ ...p, chat_endpoint: e.target.value }))}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                  </div>
+                  <div>
+                    <label className="text-sm text-slate-400 mb-1 block">Priority</label>
+                    <input type="number" value={newProvider.priority} onChange={e => setNewProvider(p => ({ ...p, priority: Number(e.target.value) }))}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-4">
+                  <Button onClick={createCustomProvider} disabled={saving || !newProvider.id || !newProvider.name || !newProvider.base_url}
+                    className="bg-purple-600 hover:bg-purple-700">
+                    {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
+                    Create Provider
+                  </Button>
+                  <Button variant="outline" onClick={() => setShowAddProvider(false)} className="bg-slate-800 border-slate-700">Cancel</Button>
+                </div>
+              </div>
+            )}
+
+            {/* Provider Cards */}
+            {customProviders.map(provider => (
+              <div key={provider.id} className="bg-slate-800/40 backdrop-blur-sm rounded-3xl border border-slate-700/50 p-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-6 h-6 text-purple-400" />
+                    <div>
+                      <h4 className="font-bold text-white">{provider.name}</h4>
+                      <p className="text-xs text-slate-500 font-mono">{provider.base_url}</p>
+                      <div className="flex gap-2 mt-1">
+                        <span className="text-xs bg-slate-700/50 text-slate-300 px-2 py-0.5 rounded-lg">{provider.api_format}</span>
+                        <span className="text-xs bg-slate-700/50 text-slate-300 px-2 py-0.5 rounded-lg">{provider.auth_type}</span>
+                        <span className="text-xs bg-slate-700/50 text-slate-300 px-2 py-0.5 rounded-lg">Priority: {provider.priority}</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={() => testCustomProvider(provider.id)} disabled={testing}
+                      className="bg-emerald-600 hover:bg-emerald-700">
+                      {testing ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <TestTube className="w-4 h-4 mr-1" />}
+                      Test
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)}
+                      className="bg-slate-800 border-slate-700">
+                      <Plus className="w-4 h-4 mr-1" /> Model
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => setShowAddKey(provider.id)}
+                      className="bg-slate-800 border-slate-700">
+                      <Key className="w-4 h-4 mr-1" /> Key
+                    </Button>
+                    <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)}
+                      className="bg-red-900/30 border-red-700/50 hover:bg-red-900/50 text-red-400">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Add Model Form */}
+                {showAddModel === provider.id && (
+                  <div className="mt-4 pt-4 border-t border-slate-700/50">
+                    <h5 className="text-sm font-medium text-slate-300 mb-3">Add Model</h5>
+                    <div className="flex gap-3">
+                      <input value={newModel.model_id} onChange={e => setNewModel(m => ({ ...m, model_id: e.target.value }))}
+                        placeholder="Model ID (e.g. anthropic/claude-3.5-sonnet)"
+                        className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      <input value={newModel.display_name} onChange={e => setNewModel(m => ({ ...m, display_name: e.target.value }))}
+                        placeholder="Display Name"
+                        className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      <Button size="sm" onClick={() => createCustomModel(provider.id)} disabled={saving || !newModel.model_id || !newModel.display_name}
+                        className="bg-purple-600 hover:bg-purple-700">Add</Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowAddModel(null)} className="bg-slate-800 border-slate-700">Cancel</Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Add Key Form */}
+                {showAddKey === provider.id && (
+                  <div className="mt-4 pt-4 border-t border-slate-700/50">
+                    <h5 className="text-sm font-medium text-slate-300 mb-3">Add API Key</h5>
+                    <div className="flex gap-3">
+                      <input value={newKey.key_name} onChange={e => setNewKey(k => ({ ...k, key_name: e.target.value }))}
+                        placeholder="Key Name"
+                        className="w-32 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      <input type="password" value={newKey.api_key} onChange={e => setNewKey(k => ({ ...k, api_key: e.target.value }))}
+                        placeholder="sk-..."
+                        className="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2 text-white text-sm focus:border-purple-500 focus:outline-none" />
+                      <Button size="sm" onClick={() => createCustomKey(provider.id)} disabled={saving || !newKey.api_key}
+                        className="bg-purple-600 hover:bg-purple-700">Add</Button>
+                      <Button size="sm" variant="outline" onClick={() => setShowAddKey(null)} className="bg-slate-800 border-slate-700">Cancel</Button>
+                    </div>
+                  </div>
+                )}
+
+                {/* Models & Keys */}
+                <div className="mt-4 pt-4 border-t border-slate-700/50 grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <p className="text-sm font-medium text-slate-400 mb-2">Models ({customModels.filter(m => m.provider_id === provider.id).length})</p>
+                    <div className="space-y-1">
+                      {customModels.filter(m => m.provider_id === provider.id).map(model => (
+                        <div key={model.id} className="flex items-center justify-between bg-slate-900/40 rounded-xl px-3 py-2">
+                          <div>
+                            <span className="text-sm text-white">{model.display_name}</span>
+                            <span className="text-xs text-slate-500 ml-2 font-mono">{model.model_id}</span>
+                          </div>
+                          <button onClick={() => deleteCustomModel(model.id)} className="text-red-400 hover:text-red-300">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                      {customModels.filter(m => m.provider_id === provider.id).length === 0 && (
+                        <p className="text-xs text-slate-600">No models added yet</p>
+                      )}
+                    </div>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-400 mb-2">Keys ({customKeys.filter(k => k.provider_id === provider.id).length})</p>
+                    <div className="space-y-1">
+                      {customKeys.filter(k => k.provider_id === provider.id).map(key => (
+                        <div key={key.id} className="flex items-center justify-between bg-slate-900/40 rounded-xl px-3 py-2">
+                          <div>
+                            <span className="text-sm text-white">{key.key_name}</span>
+                            <span className={cn("text-xs ml-2 px-1.5 py-0.5 rounded-lg",
+                              key.status === 'valid' ? 'bg-emerald-500/10 text-emerald-400' :
+                              key.status === 'invalid' ? 'bg-red-500/10 text-red-400' :
+                              'bg-slate-700/50 text-slate-400'
+                            )}>{key.status}</span>
+                          </div>
+                          <button onClick={() => deleteCustomKey(key.id)} className="text-red-400 hover:text-red-300">
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                      {customKeys.filter(k => k.provider_id === provider.id).length === 0 && (
+                        <p className="text-xs text-slate-600">No keys added yet</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {customProviders.length === 0 && !showAddProvider && (
+              <div className="text-center py-12">
+                <Puzzle className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+                <p className="text-slate-400">No custom providers yet</p>
+                <p className="text-sm text-slate-600">Add OpenRouter, Together, Groq, or any OpenAI-compatible API</p>
+              </div>
+            )}
           </div>
         )}
 
