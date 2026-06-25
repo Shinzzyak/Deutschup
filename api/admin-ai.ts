@@ -609,15 +609,18 @@ async function handleHealthCheck(_req: VercelRequest, res: VercelResponse, supab
     const results: HealthCheckResult[] = [];
 
     for (const provider of providers || []) {
-      // Check if key exists
+      // Check if key exists — match ai-router.ts logic (db + env var)
       const { data: secret } = await supabase
         .from('provider_secrets')
         .select('secret_value')
         .eq('provider_id', provider.id)
         .eq('secret_key', 'api_key')
-        .single();
+        .maybeSingle();
 
-      const key_exists = !!secret?.secret_value;
+      const envKey = `${provider.id.toUpperCase()}_API_KEY`;
+      const envValue = process.env[envKey];
+      const key_exists = !!(secret?.secret_value || envValue);
+      const key_source = secret?.secret_value ? 'database' : envValue ? 'env_var' : 'none';
       
       if (!provider.enabled) {
         results.push({
@@ -629,6 +632,7 @@ async function handleHealthCheck(_req: VercelRequest, res: VercelResponse, supab
           latency_ms: null,
           checked_at: new Date().toISOString(),
           error_message: null,
+          key_source,
         });
         continue;
       }
@@ -643,12 +647,14 @@ async function handleHealthCheck(_req: VercelRequest, res: VercelResponse, supab
           latency_ms: null,
           checked_at: new Date().toISOString(),
           error_message: 'No API key configured',
+          key_source: 'none',
         });
         continue;
       }
 
       // Validate key
-      const validation = await validateProviderKey(provider.id, secret.secret_value);
+      const actualKey = secret?.secret_value || envValue!;
+      const validation = await validateProviderKey(provider.id, actualKey);
       
       let runtime_status: ProviderRuntimeStatus;
       if (validation.success) {
@@ -670,6 +676,7 @@ async function handleHealthCheck(_req: VercelRequest, res: VercelResponse, supab
         latency_ms: validation.latency_ms,
         checked_at: new Date().toISOString(),
         error_message: validation.error,
+        key_source,
       });
     }
 
