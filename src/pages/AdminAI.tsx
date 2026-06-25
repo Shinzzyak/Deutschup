@@ -454,15 +454,15 @@ export default function AdminAI() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 pb-20">
-      {/* Decorative background */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#F2C94C]/5 rounded-full blur-3xl" />
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-purple-500/5 rounded-full blur-3xl" />
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/[0.03] rounded-full blur-3xl" />
+    <div className="max-w-7xl mx-auto py-12 px-6">
+      {/* Decorative background — hidden, kept for structure */}
+      <div className="hidden">
+        <div className="" />
+        <div className="" />
+        <div className="" />
       </div>
 
-      <div className="relative max-w-6xl mx-auto px-4 md:px-6">
+      <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div>
