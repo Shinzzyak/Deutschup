@@ -582,7 +582,7 @@ export async function executeWithRouting<T>(
         endpoint,
         latencyMs,
         success: true,
-      }).catch(() => {});
+      }).catch((e: any) => console.error('[AI-LOG] Failed to log usage:', e.message));
 
       return { result, providerId: model.provider_id, modelId: model.id, latencyMs };
     } catch (error: any) {
@@ -601,7 +601,7 @@ export async function executeWithRouting<T>(
     latencyMs,
     success: false,
     errorMessage: errors.join('; '),
-  }).catch(() => {});
+  }).catch((e: any) => console.error('[AI-LOG] Failed to log usage:', e.message));
 
   throw new Error(`All AI providers failed: ${errors.join('; ')}`);
 }

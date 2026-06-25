@@ -8,7 +8,7 @@ import SecretList from '../components/admin/SecretList';
 import {
   Loader2, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
   Server, Cpu, Activity, Zap, ArrowLeft, BarChart3, Key,
-  Shield, TrendingUp, Clock, AlertCircle, EyeOff,
+  Shield, TrendingUp, Clock, AlertCircle, EyeOff, Eye,
   ChevronRight, Gauge, Puzzle, Plus, Trash2, TestTube, Globe
 } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -88,6 +88,10 @@ export default function AdminAI() {
   const [showAddKey, setShowAddKey] = useState<string | null>(null);
   const [testResult, setTestResult] = useState<any>(null);
   const [testing, setTesting] = useState(false);
+  const [secrets, setSecrets] = useState<any[]>([]);
+  const [providerKeys, setProviderKeys] = useState<Record<string, string>>({});
+  const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
+  const [savingKey, setSavingKey] = useState<string | null>(null);
   const [newProvider, setNewProvider] = useState({ id: '', name: '', base_url: '', auth_type: 'bearer', api_format: 'openai', chat_endpoint: '/chat/completions', priority: 50 });
   const [newModel, setNewModel] = useState({ id: '', model_id: '', display_name: '' });
   const [newKey, setNewKey] = useState({ key_name: 'default', api_key: '' });
@@ -107,7 +111,7 @@ export default function AdminAI() {
     
     setLoading(true);
     try {
-      const [providersRes, modelsRes, statsRes, healthRes, customRes, sysHealthRes] = await Promise.all([
+      const [providersRes, modelsRes, statsRes, healthRes, customRes, sysHealthRes, secretsRes] = await Promise.all([
         fetch('/api/admin-ai?action=providers', {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
@@ -124,6 +128,9 @@ export default function AdminAI() {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
         fetch('/api/admin?action=system-health', {
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
+        }),
+        fetch('/api/admin-ai?action=secrets', {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
         })
       ]);
@@ -143,6 +150,16 @@ export default function AdminAI() {
         setCustomKeys(custom.keys || []);
       }
       if (sysHealthRes.ok) setSystemHealth(await sysHealthRes.json());
+      if (secretsRes.ok) {
+        const secretsData = await secretsRes.json();
+        setSecrets(secretsData);
+        // Pre-populate providerKeys with masked values
+        const keysMap: Record<string, string> = {};
+        for (const s of secretsData) {
+          keysMap[s.provider_id] = '••••••••'; // masked
+        }
+        setProviderKeys(prev => ({ ...keysMap, ...prev }));
+      }
     } catch (e) {
       console.error('Fetch AI data failed:', e);
     } finally {
@@ -169,6 +186,65 @@ export default function AdminAI() {
       console.error('Toggle provider failed:', e);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const saveKey = async (providerId: string) => {
+    const key = providerKeys[providerId];
+    if (!key || key === '••••••••') return;
+    setSavingKey(providerId);
+    try {
+      const res = await fetch('/api/admin-ai?action=secret-add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getToken()}`
+        },
+        body: JSON.stringify({
+          provider_id: providerId,
+          secret_key: 'api_key',
+          secret_value: key
+        })
+      });
+      if (res.ok) {
+        // Auto-validate after saving
+        await validateProvider(providerId);
+        // Refresh secrets list
+        const secretsRes = await fetch('/api/admin-ai?action=secrets', {
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
+        });
+        if (secretsRes.ok) setSecrets(await secretsRes.json());
+        // Clear the input
+        setProviderKeys(prev => ({ ...prev, [providerId]: '••••••••' }));
+      }
+    } catch (e) {
+      console.error('Save key failed:', e);
+    } finally {
+      setSavingKey(null);
+    }
+  };
+
+  const deleteKey = async (providerId: string) => {
+    const secret = secrets.find(s => s.provider_id === providerId);
+    if (!secret) return;
+    setSavingKey(providerId);
+    try {
+      await fetch('/api/admin-ai?action=secret-delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getToken()}`
+        },
+        body: JSON.stringify({ id: secret.id })
+      });
+      setProviderKeys(prev => ({ ...prev, [providerId]: '' }));
+      setSecrets(prev => prev.filter(s => s.provider_id !== providerId));
+      // Re-validate
+      await validateProvider(providerId);
+    } catch (e) {
+      console.error('Delete key failed:', e);
+    } finally {
+      setSavingKey(null);
     }
   };
 
@@ -661,301 +737,154 @@ export default function AdminAI() {
           </div>
         )}
 
-        {/* Providers Tab */}
+        {/* Providers Tab — OpenClaw Style */}
         {activeTab === 'providers' && (
           <div className="space-y-4">
+            {/* Info Banner */}
+            <div className="bg-[#F2C94C]/5 border border-[#F2C94C]/20 rounded-2xl p-4 flex items-center gap-3">
+              <Key className="w-5 h-5 text-[#F2C94C] shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">API Key Management</p>
+                <p className="text-xs text-muted-foreground">Paste your API keys below. Keys are stored securely in the database and used by the AI chat engine.</p>
+              </div>
+            </div>
+
             {providers.map(provider => {
               const health = getProviderHealth(provider.id);
               const status = health?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED');
+              const hasKey = secrets.some(s => s.provider_id === provider.id);
+              const keySource = health?.key_source || (hasKey ? 'database' : 'none');
+              const currentKey = providerKeys[provider.id] || '';
+
               return (
                 <div
                   key={provider.id}
                   className={cn(
-                    "bg-card rounded-3xl border-2 p-6 transition-all",
+                    "bg-card rounded-2xl border p-5 transition-all",
                     status === 'ACTIVE' ? "border-emerald-500/30" :
-                    status === 'MISSING_KEY' || status === 'RATE_LIMITED' ? "border-amber-500/30" :
+                    status === 'MISSING_KEY' ? "border-amber-500/30" :
                     status === 'UNREACHABLE' || status === 'INVALID_KEY' ? "border-red-500/30" :
-                    provider.enabled ? "border-border" : "border-border opacity-60"
+                    "border-border"
                   )}
                 >
-                  <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                    <div className="flex items-center space-x-4">
-                      {getStatusIcon(status, 'md')}
+                  {/* Header Row */}
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      {getStatusIcon(status)}
                       <div>
-                        <h3 className="font-bold text-lg text-foreground">{provider.name}</h3>
-                        <div className="flex items-center gap-3 mt-1">
-                          <span className="text-sm text-muted-foreground">
-                            Priority: {provider.priority}
-                          </span>
-                          <span className={cn(
-                            "px-2 py-0.5 rounded-lg text-xs font-medium",
-                            getStatusBadge(status)
-                          )}>
+                        <div className="flex items-center gap-2">
+                          <h3 className="font-bold text-foreground">{provider.name}</h3>
+                          <span className={cn("px-2 py-0.5 rounded text-[10px] font-bold", getStatusBadge(status))}>
                             {getStatusLabel(status)}
                           </span>
+                        </div>
+                        <div className="flex items-center gap-3 mt-0.5">
+                          <span className="text-xs text-muted-foreground">Priority: {provider.priority}</span>
                           {health?.latency_ms != null && (
-                            <span className="text-xs text-muted-foreground">
-                              {health.latency_ms}ms
+                            <span className="text-xs text-muted-foreground">{health.latency_ms}ms</span>
+                          )}
+                          {keySource !== 'none' && (
+                            <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground">
+                              {keySource === 'database' ? '🔑 DB' : '⚙️ ENV'}
                             </span>
                           )}
                         </div>
                         {health?.error_message && (
-                          <p className="text-xs text-red-400 mt-1">{health.error_message}</p>
+                          <p className="text-xs text-red-500 mt-1">{health.error_message}</p>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center gap-2">
                       <Button
                         variant="outline"
                         size="sm"
-                        onClick={() => validateProvider(provider.id)}
-                        disabled={validating === provider.id}
-                        className="bg-background border-border hover:bg-muted"
-                      >
-                        {validating === provider.id ? (
-                          <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                        ) : (
-                          <RefreshCw className="w-4 h-4 mr-1" />
-                        )}
-                        Validate
-                      </Button>
-                      <Button
-                        variant={provider.enabled ? "default" : "outline"}
-                        size="sm"
                         onClick={() => toggleProvider(provider.id, !provider.enabled)}
                         disabled={saving}
-                        className={provider.enabled ? "bg-emerald-600 hover:bg-emerald-700" : "bg-background border-border hover:bg-muted"}
+                        className={cn("rounded-lg text-xs", provider.enabled ? "border-emerald-500/30 text-emerald-600" : "border-border text-muted-foreground")}
                       >
-                        {provider.enabled ? 'Enabled' : 'Disabled'}
+                        {provider.enabled ? 'ON' : 'OFF'}
                       </Button>
                     </div>
                   </div>
 
-                  {/* Models for this provider */}
-                  <div className="mt-4 pt-4 border-t border-border">
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Models:</p>
-                    <div className="flex flex-wrap gap-2">
-                      {models
-                        .filter(m => m.provider_id === provider.id)
-                        .map(model => (
+                  {/* API Key Input */}
+                  <div className="flex gap-2">
+                    <div className="relative flex-1">
+                      <input
+                        type={showKeys[provider.id] ? 'text' : 'password'}
+                        value={currentKey}
+                        onChange={e => setProviderKeys(prev => ({ ...prev, [provider.id]: e.target.value }))}
+                        placeholder={hasKey ? '•••••••• (key saved)' : 'Paste API key here...'}
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 focus:border-[#F2C94C] pr-10"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowKeys(prev => ({ ...prev, [provider.id]: !prev[provider.id] }))}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                      >
+                        {showKeys[provider.id] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={() => saveKey(provider.id)}
+                      disabled={!currentKey || currentKey === '••••••••' || savingKey === provider.id}
+                      className="rounded-lg bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold"
+                    >
+                      {savingKey === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => validateProvider(provider.id)}
+                      disabled={validating === provider.id}
+                      className="rounded-lg"
+                    >
+                      {validating === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <TestTube className="w-4 h-4" />}
+                    </Button>
+                    {hasKey && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => deleteKey(provider.id)}
+                        disabled={savingKey === provider.id}
+                        className="rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    )}
+                  </div>
+
+                  {/* Models */}
+                  {models.filter(m => m.provider_id === provider.id).length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-border">
+                      <div className="flex flex-wrap gap-1.5">
+                        {models.filter(m => m.provider_id === provider.id).map(model => (
                           <span
                             key={model.id}
                             className={cn(
-                              "px-3 py-1 rounded-xl text-sm font-medium",
-                              model.is_primary ? "bg-[#F2C94C]/10 text-[#F2C94C] border border-blue-500/20" :
-                              model.is_fallback ? "bg-amber-500/10 text-amber-400 border border-amber-500/20" :
-                              model.enabled ? "bg-muted/50 text-foreground border border-border" :
-                              "bg-card text-muted-foreground border border-border"
+                              "px-2 py-0.5 rounded text-xs font-medium",
+                              model.is_primary ? "bg-[#F2C94C]/10 text-[#B8952E] border border-[#F2C94C]/20" :
+                              model.is_fallback ? "bg-amber-500/10 text-amber-600 border border-amber-500/20" :
+                              model.enabled ? "bg-muted text-muted-foreground" :
+                              "bg-card text-muted-foreground/50"
                             )}
                           >
-                            {model.display_name}
+                            {model.name}
                             {model.is_primary && " ★"}
                             {model.is_fallback && " ◆"}
                           </span>
                         ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               );
             })}
           </div>
         )}
 
-        {/* Routing Tab */}
-        {activeTab === 'routing' && (
-          <div className="bg-card rounded-3xl border border-border p-6">
-            <h3 className="text-lg font-bold text-foreground mb-6 flex items-center">
-              <Zap className="w-5 h-5 mr-2 text-[#F2C94C]" />
-              Routing Chain — Failover Order
-            </h3>
-            
-            <div className="space-y-3">
-              {providers
-                .sort((a, b) => a.priority - b.priority)
-                .map((provider, idx) => {
-                  const health = getProviderHealth(provider.id);
-                  const status = health?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED');
-                  const hasModel = models.some(m => m.provider_id === provider.id && m.enabled);
-                  const isPrimary = models.some(m => m.provider_id === provider.id && m.is_primary);
-                  const isFallback = models.some(m => m.provider_id === provider.id && m.is_fallback);
-                  
-                  let chainStatus = 'Disabled';
-                  let chainResult = 'Skipped';
-                  let chainColor = 'text-muted-foreground';
-                  let dotColor = 'bg-muted';
-                  
-                  if (!provider.enabled) {
-                    chainStatus = 'Disabled';
-                    chainResult = 'Skipped';
-                    chainColor = 'text-muted-foreground';
-                    dotColor = 'bg-muted';
-                  } else if (isPrimary) {
-                    chainStatus = 'Primary';
-                    chainResult = 'Serving Traffic';
-                    chainColor = 'text-emerald-400';
-                    dotColor = 'bg-emerald-500';
-                  } else if (isFallback) {
-                    chainStatus = 'Fallback';
-                    chainResult = 'Standby';
-                    chainColor = 'text-amber-400';
-                    dotColor = 'bg-amber-500';
-                  } else if (hasModel) {
-                    chainStatus = 'Available';
-                    chainResult = 'Standby';
-                    chainColor = 'text-[#F2C94C]';
-                    dotColor = 'bg-[#F2C94C]';
-                  } else {
-                    chainStatus = 'No Models';
-                    chainResult = 'Skipped';
-                    chainColor = 'text-muted-foreground';
-                    dotColor = 'bg-muted';
-                  }
-                  
-                  return (
-                    <div key={provider.id} className="relative">
-                      {/* Connector line */}
-                      {idx < providers.length - 1 && (
-                        <div className="absolute left-6 top-12 w-0.5 h-8 bg-muted/50" />
-                      )}
-                      <div className={cn(
-                        "flex items-center justify-between p-4 rounded-2xl transition-all",
-                        idx === 0 && "bg-emerald-500/5 border border-emerald-500/20",
-                        idx === 1 && "bg-amber-500/5 border border-amber-500/20",
-                        idx > 1 && "bg-background/40 border border-border"
-                      )}>
-                        <div className="flex items-center space-x-4">
-                          {/* Priority number with dot */}
-                          <div className="relative">
-                            <div className={cn("w-12 h-12 rounded-xl flex items-center justify-center font-bold text-lg", dotColor + '/10')}>
-                              <span className={chainColor}>{idx + 1}</span>
-                            </div>
-                            <div className={cn("absolute -bottom-1 -right-1 w-3 h-3 rounded-full border-2 border-background", dotColor)} />
-                          </div>
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <h4 className="font-bold text-foreground">{provider.name}</h4>
-                              <span className={cn("px-2 py-0.5 rounded-lg text-xs font-medium", chainColor === 'text-emerald-400' ? 'bg-emerald-500/10 text-emerald-400' : chainColor === 'text-amber-400' ? 'bg-amber-500/10 text-amber-400' : chainColor === 'text-[#F2C94C]' ? 'bg-[#F2C94C]/10 text-[#F2C94C]' : 'bg-muted/10 text-muted-foreground')}>
-                                {chainStatus}
-                              </span>
-                            </div>
-                            <p className="text-sm text-muted-foreground">{chainResult}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          {health?.latency_ms != null && (
-                            <span className="text-xs text-muted-foreground">{health.latency_ms}ms</span>
-                          )}
-                          {idx < providers.length - 1 && (
-                            <ChevronRight className="w-4 h-4 text-muted-foreground/50" />
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-            </div>
-            
-            <div className="mt-6 p-4 bg-card rounded-2xl border border-border">
-              <p className="text-sm text-muted-foreground">
-                <strong className="text-foreground">How routing works:</strong> Requests flow through providers in priority order. If the primary provider fails, the system automatically falls back to the next available provider in the chain.
-              </p>
-            </div>
-          </div>
-        )}
-
-        {/* Usage Tab */}
-        {activeTab === 'usage' && (
-          <div className="space-y-6">
-            {/* Overview Stats */}
-            <div className="bg-card rounded-3xl border border-border p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center">
-                <BarChart3 className="w-5 h-5 mr-2 text-cyan-400" />
-                Usage Analytics — Last 7 Days
-              </h3>
-              
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div className="bg-card rounded-2xl p-4 border border-border">
-                  <p className="text-xs text-muted-foreground mb-1">Total Requests</p>
-                  <p className="text-2xl font-bold text-foreground">{totalRequests.toLocaleString()}</p>
-                </div>
-                <div className="bg-card rounded-2xl p-4 border border-border">
-                  <p className="text-xs text-muted-foreground mb-1">Success Rate</p>
-                  <p className={cn("text-2xl font-bold", successRate >= 90 ? "text-emerald-400" : successRate >= 70 ? "text-amber-400" : "text-red-400")}>
-                    {successRate}%
-                  </p>
-                </div>
-                <div className="bg-card rounded-2xl p-4 border border-border">
-                  <p className="text-xs text-muted-foreground mb-1">Avg Latency</p>
-                  <p className={cn("text-2xl font-bold", avgLatency < 500 ? "text-emerald-400" : avgLatency < 1000 ? "text-amber-400" : "text-red-400")}>
-                    {avgLatency}ms
-                  </p>
-                </div>
-                <div className="bg-card rounded-2xl p-4 border border-border">
-                  <p className="text-xs text-muted-foreground mb-1">Total Tokens</p>
-                  <p className="text-2xl font-bold text-foreground">{totalTokens.toLocaleString()}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Per-Model Stats */}
-            <div className="bg-card rounded-3xl border border-border p-6">
-              <h3 className="text-lg font-bold text-foreground mb-4">Model Performance</h3>
-              
-              {usageStats.length === 0 ? (
-                <div className="text-center py-12">
-                  <Gauge className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
-                  <p className="text-muted-foreground">No usage data yet</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {usageStats.map((stat, idx) => {
-                    const modelRate = stat.total_requests > 0
-                      ? Math.round((stat.successful_requests / stat.total_requests) * 100)
-                      : 0;
-                    const modelLatency = stat.total_requests > 0
-                      ? Math.round(stat.total_latency_ms / stat.total_requests)
-                      : 0;
-                    return (
-                      <div key={idx} className="bg-card rounded-2xl p-4 border border-border hover:border-border transition-all">
-                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-                          <div>
-                            <div className="flex items-center space-x-2">
-                              <Cpu className="w-4 h-4 text-[#F2C94C]" />
-                              <span className="font-bold text-foreground">{stat.provider_id}</span>
-                              <span className="text-muted-foreground">/</span>
-                              <span className="text-muted-foreground">{stat.model_id}</span>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-4 text-sm">
-                            <div className="flex items-center space-x-1">
-                              <TrendingUp className="w-3 h-3 text-muted-foreground" />
-                              <span className="text-muted-foreground">{stat.total_requests} reqs</span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <CheckCircle2 className={cn("w-3 h-3", modelRate >= 90 ? "text-emerald-500" : modelRate >= 70 ? "text-amber-500" : "text-red-500")} />
-                              <span className={cn(modelRate >= 90 ? "text-emerald-400" : modelRate >= 70 ? "text-amber-400" : "text-red-400")}>
-                                {modelRate}%
-                              </span>
-                            </div>
-                            <div className="flex items-center space-x-1">
-                              <Clock className="w-3 h-3 text-muted-foreground" />
-                              <span className="text-muted-foreground">{modelLatency}ms</span>
-                            </div>
-                            <div className="text-muted-foreground">
-                              {(stat.total_tokens_in + stat.total_tokens_out).toLocaleString()} tok
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Custom Providers Tab */}
+                {/* Custom Providers Tab */}
         {activeTab === 'custom' && (
           <div className="space-y-6">
             {/* Header */}
