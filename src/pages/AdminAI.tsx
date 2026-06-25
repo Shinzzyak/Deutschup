@@ -5,10 +5,10 @@ import { supabase } from '../lib/supabase';
 import { Button } from '../components/ui/button';
 import SecretList from '../components/admin/SecretList';
 import {
-  Loader2, Save, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
-  Server, Cpu, Activity, Zap, ArrowLeft, Settings, BarChart3, Key,
-  Shield, TrendingUp, Clock, AlertCircle, Eye, EyeOff, ChevronRight,
-  Wifi, WifiOff, Gauge, Puzzle, Plus, Trash2, TestTube, Globe, ExternalLink
+  Loader2, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
+  Server, Cpu, Activity, Zap, ArrowLeft, BarChart3, Key,
+  Shield, TrendingUp, Clock, AlertCircle, EyeOff,
+  ChevronRight, Gauge, Puzzle, Plus, Trash2, TestTube, Globe
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -73,6 +73,7 @@ export default function AdminAI() {
   const [validating, setValidating] = useState<string | null>(null);
   const [models, setModels] = useState<Model[]>([]);
   const [usageStats, setUsageStats] = useState<UsageStats[]>([]);
+  const [systemHealth, setSystemHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState<'health' | 'providers' | 'custom' | 'routing' | 'usage' | 'secrets'>('health');
@@ -105,7 +106,7 @@ export default function AdminAI() {
     
     setLoading(true);
     try {
-      const [providersRes, modelsRes, statsRes, healthRes, customRes] = await Promise.all([
+      const [providersRes, modelsRes, statsRes, healthRes, customRes, sysHealthRes] = await Promise.all([
         fetch('/api/admin-ai?action=providers', {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
@@ -119,6 +120,9 @@ export default function AdminAI() {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
         }),
         fetch('/api/custom-provider?action=full-config', {
+          headers: { 'Authorization': `Bearer ${await getToken()}` }
+        }),
+        fetch('/api/admin?action=system-health', {
           headers: { 'Authorization': `Bearer ${await getToken()}` }
         })
       ]);
@@ -137,6 +141,7 @@ export default function AdminAI() {
         setCustomModels(custom.models || []);
         setCustomKeys(custom.keys || []);
       }
+      if (sysHealthRes.ok) setSystemHealth(await sysHealthRes.json());
     } catch (e) {
       console.error('Fetch AI data failed:', e);
     } finally {
@@ -514,14 +519,37 @@ export default function AdminAI() {
           ))}
         </div>
 
+        {/* System Overview Banner */}
+        {systemHealth && (
+          <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+            {[
+              { label: 'AI', ok: systemHealth.config?.aiConfigured, detail: systemHealth.ai ? `${systemHealth.ai.totalKeys} keys, ${systemHealth.ai.enabledProviders} providers` : null },
+              { label: 'Payment', ok: systemHealth.config?.paymentConfigured },
+              { label: 'Database', ok: systemHealth.config?.databaseConfigured },
+              { label: 'Webhook', ok: systemHealth.config?.webhookConfigured },
+            ].map(({ label, ok, detail }) => (
+              <div key={label} className={cn(
+                "flex items-center gap-3 px-4 py-3 rounded-2xl border",
+                ok ? "bg-emerald-500/5 border-emerald-500/20" : "bg-slate-800/40 border-slate-700/50"
+              )}>
+                {ok ? <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" /> : <XCircle className="w-4 h-4 text-slate-500 shrink-0" />}
+                <div className="min-w-0">
+                  <p className={cn("text-sm font-medium", ok ? "text-emerald-300" : "text-slate-500")}>{label}</p>
+                  {detail && <p className="text-xs text-slate-500 truncate">{detail}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Navigation Tabs */}
-        <div className="flex flex-wrap gap-2 mb-8 p-1 bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50">
+        <div className="flex gap-2 mb-8 p-1 bg-slate-800/40 backdrop-blur-sm rounded-2xl border border-slate-700/50 overflow-x-auto">
           {tabs.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
               className={cn(
-                "flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+                "flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all whitespace-nowrap shrink-0",
                 activeTab === id
                   ? "bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg shadow-blue-500/20"
                   : "text-slate-400 hover:text-white hover:bg-slate-700/50"

@@ -53,18 +53,64 @@ function handleEnvCheck(_req: VercelRequest, res: VercelResponse) {
   });
 }
 
-function handleSystemHealth(_req: VercelRequest, res: VercelResponse) {
-  return res.json({
-    status: 'ok',
-    timestamp: new Date().toISOString(),
-    config: {
-      paymentConfigured: !!(process.env.BAYAR_GG_API_KEY && process.env.BAYAR_GG_API_KEY.length > 10),
-      aiConfigured: !!(process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GEMINI_API_KEY),
-      databaseConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
-      webhookConfigured: !!process.env.BAYARGG_WEBHOOK_SECRET,
-    },
-    version: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
-  });
+async function handleSystemHealth(_req: VercelRequest, res: VercelResponse) {
+  try {
+    const supabase = getSupabaseAdminClient();
+    
+    // Check actual keys in provider_secrets table
+    const { data: secrets } = await supabase
+      .from('provider_secrets')
+      .select('provider_id, secret_key')
+      .eq('secret_key', 'api_key');
+
+    // Check custom provider keys
+    const { data: customKeys } = await supabase
+      .from('custom_provider_keys')
+      .select('id, provider_id, status')
+      .eq('is_active', true);
+
+    // Check enabled providers
+    const { data: providers } = await supabase
+      .from('ai_providers')
+      .select('id, enabled')
+      .eq('enabled', true);
+
+    // Check primary model
+    const { data: primaryModel } = await supabase
+      .from('ai_models')
+      .select('id')
+      .eq('is_primary', true)
+      .eq('enabled', true)
+      .maybeSingle();
+
+    const builtInKeys = secrets?.length || 0;
+    const customKeyCount = customKeys?.length || 0;
+    const totalKeys = builtInKeys + customKeyCount;
+    const enabledProviders = providers?.length || 0;
+
+    const aiConfigured = totalKeys > 0 && enabledProviders > 0 && !!primaryModel;
+
+    return res.json({
+      status: 'ok',
+      timestamp: new Date().toISOString(),
+      config: {
+        paymentConfigured: !!(process.env.BAYAR_GG_API_KEY && process.env.BAYAR_GG_API_KEY.length > 10),
+        aiConfigured,
+        databaseConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
+        webhookConfigured: !!process.env.BAYARGG_WEBHOOK_SECRET,
+      },
+      ai: {
+        builtInKeys,
+        customKeys: customKeyCount,
+        totalKeys,
+        enabledProviders,
+        hasPrimary: !!primaryModel,
+      },
+      version: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
+    });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
 }
 
 async function handleStats(_req: VercelRequest, res: VercelResponse) {
@@ -73,7 +119,7 @@ async function handleStats(_req: VercelRequest, res: VercelResponse) {
     const today = new Date().toISOString().split('T')[0];
     
     const { data: todayStats } = await supabase
-      .from('ai_requests')
+      .from('ai_usage_log')
       .select('*')
       .gte('created_at', `${today}T00:00:00Z`);
 
