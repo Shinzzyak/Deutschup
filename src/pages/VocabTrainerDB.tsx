@@ -51,7 +51,11 @@ export default function VocabTrainerDB() {
   // Load vocab progress from localStorage on mount
   useEffect(() => {
     if (user?.id) {
-      loadProgress(user.id);
+      console.log('[VOCAB-DEBUG] Calling loadProgress for:', user.id);
+      loadProgress(user.id).then(() => {
+        const currentVocab = useProgressStore.getState().vocab;
+        console.log('[VOCAB-DEBUG] loadProgress done, vocab keys:', Object.keys(currentVocab).length);
+      });
     }
   }, [user?.id]);
 
@@ -104,11 +108,13 @@ export default function VocabTrainerDB() {
   }, [dbVocab, searchQuery, filter, sort, vocab]);
 
   const dueCards = useMemo(() => {
-    return filteredVocab.filter(v => {
+    const result = filteredVocab.filter(v => {
       const progress = vocab[v.id];
       if (!progress) return true;
       return progress.nextReview <= Date.now();
     }).sort(() => Math.random() - 0.5);
+    console.log('[VOCAB-DEBUG] dueCards:', result.length, '| filteredVocab:', filteredVocab.length, '| vocab keys:', Object.keys(vocab).length);
+    return result;
   }, [filteredVocab, vocab]);
 
   const currentCard = dueCards[0];
