@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "test:e2e": "playwright test",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit"
   },
@@ -51,6 +52,7 @@
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
     "jsdom": "^29.1.1",
+    "msw": "^2.14.6",
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
