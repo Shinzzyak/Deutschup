@@ -105,7 +105,9 @@ export default function VocabTrainerDB() {
   }, [filteredVocab, vocab]);
 
   const currentCard = dueCards[0];
-  const progressPercent = dueCards.length > 0 ? ((cardsReviewed + 1) / dueCards.length) * 100 : 0;
+  // Calculate from saved vocab data (persists across page navigation)
+  const knownCount = filteredVocab.filter(v => vocab[v.id]?.status === 'known').length;
+  const progressPercent = filteredVocab.length > 0 ? (knownCount / filteredVocab.length) * 100 : 0;
 
   const handleFlip = () => setIsFlipped(!isFlipped);
 
