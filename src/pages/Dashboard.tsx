@@ -6,6 +6,7 @@
  import { useLearningStore } from '../stores/learningStore';
  import { useAuthStore } from '../stores/authStore';
  import { isUserPro } from '../lib/subscription';
+import { generateReportPDF } from '../lib/pdf-report';
  import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock, Flame, Star, Brain, GraduationCap, Sparkles, Medal, TrendingUp, BarChart3, Award } from 'lucide-react';
  import { cn } from '../lib/utils';
  import { Progress } from '../components/ui/progress';
@@ -108,101 +109,39 @@ export default function Dashboard() {
     
     setExporting(true);
     
-    const [{ jsPDF }, autoTable] = await Promise.all([
-      import('jspdf'),
-      import('jspdf-autotable').then(m => m.default)
-    ]);
-
-    await new Promise(resolve => setTimeout(resolve, 500));
-
     try {
-      const doc = new jsPDF();
-      doc.setFillColor(30, 58, 138);
-      doc.rect(0, 0, 210, 40, 'F');
-      doc.setFontSize(24);
-      doc.setTextColor(255, 255, 255);
-      doc.text("Laporan Pembelajaran DeutschUp", 14, 25);
-      
-      let yPos = 50;
-      doc.setFontSize(14);
-      doc.setTextColor(30, 58, 138);
-      doc.text("Profil Siswa", 14, yPos);
-      doc.setDrawColor(200, 200, 200);
-      doc.line(14, yPos + 2, 196, yPos + 2);
-      
-      yPos += 10;
-      doc.setFontSize(11);
-      doc.setTextColor(60, 60, 60);
-      doc.text(`Nama: ${user?.user_metadata?.full_name || 'Siswa'}`, 14, yPos);
-      doc.text(`Level Saat Ini: ${currentLevel}`, 105, yPos);
-      yPos += 8;
-      doc.text(`Tanggal Laporan: ${new Date().toLocaleDateString('id-ID')}`, 14, yPos);
-      doc.text(`Total XP: ${xp} XP`, 105, yPos);
-      yPos += 8;
-      doc.text(`Kosakata Dikuasai: ${Object.keys(vocab).length} kata`, 14, yPos);
-      doc.text(`Pelajaran Selesai: ${unlockedLessons.length}`, 105, yPos);
-      yPos += 20;
+      const blob = await generateReportPDF({
+        userName: user?.user_metadata?.full_name || 'Siswa',
+        currentLevel: currentLevel,
+        xp: xp,
+        vocabCount: Object.keys(vocab).length,
+        completedCount: completedLessons.length,
+        totalLessons: courseIndex.length,
+        overallProgress: overallProgress,
+        streak: streakData.current,
+        studyHours: learningStats.studyHours,
+        averageScore: learningStats.averageScore,
+        lessons: courseIndex.map(l => ({
+          level: l.level || 'A1',
+          title: l.title || l.id,
+          goals: l.canDoGoals || [],
+          completed: completedLessons.includes(l.id),
+        })),
+        mockTests: (mockTests || []).map(t => ({
+          createdAt: t.createdAt,
+          level: t.level,
+          score: t.score,
+          total: t.total,
+        })),
+      });
 
-      doc.setFontSize(14);
-      doc.setTextColor(30, 58, 138);
-      doc.text("Pelajaran & Kompetensi yang Dicapai", 14, yPos);
-      doc.line(14, yPos + 2, 196, yPos + 2);
-      yPos += 8;
-      doc.setFontSize(10);
-      doc.setTextColor(80, 80, 80);
-      
-      const unlockedCourseData = courseIndex.filter(l => unlockedLessons.includes(l.id));
-      
-      if (unlockedCourseData.length === 0) {
-        doc.text("Belum ada pelajaran yang diselesaikan.", 14, yPos + 5);
-        yPos += 15;
-      } else {
-        const tableBody = unlockedCourseData.map((l, index) => {
-          const goalsStr = (l.canDoGoals && l.canDoGoals.length > 0) ? "• " + l.canDoGoals.join("\n• ") : "-";
-          return [index + 1, l.level, l.title, goalsStr];
-        });
-        
-        autoTable(doc, {
-          startY: yPos + 5,
-          head: [['No', 'Level', 'Pelajaran', 'Kompetensi']],
-          body: tableBody,
-          theme: 'grid',
-          headStyles: { fillColor: [30, 64, 175], textColor: [255, 255, 255], fontStyle: 'bold' },
-          columnStyles: { 0: { cellWidth: 10 }, 1: { cellWidth: 15 }, 2: { cellWidth: 45 }, 3: { cellWidth: 110 } },
-          styles: { fontSize: 9, cellPadding: 3, overflow: 'linebreak' }
-        });
-        yPos = (doc as any).lastAutoTable.finalY + 15;
-      }
-
-      if (yPos > 250) { doc.addPage(); yPos = 20; }
-
-      doc.setFontSize(14);
-      doc.setTextColor(30, 58, 138);
-      doc.text("Riwayat Simulasi Ujian", 14, yPos);
-      doc.line(14, yPos + 2, 196, yPos + 2);
-
-      if (mockTests && mockTests.length > 0) {
-        const tableData = mockTests.map((t, index) => [
-          index + 1, new Date(t.createdAt).toLocaleDateString('id-ID'), t.level, `${t.score} / ${t.total}`, `${Math.round((t.score/t.total)*100)}%`
-        ]);
-        autoTable(doc, { startY: yPos + 8, head: [['No', 'Tanggal', 'Level', 'Skor Benar/Total', 'Persentase']], body: tableData, theme: 'striped', headStyles: { fillColor: [16, 185, 129] }, styles: { fontSize: 10 } });
-      } else {
-        doc.setFontSize(11);
-        doc.setTextColor(100);
-        doc.text("Belum ada riwayat simulasi ujian.", 14, yPos + 10);
-      }
-
-      const pageCount = (doc.internal as any).getNumberOfPages();
-      for (let i = 1; i <= pageCount; i++) {
-        doc.setPage(i);
-        doc.setFontSize(8);
-        doc.setTextColor(150);
-        doc.text(`Dicetak melalui DeutschUp - Halaman ${i} dari ${pageCount}`, 14, doc.internal.pageSize.height - 10);
-      }
-
-      doc.save(`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`);
-      const pdfBlob = doc.output('blob');
-      setPdfBlobUrl(URL.createObjectURL(pdfBlob));
+      const pdfUrl = URL.createObjectURL(blob);
+      setPdfBlobUrl(pdfUrl);
+      // Auto-download
+      const a = document.createElement('a');
+      a.href = pdfUrl;
+      a.download = `DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`;
+      a.click();
     } catch (e: any) {
       console.error(e);
       setErrorMsg("Gagal membuat PDF: " + (e.message || "Error tidak diketahui"));
