@@ -19,6 +19,7 @@ interface ModelConfig {
   id: string;
   provider_id: string;
   name: string;
+  model_id?: string;
   display_name: string;
   enabled: boolean;
   is_primary: boolean;
