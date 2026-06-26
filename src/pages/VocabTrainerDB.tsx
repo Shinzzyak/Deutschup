@@ -30,7 +30,7 @@ const articleColors: Record<string, string> = {
 
 export default function VocabTrainerDB() {
   const { user } = useAuthStore();
-  const { vocab, updateVocab } = useProgressStore();
+  const { vocab, updateVocab, loadProgress } = useProgressStore();
   
   const [activeTab, setActiveTab] = useState<TabType>('flashcard');
   const [filter, setFilter] = useState<FilterType>('all');
@@ -47,6 +47,13 @@ export default function VocabTrainerDB() {
   const [examples, setExamples] = useState<{german: string, indonesian: string}[] | null>(null);
   const [pronunciationLoading, setPronunciationLoading] = useState(false);
   const [pronunciation, setPronunciation] = useState<{phonetic: string, tip: string} | null>(null);
+
+  // Load vocab progress from localStorage on mount
+  useEffect(() => {
+    if (user?.id) {
+      loadProgress(user.id);
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     fetchVocab();

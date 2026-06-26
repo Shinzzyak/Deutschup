@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { allVocab } from '../data/lessons';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
@@ -26,7 +26,7 @@ const articleColors: Record<string, string> = {
 
 export default function VocabTrainer() {
   const { user } = useAuthStore();
-  const { vocab, updateVocab } = useProgressStore();
+  const { vocab, updateVocab, loadProgress } = useProgressStore();
   
   const [activeTab, setActiveTab] = useState<TabType>('flashcard');
   const [filter, setFilter] = useState<FilterType>('all');
@@ -40,6 +40,13 @@ export default function VocabTrainer() {
   
   const [pronunciationLoading, setPronunciationLoading] = useState(false);
   const [pronunciation, setPronunciation] = useState<{phonetic: string, tip: string} | null>(null);
+
+  // Load vocab progress from localStorage on mount
+  useEffect(() => {
+    if (user?.id) {
+      loadProgress(user.id);
+    }
+  }, [user?.id]);
 
   const dueCards = useMemo(() => {
     const now = Date.now();
