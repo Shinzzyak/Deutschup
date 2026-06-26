@@ -19,6 +19,8 @@ import {
   Sparkles,
   CreditCard,
   BarChart3,
+  Moon,
+  Sun,
 } from 'lucide-react';
 
 const navigation = [
@@ -35,7 +37,19 @@ export default function TopNav() {
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    const saved = localStorage.getItem('du_theme');
+    if (saved) return saved === 'dark';
+    return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  });
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // Sync dark mode to DOM + localStorage
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', darkMode);
+    localStorage.setItem('du_theme', darkMode ? 'dark' : 'light');
+  }, [darkMode]);
 
   const streak = useProgressStore((s) => s.streak);
   const xp = useProgressStore((s) => s.xp);
@@ -136,6 +150,15 @@ export default function TopNav() {
 
             {/* Right section */}
             <div className="flex items-center gap-1.5">
+              {/* Dark mode toggle */}
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                className="p-2 text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                aria-label={darkMode ? 'Mode terang' : 'Mode gelap'}
+              >
+                {darkMode ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+              </button>
+
               {/* Search toggle */}
               <button
                 onClick={() => setSearchOpen(true)}
