@@ -70,6 +70,20 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   // --------------------------------------------------------
   loadProgress: async (clerkUserId: string) => {
     set({ loading: true });
+
+    // Load vocab from localStorage FIRST (synchronous, before async DB queries)
+    try {
+      const vocabKey = `deutschup_vocab_` + clerkUserId;
+      const savedVocab = localStorage.getItem(vocabKey);
+      if (savedVocab) {
+        const parsed = JSON.parse(savedVocab);
+        set({ vocab: parsed });
+        console.log('[PROGRESS] Loaded vocab from localStorage:', Object.keys(parsed).length, 'words');
+      }
+    } catch (e) {
+      console.warn('[PROGRESS] Failed to load vocab from localStorage:', e);
+    }
+
     const userId = await resolveInternalId(clerkUserId);
     if (!userId) {
       console.error('[PROGRESS] Could not resolve Clerk ID:', clerkUserId.substring(0, 12));
@@ -137,21 +151,10 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
           });
 
         if (insertError) throw insertError;
-        set({ ...defaultProgress, initialized: true, loading: false });
+        set({ ...defaultProgress, vocab: get().vocab, initialized: true, loading: false });
       }
 
-      // Load vocab progress from localStorage (use clerkUserId for consistent key)
-      try {
-        const vocabKey = `deutschup_vocab_` + clerkUserId;
-        const savedVocab = localStorage.getItem(vocabKey);
-        if (savedVocab) {
-          const parsed = JSON.parse(savedVocab);
-          set({ vocab: parsed });
-          console.log('[PROGRESS] Loaded vocab from localStorage:', Object.keys(parsed).length, 'words');
-        }
-      } catch (e) {
-        console.warn('[PROGRESS] Failed to load vocab from localStorage:', e);
-      }
+
 
     } catch (e) {
       console.error(`[PROGRESS] load error for ${userId}:`, e);
