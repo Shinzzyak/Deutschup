@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useAuthStore } from '../../stores/authStore';
 import { useProgressStore } from '../../stores/progressStore';
+import { useTheme } from '../../lib/theme';
 import SearchOverlay from '../search/SearchOverlay';
 import {
   Search,
@@ -37,19 +38,8 @@ export default function TopNav() {
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    const saved = localStorage.getItem('du_theme');
-    if (saved) return saved === 'dark';
-    return window.matchMedia('(prefers-color-scheme: dark)').matches;
-  });
+  const { isDark, toggle } = useTheme();
   const userMenuRef = useRef<HTMLDivElement>(null);
-
-  // Sync dark mode to DOM + localStorage
-  useEffect(() => {
-    document.documentElement.classList.toggle('dark', darkMode);
-    localStorage.setItem('du_theme', darkMode ? 'dark' : 'light');
-  }, [darkMode]);
 
   const streak = useProgressStore((s) => s.streak);
   const xp = useProgressStore((s) => s.xp);
@@ -152,11 +142,11 @@ export default function TopNav() {
             <div className="flex items-center gap-1.5">
               {/* Dark mode toggle */}
               <button
-                onClick={() => setDarkMode(!darkMode)}
+                onClick={toggle}
                 className="p-2 text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                aria-label={darkMode ? 'Mode terang' : 'Mode gelap'}
+                aria-label={isDark ? 'Mode terang' : 'Mode gelap'}
               >
-                {darkMode ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
+                {isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
               </button>
 
               {/* Search toggle */}

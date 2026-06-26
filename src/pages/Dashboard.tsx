@@ -222,7 +222,7 @@ export default function Dashboard() {
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 p-6 md:p-8 text-white shadow-xl">
+        <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 dark:from-blue-800 dark:via-blue-900 dark:to-indigo-900 p-6 md:p-8 text-white shadow-xl">
           {/* German Flag Stripe */}
           <div className="absolute top-0 left-0 right-0 flex h-1.5">
             <div className="flex-1 bg-[#1F2937]" />
@@ -256,7 +256,7 @@ export default function Dashboard() {
               </div>
               
               <div className="flex flex-col items-start md:items-end w-full md:w-auto">
-                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2 rounded-xl bg-white/15 hover:bg-white/25 text-white border-0 backdrop-blur-sm w-full md:w-auto">
+                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2 rounded-xl bg-white/15 hover:bg-white/25 dark:bg-white/10 dark:hover:bg-white/20 text-white border-0 backdrop-blur-sm w-full md:w-auto">
                   {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                   <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan'}</span>
                 </Button>
@@ -285,7 +285,7 @@ export default function Dashboard() {
 
         {/* EMPTY STATE */}
         {!loading && completedLessons.length === 0 && (
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/50 dark:to-indigo-950/50 border border-blue-100 dark:border-blue-800 rounded-3xl p-8 text-center">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 border border-blue-100 dark:border-slate-700 rounded-3xl p-8 text-center">
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
@@ -303,7 +303,7 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 border border-amber-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 dark:from-amber-500/20 dark:to-amber-500/10 border border-amber-500/20 dark:border-amber-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-amber-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-12 h-12 rounded-xl bg-amber-500/15 flex items-center justify-center mb-2">
@@ -313,7 +313,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-amber-600/80 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 border border-blue-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 dark:from-blue-500/20 dark:to-blue-500/10 border border-blue-500/20 dark:border-blue-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-blue-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-12 h-12 rounded-xl bg-blue-500/15 flex items-center justify-center mb-2">
@@ -323,7 +323,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-blue-600/80 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-500/5 border border-green-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-500/5 dark:from-green-500/20 dark:to-green-500/10 border border-green-500/20 dark:border-green-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-green-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-12 h-12 rounded-xl bg-green-500/15 flex items-center justify-center mb-2">
@@ -333,7 +333,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 border border-purple-500/20 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 dark:from-purple-500/20 dark:to-purple-500/10 border border-purple-500/20 dark:border-purple-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-purple-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center mb-2">
@@ -349,7 +349,7 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 p-6 md:p-8 text-white shadow-xl shadow-purple-500/20 hover:shadow-2xl transition-shadow">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 dark:from-indigo-800 dark:via-purple-800 dark:to-purple-900 p-6 md:p-8 text-white shadow-xl shadow-purple-500/20 hover:shadow-2xl transition-shadow">
             <div className="absolute inset-0 opacity-20">
               <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white/30 blur-3xl" />
               <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
@@ -378,7 +378,7 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-orange-500/10 border border-orange-500/20 p-5 md:p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-orange-500/10 dark:from-orange-500/20 dark:via-amber-500/10 dark:to-orange-500/20 border border-orange-500/20 dark:border-orange-500/30 p-5 md:p-6">
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-orange-500/10 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -410,7 +410,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-indigo-500/10 border border-indigo-500/20 p-5 md:p-6">
+            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-indigo-500/10 dark:from-indigo-500/20 dark:via-purple-500/10 dark:to-indigo-500/20 border border-indigo-500/20 dark:border-indigo-500/30 p-5 md:p-6">
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-indigo-500/10 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -443,7 +443,7 @@ export default function Dashboard() {
 
         {/* SECTION E: ACHIEVEMENTS */}
         {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-amber-500/5 border border-amber-500/20 p-5 md:p-6">
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-amber-500/5 dark:from-amber-500/10 dark:via-yellow-500/10 dark:to-amber-500/10 border border-amber-500/20 dark:border-amber-500/30 p-5 md:p-6">
             <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-amber-500/10 blur-2xl" />
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-4">
