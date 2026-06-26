@@ -75,9 +75,9 @@ export default function TopNav() {
     <>
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
       <nav
-        className="sticky top-0 z-50 border-b border-slate-200/60 dark:border-slate-700/60"
+        className="sticky top-0 z-50 border-b border-white/30"
         style={{
-          background: 'rgba(255,255,255,0.72)',
+          background: 'rgba(255,255,255,0.88)',
           backdropFilter: 'blur(16px) saturate(180%)',
           WebkitBackdropFilter: 'blur(16px) saturate(180%)',
         }}
