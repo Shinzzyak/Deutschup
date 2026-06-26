@@ -422,12 +422,12 @@ export default function VocabTrainerDB() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm"
+            className="glass-strong border border-border rounded-3xl overflow-hidden shadow-sm"
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-muted/50 text-muted-foreground text-sm uppercase tracking-wider">
+                  <tr className="glass/50 text-muted-foreground text-sm uppercase tracking-wider">
                     <th className="px-6 py-4 font-semibold">Word</th>
                     <th className="px-6 py-4 font-semibold">Translation</th>
                     <th className="px-6 py-4 font-semibold">Status</th>

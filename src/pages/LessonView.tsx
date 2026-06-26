@@ -259,7 +259,7 @@ export default function LessonView() {
         </TabsList>
 
         <TabsContent value="materi" className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
-          <div className="bg-card p-6 md:p-8 rounded-3xl shadow-sm border border-border">
+          <div className="glass-strong p-6 md:p-8 rounded-3xl">
             <h2 className="text-xl font-bold mb-4 flex items-center space-x-2">
               <Brain className="w-6 h-6 text-indigo-500" />
               <span>Tata Bahasa (Grammar)</span>
@@ -339,7 +339,7 @@ export default function LessonView() {
           )}
 
           {lesson.listeningSimulation && (
-            <div className="bg-muted p-6 md:p-8 rounded-3xl shadow-sm border border-border">
+            <div className="glass p-6 md:p-8 rounded-3xl">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-foreground">
                 <Headphones className="w-6 h-6" />
                 <span>Listening Simulation Transcript</span>
@@ -362,7 +362,7 @@ export default function LessonView() {
           )}
 
           {lesson.vocabulary && lesson.vocabulary.length > 0 && (
-            <div className="bg-card p-6 md:p-8 rounded-3xl shadow-sm border border-border">
+            <div className="glass-strong p-6 md:p-8 rounded-3xl">
               <h2 className="text-xl font-bold mb-6 flex items-center space-x-2">
                 <Star className="w-6 h-6 text-yellow-500" />
                 <span>Kosakata Utama</span>
@@ -449,7 +449,7 @@ export default function LessonView() {
 
         <TabsContent value="latihan" className="animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
           {quizFinished ? (
-            <div className="bg-card p-10 rounded-3xl shadow-sm border border-border text-center space-y-6">
+            <div className="glass-strong p-10 rounded-3xl text-center space-y-6">
               <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Trophy className="w-12 h-12 text-green-500" />
               </div>
@@ -468,7 +468,7 @@ export default function LessonView() {
               </div>
             </div>
           ) : exercisesLoading ? (
-            <div className="bg-card p-12 rounded-3xl shadow-sm border border-border flex flex-col items-center justify-center text-center space-y-4 min-h-[400px]">
+            <div className="glass-strong p-12 rounded-3xl flex flex-col items-center justify-center text-center space-y-4 min-h-[400px]">
                <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
                <h2 className="text-2xl font-bold text-foreground">Meracik Soal Latihan...</h2>
                <p className="text-muted-foreground max-w-sm">Herr Deutsch sedang membuat soal spesial untuk materi ini.</p>

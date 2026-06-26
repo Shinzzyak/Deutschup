@@ -66,7 +66,7 @@ export default function Profile() {
           </h1>
           <p className="text-muted-foreground text-lg">Kelola identitas dan preferensi belajar Anda.</p>
         </div>
-        <div className="flex items-center gap-3 bg-muted/50 p-1 rounded-2xl border border-border">
+        <div className="flex items-center gap-3 bg-muted/50 p-1 rounded-2xl">
           <div className="px-4 py-2 rounded-xl bg-background shadow-sm text-sm font-medium flex items-center gap-2">
             <Shield className="w-4 h-4 text-[#F2C94C]" />
             {activePro ? 'Pro Member' : 'Free Member'}
@@ -77,7 +77,7 @@ export default function Profile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Identity Card */}
         <div className="lg:col-span-1">
-          <div className="bg-card rounded-[2rem] border border-border p-8 sticky top-24 overflow-hidden relative group">
+          <div className="glass-strong rounded-[2rem] border border-border p-8 sticky top-24 overflow-hidden relative group">
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-[#F2C94C]/10 rounded-full blur-3xl group-hover:bg-[#F2C94C]/20 transition-all duration-500" />
             
             <div className="relative z-10 flex flex-col items-center text-center">
@@ -110,7 +110,7 @@ export default function Profile() {
         {/* Right Column: Forms & Details */}
         <div className="lg:col-span-2 space-y-8">
           {/* Account Settings Card */}
-          <div className="bg-card rounded-[2rem] border border-border p-8 relative overflow-hidden">
+          <div className="glass-strong rounded-[2rem] border border-border p-8 relative overflow-hidden">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2 bg-[#F2C94C]/10 rounded-lg">
                 <User className="w-5 h-5 text-[#F2C94C]" />
@@ -128,7 +128,7 @@ export default function Profile() {
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    className="w-full px-5 py-4 rounded-2xl border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 transition-all"
+                    className="w-full px-5 py-4 rounded-2xl bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 transition-all"
                     placeholder="Masukkan nama lengkap Anda"
                   />
                 </div>
@@ -143,7 +143,7 @@ export default function Profile() {
                     type="email"
                     value={user.email || ''}
                     disabled
-                    className="w-full px-5 py-4 rounded-2xl border border-border bg-muted/50 text-muted-foreground cursor-not-allowed"
+                    className="w-full px-5 py-4 rounded-2xl bg-muted/50 text-muted-foreground cursor-not-allowed"
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2">
                     <Shield className="w-4 h-4 text-muted-foreground/50" />

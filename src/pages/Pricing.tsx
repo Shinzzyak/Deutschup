@@ -204,12 +204,12 @@ export default function Pricing() {
               Memuat riwayat...
             </div>
           ) : orders.length === 0 ? (
-            <div className="text-center py-8 bg-muted rounded-2xl border border-border">
+            <div className="text-center py-8 bg-muted rounded-2xl">
               <Clock className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
               <p className="text-muted-foreground">Belum ada riwayat pembayaran.</p>
             </div>
           ) : (
-            <div className="bg-card rounded-2xl border border-border overflow-hidden">
+            <div className="glass-strong rounded-2xl overflow-hidden">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border bg-muted">

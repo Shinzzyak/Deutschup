@@ -152,7 +152,7 @@ export default function MockTest() {
   if (testState === 'SETUP') {
     return (
       <div className="max-w-3xl mx-auto pb-20 text-center space-y-8">
-        <div className="bg-card p-12 rounded-3xl border border-border shadow-sm">
+        <div className="glass-strong p-12 rounded-3xl border border-border shadow-sm">
            <FileText className="w-16 h-16 mx-auto mb-6 text-blue-600" />
            <h1 className="text-4xl font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
            <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
@@ -214,7 +214,7 @@ export default function MockTest() {
        <div className="max-w-3xl mx-auto pb-20">
          <div className="flex items-center justify-between mb-6 bg-card p-4 rounded-xl shadow-sm border border-border">
             <div className="flex space-x-2">
-               <span className="bg-muted text-foreground font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
+               <span className="glass text-foreground font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
                <span className="text-muted-foreground font-medium px-3 py-1 text-sm">Soal {currentIdx + 1} dari {questions.length}</span>
             </div>
             <div className="flex items-center text-orange-700 font-bold bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-2 rounded-full border border-orange-200 shadow-sm">
@@ -222,7 +222,7 @@ export default function MockTest() {
             </div>
          </div>
 
-         <div className="bg-card p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col min-h-[400px]">
+         <div className="glass-strong p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col min-h-[400px]">
             {q.context && (
                <div className="bg-blue-50 p-4 rounded-2xl mb-6 text-blue-900 border border-blue-100 italic">
                   {q.context}
@@ -264,7 +264,7 @@ export default function MockTest() {
   // EVALUATING & RESULT
   return (
     <div className="max-w-4xl mx-auto pb-20">
-      <div className="bg-card p-8 md:p-12 rounded-3xl border border-border shadow-sm text-center mb-8">
+      <div className="glass-strong p-8 md:p-12 rounded-3xl border border-border shadow-sm text-center mb-8">
         {testState === 'EVALUATING' ? (
            <>
              <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />

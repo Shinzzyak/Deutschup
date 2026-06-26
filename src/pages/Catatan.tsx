@@ -75,7 +75,7 @@ export default function Catatan() {
         
         {/* Kolom 1: Rencana Belajar */}
         <div className="space-y-6">
-          <div className="bg-card p-6 md:p-8 rounded-3xl border border-border shadow-sm">
+          <div className="glass-strong p-6 md:p-8 rounded-3xl border border-border shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center">
                  <CalendarCheck2 className="w-6 h-6 mr-2 text-[#F2C94C]" />
@@ -127,7 +127,7 @@ export default function Catatan() {
 
         {/* Kolom 2: Catatan Pribadi */}
         <div className="space-y-6">
-          <div className="bg-card p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col h-full">
+          <div className="glass-strong p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col h-full">
             <h2 className="text-2xl font-bold mb-6">Catatan Pribadi</h2>
             
             <div className="mb-8">
