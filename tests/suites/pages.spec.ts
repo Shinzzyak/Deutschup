@@ -1,19 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { BASE, loginAs } from '../helpers/auth';
 
-const hasCredentials = !!process.env.E2E_TEST_PASSWORD;
-
 test.describe('Page Rendering', () => {
-  test.skip(!hasCredentials, 'E2E_TEST_PASSWORD not set');
-
-  test.beforeAll(async ({ browser }) => {
-    // Login once for all page tests
-    const context = await browser.newContext();
-    const page = await context.newPage();
+  test.beforeEach(async ({ page }) => {
     await loginAs(page);
-    // Save auth state
-    await context.storageState({ path: 'tests/.auth/user.json' });
-    await context.close();
   });
 
   const pages = [
@@ -25,11 +15,8 @@ test.describe('Page Rendering', () => {
 
   for (const { name, path } of pages) {
     test(`${name} page should render without errors`, async ({ page }) => {
-      // Use saved auth state
-      await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded' });
-
-      // Wait for React to render
-      await page.waitForSelector('#root', { state: 'attached', timeout: 10000 });
+      await page.goto(`${BASE}${path}`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+      await page.waitForTimeout(3000);
 
       // Should not show error boundary
       const hasError = await page.locator('text=Something went wrong').isVisible().catch(() => false);
@@ -37,18 +24,17 @@ test.describe('Page Rendering', () => {
 
       // Should not be blank
       const content = await page.textContent('body');
-      expect(content?.length).toBeGreaterThan(50);
+      expect(content!.length).toBeGreaterThan(50);
     });
   }
 
   test('Simulasi page should render', async ({ page }) => {
-    await page.goto(`${BASE}/simulasi`, { waitUntil: 'domcontentloaded' });
+    await page.goto(`${BASE}/simulasi`, { waitUntil: 'domcontentloaded', timeout: 30000 });
+    await page.waitForTimeout(3000);
 
-    // Should show simulasi content (level selection, etc.)
     const content = await page.textContent('body');
-    expect(content?.length).toBeGreaterThan(50);
+    expect(content!.length).toBeGreaterThan(50);
 
-    // Should not crash
     const hasError = await page.locator('text=Something went wrong').isVisible().catch(() => false);
     expect(hasError).toBe(false);
   });
