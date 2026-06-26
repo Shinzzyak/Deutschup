@@ -197,3 +197,126 @@ body {
   overflow-x: hidden;
   min-height: 100dvh;
 }
+
+/* ============================================
+   DESIGN SYSTEM — Premium Utilities (v2)
+   ============================================ */
+
+/* Glassmorphism cards */
+.glass {
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.glass-strong {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+/* Soft glow backgrounds */
+.glow-blue {
+  box-shadow: 0 0 60px -12px rgba(37, 99, 235, 0.25);
+}
+
+.glow-amber {
+  box-shadow: 0 0 60px -12px rgba(217, 119, 6, 0.25);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 60px -12px rgba(22, 163, 74, 0.25);
+}
+
+/* Staggered animation classes */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Mesh gradient backgrounds */
+.bg-mesh-blue {
+  background:
+    radial-gradient(at 20% 30%, rgba(37, 99, 235, 0.12) 0, transparent 50%),
+    radial-gradient(at 80% 70%, rgba(99, 102, 241, 0.08) 0, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(236, 72, 153, 0.05) 0, transparent 70%);
+}
+
+.bg-mesh-warm {
+  background:
+    radial-gradient(at 30% 20%, rgba(217, 119, 6, 0.08) 0, transparent 50%),
+    radial-gradient(at 70% 80%, rgba(220, 38, 38, 0.06) 0, transparent 50%),
+    radial-gradient(at 50% 50%, rgba(37, 99, 235, 0.04) 0, transparent 70%);
+}
+
+/* Premium card hover effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.05),
+    0 10px 15px -3px rgba(0, 0, 0, 0.08),
+    0 20px 25px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* German flag accent bar */
+.flag-accent {
+  background: linear-gradient(90deg, #1a1a1a 33%, #dd0000 33% 66%, #ffcc00 66%);
+  height: 3px;
+  border-radius: 2px;
+}
+
+/* Typography: section headers */
+.section-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: hsl(222.2 84% 4.9%);
+}
+
+.section-subtitle {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: hsl(215.4 16.3% 46.9%);
+  line-height: 1.5;
+}
+
+/* Badge with gradient */
+.badge-pro {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  color: white;
+  font-weight: 700;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 9999px;
+}
+
+/* Divider with fade edges */
+.divider-fade {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(214.3 31.8% 91.4%), transparent);
+}
