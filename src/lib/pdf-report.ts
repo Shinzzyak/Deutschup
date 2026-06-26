@@ -87,12 +87,12 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(24);
   doc.setTextColor(...C.ink);
-  doc.text('Laporan Pembelajaran', M, y + 15);
+  doc.text('Laporan Pembelajaran', M, y + 14);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(...C.inkLight);
-  doc.text('DeutschUp - Belajar Bahasa Jerman', M, y + 21);
+  doc.text('DeutschUp - Belajar Bahasa Jerman', M, y + 22);
 
   // Date (right, safe bounds)
   const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -110,9 +110,9 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   // Divider
   doc.setDrawColor(...C.divider);
   doc.setLineWidth(0.3);
-  doc.line(M, y + 28, W - M, y + 28);
+  doc.line(M, y + 30, W - M, y + 30);
 
-  y = 40;
+  y = 42;
 
   // ── GREETING ──
   doc.setFont('helvetica', 'normal');
