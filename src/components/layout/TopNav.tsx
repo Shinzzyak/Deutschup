@@ -2,7 +2,6 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useAuthStore } from '../../stores/authStore';
 import { useProgressStore } from '../../stores/progressStore';
-import { useTheme } from '../../lib/theme';
 import SearchOverlay from '../search/SearchOverlay';
 import {
   Search,
@@ -20,8 +19,6 @@ import {
   Sparkles,
   CreditCard,
   BarChart3,
-  Moon,
-  Sun,
 } from 'lucide-react';
 
 const navigation = [
@@ -38,7 +35,6 @@ export default function TopNav() {
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const { isDark, toggle } = useTheme();
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const streak = useProgressStore((s) => s.streak);
@@ -140,15 +136,6 @@ export default function TopNav() {
 
             {/* Right section */}
             <div className="flex items-center gap-1.5">
-              {/* Dark mode toggle */}
-              <button
-                onClick={toggle}
-                className="p-2 text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-                aria-label={isDark ? 'Mode terang' : 'Mode gelap'}
-              >
-                {isDark ? <Sun className="w-4.5 h-4.5" /> : <Moon className="w-4.5 h-4.5" />}
-              </button>
-
               {/* Search toggle */}
               <button
                 onClick={() => setSearchOpen(true)}
