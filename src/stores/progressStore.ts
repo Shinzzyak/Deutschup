@@ -139,6 +139,20 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         if (insertError) throw insertError;
         set({ ...defaultProgress, initialized: true, loading: false });
       }
+
+      // Load vocab progress from localStorage
+      try {
+        const vocabKey = `deutschup_vocab_` + userId;
+        const savedVocab = localStorage.getItem(vocabKey);
+        if (savedVocab) {
+          const parsed = JSON.parse(savedVocab);
+          set({ vocab: parsed });
+          console.log('[PROGRESS] Loaded vocab from localStorage:', Object.keys(parsed).length, 'words');
+        }
+      } catch (e) {
+        console.warn('[PROGRESS] Failed to load vocab from localStorage:', e);
+      }
+
     } catch (e) {
       console.error(`[PROGRESS] load error for ${userId}:`, e);
       set({ loading: false });
@@ -297,7 +311,13 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
       Date.now() + (status === 'known' ? 86400000 * 3 : 86400000);
     const newVocab = { ...vocab, [wordId]: { status, nextReview } };
     set({ vocab: newVocab });
-    // Vocab persistence deferred — in-memory only for now
+    // Persist to localStorage (per-user)
+    try {
+      const key = `deutschup_vocab_${userId}`;
+      localStorage.setItem(key, JSON.stringify(newVocab));
+    } catch (e) {
+      console.warn('[PROGRESS] Failed to save vocab to localStorage:', e);
+    }
   },
 
   // --------------------------------------------------------
