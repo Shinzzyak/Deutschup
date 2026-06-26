@@ -289,11 +289,13 @@ export default function Dashboard() {
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
-            <Link to="/lesson/a1-1">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/25">
-                <PlayCircle className="w-5 h-5 mr-2" /> Mulai Pelajaran Pertama
-              </Button>
-            </Link>
+            <div className="flex justify-center">
+              <Link to="/lesson/a1-1">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/25">
+                  <PlayCircle className="w-5 h-5 mr-2" /> Mulai Pelajaran Pertama
+                </Button>
+              </Link>
+            </div>
           </div>
         )}
 

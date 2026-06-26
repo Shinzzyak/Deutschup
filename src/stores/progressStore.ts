@@ -140,9 +140,9 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
         set({ ...defaultProgress, initialized: true, loading: false });
       }
 
-      // Load vocab progress from localStorage
+      // Load vocab progress from localStorage (use clerkUserId for consistent key)
       try {
-        const vocabKey = `deutschup_vocab_` + userId;
+        const vocabKey = `deutschup_vocab_` + clerkUserId;
         const savedVocab = localStorage.getItem(vocabKey);
         if (savedVocab) {
           const parsed = JSON.parse(savedVocab);
