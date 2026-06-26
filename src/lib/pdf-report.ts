@@ -1,6 +1,6 @@
 /**
- * PDF Report Generator v3 — DeutschUp Laporan Pembelajaran
- * Fix: proper text wrapping, no overflow
+ * PDF Report Generator v4 — DeutschUp Laporan Pembelajaran
+ * Fix: ASCII-only chars, proper text bounds, no overflow
  */
 
 import type { jsPDF } from 'jspdf';
@@ -48,17 +48,15 @@ const C = {
   divider: [230, 225, 218] as [number, number, number],
 };
 
-/** Wrap text to fit within maxWidth, returns array of lines */
-function wrapText(doc: jsPDF, text: string, maxWidth: number, fontSize: number): string[] {
-  doc.setFontSize(fontSize);
+/** Wrap text to fit within maxWidth */
+function wrapText(doc: jsPDF, text: string, maxWidth: number): string[] {
   const words = text.split(' ');
   const lines: string[] = [];
   let current = '';
 
   for (const word of words) {
     const test = current ? `${current} ${word}` : word;
-    const w = doc.getTextWidth(test);
-    if (w > maxWidth && current) {
+    if (doc.getTextWidth(test) > maxWidth && current) {
       lines.push(current);
       current = word;
     } else {
@@ -69,12 +67,11 @@ function wrapText(doc: jsPDF, text: string, maxWidth: number, fontSize: number):
   return lines;
 }
 
-/** Truncate text to fit maxWidth */
-function truncate(doc: jsPDF, text: string, maxWidth: number, fontSize: number): string {
-  doc.setFontSize(fontSize);
+/** Truncate text to fit with ellipsis */
+function trunc(doc: jsPDF, text: string, maxWidth: number): string {
   if (doc.getTextWidth(text) <= maxWidth) return text;
   let t = text;
-  while (t.length > 0 && doc.getTextWidth(t + '...') > maxWidth) {
+  while (t.length > 1 && doc.getTextWidth(t + '...') > maxWidth) {
     t = t.slice(0, -1);
   }
   return t + '...';
@@ -89,7 +86,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   const doc = new jsPDF();
   const W = 210;
   const M = 18;
-  const CW = W - M * 2; // 174mm content width
+  const CW = W - M * 2; // 174mm usable width
 
   // Page background
   doc.setFillColor(...C.paper);
@@ -100,6 +97,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   // ═══════════════════════════════════════
   // HEADER
   // ═══════════════════════════════════════
+  // German flag dots
   doc.setFillColor(...C.ink);
   doc.circle(M + 3, y + 2, 2, 'F');
   doc.setFillColor(...C.red);
@@ -115,14 +113,14 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(...C.inkLight);
-  doc.text('DeutschUp — Platform Belajar Bahasa Jerman', M, y + 22);
+  doc.text('DeutschUp - Platform Belajar Bahasa Jerman', M, y + 22);
 
-  // Date (right)
+  // Date right-aligned (within page bounds)
   doc.setFontSize(8);
-  doc.text(
-    new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
-    W - M, y + 8, { align: 'right' }
-  );
+  const dateStr = new Date().toLocaleDateString('id-ID', {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',
+  });
+  doc.text(trunc(doc, dateStr, 80), W - M, y + 8, { align: 'right' });
 
   // Level badge
   doc.setFillColor(...C.accent);
@@ -137,7 +135,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setLineWidth(0.3);
   doc.line(M, y + 30, W - M, y + 30);
 
-  y = 42;
+  y = 44;
 
   // ═══════════════════════════════════════
   // GREETING
@@ -145,12 +143,11 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(10);
   doc.setTextColor(...C.inkLight);
-  const greeting = `Halo, ${data.userName}! Berikut ringkasan perjalanan belajarmu.`;
-  doc.text(truncate(doc, greeting, CW, 10), M, y);
-  y += 12;
+  doc.text(trunc(doc, `Halo, ${data.userName}! Berikut ringkasan belajarmu.`, CW, 10), M, y);
+  y += 14;
 
   // ═══════════════════════════════════════
-  // STAT PILLS
+  // STAT PILLS (4 equal width)
   // ═══════════════════════════════════════
   const gap = 3;
   const pillW = (CW - gap * 3) / 4;
@@ -168,15 +165,17 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     doc.setFillColor(...p.bg);
     doc.roundedRect(px, y, pillW, pillH, 3, 3, 'F');
 
-    // Value — fit within pill
+    // Value (auto-size if too wide)
     doc.setFont('helvetica', 'bold');
-    const valWidth = doc.getTextWidth(p.value);
-    const valSize = valWidth > pillW - 8 ? 12 : 16;
+    let valSize = 16;
+    while (valSize > 10 && doc.getTextWidth(p.value) > pillW - 6) {
+      valSize -= 1;
+    }
     doc.setFontSize(valSize);
     doc.setTextColor(...p.color);
-    doc.text(p.value, px + pillW / 2, y + 12, { align: 'center' });
+    doc.text(trunc(doc, p.value, pillW - 4), px + pillW / 2, y + 12, { align: 'center' });
 
-    // Label
+    // Label (always fits — short text)
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.5);
     doc.setTextColor(...C.inkLight);
@@ -188,31 +187,36 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   // ═══════════════════════════════════════
   // INSIGHTS CARD
   // ═══════════════════════════════════════
-  const insightH = 34;
+  const cardPadX = 8;
+  const cardPadY = 6;
+  const lineH = 5.5;
+  const insights = [
+    { text: `${data.streak} hari streak - pertahankan!`, color: C.accent },
+    { text: `${data.studyHours} jam waktu belajar`, color: C.success },
+    { text: `Rata-rata skor: ${data.averageScore}%`, color: C.amber },
+    { text: `${data.vocabCount} kosakata dikuasai`, color: C.red },
+  ];
+  const insightH = cardPadY + 8 + insights.length * lineH + cardPadY;
+
   doc.setFillColor(...C.cream);
   doc.roundedRect(M, y, CW, insightH, 3, 3, 'F');
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(...C.ink);
-  doc.text('Catatan Belajar', M + 6, y + 8);
+  doc.text('Catatan Belajar', M + cardPadX, y + cardPadY + 5);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.setTextColor(...C.inkLight);
-
-  const insights = [
-    { text: `${data.streak} hari streak — pertahankan!`, color: C.accent },
-    { text: `${data.studyHours} jam waktu belajar`, color: C.success },
-    { text: `Rata-rata skor simulasi: ${data.averageScore}%`, color: C.amber },
-    { text: `${data.vocabCount} kosakata dikuasai`, color: C.red },
-  ];
 
   insights.forEach((ins, i) => {
-    const iy = y + 14 + i * 5;
+    const iy = y + cardPadY + 10 + i * lineH;
+    // Colored dot
     doc.setFillColor(...ins.color);
-    doc.circle(M + 8, iy - 1, 1.2, 'F');
-    doc.text(truncate(doc, ins.text, CW - 18, 8), M + 13, iy);
+    doc.circle(M + cardPadX + 2, iy - 1, 1.2, 'F');
+    // Text (truncated to fit within card)
+    doc.setTextColor(...C.inkLight);
+    doc.text(trunc(doc, ins.text, CW - cardPadX * 2 - 8, 8), M + cardPadX + 7, iy);
   });
 
   y += insightH + 10;
@@ -220,6 +224,8 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   // ═══════════════════════════════════════
   // LESSONS SECTION
   // ═══════════════════════════════════════
+  if (y > 250) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
+
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.setTextColor(...C.ink);
@@ -241,7 +247,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     doc.setFont('helvetica', 'italic');
     doc.setFontSize(9);
     doc.setTextColor(...C.inkMuted);
-    doc.text('Belum ada pelajaran selesai. Mulai belajar sekarang!', M, y);
+    doc.text('Belum ada pelajaran selesai. Mulai sekarang!', M, y);
     y += 12;
   } else {
     const byLevel: Record<string, typeof completedLessons> = {};
@@ -255,13 +261,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     };
 
     for (const [level, lessons] of Object.entries(byLevel)) {
-      // Page break check
-      if (y > 252) {
-        doc.addPage();
-        doc.setFillColor(...C.paper);
-        doc.rect(0, 0, W, 297, 'F');
-        y = 20;
-      }
+      if (y > 252) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
 
       const lColor = levelColors[level] || C.ink;
 
@@ -281,34 +281,29 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
       y += 10;
 
       for (const lesson of lessons.slice(0, 5)) {
-        if (y > 268) {
-          doc.addPage();
-          doc.setFillColor(...C.paper);
-          doc.rect(0, 0, W, 297, 'F');
-          y = 20;
-        }
+        if (y > 268) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
 
-        // Checkmark
+        // Checkmark (ASCII only — use ">" since jsPDF can't render unicode)
         doc.setFont('helvetica', 'bold');
-        doc.setFontSize(8);
+        doc.setFontSize(9);
         doc.setTextColor(...C.success);
-        doc.text('\u2713', M + 2, y);
+        doc.text('>', M + 2, y);
 
-        // Title (truncated to fit)
+        // Title
         doc.setFont('helvetica', 'normal');
         doc.setFontSize(8.5);
         doc.setTextColor(...C.ink);
-        doc.text(truncate(doc, lesson.title, CW - 12, 8.5), M + 8, y);
+        doc.text(trunc(doc, lesson.title, CW - 14, 8.5), M + 8, y);
 
         y += 4.5;
 
-        // First goal (wrapped if needed)
+        // First goal (wrapped)
         if (lesson.goals.length > 0) {
           doc.setFontSize(7);
           doc.setTextColor(...C.inkMuted);
-          const goalLines = wrapText(doc, lesson.goals[0], CW - 16, 7);
+          const goalLines = wrapText(doc, lesson.goals[0], CW - 18);
           for (const line of goalLines.slice(0, 2)) {
-            doc.text(truncate(doc, line, CW - 16, 7), M + 8, y);
+            doc.text(trunc(doc, line, CW - 18, 7), M + 8, y);
             y += 3.5;
           }
         }
@@ -328,14 +323,9 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   }
 
   // ═══════════════════════════════════════
-  // SIMULASI SECTION
+  // SIMULASI
   // ═══════════════════════════════════════
-  if (y > 230) {
-    doc.addPage();
-    doc.setFillColor(...C.paper);
-    doc.rect(0, 0, W, 297, 'F');
-    y = 20;
-  }
+  if (y > 235) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
 
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
@@ -372,18 +362,8 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
         ];
       }),
       theme: 'plain',
-      headStyles: {
-        fillColor: C.cream,
-        textColor: C.inkLight,
-        fontStyle: 'bold',
-        fontSize: 7.5,
-        cellPadding: 3,
-      },
-      bodyStyles: {
-        fontSize: 8,
-        textColor: C.ink,
-        cellPadding: 3,
-      },
+      headStyles: { fillColor: C.cream, textColor: C.inkLight, fontStyle: 'bold', fontSize: 7.5, cellPadding: 3 },
+      bodyStyles: { fontSize: 8, textColor: C.ink, cellPadding: 3 },
       alternateRowStyles: { fillColor: [248, 246, 242] },
       columnStyles: {
         0: { cellWidth: 8, halign: 'center' },
@@ -402,7 +382,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   }
 
   // ═══════════════════════════════════════
-  // FOOTER (all pages)
+  // FOOTER
   // ═══════════════════════════════════════
   const pageCount = (doc.internal as any).getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
@@ -414,9 +394,10 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.5);
     doc.setTextColor(...C.inkMuted);
-    doc.text('DeutschUp — Belajar Bahasa Jerman Menyenangkan', M, 282);
+    doc.text('DeutschUp - Belajar Bahasa Jerman Menyenangkan', M, 282);
     doc.text(`Halaman ${i}/${pageCount}`, W - M, 282, { align: 'right' });
 
+    // Tiny flag dots (centered)
     doc.setFillColor(...C.ink);
     doc.circle(W / 2 - 3, 282, 0.8, 'F');
     doc.setFillColor(...C.red);
