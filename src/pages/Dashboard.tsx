@@ -161,16 +161,17 @@ export default function Dashboard() {
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 dark:from-blue-800 dark:via-blue-900 dark:to-indigo-900 p-6 md:p-8 text-white shadow-xl">
-          {/* German Flag Stripe */}
-          <div className="absolute top-0 left-0 right-0 flex h-1.5">
-            <div className="flex-1 bg-[#1F2937]" />
-            <div className="flex-1 bg-[#DC2626]" />
-            <div className="flex-1 bg-[#F2C94C]" />
+        <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 md:p-8 text-white shadow-xl">
+          {/* German flag accent */}
+          <div className="absolute top-0 left-0 right-0 h-1 flex">
+            <div className="flex-1 bg-slate-600" />
+            <div className="flex-1 bg-red-500" />
+            <div className="flex-1 bg-amber-400" />
           </div>
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute -right-20 -top-20 w-64 h-64 rounded-full bg-white/20 blur-3xl" />
-            <div className="absolute -left-10 -bottom-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
+          {/* Ambient glow */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -right-20 -top-20 w-80 h-80 bg-amber-400/8 rounded-full blur-3xl" />
+            <div className="absolute -left-10 -bottom-10 w-60 h-60 bg-blue-400/5 rounded-full blur-2xl" />
           </div>
           
           <div className="relative z-10">
@@ -224,7 +225,7 @@ export default function Dashboard() {
 
         {/* EMPTY STATE */}
         {!loading && completedLessons.length === 0 && (
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-slate-800 dark:to-slate-800 border border-blue-100 dark:border-slate-700 rounded-3xl p-8 text-center">
+          <div className="glass-strong rounded-3xl p-8 text-center border border-blue-100/50">
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
@@ -242,31 +243,31 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/10 to-amber-500/5 dark:from-amber-500/20 dark:to-amber-500/10 border border-amber-500/20 dark:border-amber-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
-              <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-amber-500/10 blur-xl" />
+            <div className="relative overflow-hidden rounded-2xl glass-strong p-4 md:p-5 flex flex-col card-hover border border-amber-200/30">
+              <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-amber-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-12 h-12 rounded-xl bg-amber-500/15 flex items-center justify-center mb-2">
-                  <Zap className="w-6 h-6 text-amber-500" />
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mb-2.5 shadow-md shadow-amber-500/20">
+                  <Zap className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-2xl md:text-3xl font-black text-amber-500">{xp}</span>
-                <span className="text-[10px] md:text-xs font-bold text-amber-600/80 uppercase tracking-wider mt-1">Total XP</span>
+                <span className="text-2xl md:text-3xl font-black text-slate-900">{xp}</span>
+                <span className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-500/10 to-blue-500/5 dark:from-blue-500/20 dark:to-blue-500/10 border border-blue-500/20 dark:border-blue-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
-              <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-blue-500/10 blur-xl" />
+            <div className="relative overflow-hidden rounded-2xl glass-strong p-4 md:p-5 flex flex-col card-hover border border-blue-200/30">
+              <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-blue-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-12 h-12 rounded-xl bg-blue-500/15 flex items-center justify-center mb-2">
-                  <BookOpen className="w-6 h-6 text-blue-500" />
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mb-2.5 shadow-md shadow-blue-500/20">
+                  <BookOpen className="w-5 h-5 text-white" />
                 </div>
-                <span className="text-2xl md:text-3xl font-black text-blue-500">{learningStats.totalVocab}</span>
-                <span className="text-[10px] md:text-xs font-bold text-blue-600/80 uppercase tracking-wider mt-1">Kosakata</span>
+                <span className="text-2xl md:text-3xl font-black text-slate-900">{learningStats.totalVocab}</span>
+                <span className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-green-500/10 to-green-500/5 dark:from-green-500/20 dark:to-green-500/10 border border-green-500/20 dark:border-green-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
-              <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-green-500/10 blur-xl" />
+            <div className="relative overflow-hidden rounded-2xl glass-strong p-4 md:p-5 flex flex-col card-hover border border-emerald-200/30">
+              <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-emerald-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-12 h-12 rounded-xl bg-green-500/15 flex items-center justify-center mb-2">
-                  <CheckCircle2 className="w-6 h-6 text-green-500" />
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-2.5 shadow-md shadow-emerald-500/20">
+                  <CheckCircle2 className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-green-500">{completedLessons.length}</span>
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
@@ -288,23 +289,31 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-600 via-purple-600 to-purple-700 dark:from-indigo-800 dark:via-purple-800 dark:to-purple-900 p-6 md:p-8 text-white shadow-xl shadow-purple-500/20 hover:shadow-2xl transition-shadow">
-            <div className="absolute inset-0 opacity-20">
-              <div className="absolute -right-16 -top-16 w-48 h-48 rounded-full bg-white/30 blur-3xl" />
-              <div className="absolute -left-8 -bottom-8 w-32 h-32 rounded-full bg-white/20 blur-2xl" />
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 md:p-8 text-white shadow-xl hover:shadow-2xl transition-shadow">
+            {/* German flag accent */}
+            <div className="absolute top-0 left-0 right-0 h-1 flex">
+              <div className="flex-1 bg-slate-600" />
+              <div className="flex-1 bg-red-500" />
+              <div className="flex-1 bg-amber-400" />
+            </div>
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="absolute -right-16 -top-16 w-60 h-60 bg-amber-400/8 rounded-full blur-3xl" />
+              <div className="absolute -left-8 -bottom-8 w-40 h-40 bg-blue-400/5 rounded-full blur-2xl" />
             </div>
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-3">
-                <Zap className="w-5 h-5 text-yellow-300" />
-                <span className="text-sm font-bold uppercase tracking-wider text-blue-200">Lanjutkan Belajar</span>
+                <div className="w-6 h-6 rounded-lg bg-amber-400 flex items-center justify-center">
+                  <Zap className="w-3.5 h-3.5 text-slate-900" />
+                </div>
+                <span className="text-sm font-bold uppercase tracking-wider text-amber-300">Lanjutkan Belajar</span>
               </div>
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h3 className="text-xl md:text-2xl font-bold">{currentLesson.title}</h3>
-                  <p className="text-blue-200 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
+                  <p className="text-slate-400 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
                 </div>
                 <Link to={`/lesson/${currentLesson.id}`}>
-                  <Button className="bg-white text-blue-700 hover:bg-blue-50 px-6 py-3 rounded-xl font-bold shadow-lg shadow-white/20 transition-all hover:scale-105">
+                  <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-amber-500/20 transition-all hover:scale-105">
                     <PlayCircle className="w-5 h-5 mr-2" /> Lanjutkan Sekarang
                   </Button>
                 </Link>
@@ -317,29 +326,31 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-orange-500/10 via-amber-500/5 to-orange-500/10 dark:from-orange-500/20 dark:via-amber-500/10 dark:to-orange-500/20 border border-orange-500/20 dark:border-orange-500/30 p-5 md:p-6">
-              <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-orange-500/10 blur-2xl" />
+            <div className="relative overflow-hidden rounded-2xl glass-strong p-5 md:p-6 card-hover border border-orange-200/30">
+              <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-orange-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
-                  <Flame className="w-6 h-6 text-orange-500" />
-                  <h3 className="text-lg font-bold text-foreground">Streak Belajar</h3>
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-md shadow-orange-500/20">
+                    <Flame className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">Streak Belajar</h3>
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-1">
                     <div className="flex items-baseline gap-2">
                       <span className="text-4xl font-black text-orange-500">{streakData.current}</span>
-                      <span className="text-sm font-medium text-muted-foreground">hari</span>
+                      <span className="text-sm font-medium text-slate-500">hari</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">Hari berturut-turut</p>
+                    <p className="text-sm text-slate-500">Hari berturut-turut</p>
                   </div>
                   <div className="text-right space-y-1">
                     <div className="flex items-center justify-end gap-1.5">
                       <Trophy className="w-4 h-4 text-amber-500" />
-                      <span className="text-sm font-bold text-muted-foreground">Best: {streakData.best}</span>
+                      <span className="text-sm font-bold text-slate-500">Best: {streakData.best}</span>
                     </div>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                        <div key={day} className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-orange-500 text-white" : "bg-muted text-muted-foreground")}>
+                        <div key={day} className={cn("w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-gradient-to-br from-orange-400 to-red-500 text-white shadow-sm" : "bg-slate-100 text-slate-400")}>
                           {day}
                         </div>
                       ))}
@@ -349,12 +360,14 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-500/10 via-purple-500/5 to-indigo-500/10 dark:from-indigo-500/20 dark:via-purple-500/10 dark:to-indigo-500/20 border border-indigo-500/20 dark:border-indigo-500/30 p-5 md:p-6">
-              <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-indigo-500/10 blur-2xl" />
+            <div className="relative overflow-hidden rounded-2xl glass-strong p-5 md:p-6 card-hover border border-indigo-200/30">
+              <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-indigo-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
-                  <BarChart3 className="w-6 h-6 text-indigo-500" />
-                  <h3 className="text-lg font-bold text-foreground">Statistik Belajar</h3>
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
+                    <BarChart3 className="w-5 h-5 text-white" />
+                  </div>
+                  <h3 className="text-lg font-bold text-slate-900">Statistik Belajar</h3>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
@@ -382,24 +395,26 @@ export default function Dashboard() {
 
         {/* SECTION E: ACHIEVEMENTS */}
         {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-amber-500/5 via-yellow-500/5 to-amber-500/5 dark:from-amber-500/10 dark:via-yellow-500/10 dark:to-amber-500/10 border border-amber-500/20 dark:border-amber-500/30 p-5 md:p-6">
-            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-amber-500/10 blur-2xl" />
+          <div className="relative overflow-hidden rounded-2xl glass-strong p-5 md:p-6">
+            <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-amber-400/8 blur-2xl" />
             <div className="relative z-10">
-              <div className="flex items-center space-x-2 mb-4">
-                <Award className="w-6 h-6 text-amber-500" />
-                <h3 className="text-lg font-bold text-foreground">Pencapaian</h3>
+              <div className="flex items-center space-x-2 mb-5">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/20">
+                  <Award className="w-5 h-5 text-white" />
+                </div>
+                <h3 className="text-lg font-bold text-slate-900">Pencapaian</h3>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                 {achievements.map(achievement => {
                   const Icon = achievement.icon;
                   return (
-                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 rounded-2xl border transition-all", achievement.unlocked ? "bg-card border-amber-500/30 shadow-sm" : "bg-muted/50 border-border opacity-60")}>
-                      <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mb-2", achievement.unlocked ? "bg-amber-500/10" : "bg-muted")}>
-                        <Icon className={cn("w-6 h-6", achievement.unlocked ? achievement.color : "text-muted-foreground")} />
+                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 rounded-2xl border transition-all card-hover", achievement.unlocked ? "glass border-amber-200/40" : "bg-slate-50 border-slate-100 opacity-50")}>
+                      <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mb-2", achievement.unlocked ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-md shadow-amber-500/20" : "bg-slate-100")}>
+                        <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-white" : "text-slate-400")} />
                       </div>
-                      <p className="text-sm font-bold text-foreground">{achievement.title}</p>
-                      <p className="text-[10px] text-muted-foreground mt-1">{achievement.description}</p>
-                      {achievement.unlocked && <span className="mt-2 text-[10px] font-bold text-amber-500 uppercase tracking-wider">Terbuka</span>}
+                      <p className="text-sm font-bold text-slate-900">{achievement.title}</p>
+                      <p className="text-[10px] text-slate-500 mt-1">{achievement.description}</p>
+                      {achievement.unlocked && <span className="mt-2 text-[10px] font-bold text-amber-600 uppercase tracking-wider">Terbuka</span>}
                     </div>
                   );
                 })}
@@ -464,10 +479,10 @@ export default function Dashboard() {
                           to={isUnlocked ? `/lesson/${lesson.id}` : ''}
                           onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
                           className={cn(
-                            "flex flex-col p-5 rounded-2xl border transition-all duration-200 relative overflow-hidden",
-                            isCompleted ? "bg-muted border-border hover:border-border" :
-                            isUnlocked ? "bg-card border-blue-500/50 shadow-md hover:-translate-y-1" :
-                            "bg-muted border-border opacity-60 cursor-not-allowed"
+                            "flex flex-col p-5 rounded-2xl border transition-all duration-200 relative overflow-hidden card-hover",
+                            isCompleted ? "glass border-emerald-200/40" :
+                            isUnlocked ? "glass-strong border-blue-200/40 shadow-lg shadow-blue-500/5" :
+                            "bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed"
                           )}
                           aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
                           aria-disabled={!isUnlocked}
