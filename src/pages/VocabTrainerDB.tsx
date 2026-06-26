@@ -40,6 +40,7 @@ export default function VocabTrainerDB() {
   
   const [dbVocab, setDbVocab] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [vocabLoaded, setVocabLoaded] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [cardsReviewed, setCardsReviewed] = useState(0);
   
@@ -51,11 +52,11 @@ export default function VocabTrainerDB() {
   // Load vocab progress from localStorage on mount
   useEffect(() => {
     if (user?.id) {
-      console.log('[VOCAB-DEBUG] Calling loadProgress for:', user.id);
       loadProgress(user.id).then(() => {
-        const currentVocab = useProgressStore.getState().vocab;
-        console.log('[VOCAB-DEBUG] loadProgress done, vocab keys:', Object.keys(currentVocab).length);
+        setVocabLoaded(true);
       });
+    } else {
+      setVocabLoaded(true);
     }
   }, [user?.id]);
 
@@ -268,7 +269,12 @@ export default function VocabTrainerDB() {
       </div>
 
       <AnimatePresence mode="wait">
-        {activeTab === 'flashcard' ? (
+        {!vocabLoaded ? (
+          <div className="flex flex-col items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
+            <p className="text-muted-foreground">Loading progress...</p>
+          </div>
+        ) : activeTab === 'flashcard' ? (
           <motion.div 
             key="flashcards"
             initial={{ opacity: 0, y: 10 }}
