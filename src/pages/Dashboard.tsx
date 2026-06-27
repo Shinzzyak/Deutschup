@@ -154,14 +154,14 @@ export default function Dashboard() {
     <div className="min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-6 md:space-y-8">
         {errorMsg && (
-          <div className="bg-destructive/10 border border-destructive/20 text-destructive rounded-2xl p-4 font-medium flex items-center justify-between shadow-sm">
+          <div className="bg-destructive/10 border border-destructive/20 text-destructive  p-4 font-medium flex items-center justify-between shadow-sm">
             <span>{errorMsg}</span>
             <button onClick={() => setErrorMsg("")} className="opacity-70 hover:opacity-100 transition-opacity" aria-label="Tutup pesan error">✕</button>
           </div>
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-6 md:p-8 text-white shadow-xl">
+        <header className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 text-white ">
           {/* German flag accent */}
           <div className="absolute top-0 left-0 right-0 h-1 flex">
             <div className="flex-1 bg-slate-600" />
@@ -182,12 +182,12 @@ export default function Dashboard() {
                 </p>
                 <h1 className="text-2xl md:text-4xl font-bold tracking-tight">Learning Command Center</h1>
                 <div className="flex items-center gap-3 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-sm font-semibold backdrop-blur-sm">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/15 text-sm font-semibold ">
                     <GraduationCap className="w-4 h-4" />
                     Level {currentLevel}
                   </span>
                   {isUserPro(tierData, role) && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-100 text-sm font-semibold backdrop-blur-sm">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-400/20 text-amber-100 text-sm font-semibold ">
                       <Sparkles className="w-4 h-4" />
                       Pro
                     </span>
@@ -196,7 +196,7 @@ export default function Dashboard() {
               </div>
               
               <div className="flex flex-col items-start md:items-end w-full md:w-auto">
-                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2 rounded-xl bg-white/15 hover:bg-white/25 dark:bg-white/10 dark:hover:bg-white/20 text-white border-0 backdrop-blur-sm w-full md:w-auto">
+                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2 rounded-xl bg-white/15 hover:bg-white/25 dark:bg-white/10 dark:hover:bg-white/20 text-white border-0  w-full md:w-auto">
                   {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                   <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan'}</span>
                 </Button>
@@ -225,13 +225,13 @@ export default function Dashboard() {
 
         {/* EMPTY STATE */}
         {!loading && completedLessons.length === 0 && (
-          <div className="glass-strong rounded-3xl p-8 text-center border border-blue-100/50">
+          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  p-8 text-center border border-blue-100/50">
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
             <div className="flex justify-center">
               <Link to="/lesson/a1-1">
-                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold text-lg shadow-lg shadow-blue-500/25">
+                <Button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-bold text-lg  shadow-blue-500/25">
                   <PlayCircle className="w-5 h-5 mr-2" /> Mulai Pelajaran Pertama
                 </Button>
               </Link>
@@ -243,37 +243,37 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden rounded-2xl glass-strong p-4 md:p-5 flex flex-col card-hover border border-amber-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-amber-200/30">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-amber-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mb-2.5 shadow-md shadow-amber-500/20">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center mb-2.5  shadow-amber-500/20">
                   <Zap className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-slate-900">{xp}</span>
                 <span className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl glass-strong p-4 md:p-5 flex flex-col card-hover border border-blue-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-blue-200/30">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-blue-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mb-2.5 shadow-md shadow-blue-500/20">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center mb-2.5  shadow-blue-500/20">
                   <BookOpen className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-slate-900">{learningStats.totalVocab}</span>
                 <span className="text-[10px] md:text-xs font-bold text-slate-500 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl glass-strong p-4 md:p-5 flex flex-col card-hover border border-emerald-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-emerald-200/30">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-emerald-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-2.5 shadow-md shadow-emerald-500/20">
+                <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center mb-2.5  shadow-emerald-500/20">
                   <CheckCircle2 className="w-5 h-5 text-white" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-green-500">{completedLessons.length}</span>
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
               </div>
             </div>
-            <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-500/10 to-purple-500/5 dark:from-purple-500/20 dark:to-purple-500/10 border border-purple-500/20 dark:border-purple-500/30 p-4 md:p-5 flex flex-col backdrop-blur-sm hover:shadow-md transition-shadow">
+            <div className="relative overflow-hidden  bg-gradient-to-br from-purple-500/10 to-purple-500/5 dark:from-purple-500/20 dark:to-purple-500/10 border border-purple-500/20 dark:border-purple-500/30 p-4 md:p-5 flex flex-col  hover: transition-shadow">
               <div className="absolute -right-4 -bottom-4 w-20 h-20 rounded-full bg-purple-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-12 h-12 rounded-xl bg-purple-500/15 flex items-center justify-center mb-2">
@@ -289,7 +289,7 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && (
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 md:p-8 text-white shadow-xl hover:shadow-2xl transition-shadow">
+          <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 text-white  hover:shadow-2xl transition-shadow">
             {/* German flag accent */}
             <div className="absolute top-0 left-0 right-0 h-1 flex">
               <div className="flex-1 bg-slate-600" />
@@ -313,7 +313,7 @@ export default function Dashboard() {
                   <p className="text-slate-400 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
                 </div>
                 <Link to={`/lesson/${currentLesson.id}`}>
-                  <Button className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-amber-500/20 transition-all hover:scale-105">
+                  <Button className="bg-[#c8956c] hover:bg-[#b8854c] text-white px-6 py-3 rounded-xl font-bold  shadow-amber-500/20 transition-all hover:scale-105">
                     <PlayCircle className="w-5 h-5 mr-2" /> Lanjutkan Sekarang
                   </Button>
                 </Link>
@@ -326,11 +326,11 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden rounded-2xl glass-strong p-5 md:p-6 card-hover border border-orange-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-5 md:p-6 card-hover border border-orange-200/30">
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-orange-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center shadow-md shadow-orange-500/20">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center  shadow-orange-500/20">
                     <Flame className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-slate-900">Streak Belajar</h3>
@@ -360,11 +360,11 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden rounded-2xl glass-strong p-5 md:p-6 card-hover border border-indigo-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-5 md:p-6 card-hover border border-indigo-200/30">
               <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-indigo-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center shadow-md shadow-indigo-500/20">
+                  <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center  shadow-indigo-500/20">
                     <BarChart3 className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="text-lg font-bold text-slate-900">Statistik Belajar</h3>
@@ -395,11 +395,11 @@ export default function Dashboard() {
 
         {/* SECTION E: ACHIEVEMENTS */}
         {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden rounded-2xl glass-strong p-5 md:p-6">
+          <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-5 md:p-6">
             <div className="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-amber-400/8 blur-2xl" />
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-5">
-                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shadow-md shadow-amber-500/20">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center  shadow-amber-500/20">
                   <Award className="w-5 h-5 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-slate-900">Pencapaian</h3>
@@ -408,8 +408,8 @@ export default function Dashboard() {
                 {achievements.map(achievement => {
                   const Icon = achievement.icon;
                   return (
-                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 rounded-2xl border transition-all card-hover", achievement.unlocked ? "glass border-amber-200/40" : "bg-slate-50 border-slate-100 opacity-50")}>
-                      <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mb-2", achievement.unlocked ? "bg-gradient-to-br from-amber-400 to-orange-500 shadow-md shadow-amber-500/20" : "bg-slate-100")}>
+                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4  border transition-all card-hover", achievement.unlocked ? "bg-white border border-[#0a0a0a]/10 border-amber-200/40" : "bg-slate-50 border-slate-100 opacity-50")}>
+                      <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mb-2", achievement.unlocked ? "bg-gradient-to-br from-amber-400 to-orange-500  shadow-amber-500/20" : "bg-slate-100")}>
                         <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-white" : "text-slate-400")} />
                       </div>
                       <p className="text-sm font-bold text-slate-900">{achievement.title}</p>
@@ -444,7 +444,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-4">
                       <Link to={isLevelUnlocked ? `/level/${lvl.id}` : '#'}>
-                        <div className={cn("w-14 h-14 rounded-2xl flex items-center justify-center text-white font-bold text-2xl shadow-sm transition-transform hover:scale-105", lvl.color)}>
+                        <div className={cn("w-14 h-14  flex items-center justify-center text-white font-bold text-2xl shadow-sm transition-transform hover:scale-105", lvl.color)}>
                           {lvl.id}
                         </div>
                       </Link>
@@ -479,9 +479,9 @@ export default function Dashboard() {
                           to={isUnlocked ? `/lesson/${lesson.id}` : ''}
                           onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
                           className={cn(
-                            "flex flex-col p-5 rounded-2xl border transition-all duration-200 relative overflow-hidden card-hover",
-                            isCompleted ? "glass border-emerald-200/40" :
-                            isUnlocked ? "glass-strong border-blue-200/40 shadow-lg shadow-blue-500/5" :
+                            "flex flex-col p-5  border transition-all duration-200 relative overflow-hidden card-hover",
+                            isCompleted ? "bg-white border border-[#0a0a0a]/10 border-emerald-200/40" :
+                            isUnlocked ? "bg-[#f5f0eb] border-2 border-[#0a0a0a] border-blue-200/40  shadow-blue-500/5" :
                             "bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed"
                           )}
                           aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}

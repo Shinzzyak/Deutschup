@@ -121,7 +121,7 @@ export default function Admin() {
 
       {/* System Health Banner */}
       {health && (
-        <div className={`mb-8 p-4 rounded-2xl border flex items-center gap-3 ${
+        <div className={`mb-8 p-4  border flex items-center gap-3 ${
           health.status === 'ok' 
             ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-700 dark:text-emerald-400' 
             : 'bg-destructive/5 border-destructive/20 text-destructive'
@@ -193,7 +193,7 @@ export default function Admin() {
         </h2>
         <Button
           onClick={() => navigate('/admin/ai')}
-          className="rounded-2xl px-6 py-5 font-bold shadow-lg shadow-[#F2C94C]/20 gap-2"
+          className=" px-6 py-5 font-bold  shadow-[#F2C94C]/20 gap-2"
         >
           <Zap className="w-4 h-4" />
           Kelola AI Provider & Model
@@ -212,7 +212,7 @@ function StatCard({ icon: Icon, label, value, accent, bg }: {
   icon: any; label: string; value: number; accent: string; bg: string; 
 }) {
   return (
-    <Card className="rounded-2xl border-border bg-card hover:shadow-md transition-shadow">
+    <Card className=" border-border bg-card hover: transition-shadow">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-3">
           <div className={`p-2 rounded-xl ${bg}`}>

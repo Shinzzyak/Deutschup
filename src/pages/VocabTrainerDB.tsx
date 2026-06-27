@@ -310,7 +310,7 @@ export default function VocabTrainerDB() {
                     transition={{ type: 'spring', stiffness: 260, damping: 20 }}
                   >
                     {/* Front */}
-                    <div className="absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border rounded-3xl shadow-xl text-center">
+                    <div className="absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border   text-center">
                       <div className={cn("px-3 py-1 rounded-full text-xs font-bold mb-6", levelColors[selectedLevel].bg, levelColors[selectedLevel].text)}>
                         {selectedLevel}
                       </div>
@@ -326,7 +326,7 @@ export default function VocabTrainerDB() {
                     </div>
 
                     {/* Back */}
-                    <div className="absolute inset-0 backface-hidden rotate-y-180 flex flex-col items-center justify-center p-8 bg-card border-2 border-primary rounded-3xl shadow-xl text-center">
+                    <div className="absolute inset-0 backface-hidden rotate-y-180 flex flex-col items-center justify-center p-8 bg-card border-2 border-primary   text-center">
                       <h2 className="text-4xl font-bold mb-6 text-primary">
                         {currentCard.translation}
                       </h2>
@@ -383,7 +383,7 @@ export default function VocabTrainerDB() {
                   <Button 
                     variant="destructive" 
                     size="lg" 
-                    className="w-32 h-16 rounded-2xl text-xl flex flex-col items-center gap-1"
+                    className="w-32 h-16  text-xl flex flex-col items-center gap-1"
                     onClick={() => handleAnswer(false)}
                   >
                     <X className="w-6 h-6" />
@@ -392,7 +392,7 @@ export default function VocabTrainerDB() {
                   <Button 
                     variant="default" 
                     size="lg" 
-                    className="w-32 h-16 rounded-2xl text-xl flex flex-col items-center gap-1 bg-emerald-600 hover:bg-emerald-700"
+                    className="w-32 h-16  text-xl flex flex-col items-center gap-1 bg-emerald-600 hover:bg-emerald-700"
                     onClick={() => handleAnswer(true)}
                   >
                     <Check className="w-6 h-6" />
@@ -401,7 +401,7 @@ export default function VocabTrainerDB() {
                 </div>
               </>
             ) : (
-              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 bg-card border border-dashed border-border rounded-3xl">
+              <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 bg-card border border-dashed border-border ">
                 <div className="p-4 bg-primary/10 rounded-full">
                   <Trophy className="w-12 h-12 text-primary" />
                 </div>
@@ -422,12 +422,12 @@ export default function VocabTrainerDB() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="glass-strong border border-border rounded-3xl overflow-hidden shadow-sm"
+            className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border border-border  overflow-hidden shadow-sm"
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="glass/50 text-muted-foreground text-sm uppercase tracking-wider">
+                  <tr className="bg-white border border-[#0a0a0a]/10/50 text-muted-foreground text-sm uppercase tracking-wider">
                     <th className="px-6 py-4 font-semibold">Word</th>
                     <th className="px-6 py-4 font-semibold">Translation</th>
                     <th className="px-6 py-4 font-semibold">Status</th>

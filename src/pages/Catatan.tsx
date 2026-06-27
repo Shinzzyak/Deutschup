@@ -75,7 +75,7 @@ export default function Catatan() {
         
         {/* Kolom 1: Rencana Belajar */}
         <div className="space-y-6">
-          <div className="glass-strong p-6 md:p-8 rounded-3xl border border-border shadow-sm">
+          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center">
                  <CalendarCheck2 className="w-6 h-6 mr-2 text-[#F2C94C]" />
@@ -127,7 +127,7 @@ export default function Catatan() {
 
         {/* Kolom 2: Catatan Pribadi */}
         <div className="space-y-6">
-          <div className="glass-strong p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col h-full">
+          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border shadow-sm flex flex-col h-full">
             <h2 className="text-2xl font-bold mb-6">Catatan Pribadi</h2>
             
             <div className="mb-8">
@@ -135,7 +135,7 @@ export default function Catatan() {
                  value={newNote}
                  onChange={(e) => setNewNote(e.target.value)}
                  placeholder="Tulis hal penting untuk diingat..."
-                 className="w-full h-24 bg-muted border-2 border-border rounded-2xl p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all resize-none mb-3"
+                 className="w-full h-24 bg-muted border-2 border-border  p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all resize-none mb-3"
                />
                <div className="flex justify-between items-center">
                   <div className="flex gap-2">
@@ -173,7 +173,7 @@ export default function Catatan() {
                )}
                
                {notes.map(note => (
-                 <div key={note.id} className="p-4 bg-muted border border-border rounded-2xl relative group">
+                 <div key={note.id} className="p-4 bg-muted border border-border  relative group">
                     <div className="flex justify-between items-start mb-2">
                        <span className="px-2 py-1 bg-card border border-border rounded-lg text-xs font-bold text-muted-foreground">{note.tag}</span>
                        <button onClick={() => user && deleteNote(user.id, note.id)} className="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity" aria-label="Hapus catatan">

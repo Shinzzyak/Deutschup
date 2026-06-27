@@ -42,7 +42,7 @@ export function VocabSkeleton() {
       <Skeleton className="h-12 w-full rounded-xl" />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="p-5 bg-white rounded-2xl border border-slate-200">
+          <div key={i} className="p-5 bg-white  border border-slate-200">
             <Skeleton className="h-6 w-32 mb-2" />
             <Skeleton className="h-4 w-48 mb-3" />
             <Skeleton className="h-3 w-full" />
@@ -59,7 +59,7 @@ export function VerbSkeleton() {
     <div className="space-y-6">
       <Skeleton className="h-12 w-full rounded-xl" />
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="p-6 bg-white rounded-3xl border border-slate-200">
+        <div key={i} className="p-6 bg-white  border border-slate-200">
           <div className="flex items-center gap-3 mb-4">
             <Skeleton className="h-8 w-24" />
             <Skeleton className="h-5 w-16 rounded-md" />
@@ -106,7 +106,7 @@ export function PricingSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="p-8 bg-white rounded-2xl border border-slate-200">
+        <div key={i} className="p-8 bg-white  border border-slate-200">
           <Skeleton className="h-6 w-24 mb-2" />
           <Skeleton className="h-10 w-32 mb-4" />
           <Skeleton className="h-4 w-full mb-2" />

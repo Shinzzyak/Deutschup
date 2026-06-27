@@ -160,7 +160,7 @@ export default function VerbTrainer() {
         <input 
           type="text" 
           placeholder="Cari kata (misal: rumah, gehen, schön)..."
-          className="w-full bg-card border-2 border-border rounded-2xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium"
+          className="w-full bg-card border-2 border-border  py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -172,7 +172,7 @@ export default function VerbTrainer() {
             
             <div className="space-y-4">
               {filteredVocab.map(v => (
-                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
+                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-card  border border-border shadow-sm hover: transition-shadow">
                   <div>
                     <div className="flex items-center space-x-3 mb-1">
                       {v.article && (
@@ -208,7 +208,7 @@ export default function VerbTrainer() {
           </div>
         )}
         {(searchTerm && filteredVerbs.map(verb => (
-            <div key={verb.infinitive} className="bg-card rounded-3xl border border-border overflow-hidden shadow-sm">
+            <div key={verb.infinitive} className="bg-card  border border-border overflow-hidden shadow-sm">
               <div className="p-6 md:p-8 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center space-x-3 mb-1">

@@ -152,10 +152,10 @@ export default function Pricing() {
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
-          <div key={plan.id} className={`relative bg-card rounded-3xl p-8 border ${plan.popular ? 'border-[#F2C94C] shadow-xl shadow-[#F2C94C]/20 scale-105 z-10' : 'border-border shadow-sm'} flex flex-col`}>
+          <div key={plan.id} className={`relative bg-card  p-8 border ${plan.popular ? 'border-[#F2C94C]  shadow-[#F2C94C]/20 scale-105 z-10' : 'border-border shadow-sm'} flex flex-col`}>
             {plan.popular && (
               <div className="absolute -top-4 inset-x-0 flex justify-center">
-                 <span className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] flex items-center shadow-lg text-[#1F2937] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                 <span className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] flex items-center  text-[#1F2937] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
                    <Sparkles className="w-3 h-3 mr-1" /> Paling Laris
                  </span>
               </div>
@@ -182,7 +182,7 @@ export default function Pricing() {
               onClick={() => handleUpgrade(plan.id)}
               disabled={loading !== null || plan.id === 'free' || activePro}
               variant={plan.buttonVariant}
-              className={`w-full rounded-2xl py-6 text-lg font-bold shadow-md ${plan.popular && !activePro ? 'bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937]' : ''}`}
+              className={`w-full  py-6 text-lg font-bold  ${plan.popular && !activePro ? 'bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937]' : ''}`}
             >
               {loading === plan.id ? <Loader2 className="w-6 h-6 animate-spin" /> : plan.buttonText}
             </Button>
@@ -204,12 +204,12 @@ export default function Pricing() {
               Memuat riwayat...
             </div>
           ) : orders.length === 0 ? (
-            <div className="text-center py-8 bg-muted rounded-2xl">
+            <div className="text-center py-8 bg-muted ">
               <Clock className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
               <p className="text-muted-foreground">Belum ada riwayat pembayaran.</p>
             </div>
           ) : (
-            <div className="glass-strong rounded-2xl overflow-hidden">
+            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  overflow-hidden">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border bg-muted">

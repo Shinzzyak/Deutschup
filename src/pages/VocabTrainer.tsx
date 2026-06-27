@@ -145,7 +145,7 @@ export default function VocabTrainer() {
           <p className="text-muted-foreground text-lg">Tingkatkan penguasaan kata-kata baru.</p>
         </div>
         
-        <div className="flex bg-muted p-1 rounded-2xl">
+        <div className="flex bg-muted p-1 ">
           <button 
             onClick={() => setActiveTab('flashcard')}
             className={cn(
@@ -189,7 +189,7 @@ export default function VocabTrainer() {
                   isFlipped ? "rotate-y-180" : ""
                 )}>
                   {/* Front */}
-                  <div className="absolute inset-0 backface-hidden bg-card border-2 border-border rounded-3xl p-8 flex flex-col items-center justify-center shadow-lg hover:border-border transition-colors">
+                  <div className="absolute inset-0 backface-hidden bg-card border-2 border-border  p-8 flex flex-col items-center justify-center  hover:border-border transition-colors">
                     {currentCard.article && (
                       <span className={cn(
                         "text-sm font-bold px-3 py-1.5 rounded-lg text-white mb-4 uppercase tracking-widest",
@@ -201,19 +201,19 @@ export default function VocabTrainer() {
                   </div>
 
                   {/* Back */}
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900 border-2 border-slate-800 rounded-3xl p-6 md:p-8 flex flex-col items-center justify-center shadow-xl overflow-y-auto">
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900 border-2 border-slate-800  p-6 md:p-8 flex flex-col items-center justify-center  overflow-y-auto">
                     <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2">{currentCard.translation}</h2>
                     <p className="text-muted-foreground text-lg mb-6">Level: {currentCard.level}</p>
                     
                     <div className="w-full space-y-4 text-left">
                       {!pronunciation && (
-                        <Button onClick={fetchPronunciation} variant="outline" className="w-full rounded-2xl border-slate-700 bg-slate-800 text-white hover:bg-slate-700 hover:text-white" disabled={pronunciationLoading}>
+                        <Button onClick={fetchPronunciation} variant="outline" className="w-full  border-slate-700 bg-slate-800 text-white hover:bg-slate-700 hover:text-white" disabled={pronunciationLoading}>
                           {pronunciationLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Volume2 className="w-4 h-4 mr-2" />}
                           Cara Baca
                         </Button>
                       )}
                       {pronunciation && (
-                        <div className="bg-slate-800 border border-slate-700 p-4 rounded-2xl text-white">
+                        <div className="bg-slate-800 border border-slate-700 p-4  text-white">
                           <p className="text-sm text-muted-foreground mb-1">Ejaan IPA / Fonetik:</p>
                           <p className="text-xl font-mono text-yellow-400 mb-2">{pronunciation.phonetic}</p>
                           <p className="text-sm italic text-slate-300">💡 {pronunciation.tip}</p>
@@ -221,13 +221,13 @@ export default function VocabTrainer() {
                       )}
 
                       {!examples && (
-                        <Button onClick={fetchExamples} variant="outline" className="w-full rounded-2xl border-slate-700 bg-slate-800 text-white hover:bg-slate-700 hover:text-white" disabled={examplesLoading}>
+                        <Button onClick={fetchExamples} variant="outline" className="w-full  border-slate-700 bg-slate-800 text-white hover:bg-slate-700 hover:text-white" disabled={examplesLoading}>
                           {examplesLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                           Lihat Contoh Kalimat
                         </Button>
                       )}
                       {examples && (
-                        <div className="bg-slate-800 border border-slate-700 p-4 rounded-2xl text-white space-y-4">
+                        <div className="bg-slate-800 border border-slate-700 p-4  text-white space-y-4">
                           {examples.map((ex, i) => (
                             <div key={i} className="space-y-1">
                                 <p className="font-medium text-blue-300">"{ex.german}"</p>
@@ -245,7 +245,7 @@ export default function VocabTrainer() {
                 <Button 
                   onClick={() => handleAnswer(false)} 
                   size="lg" 
-                  className="h-16 rounded-2xl bg-red-100 hover:bg-red-200 text-red-700 font-bold text-lg border border-red-200"
+                  className="h-16  bg-red-100 hover:bg-red-200 text-red-700 font-bold text-lg border border-red-200"
                 >
                   <X className="w-6 h-6 mr-2" />
                   Lupa
@@ -253,7 +253,7 @@ export default function VocabTrainer() {
                 <Button 
                   onClick={() => handleAnswer(true)} 
                   size="lg" 
-                  className="h-16 rounded-2xl bg-green-100 hover:bg-green-200 text-green-700 font-bold text-lg border border-green-200"
+                  className="h-16  bg-green-100 hover:bg-green-200 text-green-700 font-bold text-lg border border-green-200"
                 >
                   <Check className="w-6 h-6 mr-2" />
                   Ingat
@@ -266,7 +266,7 @@ export default function VocabTrainer() {
 
       {activeTab === 'list' && (
         <div>
-          <div className="bg-card p-4 rounded-2xl border border-border mb-6 flex flex-col sm:flex-row gap-4 items-center">
+          <div className="bg-card p-4  border border-border mb-6 flex flex-col sm:flex-row gap-4 items-center">
              <div className="flex-1 flex gap-4 w-full">
                <div className="flex-1 space-y-2">
                  <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider flex items-center"><Filter className="w-3 h-3 mr-1" /> Filter</label>
@@ -303,7 +303,7 @@ export default function VocabTrainer() {
                 const status = vocab[v.id]?.status;
                 const lc = levelColors[v.level] || levelColors.A1;
                 return (
-                  <div key={v.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow gap-4">
+                  <div key={v.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card  border border-border shadow-sm hover: transition-shadow gap-4">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center border border-border flex-shrink-0">
                          {status === 'known' ? (
@@ -341,7 +341,7 @@ export default function VocabTrainer() {
              })}
              
              {listData.length === 0 && (
-                <div className="text-center py-12 bg-card rounded-2xl border border-border border-dashed">
+                <div className="text-center py-12 bg-card  border border-border border-dashed">
                   <p className="text-muted-foreground">Tidak ada kosakata yang cocok dengan filter.</p>
                 </div>
              )}

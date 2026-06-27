@@ -118,7 +118,7 @@ export default function CheckpointView() {
   const renderReviewSection = () => {
     if (reviewLessons.length === 0) return null;
     return (
-      <div className="bg-amber-50 p-6 rounded-3xl border border-amber-200 mb-6">
+      <div className="bg-amber-50 p-6  border border-amber-200 mb-6">
         <h3 className="font-bold text-amber-800 mb-4 flex items-center">
           <Star className="w-5 h-5 mr-2" /> Ulasan Pelajaran Sebelumnya
         </h3>
@@ -144,7 +144,7 @@ export default function CheckpointView() {
       </Link>
 
       {/* Header */}
-      <div className="bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-6 md:p-8 text-white mb-8">
+      <div className="bg-[#c8956c]  p-6 md:p-8 text-white mb-8">
         <div className="flex items-center space-x-3 mb-2">
           <Target className="w-8 h-8" />
           <div>
@@ -181,7 +181,7 @@ export default function CheckpointView() {
 
           {/* Question */}
           {currentQuestion && (
-            <div className="bg-card p-6 md:p-8 rounded-3xl shadow-sm border border-border">
+            <div className="bg-card p-6 md:p-8  shadow-sm border border-border">
               <p className="text-lg font-bold mb-6">{currentQuestion.question}</p>
 
               <div className="space-y-3">
@@ -190,7 +190,7 @@ export default function CheckpointView() {
                     key={idx}
                     onClick={() => handleAnswer(option)}
                     className={cn(
-                      "w-full text-left p-4 rounded-2xl border-2 transition-all",
+                      "w-full text-left p-4  border-2 transition-all",
                       selectedAnswer === option
                         ? isAnswerChecked
                           ? option === currentQuestion.options[currentQuestion.correctAnswer]
@@ -209,7 +209,7 @@ export default function CheckpointView() {
               {/* Feedback */}
               {isAnswerChecked && (
                 <div className={cn(
-                  "mt-6 p-4 rounded-2xl",
+                  "mt-6 p-4 ",
                   isCorrect ? "bg-green-50 text-green-800" : "bg-red-50 text-red-800"
                 )}>
                   {isCorrect ? "✅ Benar!" : "❌ Salah"}
@@ -222,14 +222,14 @@ export default function CheckpointView() {
                   <Button
                     onClick={checkAnswer}
                     disabled={!selectedAnswer}
-                    className="w-full h-12 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white"
+                    className="w-full h-12  bg-slate-900 hover:bg-slate-800 text-white"
                   >
                     Cek Jawaban
                   </Button>
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="w-full h-12 rounded-2xl bg-amber-500 hover:bg-amber-600 text-white"
+                    className="w-full h-12  bg-amber-500 hover:bg-amber-600 text-white"
                   >
                     {currentQuestionIndex < totalQuestions - 1 ? "Soal Berikutnya" : "Lihat Hasil"}
                   </Button>
@@ -240,7 +240,7 @@ export default function CheckpointView() {
         </>
       ) : (
         /* Result */
-        <div className="bg-card p-8 md:p-10 rounded-3xl shadow-sm border border-border text-center">
+        <div className="bg-card p-8 md:p-10  shadow-sm border border-border text-center">
           <div className={cn(
             "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6",
             passed ? "bg-green-100" : "bg-amber-100"
@@ -263,7 +263,7 @@ export default function CheckpointView() {
           </p>
 
           {passed && (
-            <div className="bg-green-50 p-4 rounded-2xl mb-6 text-green-800">
+            <div className="bg-green-50 p-4  mb-6 text-green-800">
               <p className="font-bold">Level {level} Selesai!</p>
               {nextLevel && <p className="text-sm mt-1">Level {nextLevel} sudah terbuka.</p>}
             </div>
@@ -271,13 +271,13 @@ export default function CheckpointView() {
 
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to={`/level/${level}`}>
-              <Button variant="outline" className="rounded-2xl">
+              <Button variant="outline" className="">
                 Kembali ke Level {level}
               </Button>
             </Link>
             {passed && nextLevel && (
               <Link to={`/level/${nextLevel}`}>
-                <Button className="rounded-2xl bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className=" bg-blue-600 hover:bg-blue-700 text-white">
                   Lanjut ke Level {nextLevel}
                 </Button>
               </Link>
@@ -293,7 +293,7 @@ export default function CheckpointView() {
                   setFinalScore(0);
                   setPassed(false);
                 }}
-                className="rounded-2xl bg-amber-500 hover:bg-amber-600 text-white"
+                className=" bg-amber-500 hover:bg-amber-600 text-white"
               >
                 Coba Lagi
               </Button>

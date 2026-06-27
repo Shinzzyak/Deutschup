@@ -152,7 +152,7 @@ export default function MockTest() {
   if (testState === 'SETUP') {
     return (
       <div className="max-w-3xl mx-auto pb-20 text-center space-y-8">
-        <div className="glass-strong p-12 rounded-3xl border border-border shadow-sm">
+        <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-12  border border-border shadow-sm">
            <FileText className="w-16 h-16 mx-auto mb-6 text-blue-600" />
            <h1 className="text-4xl font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
            <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
@@ -174,8 +174,8 @@ export default function MockTest() {
                      key={l}
                      onClick={() => setLevel(l)}
                      className={cn(
-                        "w-full py-4 rounded-2xl text-2xl font-bold border-2 transition-all hover:scale-[1.02]",
-                        level === l ? [c.activeBorder, c.bg, c.text, "shadow-md"] : ["border-border", "text-muted-foreground", "hover:border-gray-300", "hover:bg-muted"]
+                        "w-full py-4  text-2xl font-bold border-2 transition-all hover:scale-[1.02]",
+                        level === l ? [c.activeBorder, c.bg, c.text, ""] : ["border-border", "text-muted-foreground", "hover:border-gray-300", "hover:bg-muted"]
                      )}
                    >
                      {l}
@@ -184,7 +184,7 @@ export default function MockTest() {
               })}
            </div>
            
-           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold rounded-2xl w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white">
+           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white">
              <PlayCircle className="w-6 h-6 mr-2" /> Mulai Simulasi
            </Button>
         </div>
@@ -214,7 +214,7 @@ export default function MockTest() {
        <div className="max-w-3xl mx-auto pb-20">
          <div className="flex items-center justify-between mb-6 bg-card p-4 rounded-xl shadow-sm border border-border">
             <div className="flex space-x-2">
-               <span className="glass text-foreground font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
+               <span className="bg-white border border-[#0a0a0a]/10 text-foreground font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
                <span className="text-muted-foreground font-medium px-3 py-1 text-sm">Soal {currentIdx + 1} dari {questions.length}</span>
             </div>
             <div className="flex items-center text-orange-700 font-bold bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-2 rounded-full border border-orange-200 shadow-sm">
@@ -222,9 +222,9 @@ export default function MockTest() {
             </div>
          </div>
 
-         <div className="glass-strong p-6 md:p-8 rounded-3xl border border-border shadow-sm flex flex-col min-h-[400px]">
+         <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border shadow-sm flex flex-col min-h-[400px]">
             {q.context && (
-               <div className="bg-blue-50 p-4 rounded-2xl mb-6 text-blue-900 border border-blue-100 italic">
+               <div className="bg-blue-50 p-4  mb-6 text-blue-900 border border-blue-100 italic">
                   {q.context}
                </div>
             )}
@@ -264,7 +264,7 @@ export default function MockTest() {
   // EVALUATING & RESULT
   return (
     <div className="max-w-4xl mx-auto pb-20">
-      <div className="glass-strong p-8 md:p-12 rounded-3xl border border-border shadow-sm text-center mb-8">
+      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 md:p-12  border border-border shadow-sm text-center mb-8">
         {testState === 'EVALUATING' ? (
            <>
              <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />
@@ -299,7 +299,7 @@ export default function MockTest() {
                const isAccurate = uAns === q.correctAnswer;
                return (
                   <div key={q.id} className={cn(
-                     "p-6 rounded-3xl border-2",
+                     "p-6  border-2",
                      isAccurate ? "bg-green-50 border-green-200" : "bg-red-50 border-red-200"
                   )}>
                      <div className="flex space-x-3 mb-2">
