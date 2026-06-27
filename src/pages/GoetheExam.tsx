@@ -78,17 +78,17 @@ export default function GoetheExam() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedLevel(level.id as Level)}
-                className={`p-6 border-2 text-left transition-all ${
-                  level.color === 'green' ? 'border-green-500/30 bg-green-500/5 hover:border-green-500/60' :
-                  level.color === 'blue' ? 'border-blue-500/30 bg-blue-500/5 hover:border-blue-500/60' :
-                  level.color === 'purple' ? 'border-purple-500/30 bg-purple-500/5 hover:border-purple-500/60' :
-                  'border-red-500/30 bg-red-500/5 hover:border-red-500/60'
+                className={`p-6 border-2 border-[#0a0a0a] rounded-lg bg-[#f5f0eb] text-left transition-all hover:shadow-md ${
+                  level.color === 'green' ? 'border-l-4 border-l-green-500' :
+                  level.color === 'blue' ? 'border-l-4 border-l-blue-500' :
+                  level.color === 'purple' ? 'border-l-4 border-l-purple-500' :
+                  'border-l-4 border-l-red-500'
                 }`}
               >
                 <div className="text-3xl mb-2">{level.icon}</div>
-                <h3 className="text-xl font-bold">{level.name}</h3>
-                <p className="text-sm text-[#0a0a0a]/40 mt-1">{level.description}</p>
-                <p className="text-xs text-[#0a0a0a]/50 mt-2">{levelQuestions.length} soal tersedia</p>
+                <h3 className="text-xl font-serif font-bold">{level.name}</h3>
+                <p className="text-sm text-[#0a0a0a]/60 mt-1">{level.description}</p>
+                <p className="text-xs text-[#0a0a0a]/40 mt-2">{levelQuestions.length} soal tersedia</p>
               </motion.button>
             );
           })}
@@ -104,37 +104,37 @@ export default function GoetheExam() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-[#f5f0eb] p-8 border-2 border-[#0a0a0a]"
+          className="bg-[#f5f0eb] p-8 border-2 border-[#0a0a0a] rounded-lg"
         >
           <Trophy className="w-16 h-16 mx-auto text-amber-400 mb-4" />
           <h2 className="text-2xl font-bold mb-2">Selesai! 🎉</h2>
           <p className="text-[#0a0a0a]/40 mb-6">Level {selectedLevel?.toUpperCase()}</p>
           
           <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-[#0a0a0a]/80/50  p-4">
+            <div className="bg-[#0a0a0a] rounded-md p-4">
               <p className="text-3xl font-bold text-amber-400">{score}</p>
-              <p className="text-xs text-[#0a0a0a]/40">Poin</p>
+              <p className="text-xs text-[#f5f0eb]/60">Poin</p>
             </div>
-            <div className="bg-[#0a0a0a]/80/50  p-4">
+            <div className="bg-[#0a0a0a] rounded-md p-4">
               <p className="text-3xl font-bold text-blue-400">{percentage}%</p>
-              <p className="text-xs text-[#0a0a0a]/40">Benar</p>
+              <p className="text-xs text-[#f5f0eb]/60">Benar</p>
             </div>
-            <div className="bg-[#0a0a0a]/80/50  p-4">
+            <div className="bg-[#0a0a0a] rounded-md p-4">
               <p className="text-3xl font-bold text-green-400">{Object.keys(answered).length}</p>
-              <p className="text-xs text-[#0a0a0a]/40">Dijawab</p>
+              <p className="text-xs text-[#f5f0eb]/60">Dijawab</p>
             </div>
           </div>
 
           <div className="flex gap-3 justify-center">
             <button
               onClick={resetExam}
-              className="flex items-center gap-2 px-6 py-3 bg-[#0a0a0a]/80 hover:bg-[#0a0a0a]/70 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-[#0a0a0a] text-[#f5f0eb] rounded-md hover:bg-[#0a0a0a]/80 transition-colors"
             >
               <RotateCcw className="w-4 h-4" /> Ulangi
             </button>
             <button
               onClick={() => setSelectedLevel(null)}
-              className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black  hover:bg-amber-400 transition-colors font-medium"
+              className="flex items-center gap-2 px-6 py-3 bg-amber-500 text-black rounded-md hover:bg-amber-400 transition-colors font-medium"
             >
               <Target className="w-4 h-4" /> Ganti Level
             </button>
@@ -165,9 +165,9 @@ export default function GoetheExam() {
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-[#0a0a0a]/80  h-2 mb-8">
+      <div className="w-full bg-[#0a0a0a] rounded-md h-2 mb-8">
         <motion.div
-          className="bg-amber-500 h-2 "
+          className="bg-amber-500 h-2 rounded-md"
           initial={{ width: 0 }}
           animate={{ width: `${((currentQuestion + 1) / filteredQuestions.length) * 100}%` }}
         />
@@ -180,7 +180,7 @@ export default function GoetheExam() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          className="bg-[#f5f0eb] p-6 border-2 border-[#0a0a0a] mb-6"
+          className="bg-[#f5f0eb] p-6 border-2 border-[#0a0a0a] rounded-lg mb-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <span className={`px-2 py-1 rounded text-xs font-medium ${
@@ -211,18 +211,18 @@ export default function GoetheExam() {
                   whileTap={!showResult ? { scale: 0.99 } : {}}
                   onClick={() => handleAnswer(option)}
                   disabled={showResult}
-                  className={`w-full text-left p-4  border-2 transition-all ${
+                  className={`w-full text-left p-4 rounded-md border-2 transition-all ${
                     showCorrect ? 'border-green-500 bg-green-500/10' :
                     showWrong ? 'border-red-500 bg-red-500/10' :
                     isSelected ? 'border-amber-500 bg-amber-500/10' :
-                    'border-[#0a0a0a]/20 hover:border-[#0a0a0a]/50 bg-[#0a0a0a]/80/30'
+                    'border-[#0a0a0a]/20 hover:border-[#0a0a0a]/50 bg-[#f5f0eb]'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-8 h-8  flex items-center justify-center text-sm font-bold ${
                       showCorrect ? 'bg-green-500 text-white' :
                       showWrong ? 'bg-red-500 text-white' :
-                      'bg-[#0a0a0a]/70 text-[#0a0a0a]/30'
+                      'bg-[#0a0a0a]/10 text-[#0a0a0a]'
                     }`}>
                       {showCorrect ? <CheckCircle2 className="w-5 h-5" /> :
                        showWrong ? <XCircle className="w-5 h-5" /> :
@@ -240,7 +240,7 @@ export default function GoetheExam() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-[#0a0a0a]/5 border border-[#0a0a0a]/10"
+              className="mt-4 p-4 bg-[#0a0a0a]/5 border border-[#0a0a0a]/10 rounded-md"
             >
               <p className="text-sm text-[#0a0a0a]/30">
                 💡 {currentQ.explanation}
@@ -256,7 +256,7 @@ export default function GoetheExam() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           onClick={nextQuestion}
-          className="w-full py-4 bg-amber-500 text-black  font-bold hover:bg-amber-400 transition-colors flex items-center justify-center gap-2"
+          className="w-full py-4 bg-amber-500 text-black rounded-md font-bold hover:bg-amber-400 transition-colors flex items-center justify-center gap-2"
         >
           {currentQuestion < filteredQuestions.length - 1 ? (
             <>Soal Berikutnya <ArrowRight className="w-5 h-5" /></>

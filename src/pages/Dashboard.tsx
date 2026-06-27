@@ -161,7 +161,7 @@ export default function Dashboard() {
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 ">
+        <header className="relative overflow-hidden bg-[#0a0a0a] p-6 md:p-8 rounded-lg">
           {/* German flag accent */}
           <div className="absolute top-0 left-0 right-0 h-1 flex">
             <div className="flex-1 bg-[#0a0a0a]/70" />
@@ -180,7 +180,7 @@ export default function Dashboard() {
                 <p className="text-blue-200 font-medium text-sm md:text-base">
                   {new Date().getHours() < 12 ? '🌅 Selamat Pagi' : new Date().getHours() < 18 ? '☀️ Selamat Siang' : '🌙 Selamat Malam'}, {user?.user_metadata?.full_name?.split(' ')[0] || 'Siswa'}!
                 </p>
-                <h1 className="text-2xl md:text-4xl font-bold tracking-tight">Learning Command Center</h1>
+                <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-[#f5f0eb]">Learning Command Center</h1>
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1  bg-[#f5f0eb]/15 text-sm font-semibold ">
                     <GraduationCap className="w-4 h-4" />
@@ -225,7 +225,7 @@ export default function Dashboard() {
 
         {/* EMPTY STATE */}
         {!loading && completedLessons.length === 0 && (
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  p-8 text-center border border-blue-100/50">
+          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-8 text-center">
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
@@ -243,7 +243,7 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-amber-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-amber-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11  bg-[#c8956c] flex items-center justify-center mb-2.5  ">
@@ -253,7 +253,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-blue-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-blue-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
@@ -263,7 +263,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-emerald-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-emerald-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
@@ -273,7 +273,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border border-purple-500/20  p-4 md:p-5 flex flex-col  hover: transition-shadow">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border border-purple-500/20 rounded-lg p-4 md:p-5 flex flex-col">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-purple-500/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-12 h-12  bg-purple-500/15 flex items-center justify-center mb-2">
@@ -289,7 +289,7 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && (
-          <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 hover:transition-shadow">
+          <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 rounded-lg">
             {/* German flag accent */}
             <div className="absolute top-0 left-0 right-0 h-1 flex">
               <div className="flex-1 bg-[#0a0a0a]/70" />
@@ -309,7 +309,7 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-bold">{currentLesson.title}</h3>
+                  <h3 className="text-xl md:text-2xl font-bold text-[#f5f0eb]">{currentLesson.title}</h3>
                   <p className="text-[#f5f0eb]/60 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
                 </div>
                 <Link to={`/lesson/${currentLesson.id}`}>
@@ -326,7 +326,7 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-5 md:p-6 card-hover border border-orange-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-5 md:p-6 card-hover">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-orange-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -360,7 +360,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-5 md:p-6 card-hover border border-indigo-200/30">
+            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-5 md:p-6 card-hover">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-indigo-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -395,7 +395,7 @@ export default function Dashboard() {
 
         {/* SECTION E: ACHIEVEMENTS */}
         {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-5 md:p-6">
+          <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-5 md:p-6">
             <div className="absolute -right-8 -top-8 w-32 h-32  bg-amber-400/8 blur-2xl" />
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-5">
@@ -408,7 +408,7 @@ export default function Dashboard() {
                 {achievements.map(achievement => {
                   const Icon = achievement.icon;
                   return (
-                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4  border transition-all card-hover", achievement.unlocked ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-amber-200/40" : "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50")}>
+                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 border transition-all card-hover rounded-md", achievement.unlocked ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-amber-200/40" : "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50")}>
                       <div className={cn("w-12 h-12  flex items-center justify-center mb-2", achievement.unlocked ? "bg-[#c8956c]  " : "bg-[#0a0a0a]/5")}>
                         <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-[#f5f0eb]" : "text-[#0a0a0a]/40")} />
                       </div>
@@ -479,7 +479,7 @@ export default function Dashboard() {
                           to={isUnlocked ? `/lesson/${lesson.id}` : ''}
                           onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
                           className={cn(
-                            "flex flex-col p-5  border transition-all duration-200 relative overflow-hidden card-hover",
+                            "flex flex-col p-5 border transition-all duration-200 relative overflow-hidden card-hover rounded-lg",
                             isCompleted ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-emerald-200/40" :
                             isUnlocked ? "bg-[#f5f0eb] border-2 border-[#0a0a0a] border-blue-200/40  " :
                             "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50 cursor-not-allowed"
