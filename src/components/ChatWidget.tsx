@@ -86,12 +86,12 @@ export default function ChatWidget() {
       <div className="fixed right-4 z-50" style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 68px)' }}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-14 h-14 bg-[#0a0a0a] flex items-center justify-center hover:bg-[#0a0a0a]/80 transition-colors"
+          className="w-14 h-14 bg-[#8b2500] flex items-center justify-center hover:bg-[#8b2500]/80 transition-colors"
           aria-label={isOpen ? 'Tutup chat Herr Deutsch' : 'Buka chat Herr Deutsch'}
           aria-expanded={isOpen}
           aria-controls="chat-panel"
         >
-          <Bot className="w-6 h-6 bg-[#0a0a0a]" />
+          <Bot className="w-6 h-6 text-[#f5f0eb]" />
         </button>
       </div>
 
@@ -204,7 +204,7 @@ export default function ChatWidget() {
                     <button
                       type="submit"
                       disabled={isLoading || !input.trim()}
-                      className="px-3 py-2 bg-[#0a0a0a] hover:bg-[#0a0a0a]/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-3 py-2 bg-[#8b2500] hover:bg-[#8b2500]/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[#f5f0eb]"
                       aria-label="Kirim pesan"
                     >
                       <Send className="w-4 h-4" />

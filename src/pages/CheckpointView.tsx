@@ -277,7 +277,7 @@ export default function CheckpointView() {
             </Link>
             {passed && nextLevel && (
               <Link to={`/level/${nextLevel}`}>
-                <Button className=" bg-blue-600 hover:bg-blue-700 bg-[#0a0a0a]">
+                <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]">
                   Lanjut ke Level {nextLevel}
                 </Button>
               </Link>

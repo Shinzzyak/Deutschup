@@ -231,7 +231,7 @@ export default function Dashboard() {
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
             <div className="flex justify-center">
               <Link to="/lesson/a1-1">
-                <Button className="bg-blue-600 hover:bg-blue-700 bg-[#0a0a0a] px-8 py-3  font-bold text-lg  ">
+                <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb] px-8 py-3 font-bold text-lg">
                   <PlayCircle className="w-5 h-5 mr-2" /> Mulai Pelajaran Pertama
                 </Button>
               </Link>

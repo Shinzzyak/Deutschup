@@ -373,9 +373,9 @@ export default function LessonView() {
                     <div className="flex items-baseline space-x-2 mb-2 sm:mb-0">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] ",
-                          v.article === 'der' ? 'bg-blue-500' : 
-                          v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                          "text-xs font-bold px-2 py-1 text-white",
+                          v.article === 'der' ? 'bg-blue-700' : 
+                          v.article === 'die' ? 'bg-[#8b2500]' : 'bg-green-700'
                         )}>{v.article}</span>
                       )}
                       <span className="font-bold text-lg">{v.word}</span>
@@ -425,9 +425,9 @@ export default function LessonView() {
                     <div className="flex items-baseline space-x-2 mb-2 sm:mb-0">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] ",
-                          v.article === 'der' ? 'bg-blue-500' : 
-                          v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                          "text-xs font-bold px-2 py-1 text-white",
+                          v.article === 'der' ? 'bg-blue-700' : 
+                          v.article === 'die' ? 'bg-[#8b2500]' : 'bg-green-700'
                         )}>{v.article}</span>
                       )}
                       <span className="font-bold text-lg text-yellow-900">{v.word}</span>
@@ -441,7 +441,7 @@ export default function LessonView() {
 
           <Button 
             onClick={startQuiz} 
-            className="w-full h-14 text-lg font-bold  bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]"
+            className="w-full h-14 text-lg font-bold bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]"
           >
             Mulai Latihan <ChevronRight className="w-5 h-5 ml-2" />
           </Button>
@@ -461,7 +461,7 @@ export default function LessonView() {
                   Kembali ke Level
                 </Button>
                 {nextLessonId && (
-                  <Button size="lg" className=" bg-blue-600 hover:bg-blue-700 bg-[#0a0a0a]" onClick={() => navigate(`/lesson/${nextLessonId}`)}>
+                  <Button size="lg" className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]" onClick={() => navigate(`/lesson/${nextLessonId}`)}>
                     Pelajaran Berikutnya <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
                 )}
@@ -551,7 +551,7 @@ export default function LessonView() {
                 {!isAnswerChecked ? (
                   <Button 
                     size="lg" 
-                    className="w-full  h-14 text-lg font-bold bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]"
+                    className="w-full h-14 text-lg font-bold bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]"
                     disabled={!selectedAnswer.trim() || checkingAnswer}
                     onClick={handleCheckAnswer}
                   >
@@ -561,8 +561,8 @@ export default function LessonView() {
                   <Button 
                     size="lg" 
                     className={cn(
-                      "w-full  h-14 text-lg font-bold bg-[#0a0a0a]",
-                      checkResult?.isCorrect ? "bg-blue-600 hover:bg-blue-700" : "bg-[#0a0a0a] hover:bg-[#0a0a0a]/90"
+                      "w-full h-14 text-lg font-bold bg-[#8b2500] text-[#f5f0eb]",
+                      checkResult?.isCorrect ? "bg-green-700 hover:bg-green-800 text-white" : "bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]"
                     )}
                     onClick={handleNextQuestion}
                   >

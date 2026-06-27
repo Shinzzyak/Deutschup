@@ -163,17 +163,17 @@ export default function Profile() {
           </div>
 
           {/* Subscription Perks Card */}
-          <div className="bg-[#0a0a0a] border-2 border-[#0a0a0a] p-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-8 opacity-10">
-              <Zap className="w-32 h-32 bg-[#0a0a0a]" />
+          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 relative overflow-hidden">
+            <div className="absolute top-0 right-0 p-8 opacity-5">
+              <Zap className="w-32 h-32 text-[#0a0a0a]" />
             </div>
             
             <div className="relative z-10">
               <div className="flex items-center gap-3 mb-6">
-                <div className="p-2 bg-[#c8956c]/20">
-                  <Award className="w-5 h-5 text-[#c8956c]" />
+                <div className="p-2 bg-[#8b2500]/10">
+                  <Award className="w-5 h-5 text-[#8b2500]" />
                 </div>
-                <h3 className="text-xl font-serif font-bold text-[#f5f0eb]">Keuntungan Member</h3>
+                <h3 className="text-xl font-serif font-bold text-[#0a0a0a]">Keuntungan Member</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -200,11 +200,11 @@ export default function Profile() {
               </div>
 
               {!activePro && (
-                <div className="mt-8 pt-8 border-t border-white/10 flex items-center justify-between">
-                  <p className="text-sm text-[#f5f0eb]/60">Ingin membuka semua fitur?</p>
+                <div className="mt-8 pt-8 border-t border-[#0a0a0a]/10 flex items-center justify-between">
+                  <p className="text-sm text-[#0a0a0a]/60">Ingin membuka semua fitur?</p>
                   <Button 
                     variant="outline" 
-                    className="border-2 border-[#f5f0eb]/20 hover:bg-[#f5f0eb]/10 bg-transparent px-6 text-[#f5f0eb]"
+                    className="border-2 border-[#0a0a0a]/20 hover:bg-[#0a0a0a]/5 bg-transparent px-6 text-[#0a0a0a]"
                     onClick={() => window.location.href = '/pricing'}
                   >
                     Upgrade Pro <ArrowRight className="w-4 h-4 ml-2" />
@@ -221,9 +221,9 @@ export default function Profile() {
 
 function PerkItem({ icon: Icon, text, active }: { icon: any; text: string; active: boolean }) {
   return (
-    <div className={`flex items-center gap-3 p-4 transition-all ${active ? 'bg-[#f5f0eb]/10 border border-[#f5f0eb]/10' : 'bg-[#f5f0eb]/5 opacity-50 grayscale'}`}>
-      <Icon className={`w-5 h-5 ${active ? 'text-[#c8956c]' : 'text-[#f5f0eb]/40'}`} />
-      <span className="text-sm font-medium">{text}</span>
+    <div className={`flex items-center gap-3 p-4 transition-all ${active ? 'bg-[#8b2500]/5 border border-[#8b2500]/10' : 'bg-[#0a0a0a]/5 opacity-50 grayscale'}`}>
+      <Icon className={`w-5 h-5 ${active ? 'text-[#8b2500]' : 'text-[#0a0a0a]/40'}`} />
+      <span className="text-sm font-medium text-[#0a0a0a]">{text}</span>
     </div>
   );
 }
