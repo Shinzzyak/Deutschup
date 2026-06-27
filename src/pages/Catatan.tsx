@@ -145,7 +145,7 @@ export default function Catatan() {
                           onClick={() => setNewNoteTag(tag)}
                           className={cn(
                             "px-3 py-1.5  text-xs font-bold transition-colors",
-                            newNoteTag === tag ? "bg-slate-800 bg-[#0a0a0a]" : "bg-muted text-muted-foreground hover:bg-accent"
+                            newNoteTag === tag ? "bg-[#0a0a0a]/90 bg-[#0a0a0a]" : "bg-muted text-muted-foreground hover:bg-accent"
                           )}
                           aria-pressed={newNoteTag === tag}
                           aria-label={`Tag: ${tag}`}

@@ -222,7 +222,7 @@ export default function Pricing() {
                 </thead>
                 <tbody>
                   {orders.map((order) => (
-                    <tr key={order.id} className="border-b border-slate-50 last:border-0">
+                    <tr key={order.id} className="border-b border-[#0a0a0a]/5 last:border-0">
                       <td className="px-6 py-4 text-sm font-mono text-foreground">{order.id}</td>
                       <td className="px-6 py-4 text-sm text-muted-foreground">
                         {new Date(order.paid_at || order.created_at).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}

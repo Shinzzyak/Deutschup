@@ -264,7 +264,7 @@ export default function LessonView() {
               <Brain className="w-6 h-6 text-indigo-500" />
               <span>Tata Bahasa (Grammar)</span>
             </h2>
-            <div className="prose prose-slate max-w-none text-lg">
+            <div className="prose prose-[#0a0a0a] max-w-none text-lg">
               <ReactMarkdown
                 components={{
                   p: ({ children }) => <p className="mb-4">{renderChildrenWithGlossary(children)}</p>,
@@ -441,7 +441,7 @@ export default function LessonView() {
 
           <Button 
             onClick={startQuiz} 
-            className="w-full h-14 text-lg font-bold  bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]"
+            className="w-full h-14 text-lg font-bold  bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]"
           >
             Mulai Latihan <ChevronRight className="w-5 h-5 ml-2" />
           </Button>
@@ -551,7 +551,7 @@ export default function LessonView() {
                 {!isAnswerChecked ? (
                   <Button 
                     size="lg" 
-                    className="w-full  h-14 text-lg font-bold bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]"
+                    className="w-full  h-14 text-lg font-bold bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]"
                     disabled={!selectedAnswer.trim() || checkingAnswer}
                     onClick={handleCheckAnswer}
                   >
@@ -562,7 +562,7 @@ export default function LessonView() {
                     size="lg" 
                     className={cn(
                       "w-full  h-14 text-lg font-bold bg-[#0a0a0a]",
-                      checkResult?.isCorrect ? "bg-blue-600 hover:bg-blue-700" : "bg-[#0a0a0a] hover:bg-slate-800"
+                      checkResult?.isCorrect ? "bg-blue-600 hover:bg-blue-700" : "bg-[#0a0a0a] hover:bg-[#0a0a0a]/90"
                     )}
                     onClick={handleNextQuestion}
                   >

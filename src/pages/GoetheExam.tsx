@@ -104,22 +104,22 @@ export default function GoetheExam() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-slate-800/50  p-8 border border-slate-700"
+          className="bg-[#0a0a0a]/90/50  p-8 border border-[#0a0a0a]/10"
         >
           <Trophy className="w-16 h-16 mx-auto text-amber-400 mb-4" />
           <h2 className="text-2xl font-bold mb-2">Selesai! 🎉</h2>
           <p className="text-[#0a0a0a]/40 mb-6">Level {selectedLevel?.toUpperCase()}</p>
           
           <div className="grid grid-cols-3 gap-4 mb-8">
-            <div className="bg-slate-700/50  p-4">
+            <div className="bg-[#0a0a0a]/80/50  p-4">
               <p className="text-3xl font-bold text-amber-400">{score}</p>
               <p className="text-xs text-[#0a0a0a]/40">Poin</p>
             </div>
-            <div className="bg-slate-700/50  p-4">
+            <div className="bg-[#0a0a0a]/80/50  p-4">
               <p className="text-3xl font-bold text-blue-400">{percentage}%</p>
               <p className="text-xs text-[#0a0a0a]/40">Benar</p>
             </div>
-            <div className="bg-slate-700/50  p-4">
+            <div className="bg-[#0a0a0a]/80/50  p-4">
               <p className="text-3xl font-bold text-green-400">{Object.keys(answered).length}</p>
               <p className="text-xs text-[#0a0a0a]/40">Dijawab</p>
             </div>
@@ -128,7 +128,7 @@ export default function GoetheExam() {
           <div className="flex gap-3 justify-center">
             <button
               onClick={resetExam}
-              className="flex items-center gap-2 px-6 py-3 bg-slate-700  hover:bg-slate-600 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-[#0a0a0a]/80  hover:bg-[#0a0a0a]/70 transition-colors"
             >
               <RotateCcw className="w-4 h-4" /> Ulangi
             </button>
@@ -165,7 +165,7 @@ export default function GoetheExam() {
       </div>
 
       {/* Progress Bar */}
-      <div className="w-full bg-slate-700  h-2 mb-8">
+      <div className="w-full bg-[#0a0a0a]/80  h-2 mb-8">
         <motion.div
           className="bg-amber-500 h-2 "
           initial={{ width: 0 }}
@@ -180,7 +180,7 @@ export default function GoetheExam() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          className="bg-slate-800/50  p-6 border border-slate-700 mb-6"
+          className="bg-[#0a0a0a]/90/50  p-6 border border-[#0a0a0a]/10 mb-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <span className={`px-2 py-1 rounded text-xs font-medium ${
@@ -215,14 +215,14 @@ export default function GoetheExam() {
                     showCorrect ? 'border-green-500 bg-green-500/10' :
                     showWrong ? 'border-red-500 bg-red-500/10' :
                     isSelected ? 'border-amber-500 bg-amber-500/10' :
-                    'border-slate-600 hover:border-slate-500 bg-slate-700/30'
+                    'border-[#0a0a0a]/20 hover:border-[#0a0a0a]/50 bg-[#0a0a0a]/80/30'
                   }`}
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-8 h-8  flex items-center justify-center text-sm font-bold ${
                       showCorrect ? 'bg-green-500 bg-[#0a0a0a]' :
                       showWrong ? 'bg-red-500 bg-[#0a0a0a]' :
-                      'bg-slate-600 text-[#0a0a0a]/30'
+                      'bg-[#0a0a0a]/70 text-[#0a0a0a]/30'
                     }`}>
                       {showCorrect ? <CheckCircle2 className="w-5 h-5" /> :
                        showWrong ? <XCircle className="w-5 h-5" /> :
@@ -240,7 +240,7 @@ export default function GoetheExam() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-slate-700/50  border border-slate-600"
+              className="mt-4 p-4 bg-[#0a0a0a]/80/50  border border-[#0a0a0a]/20"
             >
               <p className="text-sm text-[#0a0a0a]/30">
                 💡 {currentQ.explanation}

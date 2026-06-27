@@ -164,7 +164,7 @@ export default function Dashboard() {
         <header className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 bg-[#0a0a0a] ">
           {/* German flag accent */}
           <div className="absolute top-0 left-0 right-0 h-1 flex">
-            <div className="flex-1 bg-slate-600" />
+            <div className="flex-1 bg-[#0a0a0a]/70" />
             <div className="flex-1 bg-red-500" />
             <div className="flex-1 bg-amber-400" />
           </div>
@@ -292,7 +292,7 @@ export default function Dashboard() {
           <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 bg-[#0a0a0a]  hover:transition-shadow">
             {/* German flag accent */}
             <div className="absolute top-0 left-0 right-0 h-1 flex">
-              <div className="flex-1 bg-slate-600" />
+              <div className="flex-1 bg-[#0a0a0a]/70" />
               <div className="flex-1 bg-red-500" />
               <div className="flex-1 bg-amber-400" />
             </div>
@@ -350,7 +350,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                        <div key={day} className={cn("w-6 h-6  flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-[#8b2500] bg-[#0a0a0a] " : "bg-slate-100 text-[#0a0a0a]/40")}>
+                        <div key={day} className={cn("w-6 h-6  flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-[#8b2500] bg-[#0a0a0a] " : "bg-[#0a0a0a]/5 text-[#0a0a0a]/40")}>
                           {day}
                         </div>
                       ))}
@@ -408,8 +408,8 @@ export default function Dashboard() {
                 {achievements.map(achievement => {
                   const Icon = achievement.icon;
                   return (
-                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4  border transition-all card-hover", achievement.unlocked ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-amber-200/40" : "bg-slate-50 border-slate-100 opacity-50")}>
-                      <div className={cn("w-12 h-12  flex items-center justify-center mb-2", achievement.unlocked ? "bg-[#c8956c]  " : "bg-slate-100")}>
+                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4  border transition-all card-hover", achievement.unlocked ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-amber-200/40" : "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50")}>
+                      <div className={cn("w-12 h-12  flex items-center justify-center mb-2", achievement.unlocked ? "bg-[#c8956c]  " : "bg-[#0a0a0a]/5")}>
                         <Icon className={cn("w-6 h-6", achievement.unlocked ? "bg-[#0a0a0a]" : "text-[#0a0a0a]/40")} />
                       </div>
                       <p className="text-sm font-bold text-[#0a0a0a]">{achievement.title}</p>
@@ -482,7 +482,7 @@ export default function Dashboard() {
                             "flex flex-col p-5  border transition-all duration-200 relative overflow-hidden card-hover",
                             isCompleted ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-emerald-200/40" :
                             isUnlocked ? "bg-[#f5f0eb] border-2 border-[#0a0a0a] border-blue-200/40  " :
-                            "bg-slate-50 border-slate-100 opacity-50 cursor-not-allowed"
+                            "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50 cursor-not-allowed"
                           )}
                           aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
                           aria-disabled={!isUnlocked}

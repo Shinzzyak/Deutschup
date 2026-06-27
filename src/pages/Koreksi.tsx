@@ -51,7 +51,7 @@ export default function Koreksi() {
           onClick={handleKoreksi} 
           disabled={loading || !input.trim()}
           size="lg" 
-          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-[#0a0a0a] hover:bg-slate-800"
+          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-[#0a0a0a] hover:bg-[#0a0a0a]/90"
         >
           {loading ? (
              <><Loader2 className="w-5 h-5 mr-3 animate-spin"/> Menganalisis...</>
@@ -90,7 +90,7 @@ export default function Koreksi() {
                     {result.correctedSentence}
                  </div>
                )}
-               <div className="prose prose-slate prose-lg">
+               <div className="prose prose-[#0a0a0a] prose-lg">
                  <ReactMarkdown>{result.explanation}</ReactMarkdown>
                </div>
             </div>

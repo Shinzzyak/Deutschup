@@ -184,7 +184,7 @@ export default function MockTest() {
               })}
            </div>
            
-           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]">
+           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]">
              <PlayCircle className="w-6 h-6 mr-2" /> Mulai Simulasi
            </Button>
         </div>

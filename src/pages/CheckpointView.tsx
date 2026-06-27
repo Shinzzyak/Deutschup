@@ -222,7 +222,7 @@ export default function CheckpointView() {
                   <Button
                     onClick={checkAnswer}
                     disabled={!selectedAnswer}
-                    className="w-full h-12  bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]"
+                    className="w-full h-12  bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]"
                   >
                     Cek Jawaban
                   </Button>

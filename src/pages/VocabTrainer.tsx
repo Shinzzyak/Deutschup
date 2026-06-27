@@ -201,19 +201,19 @@ export default function VocabTrainer() {
                   </div>
 
                   {/* Back */}
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#0a0a0a] border-2 border-slate-800  p-6 md:p-8 flex flex-col items-center justify-center  overflow-y-auto">
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#0a0a0a] border-2 border-[#0a0a0a]/10  p-6 md:p-8 flex flex-col items-center justify-center  overflow-y-auto">
                     <h2 className="text-4xl md:text-5xl font-extrabold bg-[#0a0a0a] mb-2">{currentCard.translation}</h2>
                     <p className="text-muted-foreground text-lg mb-6">Level: {currentCard.level}</p>
                     
                     <div className="w-full space-y-4 text-left">
                       {!pronunciation && (
-                        <Button onClick={fetchPronunciation} variant="outline" className="w-full  border-slate-700 bg-slate-800 bg-[#0a0a0a] hover:bg-slate-700 hover:bg-[#0a0a0a]" disabled={pronunciationLoading}>
+                        <Button onClick={fetchPronunciation} variant="outline" className="w-full  border-[#0a0a0a]/10 bg-[#0a0a0a]/90 bg-[#0a0a0a] hover:bg-[#0a0a0a]/80 hover:bg-[#0a0a0a]" disabled={pronunciationLoading}>
                           {pronunciationLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Volume2 className="w-4 h-4 mr-2" />}
                           Cara Baca
                         </Button>
                       )}
                       {pronunciation && (
-                        <div className="bg-slate-800 border border-slate-700 p-4  bg-[#0a0a0a]">
+                        <div className="bg-[#0a0a0a]/90 border border-[#0a0a0a]/10 p-4  bg-[#0a0a0a]">
                           <p className="text-sm text-muted-foreground mb-1">Ejaan IPA / Fonetik:</p>
                           <p className="text-xl font-mono text-yellow-400 mb-2">{pronunciation.phonetic}</p>
                           <p className="text-sm italic text-[#0a0a0a]/30">💡 {pronunciation.tip}</p>
@@ -221,13 +221,13 @@ export default function VocabTrainer() {
                       )}
 
                       {!examples && (
-                        <Button onClick={fetchExamples} variant="outline" className="w-full  border-slate-700 bg-slate-800 bg-[#0a0a0a] hover:bg-slate-700 hover:bg-[#0a0a0a]" disabled={examplesLoading}>
+                        <Button onClick={fetchExamples} variant="outline" className="w-full  border-[#0a0a0a]/10 bg-[#0a0a0a]/90 bg-[#0a0a0a] hover:bg-[#0a0a0a]/80 hover:bg-[#0a0a0a]" disabled={examplesLoading}>
                           {examplesLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                           Lihat Contoh Kalimat
                         </Button>
                       )}
                       {examples && (
-                        <div className="bg-slate-800 border border-slate-700 p-4  bg-[#0a0a0a] space-y-4">
+                        <div className="bg-[#0a0a0a]/90 border border-[#0a0a0a]/10 p-4  bg-[#0a0a0a] space-y-4">
                           {examples.map((ex, i) => (
                             <div key={i} className="space-y-1">
                                 <p className="font-medium text-blue-300">"{ex.german}"</p>
@@ -311,7 +311,7 @@ export default function VocabTrainer() {
                          ) : status === 'learning' ? (
                            <RotateCcw className="w-5 h-5 text-amber-500" />
                          ) : (
-                           <div className="w-2 h-2  bg-slate-300"></div>
+                           <div className="w-2 h-2  bg-[#0a0a0a]/30"></div>
                          )}
                       </div>
                       <div>
