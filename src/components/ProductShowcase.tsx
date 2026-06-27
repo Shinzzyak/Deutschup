@@ -1,112 +1,111 @@
 import { motion } from 'motion/react';
-import { MessageSquare, BookOpen, PenLine, Mic, GraduationCap, BarChart3, ArrowUpRight } from 'lucide-react';
+import { MessageSquare, BookOpen, PenLine, Mic, GraduationCap, BarChart3 } from 'lucide-react';
 
 const features = [
   {
     icon: MessageSquare,
     title: 'AI Tutor',
     description: 'Tanya apa saja tentang bahasa Jerman, dapatkan penjelasan instan dari AI tutor kami.',
-    gradient: 'from-amber-400 to-orange-500',
-    bgGlow: 'bg-amber-50',
-    span: 'md:col-span-2 md:row-span-1',
+    number: '01',
   },
   {
     icon: BookOpen,
     title: 'Vocabulary Trainer',
     description: '1,600+ kata dengan spaced repetition untuk memori jangka panjang.',
-    gradient: 'from-rose-500 to-red-500',
-    bgGlow: 'bg-rose-50',
-    span: 'md:col-span-1',
+    number: '02',
   },
   {
     icon: PenLine,
     title: 'Smart Grammar',
     description: 'Koreksi instan grammar dengan penjelasan detail dan contoh penggunaan.',
-    gradient: 'from-slate-700 to-slate-900',
-    bgGlow: 'bg-slate-50',
-    span: 'md:col-span-1',
+    number: '03',
   },
   {
     icon: Mic,
     title: 'Speaking Practice',
-    description: 'Latihan pronunciation dengan feedback dari AI.',
-    gradient: 'from-pink-500 to-rose-500',
-    bgGlow: 'bg-pink-50',
-    span: 'md:col-span-1',
+    description: 'Latihan pronunciation dengan feedback dari AI — dari percakapan sehari-hari hingga formal.',
+    number: '04',
   },
   {
     icon: GraduationCap,
     title: 'Exam Simulation',
     description: 'Latihan ujian Goethe-style dari A1 sampai B2 dengan skor dan rekomendasi.',
-    gradient: 'from-emerald-500 to-teal-500',
-    bgGlow: 'bg-emerald-50',
-    span: 'md:col-span-1',
+    number: '05',
   },
   {
     icon: BarChart3,
     title: 'Progress Tracking',
     description: 'Dashboard lengkap untuk melihat kemajuan belajar, streak, dan pencapaian.',
-    gradient: 'from-amber-500 to-orange-500',
-    bgGlow: 'bg-amber-50',
-    span: 'md:col-span-2',
+    number: '06',
   },
 ];
 
 export default function ProductShowcase() {
   return (
-    <section className="py-20 md:py-28 bg-white relative" id="fitur">
-      {/* Subtle top fade */}
-      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-slate-50/50 to-transparent pointer-events-none" />
+    <section className="py-20 md:py-32 bg-[#0a0a0a] text-white relative" id="fitur">
+      {/* Grid texture */}
+      <div
+        className="absolute inset-0 opacity-[0.04] pointer-events-none"
+        style={{
+          backgroundImage: 'linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px)',
+          backgroundSize: '80px 80px',
+        }}
+      />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
+        {/* Section header — editorial style */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
+          transition={{ duration: 0.6 }}
+          className="mb-16 md:mb-24"
         >
-          <span className="inline-flex items-center gap-2 text-sm font-semibold text-amber-600 bg-amber-50 px-4 py-1.5 rounded-full mb-4">
-            Fitur Unggulan
-          </span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
-            Semua yang Dibutuhkan untuk{' '}
-            <span className="bg-gradient-to-r from-amber-500 to-orange-500 bg-clip-text text-transparent">
-              Belajar Bahasa Jerman
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-px w-12 bg-[#c8956c]" />
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#c8956c]">
+              Fitur Unggulan
             </span>
+          </div>
+          <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight max-w-3xl">
+            Semua yang Dibutuhkan untuk{' '}
+            <span className="italic text-[#c8956c]">Belajar Bahasa Jerman</span>
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
-            Fitur lengkap yang dirancang untuk membantu kamu mencapai level B2 dengan efektif.
-          </p>
         </motion.div>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
+        {/* Feature list — editorial grid, NOT bento */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
           {features.map((feature, i) => {
             const Icon = feature.icon;
             return (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0, y: 24 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-                className={`group relative ${feature.bgGlow} hover:bg-white rounded-3xl p-6 md:p-8 border border-transparent hover:border-slate-200/80 hover:shadow-xl hover:shadow-slate-200/50 transition-all duration-300 cursor-pointer card-hover ${feature.span}`}
+                transition={{ duration: 0.5, delay: i * 0.08 }}
+                className="group bg-[#0a0a0a] p-8 md:p-10 hover:bg-[#111] transition-colors duration-300"
               >
-                {/* Icon */}
-                <div className={`w-12 h-12 bg-gradient-to-br ${feature.gradient} rounded-2xl flex items-center justify-center mb-5 group-hover:scale-110 transition-transform shadow-lg shadow-slate-900/10`}>
-                  <Icon className="w-6 h-6 text-white" />
+                {/* Number + Icon */}
+                <div className="flex items-center justify-between mb-6">
+                  <span className="font-serif text-3xl font-bold text-white/10 group-hover:text-[#c8956c]/30 transition-colors">
+                    {feature.number}
+                  </span>
+                  <Icon className="w-5 h-5 text-white/30 group-hover:text-[#c8956c] transition-colors" />
                 </div>
 
-                {/* Content */}
-                <h3 className="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+                {/* Title */}
+                <h3 className="font-serif text-xl font-bold mb-3 group-hover:text-[#c8956c] transition-colors">
                   {feature.title}
-                  <ArrowUpRight className="w-4 h-4 text-slate-300 group-hover:text-amber-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
                 </h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{feature.description}</p>
 
-                {/* Decorative gradient bar */}
-                <div className={`mt-6 h-1 w-16 rounded-full bg-gradient-to-r ${feature.gradient} opacity-20 group-hover:opacity-40 group-hover:w-24 transition-all duration-300`} />
+                {/* Description */}
+                <p className="text-sm text-white/40 leading-relaxed group-hover:text-white/60 transition-colors">
+                  {feature.description}
+                </p>
+
+                {/* Bottom accent line */}
+                <div className="mt-8 h-px bg-white/10 group-hover:bg-[#c8956c]/40 transition-colors" />
               </motion.div>
             );
           })}

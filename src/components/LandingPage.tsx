@@ -12,25 +12,26 @@ function Header() {
 
   return (
     <motion.header
-      initial={{ opacity: 0, y: -12 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="w-full glass-strong border-b border-white/30 sticky top-0 z-50"
+      className="w-full bg-[#f5f0eb] border-b-2 border-[#0a0a0a] sticky top-0 z-50"
     >
-      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between" aria-label="Navigasi utama">
-        <div className="flex items-center space-x-2.5">
-          <div className="flex space-x-[3px] rounded-md overflow-hidden shadow-sm">
-            <div className="w-2.5 h-4 bg-slate-800 rounded-sm" />
-            <div className="w-2.5 h-4 bg-red-600 rounded-sm" />
-            <div className="w-2.5 h-4 bg-amber-400 rounded-sm" />
+      <nav className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 py-4 flex items-center justify-between" aria-label="Navigasi utama">
+        <a href="/" className="flex items-center space-x-3">
+          {/* German flag — small, precise */}
+          <div className="flex flex-col w-2.5 h-5">
+            <div className="flex-1 bg-[#0a0a0a]" />
+            <div className="flex-1 bg-[#8b2500]" />
+            <div className="flex-1 bg-[#c8956c]" />
           </div>
-          <span className="font-bold tracking-tight text-xl text-slate-900">DeutschUp</span>
-        </div>
+          <span className="font-serif text-xl font-bold text-[#0a0a0a] tracking-tight">DeutschUp</span>
+        </a>
         <div className="flex items-center space-x-4">
-          <a href="/sign-in" className="text-slate-500 hover:text-slate-900 font-medium transition-colors text-sm hidden sm:inline-flex" aria-label="Masuk ke akun Anda">
+          <a href="/sign-in" className="text-[#0a0a0a]/60 hover:text-[#0a0a0a] font-medium transition-colors text-sm hidden sm:inline-flex" aria-label="Masuk ke akun Anda">
             Masuk
           </a>
-          <Button onClick={loginWithGoogle} className="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-bold rounded-xl text-sm px-5 py-2.5 shadow-md shadow-amber-500/20 hover:shadow-lg hover:shadow-amber-500/30 transition-all">
+          <Button onClick={loginWithGoogle} className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-white font-bold rounded-none text-sm px-5 py-2.5 transition-all">
             Daftar Gratis
           </Button>
         </div>
@@ -41,34 +42,51 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="bg-slate-900 text-slate-400 py-16 relative overflow-hidden">
-      {/* Ambient glow */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-gradient-to-b from-amber-500/5 to-transparent blur-3xl pointer-events-none" />
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-          <div className="flex items-center space-x-2.5">
-            <div className="flex space-x-[3px] rounded-md overflow-hidden">
-              <div className="w-2.5 h-4 bg-slate-600 rounded-sm" />
-              <div className="w-2.5 h-4 bg-red-500 rounded-sm" />
-              <div className="w-2.5 h-4 bg-amber-400 rounded-sm" />
+    <footer className="bg-[#0a0a0a] text-white/40 py-16 relative">
+      <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
+        <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-12">
+          {/* Logo + flag */}
+          <div>
+            <div className="flex items-center space-x-3 mb-4">
+              <div className="flex flex-col w-2.5 h-5">
+                <div className="flex-1 bg-white/60" />
+                <div className="flex-1 bg-[#8b2500]" />
+                <div className="flex-1 bg-[#c8956c]" />
+              </div>
+              <span className="font-serif text-xl font-bold text-white tracking-tight">DeutschUp</span>
             </div>
-            <span className="font-bold text-white text-lg">DeutschUp</span>
+            <p className="text-sm text-white/30 max-w-xs leading-relaxed">
+              Platform belajar bahasa Jerman berbasis AI untuk siswa Indonesia.
+            </p>
           </div>
-          <div className="flex gap-8 text-sm">
-            <a href="#fitur" className="hover:text-white transition-colors">Fitur</a>
-            <a href="#roadmap" className="hover:text-white transition-colors">Kurikulum</a>
-            <a href="/sign-in" className="hover:text-white transition-colors">Masuk</a>
+
+          {/* Links */}
+          <div className="flex gap-12">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-white/30 mb-3">Platform</p>
+              <div className="space-y-2">
+                <a href="#fitur" className="block text-sm text-white/50 hover:text-white transition-colors">Fitur</a>
+                <a href="#roadmap" className="block text-sm text-white/50 hover:text-white transition-colors">Kurikulum</a>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-white/30 mb-3">Akun</p>
+              <div className="space-y-2">
+                <a href="/sign-in" className="block text-sm text-white/50 hover:text-white transition-colors">Masuk</a>
+                <a href="/sign-in" className="block text-sm text-white/50 hover:text-white transition-colors">Daftar</a>
+              </div>
+            </div>
           </div>
-          <p className="text-sm text-slate-500">© 2026 DeutschUp. All rights reserved.</p>
         </div>
 
-        {/* Divider */}
-        <div className="divider-fade my-8" />
-
-        <p className="text-center text-xs text-slate-600">
-          Platform belajar bahasa Jerman berbasis AI untuk siswa Indonesia.
-        </p>
+        {/* Bottom bar — editorial divider */}
+        <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-white/20">© 2026 DeutschUp. All rights reserved.</p>
+          <div className="flex items-center gap-1 text-xs text-white/20">
+            <span>🇩🇪</span>
+            <span>Deutsch lernen macht Spaß</span>
+          </div>
+        </div>
       </div>
     </footer>
   );
@@ -76,7 +94,7 @@ function Footer() {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#f5f0eb]">
       <Header />
       <main>
         <Hero />

@@ -7,7 +7,7 @@ const levels = [
     title: 'Pemula',
     active: true,
     grammar: ['Nomen & Artikel', 'Verb-Position', 'Einfache Sätze'],
-    vocab: '500+ kata',
+    vocab: '500+',
     listening: 'Percakapan sehari-hari',
     speaking: 'Perkenalan diri',
   },
@@ -16,7 +16,7 @@ const levels = [
     title: 'Elementary',
     active: false,
     grammar: ['Perfekt Tense', 'Dativ/Akkusativ', 'Nebensätze'],
-    vocab: '1,000+ kata',
+    vocab: '1,000+',
     listening: 'Dialog pendek',
     speaking: 'Situasi sehari-hari',
   },
@@ -25,7 +25,7 @@ const levels = [
     title: 'Intermediate',
     active: false,
     grammar: ['Konjunktiv II', 'Passiv', 'Relativsätze'],
-    vocab: '2,500+ kata',
+    vocab: '2,500+',
     listening: 'Podcast & berita',
     speaking: 'Topik abstrak',
   },
@@ -34,7 +34,7 @@ const levels = [
     title: 'Upper-Intermediate',
     active: false,
     grammar: ['Erweiterte Satzstrukturen', 'Nominalisierung', 'Stilmittel'],
-    vocab: '4,000+ kata',
+    vocab: '4,000+',
     listening: 'Film & debat',
     speaking: 'Presentasi & argumen',
   },
@@ -42,135 +42,136 @@ const levels = [
 
 export default function LearningRoadmap() {
   return (
-    <section className="py-20 md:py-28 bg-gradient-to-br from-slate-50 to-[#FFF8E1]/30" id="roadmap">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-32 bg-[#f5f0eb] relative" id="roadmap">
+      <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
+        {/* Section header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-14"
+          transition={{ duration: 0.6 }}
+          className="mb-16 md:mb-24"
         >
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
-            Roadmap Belajar{' '}
-            <span className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] bg-clip-text text-transparent">
-              Bahasa Jerman
+          <div className="flex items-center gap-3 mb-6">
+            <div className="h-px w-12 bg-[#0a0a0a]" />
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/60">
+              Kurikulum
             </span>
+          </div>
+          <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-[#0a0a0a] max-w-3xl">
+            Roadmap Belajar{' '}
+            <span className="italic text-[#8b2500]">Bahasa Jerman</span>
           </h2>
-          <p className="text-lg text-slate-500 max-w-2xl mx-auto">
+          <p className="text-lg text-[#0a0a0a]/50 mt-4 max-w-xl font-light">
             Kurikulum terstruktur dari A1 hingga B2 — persiapan ujian Goethe.
           </p>
         </motion.div>
 
-        {/* Desktop — Horizontal Timeline */}
+        {/* Desktop — editorial table */}
         <div className="hidden md:block">
-          <div className="relative">
-            {/* Connecting line */}
-            <div className="absolute top-12 left-0 right-0 h-0.5 bg-gradient-to-r from-[#F2C94C]/40 via-[#F2C94C]/20 to-slate-200" />
+          {/* Header row */}
+          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10 mb-px">
+            {levels.map((level) => (
+              <div
+                key={level.level}
+                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a] text-white' : 'bg-white text-[#0a0a0a]'}`}
+              >
+                <span className="font-serif text-2xl font-bold">{level.level}</span>
+                <span className={`block text-xs uppercase tracking-wider mt-1 ${level.active ? 'text-white/60' : 'text-[#0a0a0a]/40'}`}>
+                  {level.title}
+                </span>
+              </div>
+            ))}
+          </div>
 
-            <div className="grid grid-cols-4 gap-6 relative">
-              {levels.map((level, i) => (
-                <motion.div
-                  key={level.level}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="flex flex-col items-center"
-                >
-                  {/* Level indicator */}
-                  <div
-                    className={`w-24 h-24 rounded-3xl flex flex-col items-center justify-center z-10 shadow-lg transition-all ${
-                      level.active
-                        ? 'bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] text-[#1F2937] shadow-[#F2C94C]/30 scale-110'
-                        : 'bg-white text-slate-400 shadow-slate-100 border border-slate-100'
-                    }`}
-                  >
-                    <span className="text-2xl font-extrabold">{level.level}</span>
-                    <span className={`text-xs font-medium ${level.active ? 'text-[#1F2937]/60' : 'text-slate-400'}`}>
-                      {level.title}
-                    </span>
-                  </div>
+          {/* Grammar row */}
+          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10 mb-px">
+            {levels.map((level) => (
+              <div
+                key={`g-${level.level}`}
+                className={`px-6 py-5 ${level.active ? 'bg-[#0a0a0a] text-white' : 'bg-white'}`}
+              >
+                <p className={`text-xs font-bold uppercase tracking-wider mb-3 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
+                  Grammar
+                </p>
+                <ul className="space-y-1.5">
+                  {level.grammar.map((g) => (
+                    <li key={g} className="flex items-start gap-2 text-sm">
+                      <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/20'}`} />
+                      <span className={level.active ? 'text-white/80' : 'text-[#0a0a0a]/60'}>{g}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
 
-                  {/* Card */}
-                  <div
-                    className={`mt-6 w-full rounded-3xl p-5 border transition-all ${
-                      level.active
-                        ? 'bg-white shadow-xl shadow-[#F2C94C]/10 border-[#F2C94C]/30'
-                        : 'bg-white/60 border-slate-100 hover:bg-white hover:shadow-lg hover:shadow-slate-100/50'
-                    }`}
-                  >
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">Grammar</p>
-                        <ul className="space-y-1">
-                          {level.grammar.map((g) => (
-                            <li key={g} className="flex items-start gap-1.5 text-sm text-slate-600">
-                              <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${level.active ? 'text-[#F2C94C]' : 'text-slate-300'}`} />
-                              {g}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                      <div className="pt-2 border-t border-slate-100">
-                        <p className="text-xs text-slate-400">
-                          <span className="font-semibold text-slate-600">{level.vocab}</span> kosakata
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
+          {/* Vocab row */}
+          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10 mb-px">
+            {levels.map((level) => (
+              <div
+                key={`v-${level.level}`}
+                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a] text-white' : 'bg-white'}`}
+              >
+                <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
+                  Kosakata
+                </p>
+                <p className={`font-serif text-xl font-bold ${level.active ? 'text-white' : 'text-[#0a0a0a]'}`}>
+                  {level.vocab} <span className={`text-sm font-normal ${level.active ? 'text-white/50' : 'text-[#0a0a0a]/40'}`}>kata</span>
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Skills row */}
+          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10">
+            {levels.map((level) => (
+              <div
+                key={`s-${level.level}`}
+                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a] text-white' : 'bg-white'}`}
+              >
+                <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
+                  Skills
+                </p>
+                <p className={`text-sm ${level.active ? 'text-white/60' : 'text-[#0a0a0a]/50'}`}>
+                  {level.listening}
+                </p>
+                <p className={`text-sm ${level.active ? 'text-white/60' : 'text-[#0a0a0a]/50'}`}>
+                  {level.speaking}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Mobile — Vertical Timeline */}
-        <div className="md:hidden space-y-6">
+        {/* Mobile — editorial list */}
+        <div className="md:hidden">
           {levels.map((level, i) => (
             <motion.div
               key={level.level}
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className="flex gap-4"
+              className={`border-t-2 border-[#0a0a0a] ${level.active ? 'bg-[#0a0a0a] text-white' : 'bg-white'} ${i === levels.length - 1 ? 'border-b-2' : ''}`}
             >
-              {/* Vertical line + dot */}
-              <div className="flex flex-col items-center">
-                <div
-                  className={`w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 ${
-                    level.active
-                      ? 'bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] text-[#1F2937] shadow-md shadow-[#F2C94C]/30'
-                      : 'bg-white text-slate-400 border border-slate-200'
-                  }`}
-                >
-                  <span className="text-sm font-bold">{level.level}</span>
+              <div className="px-6 py-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <span className="font-serif text-3xl font-bold">{level.level}</span>
+                    <span className={`ml-3 text-xs uppercase tracking-wider ${level.active ? 'text-white/50' : 'text-[#0a0a0a]/40'}`}>
+                      {level.title}
+                    </span>
+                  </div>
+                  <span className={`font-serif text-xl font-bold ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]'}`}>
+                    {level.vocab}
+                  </span>
                 </div>
-                {i < levels.length - 1 && (
-                  <div className="w-0.5 flex-1 bg-gradient-to-b from-[#F2C94C]/30 to-slate-200 my-1" />
-                )}
-              </div>
-
-              {/* Card */}
-              <div
-                className={`flex-1 rounded-2xl p-4 border mb-2 ${
-                  level.active
-                    ? 'bg-white shadow-lg shadow-[#F2C94C]/10 border-[#F2C94C]/30'
-                    : 'bg-white/60 border-slate-100'
-                }`}
-              >
-                <p className={`text-xs font-semibold mb-2 ${level.active ? 'text-[#F2C94C]' : 'text-slate-400'}`}>
-                  {level.title}
-                </p>
-                <div className="space-y-2">
-                  <p className="text-sm text-slate-600">
+                <div className="space-y-1">
+                  <p className={`text-sm ${level.active ? 'text-white/60' : 'text-[#0a0a0a]/50'}`}>
                     <span className="font-semibold">Grammar:</span> {level.grammar.join(', ')}
                   </p>
-                  <p className="text-sm text-slate-600">
-                    <span className="font-semibold">Vocab:</span> {level.vocab}
-                  </p>
-                  <p className="text-sm text-slate-500">
+                  <p className={`text-sm ${level.active ? 'text-white/60' : 'text-[#0a0a0a]/50'}`}>
                     {level.listening} · {level.speaking}
                   </p>
                 </div>
