@@ -63,14 +63,14 @@ export default class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-[#0a0a0a] bg-[#0a0a0a] flex items-center justify-center p-4">
+        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 text-[#f5f0eb]">
           <div className="max-w-lg w-full bg-[#0a0a0a]  border border-[#8b2500]/30 p-6">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10  bg-[#8b2500]/20 flex items-center justify-center">
                 <AlertTriangle className="w-5 h-5 text-[#8b2500]" />
               </div>
               <div>
-                <h1 className="text-lg font-bold bg-[#0a0a0a]">Terjadi Kesalahan</h1>
+                <h1 className="text-lg font-bold text-[#f5f0eb]">Terjadi Kesalahan</h1>
                 <p className="text-sm text-[#0a0a0a]/40">
                   Komposen mengalami error saat render
                 </p>

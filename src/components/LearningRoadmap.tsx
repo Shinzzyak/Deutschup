@@ -74,10 +74,10 @@ export default function LearningRoadmap() {
             {levels.map((level) => (
               <div
                 key={level.level}
-                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a] bg-[#0a0a0a]' : 'bg-[#f5f0eb] text-[#0a0a0a]'}`}
+                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb] text-[#0a0a0a]'}`}
               >
                 <span className="font-serif text-2xl font-bold">{level.level}</span>
-                <span className={`block text-xs uppercase tracking-wider mt-1 ${level.active ? 'bg-[#0a0a0a]/60' : 'text-[#0a0a0a]/40'}`}>
+                <span className={`block text-xs uppercase tracking-wider mt-1 ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/40'}`}>
                   {level.title}
                 </span>
               </div>
@@ -89,7 +89,7 @@ export default function LearningRoadmap() {
             {levels.map((level) => (
               <div
                 key={`g-${level.level}`}
-                className={`px-6 py-5 ${level.active ? 'bg-[#0a0a0a] bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
+                className={`px-6 py-5 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-3 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
                   Grammar
@@ -98,7 +98,7 @@ export default function LearningRoadmap() {
                   {level.grammar.map((g) => (
                     <li key={g} className="flex items-start gap-2 text-sm">
                       <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/20'}`} />
-                      <span className={level.active ? 'bg-[#0a0a0a]/80' : 'text-[#0a0a0a]/60'}>{g}</span>
+                      <span className={level.active ? 'text-[#f5f0eb]/80' : 'text-[#0a0a0a]/60'}>{g}</span>
                     </li>
                   ))}
                 </ul>
@@ -111,13 +111,13 @@ export default function LearningRoadmap() {
             {levels.map((level) => (
               <div
                 key={`v-${level.level}`}
-                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a] bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
+                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
                   Kosakata
                 </p>
-                <p className={`font-serif text-xl font-bold ${level.active ? 'bg-[#0a0a0a]' : 'text-[#0a0a0a]'}`}>
-                  {level.vocab} <span className={`text-sm font-normal ${level.active ? 'bg-[#0a0a0a]/50' : 'text-[#0a0a0a]/40'}`}>kata</span>
+                <p className={`font-serif text-xl font-bold ${level.active ? 'text-[#f5f0eb]' : 'text-[#0a0a0a]'}`}>
+                  {level.vocab} <span className={`text-sm font-normal ${level.active ? 'text-[#f5f0eb]/50' : 'text-[#0a0a0a]/40'}`}>kata</span>
                 </p>
               </div>
             ))}
@@ -128,15 +128,15 @@ export default function LearningRoadmap() {
             {levels.map((level) => (
               <div
                 key={`s-${level.level}`}
-                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a] bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
+                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
                   Skills
                 </p>
-                <p className={`text-sm ${level.active ? 'bg-[#0a0a0a]/60' : 'text-[#0a0a0a]/50'}`}>
+                <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
                   {level.listening}
                 </p>
-                <p className={`text-sm ${level.active ? 'bg-[#0a0a0a]/60' : 'text-[#0a0a0a]/50'}`}>
+                <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
                   {level.speaking}
                 </p>
               </div>
@@ -153,13 +153,13 @@ export default function LearningRoadmap() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className={`border-t-2 border-[#0a0a0a] ${level.active ? 'bg-[#0a0a0a] bg-[#0a0a0a]' : 'bg-[#f5f0eb]'} ${i === levels.length - 1 ? 'border-b-2' : ''}`}
+              className={`border-t-2 border-[#0a0a0a] ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'} ${i === levels.length - 1 ? 'border-b-2' : ''}`}
             >
               <div className="px-6 py-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <span className="font-serif text-3xl font-bold">{level.level}</span>
-                    <span className={`ml-3 text-xs uppercase tracking-wider ${level.active ? 'bg-[#0a0a0a]/50' : 'text-[#0a0a0a]/40'}`}>
+                    <span className={`ml-3 text-xs uppercase tracking-wider ${level.active ? 'text-[#f5f0eb]/50' : 'text-[#0a0a0a]/40'}`}>
                       {level.title}
                     </span>
                   </div>
@@ -168,10 +168,10 @@ export default function LearningRoadmap() {
                   </span>
                 </div>
                 <div className="space-y-1">
-                  <p className={`text-sm ${level.active ? 'bg-[#0a0a0a]/60' : 'text-[#0a0a0a]/50'}`}>
+                  <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
                     <span className="font-semibold">Grammar:</span> {level.grammar.join(', ')}
                   </p>
-                  <p className={`text-sm ${level.active ? 'bg-[#0a0a0a]/60' : 'text-[#0a0a0a]/50'}`}>
+                  <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
                     {level.listening} · {level.speaking}
                   </p>
                 </div>

@@ -95,7 +95,7 @@ export default function DebugOverlay() {
           {/* Drawer panel */}
           <div
             ref={panelRef}
-            className={`fixed top-0 right-0 bottom-0 z-[99999] bg-[#0a0a0a] bg-[#0a0a0a]  flex flex-col transition-transform duration-200 ease-out ${
+            className={`fixed top-0 right-0 bottom-0 z-[99999] bg-[#0a0a0a]  flex flex-col transition-transform duration-200 ease-out ${
               open ? 'translate-x-0' : 'translate-x-full'
             }`}
             style={{

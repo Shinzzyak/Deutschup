@@ -51,7 +51,7 @@ export default function Koreksi() {
           onClick={handleKoreksi} 
           disabled={loading || !input.trim()}
           size="lg" 
-          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-[#0a0a0a] hover:bg-[#0a0a0a]/90"
+          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]"
         >
           {loading ? (
              <><Loader2 className="w-5 h-5 mr-3 animate-spin"/> Menganalisis...</>

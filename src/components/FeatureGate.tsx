@@ -50,7 +50,7 @@ export default function FeatureGate({
         </div>
         <Link
           to="/pricing"
-          className="inline-flex items-center gap-2 px-5 py-2.5   from-amber-500 to-orange-500 bg-[#0a0a0a] font-bold text-sm   hover: hover:scale-105 transition-all"
+          className="inline-flex items-center gap-2 px-5 py-2.5   from-amber-500 to-orange-500 bg-[#0a0a0a] text-[#f5f0eb] font-bold text-sm   hover: hover:scale-105 transition-all"
         >
           <Sparkles className="w-4 h-4" />
           Upgrade ke Pro
@@ -65,7 +65,7 @@ export default function FeatureGate({
  */
 export function ProBadge({ className = '' }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-1 px-2 py-0.5   from-amber-400 to-orange-400 bg-[#0a0a0a] text-[10px] font-bold uppercase tracking-wider ${className}`}>
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5   from-amber-400 to-orange-400 bg-[#0a0a0a] text-[#f5f0eb] text-[10px] font-bold uppercase tracking-wider ${className}`}>
       <Sparkles className="w-3 h-3" />
       Pro
     </span>

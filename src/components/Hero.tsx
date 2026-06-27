@@ -56,7 +56,7 @@ export default function Hero() {
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
                 <Button
                   onClick={loginWithGoogle}
-                  className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a] text-base px-10 py-6  font-bold tracking-wide transition-all group"
+                  className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb] text-base px-10 py-6  font-bold tracking-wide transition-all group"
                 >
                   Mulai Gratis
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -106,8 +106,8 @@ export default function Hero() {
                   <div className="bg-[#f5f0eb] border border-[#0a0a0a]/10 px-4 py-3 max-w-[85%]">
                     <p className="text-sm text-[#0a0a0a]">Wie sagt man &quot;terima kasih&quot; dalam bahasa Jerman?</p>
                   </div>
-                  <div className="bg-[#0a0a0a] px-4 py-3 max-w-[85%] ml-auto">
-                    <p className="text-sm bg-[#0a0a0a]">Man sagt <span className="font-bold text-[#c8956c]">&quot;Danke&quot;</span></p>
+                  <div className="bg-[#0a0a0a] px-4 py-3 max-w-[85%] ml-auto text-[#f5f0eb]">
+                    <p className="text-sm text-[#f5f0eb]">Man sagt <span className="font-bold text-[#c8956c]">&quot;Danke&quot;</span></p>
                   </div>
                 </div>
 
@@ -119,7 +119,7 @@ export default function Hero() {
                       <div key={level} className="flex items-center gap-3">
                         <div className={`w-10 h-10 flex items-center justify-center text-xs font-bold border-2 ${
                           i === 0
-                            ? 'bg-[#0a0a0a] bg-[#0a0a0a] border-[#0a0a0a]'
+                            ? 'bg-[#0a0a0a] text-[#f5f0eb] border-[#0a0a0a]'
                             : 'bg-transparent text-[#0a0a0a]/40 border-[#0a0a0a]/20'
                         }`}>
                           {level}
@@ -136,10 +136,10 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
-                className="absolute -bottom-6 -left-6 bg-[#8b2500] bg-[#0a0a0a] px-6 py-4 "
+                className="absolute -bottom-6 -left-6 bg-[#8b2500] text-[#f5f0eb] px-6 py-4 "
               >
                 <p className="text-2xl font-serif font-bold">1,600+</p>
-                <p className="text-xs uppercase tracking-wider bg-[#0a0a0a]/70">Kosakata</p>
+                <p className="text-xs uppercase tracking-wider text-[#f5f0eb]/70">Kosakata</p>
               </motion.div>
             </motion.div>
           </div>

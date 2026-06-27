@@ -56,7 +56,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               className="text-center"
             >
               <div className="w-20 h-20 bg-[#c8956c] flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-10 h-10 bg-[#0a0a0a]" />
+                <Sparkles className="w-10 h-10 text-[#f5f0eb]" />
               </div>
               <h1 className="text-3xl font-serif font-bold text-[#0a0a0a] mb-3">
                 Selamat Datang di Deutschup! 🇩🇪

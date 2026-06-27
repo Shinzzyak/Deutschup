@@ -184,7 +184,7 @@ export default function MockTest() {
               })}
            </div>
            
-           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]">
+           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]">
              <PlayCircle className="w-6 h-6 mr-2" /> Mulai Simulasi
            </Button>
         </div>
@@ -251,7 +251,7 @@ export default function MockTest() {
             <div className="mt-8 pt-6 border-t border-border flex justify-between">
                <Button variant="outline" disabled={currentIdx === 0} onClick={() => setCurrentIdx(prev => prev - 1)}>Sebelumnya</Button>
                {currentIdx === questions.length - 1 ? (
-                 <Button onClick={submitTest} className="bg-green-600 hover:bg-green-700 bg-[#0a0a0a] font-bold">Kumpulkan</Button>
+                 <Button onClick={submitTest} className="bg-green-600 hover:bg-green-700 text-white font-bold">Kumpulkan</Button>
                ) : (
                  <Button onClick={() => setCurrentIdx(prev => prev + 1)}>Selanjutnya</Button>
                )}

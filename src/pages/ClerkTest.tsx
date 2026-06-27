@@ -122,7 +122,7 @@ export default function ClerkTest() {
         {/* Header */}
         <div className="flex items-center space-x-3 mb-8">
           <div className="w-10 h-10  bg-blue-600 flex items-center justify-center">
-            <Shield className="w-5 h-5 bg-[#0a0a0a]" />
+            <Shield className="w-5 h-5 text-[#f5f0eb]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">Clerk + Supabase POC</h1>

@@ -16,10 +16,10 @@ type FilterType = 'all' | 'learned' | 'learning' | 'new';
 type SortType = 'default' | 'german' | 'indonesian';
 
 const levelColors: Record<string, { bg: string; text: string; border: string }> = {
-  A1: { bg: 'bg-emerald-500', text: 'bg-[#0a0a0a]', border: 'border-emerald-500' },
-  A2: { bg: 'bg-teal-500', text: 'bg-[#0a0a0a]', border: 'border-teal-500' },
-  B1: { bg: 'bg-blue-500', text: 'bg-[#0a0a0a]', border: 'border-blue-500' },
-  B2: { bg: 'bg-indigo-500', text: 'bg-[#0a0a0a]', border: 'border-indigo-500' },
+  A1: { bg: 'bg-emerald-500', text: 'text-[#0a0a0a]', border: 'border-emerald-500' },
+  A2: { bg: 'bg-teal-500', text: 'text-[#0a0a0a]', border: 'border-teal-500' },
+  B1: { bg: 'bg-blue-500', text: 'text-[#0a0a0a]', border: 'border-blue-500' },
+  B2: { bg: 'bg-indigo-500', text: 'text-[#0a0a0a]', border: 'border-indigo-500' },
 };
 
 const articleColors: Record<string, string> = {

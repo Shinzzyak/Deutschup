@@ -161,7 +161,7 @@ export default function Dashboard() {
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 bg-[#0a0a0a] ">
+        <header className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 ">
           {/* German flag accent */}
           <div className="absolute top-0 left-0 right-0 h-1 flex">
             <div className="flex-1 bg-[#0a0a0a]/70" />
@@ -196,7 +196,7 @@ export default function Dashboard() {
               </div>
               
               <div className="flex flex-col items-start md:items-end w-full md:w-auto">
-                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2  bg-[#f5f0eb]/15 hover:bg-[#f5f0eb]/25   bg-[#0a0a0a] border-0  w-full md:w-auto">
+                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2  bg-[#f5f0eb]/15 hover:bg-[#f5f0eb]/25 border-0 text-[#f5f0eb]  w-full md:w-auto">
                   {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                   <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan'}</span>
                 </Button>
@@ -206,7 +206,7 @@ export default function Dashboard() {
                   </span>
                 )}
                 {pdfBlobUrl && (
-                  <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`} className="text-[12px] font-bold bg-[#0a0a0a] mt-2 text-left md:text-right underline underline-offset-2 hover:text-blue-100 transition-colors" aria-label="Unduh laporan PDF secara manual">
+                  <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`} className="text-[12px] font-bold text-[#f5f0eb] mt-2 text-left md:text-right underline underline-offset-2 hover:text-blue-100 transition-colors" aria-label="Unduh laporan PDF secara manual">
                     Klik di sini untuk mengunduh manual ➔
                   </a>
                 )}
@@ -247,7 +247,7 @@ export default function Dashboard() {
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-amber-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11  bg-[#c8956c] flex items-center justify-center mb-2.5  ">
-                  <Zap className="w-5 h-5 bg-[#0a0a0a]" />
+                  <Zap className="w-5 h-5 text-[#f5f0eb]" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-[#0a0a0a]">{xp}</span>
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Total XP</span>
@@ -256,8 +256,8 @@ export default function Dashboard() {
             <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-blue-200/30">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-blue-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11  bg-[#0a0a0a] flex items-center justify-center mb-2.5  ">
-                  <BookOpen className="w-5 h-5 bg-[#0a0a0a]" />
+                <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
+                  <BookOpen className="w-5 h-5 text-[#f5f0eb]" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-[#0a0a0a]">{learningStats.totalVocab}</span>
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Kosakata</span>
@@ -266,8 +266,8 @@ export default function Dashboard() {
             <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 md:p-5 flex flex-col card-hover border border-emerald-200/30">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-emerald-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11  bg-[#0a0a0a] flex items-center justify-center mb-2.5  ">
-                  <CheckCircle2 className="w-5 h-5 bg-[#0a0a0a]" />
+                <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
+                  <CheckCircle2 className="w-5 h-5 text-[#f5f0eb]" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-green-500">{completedLessons.length}</span>
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
@@ -289,7 +289,7 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && (
-          <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 bg-[#0a0a0a]  hover:transition-shadow">
+          <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 hover:transition-shadow">
             {/* German flag accent */}
             <div className="absolute top-0 left-0 right-0 h-1 flex">
               <div className="flex-1 bg-[#0a0a0a]/70" />
@@ -310,10 +310,10 @@ export default function Dashboard() {
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h3 className="text-xl md:text-2xl font-bold">{currentLesson.title}</h3>
-                  <p className="text-[#0a0a0a]/40 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
+                  <p className="text-[#f5f0eb]/60 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
                 </div>
                 <Link to={`/lesson/${currentLesson.id}`}>
-                  <Button className="bg-[#c8956c] hover:bg-[#b8854c] bg-[#0a0a0a] px-6 py-3  font-bold   transition-all hover:scale-105">
+                  <Button className="bg-[#c8956c] hover:bg-[#b8854c] text-[#0a0a0a] px-6 py-3 font-bold transition-all hover:scale-105">
                     <PlayCircle className="w-5 h-5 mr-2" /> Lanjutkan Sekarang
                   </Button>
                 </Link>
@@ -331,7 +331,7 @@ export default function Dashboard() {
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
                   <div className="w-9 h-9  bg-[#8b2500] flex items-center justify-center  ">
-                    <Flame className="w-5 h-5 bg-[#0a0a0a]" />
+                    <Flame className="w-5 h-5 text-[#f5f0eb]" />
                   </div>
                   <h3 className="text-lg font-bold text-[#0a0a0a]">Streak Belajar</h3>
                 </div>
@@ -350,7 +350,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                        <div key={day} className={cn("w-6 h-6  flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-[#8b2500] bg-[#0a0a0a] " : "bg-[#0a0a0a]/5 text-[#0a0a0a]/40")}>
+                        <div key={day} className={cn("w-6 h-6  flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-[#8b2500] text-[#f5f0eb] " : "bg-[#0a0a0a]/5 text-[#0a0a0a]/40")}>
                           {day}
                         </div>
                       ))}
@@ -365,7 +365,7 @@ export default function Dashboard() {
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
                   <div className="w-9 h-9  bg-[#0a0a0a] flex items-center justify-center  ">
-                    <BarChart3 className="w-5 h-5 bg-[#0a0a0a]" />
+                    <BarChart3 className="w-5 h-5 text-[#f5f0eb]" />
                   </div>
                   <h3 className="text-lg font-bold text-[#0a0a0a]">Statistik Belajar</h3>
                 </div>
@@ -400,7 +400,7 @@ export default function Dashboard() {
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-5">
                 <div className="w-9 h-9  bg-[#c8956c] flex items-center justify-center  ">
-                  <Award className="w-5 h-5 bg-[#0a0a0a]" />
+                  <Award className="w-5 h-5 text-[#f5f0eb]" />
                 </div>
                 <h3 className="text-lg font-bold text-[#0a0a0a]">Pencapaian</h3>
               </div>
@@ -410,7 +410,7 @@ export default function Dashboard() {
                   return (
                     <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4  border transition-all card-hover", achievement.unlocked ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-amber-200/40" : "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50")}>
                       <div className={cn("w-12 h-12  flex items-center justify-center mb-2", achievement.unlocked ? "bg-[#c8956c]  " : "bg-[#0a0a0a]/5")}>
-                        <Icon className={cn("w-6 h-6", achievement.unlocked ? "bg-[#0a0a0a]" : "text-[#0a0a0a]/40")} />
+                        <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-[#f5f0eb]" : "text-[#0a0a0a]/40")} />
                       </div>
                       <p className="text-sm font-bold text-[#0a0a0a]">{achievement.title}</p>
                       <p className="text-[10px] text-[#0a0a0a]/50 mt-1">{achievement.description}</p>
@@ -444,7 +444,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-4">
                       <Link to={isLevelUnlocked ? `/level/${lvl.id}` : '#'}>
-                        <div className={cn("w-14 h-14  flex items-center justify-center bg-[#0a0a0a] font-bold text-2xl  transition-transform hover:scale-105", lvl.color)}>
+                        <div className={cn("w-14 h-14  flex items-center justify-center bg-[#0a0a0a] text-[#f5f0eb] font-bold text-2xl  transition-transform hover:scale-105", lvl.color)}>
                           {lvl.id}
                         </div>
                       </Link>

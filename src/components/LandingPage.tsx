@@ -31,7 +31,7 @@ function Header() {
           <a href="/sign-in" className="text-[#0a0a0a]/60 hover:text-[#0a0a0a] font-medium transition-colors text-sm hidden sm:inline-flex" aria-label="Masuk ke akun Anda">
             Masuk
           </a>
-          <Button onClick={loginWithGoogle} className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a] font-bold  text-sm px-5 py-2.5 transition-all">
+          <Button onClick={loginWithGoogle} className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb] font-bold  text-sm px-5 py-2.5 transition-all">
             Daftar Gratis
           </Button>
         </div>
@@ -42,7 +42,7 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="bg-[#0a0a0a] bg-[#0a0a0a]/40 py-16 relative">
+    <footer className="bg-[#0a0a0a] py-16 relative text-[#f5f0eb]">
       <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
         <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-12">
           {/* Logo + flag */}
@@ -53,9 +53,9 @@ function Footer() {
                 <div className="flex-1 bg-[#8b2500]" />
                 <div className="flex-1 bg-[#c8956c]" />
               </div>
-              <span className="font-serif text-xl font-bold bg-[#0a0a0a] tracking-tight">DeutschUp</span>
+              <span className="font-serif text-xl font-bold text-[#f5f0eb] tracking-tight">DeutschUp</span>
             </div>
-            <p className="text-sm bg-[#0a0a0a]/30 max-w-xs leading-relaxed">
+            <p className="text-sm text-[#f5f0eb]/30 max-w-xs leading-relaxed">
               Platform belajar bahasa Jerman berbasis AI untuk siswa Indonesia.
             </p>
           </div>
@@ -63,17 +63,17 @@ function Footer() {
           {/* Links */}
           <div className="flex gap-12">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.15em] bg-[#0a0a0a]/30 mb-3">Platform</p>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#f5f0eb]/30 mb-3">Platform</p>
               <div className="space-y-2">
-                <a href="#fitur" className="block text-sm bg-[#0a0a0a]/50 hover:bg-[#0a0a0a] transition-colors">Fitur</a>
-                <a href="#roadmap" className="block text-sm bg-[#0a0a0a]/50 hover:bg-[#0a0a0a] transition-colors">Kurikulum</a>
+                <a href="#fitur" className="block text-sm text-[#f5f0eb]/50 hover:text-[#f5f0eb] transition-colors">Fitur</a>
+                <a href="#roadmap" className="block text-sm text-[#f5f0eb]/50 hover:text-[#f5f0eb] transition-colors">Kurikulum</a>
               </div>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.15em] bg-[#0a0a0a]/30 mb-3">Akun</p>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#f5f0eb]/30 mb-3">Akun</p>
               <div className="space-y-2">
-                <a href="/sign-in" className="block text-sm bg-[#0a0a0a]/50 hover:bg-[#0a0a0a] transition-colors">Masuk</a>
-                <a href="/sign-in" className="block text-sm bg-[#0a0a0a]/50 hover:bg-[#0a0a0a] transition-colors">Daftar</a>
+                <a href="/sign-in" className="block text-sm text-[#f5f0eb]/50 hover:text-[#f5f0eb] transition-colors">Masuk</a>
+                <a href="/sign-in" className="block text-sm text-[#f5f0eb]/50 hover:text-[#f5f0eb] transition-colors">Daftar</a>
               </div>
             </div>
           </div>
@@ -81,8 +81,8 @@ function Footer() {
 
         {/* Bottom bar — editorial divider */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs bg-[#0a0a0a]/20">© 2026 DeutschUp. All rights reserved.</p>
-          <div className="flex items-center gap-1 text-xs bg-[#0a0a0a]/20">
+          <p className="text-xs text-[#f5f0eb]/20">© 2026 DeutschUp. All rights reserved.</p>
+          <div className="flex items-center gap-1 text-xs text-[#f5f0eb]/20">
             <span>🇩🇪</span>
             <span>Deutsch lernen macht Spaß</span>
           </div>

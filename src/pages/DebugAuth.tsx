@@ -41,11 +41,11 @@ export default function DebugAuth() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] bg-[#0a0a0a] p-4 md:p-8">
+    <div className="min-h-screen bg-[#0a0a0a] p-4 md:p-8 text-[#f5f0eb]">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-[#0a0a0a]/50 hover:bg-[#0a0a0a] transition-colors">
+          <Link to="/" className="text-[#f5f0eb]/50 hover:text-[#f5f0eb] transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-xl font-bold">Debug: Auth</h1>
@@ -53,7 +53,7 @@ export default function DebugAuth() {
         <div className="flex gap-2">
           <button
             onClick={copyAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0a0a0a]/90 hover:bg-[#0a0a0a]/80  text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0a0a0a]/90 hover:bg-[#0a0a0a]/80 text-[#f5f0eb]  text-xs font-medium transition-colors"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
             {copied ? 'Copied!' : 'Copy All'}
@@ -163,7 +163,7 @@ function Section({ title, color, children }: { title: string; color: string; chi
     slate: 'border-[#0a0a0a]/10',
   };
   return (
-    <div className={`bg-[#0a0a0a]  border ${borderColors[color] || 'border-[#0a0a0a]/10'} mb-4`}>
+    <div className={`bg-[#0a0a0a]  border ${borderColors[color] || 'border-[#0a0a0a]/10'} mb-4 text-[#f5f0eb]`}>
       <div className="px-4 py-2 border-b border-[#0a0a0a]/10">
         <h2 className="text-sm font-bold">{title}</h2>
       </div>

@@ -16,7 +16,7 @@ export default function CanaryDashboard() {
 
   if (user?.email !== import.meta.env.VITE_ADMIN_EMAIL) {
     return (
-      <div className="min-h-screen bg-gray-950 bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-400">⛔ Access Denied</h1>
           <p className="text-gray-400 mt-2">Admin only</p>
@@ -26,11 +26,11 @@ export default function CanaryDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 bg-[#0a0a0a] p-6">
+    <div className="min-h-screen bg-[#0a0a0a] p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold bg-[#0a0a0a] flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-[#f5f0eb] flex items-center gap-3">
             🔐 Auth Dashboard
           </h1>
           <p className="text-gray-400 mt-2">
@@ -66,11 +66,11 @@ export default function CanaryDashboard() {
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-400">Email:</span>
-              <span className="bg-[#0a0a0a]">{user?.email}</span>
+              <span className="text-[#f5f0eb]">{user?.email}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">User ID:</span>
-              <span className="bg-[#0a0a0a] font-mono text-sm">{user?.id}</span>
+              <span className="text-[#f5f0eb] font-mono text-sm">{user?.id}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Auth Provider:</span>

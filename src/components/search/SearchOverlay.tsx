@@ -157,7 +157,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                           >
                             {item.article && (
                               <span className={cn(
-                                "text-xs font-bold px-1.5 py-0.5 rounded bg-[#0a0a0a]",
+                                "text-xs font-bold px-1.5 py-0.5 rounded bg-[#0a0a0a] text-[#f5f0eb]",
                                 item.article === 'der' ? 'bg-[#0a0a0a]/70' :
                                 item.article === 'die' ? 'bg-[#8b2500]' : 'bg-[#2d8a4e]'
                               )}>

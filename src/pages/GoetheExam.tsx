@@ -220,8 +220,8 @@ export default function GoetheExam() {
                 >
                   <div className="flex items-center gap-3">
                     <span className={`w-8 h-8  flex items-center justify-center text-sm font-bold ${
-                      showCorrect ? 'bg-green-500 bg-[#0a0a0a]' :
-                      showWrong ? 'bg-red-500 bg-[#0a0a0a]' :
+                      showCorrect ? 'bg-green-500 text-white' :
+                      showWrong ? 'bg-red-500 text-white' :
                       'bg-[#0a0a0a]/70 text-[#0a0a0a]/30'
                     }`}>
                       {showCorrect ? <CheckCircle2 className="w-5 h-5" /> :

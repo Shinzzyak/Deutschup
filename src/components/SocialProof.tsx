@@ -56,7 +56,7 @@ export default function SocialProof() {
                     className="flex items-center gap-4 group"
                   >
                     <div className="w-8 h-8 border border-[#0a0a0a]/15 flex items-center justify-center shrink-0 group-hover:bg-[#0a0a0a] group-hover:border-[#0a0a0a] transition-all">
-                      <Icon className="w-4 h-4 text-[#0a0a0a]/40 group-hover:bg-[#0a0a0a] transition-colors" />
+                      <Icon className="w-4 h-4 text-[#0a0a0a]/40 group-hover:text-[#f5f0eb] transition-colors" />
                     </div>
                     <span className="text-sm font-medium text-[#0a0a0a]/70 group-hover:text-[#0a0a0a] transition-colors">
                       {feature.label}

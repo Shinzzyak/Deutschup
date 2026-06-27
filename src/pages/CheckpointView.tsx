@@ -144,7 +144,7 @@ export default function CheckpointView() {
       </Link>
 
       {/* Header */}
-      <div className="bg-[#c8956c]  p-6 md:p-8 bg-[#0a0a0a] mb-8">
+      <div className="bg-[#0a0a0a] p-6 md:p-8 mb-8">
         <div className="flex items-center space-x-3 mb-2">
           <Target className="w-8 h-8" />
           <div>
@@ -222,14 +222,14 @@ export default function CheckpointView() {
                   <Button
                     onClick={checkAnswer}
                     disabled={!selectedAnswer}
-                    className="w-full h-12  bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a]"
+                    className="w-full h-12  bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]"
                   >
                     Cek Jawaban
                   </Button>
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="w-full h-12  bg-amber-500 hover:bg-amber-600 bg-[#0a0a0a]"
+                    className="w-full h-12  bg-amber-500 hover:bg-amber-600 text-[#0a0a0a]"
                   >
                     {currentQuestionIndex < totalQuestions - 1 ? "Soal Berikutnya" : "Lihat Hasil"}
                   </Button>
@@ -293,7 +293,7 @@ export default function CheckpointView() {
                   setFinalScore(0);
                   setPassed(false);
                 }}
-                className=" bg-amber-500 hover:bg-amber-600 bg-[#0a0a0a]"
+                className=" bg-amber-500 hover:bg-amber-600 text-[#0a0a0a]"
               >
                 Coba Lagi
               </Button>

@@ -177,7 +177,7 @@ export default function VerbTrainer() {
                     <div className="flex items-center space-x-3 mb-1">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] ",
+                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] text-[#f5f0eb] ",
                           articleColors[v.article] || 'bg-gray-500'
                         )}>{v.article}</span>
                       )}

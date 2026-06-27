@@ -48,7 +48,7 @@ function processTextNodeWithGlossary(text: string): React.ReactNode[] {
               {part}
             </span>
           </TooltipTrigger>
-          <TooltipContent className="max-w-xs text-sm bg-[#0a0a0a] bg-[#0a0a0a] z-50">
+          <TooltipContent className="max-w-xs text-sm bg-[#0a0a0a] z-50 text-[#f5f0eb]">
             <p className="font-bold mb-1">{term}</p>
             <p>{grammarGlossary[term]}</p>
           </TooltipContent>
