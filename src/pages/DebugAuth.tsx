@@ -41,11 +41,11 @@ export default function DebugAuth() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-4 md:p-8">
+    <div className="min-h-screen bg-slate-950 bg-[#0a0a0a] p-4 md:p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Link to="/" className="text-slate-500 hover:text-white transition-colors">
+          <Link to="/" className="text-[#0a0a0a]/50 hover:bg-[#0a0a0a] transition-colors">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <h1 className="text-xl font-bold">Debug: Auth</h1>
@@ -53,14 +53,14 @@ export default function DebugAuth() {
         <div className="flex gap-2">
           <button
             onClick={copyAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-800 hover:bg-slate-700  text-xs font-medium transition-colors"
           >
             {copied ? <Check className="w-3.5 h-3.5 text-green-400" /> : <Copy className="w-3.5 h-3.5" />}
             {copied ? 'Copied!' : 'Copy All'}
           </button>
           <button
             onClick={() => { clearDebugLogs(); setLogs([]); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-900/30 hover:bg-red-900/50 text-red-400 rounded-lg text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-900/30 hover:bg-red-900/50 text-red-400  text-xs font-medium transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Clear
@@ -106,18 +106,18 @@ export default function DebugAuth() {
       {/* Errors */}
       <Section title={`Errors (${errorEvents.length})`} color="red">
         {errorEvents.length === 0 ? (
-          <div className="text-slate-600 text-xs py-2">No errors captured</div>
+          <div className="text-[#0a0a0a]/60 text-xs py-2">No errors captured</div>
         ) : (
           errorEvents.map((e, i) => (
             <div key={i} className="text-[11px] font-mono border-b border-slate-800 py-2 last:border-0">
               <div className="flex items-center gap-2">
                 <span className="text-red-400 font-bold">{e.type}</span>
-                <span className="text-slate-500">{timeAgo(e.timestamp)}</span>
-                <span className="text-slate-600">{e.route}</span>
+                <span className="text-[#0a0a0a]/50">{timeAgo(e.timestamp)}</span>
+                <span className="text-[#0a0a0a]/60">{e.route}</span>
               </div>
-              <div className="text-slate-300 mt-0.5 break-all">{e.message}</div>
+              <div className="text-[#0a0a0a]/30 mt-0.5 break-all">{e.message}</div>
               {e.detail && (
-                <div className="text-slate-500 mt-0.5 break-all text-[10px] max-h-16 overflow-y-auto">{e.detail}</div>
+                <div className="text-[#0a0a0a]/50 mt-0.5 break-all text-[10px] max-h-16 overflow-y-auto">{e.detail}</div>
               )}
             </div>
           ))
@@ -127,13 +127,13 @@ export default function DebugAuth() {
       {/* Auth Events */}
       <Section title={`Auth Events (${authEvents.length})`} color="blue">
         {authEvents.length === 0 ? (
-          <div className="text-slate-600 text-xs py-2">No auth events</div>
+          <div className="text-[#0a0a0a]/60 text-xs py-2">No auth events</div>
         ) : (
           authEvents.slice(0, 20).map((e, i) => (
             <div key={i} className="text-[11px] font-mono border-b border-slate-800 py-1.5 last:border-0">
               <span className="text-blue-400">{timeAgo(e.timestamp)}</span>
-              <span className="text-slate-300 ml-2">{e.message}</span>
-              {e.detail && <span className="text-slate-500 ml-2">{e.detail}</span>}
+              <span className="text-[#0a0a0a]/30 ml-2">{e.message}</span>
+              {e.detail && <span className="text-[#0a0a0a]/50 ml-2">{e.detail}</span>}
             </div>
           ))
         )}
@@ -143,9 +143,9 @@ export default function DebugAuth() {
       <Section title={`All Logs (${logs.length})`} color="slate">
         {logs.slice(0, 50).map((e, i) => (
           <div key={i} className="text-[10px] font-mono border-b border-slate-800 py-1 last:border-0">
-            <span className="text-slate-500">{timeAgo(e.timestamp)}</span>
+            <span className="text-[#0a0a0a]/50">{timeAgo(e.timestamp)}</span>
             <span className="ml-1" style={{ color: TYPE_COLORS[e.type] || '#9ca3af' }}>{e.type}</span>
-            <span className="text-slate-400 ml-1 break-all">{e.message?.substring(0, 100)}</span>
+            <span className="text-[#0a0a0a]/40 ml-1 break-all">{e.message?.substring(0, 100)}</span>
           </div>
         ))}
       </Section>
@@ -163,7 +163,7 @@ function Section({ title, color, children }: { title: string; color: string; chi
     slate: 'border-slate-700',
   };
   return (
-    <div className={`bg-slate-900 rounded-xl border ${borderColors[color] || 'border-slate-700'} mb-4`}>
+    <div className={`bg-[#0a0a0a]  border ${borderColors[color] || 'border-slate-700'} mb-4`}>
       <div className="px-4 py-2 border-b border-slate-800">
         <h2 className="text-sm font-bold">{title}</h2>
       </div>
@@ -175,7 +175,7 @@ function Section({ title, color, children }: { title: string; color: string; chi
 function Row({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex items-start gap-2 py-1 text-xs font-mono">
-      <span className="text-slate-500 w-40 flex-shrink-0">{label}</span>
+      <span className="text-[#0a0a0a]/50 w-40 flex-shrink-0">{label}</span>
       <span className="text-slate-200 break-all">{value}</span>
     </div>
   );

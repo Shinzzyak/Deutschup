@@ -11,7 +11,7 @@ const features = [
 
 export default function SocialProof() {
   return (
-    <section className="py-20 md:py-32 bg-white relative">
+    <section className="py-20 md:py-32 bg-[#f5f0eb] relative">
       <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
           {/* Left — editorial quote/testimonial style */}
@@ -56,7 +56,7 @@ export default function SocialProof() {
                     className="flex items-center gap-4 group"
                   >
                     <div className="w-8 h-8 border border-[#0a0a0a]/15 flex items-center justify-center shrink-0 group-hover:bg-[#0a0a0a] group-hover:border-[#0a0a0a] transition-all">
-                      <Icon className="w-4 h-4 text-[#0a0a0a]/40 group-hover:text-white transition-colors" />
+                      <Icon className="w-4 h-4 text-[#0a0a0a]/40 group-hover:bg-[#0a0a0a] transition-colors" />
                     </div>
                     <span className="text-sm font-medium text-[#0a0a0a]/70 group-hover:text-[#0a0a0a] transition-colors">
                       {feature.label}

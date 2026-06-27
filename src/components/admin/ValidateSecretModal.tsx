@@ -31,8 +31,8 @@ export default function ValidateSecretModal({ providerId, providerName, onClose 
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-        <div className="px-6 py-4 border-b border-gray-200">
+      <div className="bg-[#f5f0eb]   w-full max-w-md mx-4">
+        <div className="px-6 py-4 border-b border-[#0a0a0a]/20">
           <h3 className="text-lg font-semibold text-gray-900">
             Validate {providerName} API Key
           </h3>
@@ -41,24 +41,24 @@ export default function ValidateSecretModal({ providerId, providerName, onClose 
         <div className="px-6 py-4">
           {validating ? (
             <div className="text-center py-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+              <div className="animate-spin  h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
               <p className="text-gray-600">Validating API key...</p>
             </div>
           ) : result ? (
             <div className="text-center py-4">
               {result.valid ? (
                 <>
-                  <div className="text-green-600 text-5xl mb-3">✓</div>
-                  <p className="text-lg font-medium text-green-600 mb-1">Valid</p>
-                  <p className="text-sm text-gray-500">
+                  <div className="text-[#2d8a4e] text-5xl mb-3">✓</div>
+                  <p className="text-lg font-medium text-[#2d8a4e] mb-1">Valid</p>
+                  <p className="text-sm text-[#0a0a0a]/50">
                     API key is working correctly
                   </p>
                 </>
               ) : (
                 <>
-                  <div className="text-red-600 text-5xl mb-3">✗</div>
-                  <p className="text-lg font-medium text-red-600 mb-1">Invalid</p>
-                  <p className="text-sm text-gray-500">
+                  <div className="text-[#8b2500] text-5xl mb-3">✗</div>
+                  <p className="text-lg font-medium text-[#8b2500] mb-1">Invalid</p>
+                  <p className="text-sm text-[#0a0a0a]/50">
                     {result.error || 'API key is invalid or expired'}
                   </p>
                 </>
@@ -67,10 +67,10 @@ export default function ValidateSecretModal({ providerId, providerName, onClose 
           ) : null}
         </div>
 
-        <div className="px-6 py-4 border-t border-gray-200">
+        <div className="px-6 py-4 border-t border-[#0a0a0a]/20">
           <button
             onClick={onClose}
-            className="w-full px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full px-4 py-2 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5  hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-gray-500"
           >
             Close
           </button>

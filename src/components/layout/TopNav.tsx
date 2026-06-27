@@ -136,7 +136,7 @@ export default function TopNav() {
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-56 bg-[#f5f0eb] border-2 border-[#0a0a0a] shadow-lg z-50">
+                  <div className="absolute right-0 mt-2 w-56 bg-[#f5f0eb] border-2 border-[#0a0a0a] z-50">
                     <div className="px-4 py-3 border-b border-[#0a0a0a]/10">
                       <p className="text-sm font-bold text-[#0a0a0a] truncate">{profileData?.full_name || 'Learner'}</p>
                       <p className="text-xs text-[#0a0a0a]/40 truncate mt-0.5">{user?.email}</p>

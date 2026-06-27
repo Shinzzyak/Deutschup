@@ -48,7 +48,7 @@ function processTextNodeWithGlossary(text: string): React.ReactNode[] {
               {part}
             </span>
           </TooltipTrigger>
-          <TooltipContent className="max-w-xs text-sm bg-slate-900 text-white z-50">
+          <TooltipContent className="max-w-xs text-sm bg-[#0a0a0a] bg-[#0a0a0a] z-50">
             <p className="font-bold mb-1">{term}</p>
             <p>{grammarGlossary[term]}</p>
           </TooltipContent>
@@ -250,10 +250,10 @@ export default function LessonView() {
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 mb-8 bg-muted p-1 ">
-          <TabsTrigger value="materi" className="rounded-xl font-bold py-3 data-[state=active]:bg-card data-[state=active]:text-blue-600 data-[state=active]:shadow-sm">
+          <TabsTrigger value="materi" className=" font-bold py-3 data-[state=active]:bg-card data-[state=active]:text-blue-600 data-[state=active]:">
             Materi & Kosakata
           </TabsTrigger>
-          <TabsTrigger value="latihan" className="rounded-xl font-bold py-3 data-[state=active]:bg-card data-[state=active]:text-blue-600 data-[state=active]:shadow-sm">
+          <TabsTrigger value="latihan" className=" font-bold py-3 data-[state=active]:bg-card data-[state=active]:text-blue-600 data-[state=active]:">
             Latihan
           </TabsTrigger>
         </TabsList>
@@ -277,7 +277,7 @@ export default function LessonView() {
           </div>
 
           {lesson.canDoGoals && lesson.canDoGoals.length > 0 && (
-            <div className="bg-gradient-to-br from-green-50 to-emerald-100 p-6 md:p-8  shadow-sm border border-green-200">
+            <div className=" from-green-50 to-emerald-100 p-6 md:p-8   border border-green-200">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-emerald-800">
                 <Target className="w-6 h-6" />
                 <span>Setelah pelajaran ini, kamu bisa:</span>
@@ -294,7 +294,7 @@ export default function LessonView() {
           )}
 
           {lesson.indonesianMistakes && (
-            <div className="bg-orange-50 p-6 md:p-8  shadow-sm border border-orange-200">
+            <div className="bg-orange-50 p-6 md:p-8   border border-orange-200">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-orange-800">
                 <AlertTriangle className="w-6 h-6" />
                 <span>⚠️ Kesalahan Umum Pembelajar Indonesia</span>
@@ -313,7 +313,7 @@ export default function LessonView() {
           )}
 
           {lesson.culturalNotes && (
-            <div className="bg-blue-50 p-6 md:p-8  shadow-sm border border-blue-200">
+            <div className="bg-blue-50 p-6 md:p-8   border border-blue-200">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-blue-800">
                 <Globe className="w-6 h-6" />
                 <span>Real-Life Germany Notes</span>
@@ -325,7 +325,7 @@ export default function LessonView() {
           )}
 
           {lesson.registerNotes && (
-            <div className="bg-indigo-50 p-6 md:p-8  shadow-sm border border-indigo-200">
+            <div className="bg-indigo-50 p-6 md:p-8   border border-indigo-200">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-800">
                 <MessageSquare className="w-6 h-6" />
                 <span>Register Notes (Formal/Informal)</span>
@@ -339,7 +339,7 @@ export default function LessonView() {
           )}
 
           {lesson.listeningSimulation && (
-            <div className="bg-white border border-[#0a0a0a]/10 p-6 md:p-8 ">
+            <div className="bg-[#f5f0eb] border border-[#0a0a0a]/10 p-6 md:p-8 ">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-foreground">
                 <Headphones className="w-6 h-6" />
                 <span>Listening Simulation Transcript</span>
@@ -353,7 +353,7 @@ export default function LessonView() {
                 ))}
               </div>
               {lesson.listeningSimulation.questions && lesson.listeningSimulation.questions.length > 0 && (
-                <div className="bg-card p-4 rounded-xl border border-border">
+                <div className="bg-card p-4  border border-border">
                   <span className="font-bold text-sm uppercase text-muted-foreground mb-2 block">Quick Question</span>
                   <p className="font-medium">{lesson.listeningSimulation.questions[0].question}</p>
                 </div>
@@ -373,7 +373,7 @@ export default function LessonView() {
                     <div className="flex items-baseline space-x-2 mb-2 sm:mb-0">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1 rounded-md text-white shadow-sm",
+                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] ",
                           v.article === 'der' ? 'bg-blue-500' : 
                           v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
                         )}>{v.article}</span>
@@ -388,7 +388,7 @@ export default function LessonView() {
           )}
 
           {lesson.pronunciationTips && (
-            <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 md:p-8  shadow-sm border border-indigo-100">
+            <div className=" from-indigo-50 to-purple-50 p-6 md:p-8   border border-indigo-100">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-900">
                 <Mic className="w-6 h-6 text-indigo-500" />
                 <span>Panduan Pengucapan</span>
@@ -410,7 +410,7 @@ export default function LessonView() {
           )}
 
           {lesson.reviewLessons && lesson.reviewLessons.length > 0 && (
-            <div className="bg-yellow-50 p-6 md:p-8  shadow-sm border border-yellow-200 fade-in-50 duration-500 animate-in">
+            <div className="bg-yellow-50 p-6 md:p-8   border border-yellow-200 fade-in-50 duration-500 animate-in">
               <h2 className="text-xl font-bold mb-6 flex items-center space-x-2 text-yellow-800">
                 <Brain className="w-6 h-6" />
                 <span>Ulas Kembali (Vocabulary Recycling)</span>
@@ -421,11 +421,11 @@ export default function LessonView() {
                    const reviewLesson = courseData.find(l => l.id === id);
                    return reviewLesson?.vocabulary?.slice(0, 2) || [];
                 }).filter((v, i, a) => a.findIndex(t => t.id === v.id) === i).map((v) => (
-                  <div key={`review-${v.id}`} className="flex flex-col sm:flex-row items-center justify-between p-4 bg-card  border border-yellow-100 shadow-sm">
+                  <div key={`review-${v.id}`} className="flex flex-col sm:flex-row items-center justify-between p-4 bg-card  border border-yellow-100 ">
                     <div className="flex items-baseline space-x-2 mb-2 sm:mb-0">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1 rounded-md text-white shadow-sm",
+                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] ",
                           v.article === 'der' ? 'bg-blue-500' : 
                           v.article === 'die' ? 'bg-red-500' : 'bg-green-500'
                         )}>{v.article}</span>
@@ -441,7 +441,7 @@ export default function LessonView() {
 
           <Button 
             onClick={startQuiz} 
-            className="w-full h-14 text-lg font-bold  bg-slate-900 hover:bg-slate-800 text-white"
+            className="w-full h-14 text-lg font-bold  bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]"
           >
             Mulai Latihan <ChevronRight className="w-5 h-5 ml-2" />
           </Button>
@@ -450,7 +450,7 @@ export default function LessonView() {
         <TabsContent value="latihan" className="animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
           {quizFinished ? (
             <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-10  text-center space-y-6">
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-24 h-24 bg-green-100  flex items-center justify-center mx-auto mb-4">
                 <Trophy className="w-12 h-12 text-green-500" />
               </div>
               <h2 className="text-3xl font-extrabold text-foreground">Pelajaran Selesai!</h2>
@@ -461,7 +461,7 @@ export default function LessonView() {
                   Kembali ke Level
                 </Button>
                 {nextLessonId && (
-                  <Button size="lg" className=" bg-blue-600 hover:bg-blue-700 text-white" onClick={() => navigate(`/lesson/${nextLessonId}`)}>
+                  <Button size="lg" className=" bg-blue-600 hover:bg-blue-700 bg-[#0a0a0a]" onClick={() => navigate(`/lesson/${nextLessonId}`)}>
                     Pelajaran Berikutnya <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
                 )}
@@ -474,13 +474,13 @@ export default function LessonView() {
                <p className="text-muted-foreground max-w-sm">Herr Deutsch sedang membuat soal spesial untuk materi ini.</p>
             </div>
           ) : currentQuestion ? (
-            <div className="bg-card p-6 md:p-8  shadow-sm border border-border min-h-[400px] flex flex-col">
+            <div className="bg-card p-6 md:p-8   border border-border min-h-[400px] flex flex-col">
               <div className="mb-8">
                 <div className="flex justify-between text-sm font-bold text-muted-foreground mb-2">
                   <span>Pertanyaan {currentQuizIndex + 1} dari {exercises.length}</span>
                   <span className="flex items-center text-yellow-500"><Star className="w-4 h-4 mr-1"/> 10 XP</span>
                 </div>
-                <div className="h-2 bg-muted rounded-full w-full overflow-hidden">
+                <div className="h-2 bg-muted  w-full overflow-hidden">
                    <div 
                      className="h-full bg-blue-500 transition-all duration-300"
                      style={{ width: `${((currentQuizIndex) / exercises.length) * 100}%` }}
@@ -539,7 +539,7 @@ export default function LessonView() {
                     <p className="font-bold mb-1">{checkResult.isCorrect ? "Benar!" : "Belum Tepat"}</p>
                     <p>{checkResult.feedback}</p>
                     {checkResult.correctedSentence && (
-                       <div className="mt-4 p-3 bg-card border border-red-200 rounded-xl shadow-sm">
+                       <div className="mt-4 p-3 bg-card border border-red-200  ">
                          <span className="text-sm font-semibold text-red-600 block mb-1">Coba gunakan kalimat ini:</span>
                          <p className="font-bold text-foreground text-lg">✨ {checkResult.correctedSentence}</p>
                        </div>
@@ -551,7 +551,7 @@ export default function LessonView() {
                 {!isAnswerChecked ? (
                   <Button 
                     size="lg" 
-                    className="w-full  h-14 text-lg font-bold bg-slate-900 hover:bg-slate-800 text-white"
+                    className="w-full  h-14 text-lg font-bold bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]"
                     disabled={!selectedAnswer.trim() || checkingAnswer}
                     onClick={handleCheckAnswer}
                   >
@@ -561,8 +561,8 @@ export default function LessonView() {
                   <Button 
                     size="lg" 
                     className={cn(
-                      "w-full  h-14 text-lg font-bold text-white",
-                      checkResult?.isCorrect ? "bg-blue-600 hover:bg-blue-700" : "bg-slate-900 hover:bg-slate-800"
+                      "w-full  h-14 text-lg font-bold bg-[#0a0a0a]",
+                      checkResult?.isCorrect ? "bg-blue-600 hover:bg-blue-700" : "bg-[#0a0a0a] hover:bg-slate-800"
                     )}
                     onClick={handleNextQuestion}
                   >

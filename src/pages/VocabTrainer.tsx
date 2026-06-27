@@ -12,10 +12,10 @@ type FilterType = 'all' | 'learned' | 'learning' | 'new';
 type SortType = 'default' | 'german' | 'indonesian';
 
 const levelColors: Record<string, { bg: string; text: string; border: string }> = {
-  A1: { bg: 'bg-emerald-500', text: 'text-white', border: 'border-emerald-500' },
-  A2: { bg: 'bg-teal-500', text: 'text-white', border: 'border-teal-500' },
-  B1: { bg: 'bg-blue-500', text: 'text-white', border: 'border-blue-500' },
-  B2: { bg: 'bg-indigo-500', text: 'text-white', border: 'border-indigo-500' },
+  A1: { bg: 'bg-emerald-500', text: 'bg-[#0a0a0a]', border: 'border-emerald-500' },
+  A2: { bg: 'bg-teal-500', text: 'bg-[#0a0a0a]', border: 'border-teal-500' },
+  B1: { bg: 'bg-blue-500', text: 'bg-[#0a0a0a]', border: 'border-blue-500' },
+  B2: { bg: 'bg-indigo-500', text: 'bg-[#0a0a0a]', border: 'border-indigo-500' },
 };
 
 const articleColors: Record<string, string> = {
@@ -149,8 +149,8 @@ export default function VocabTrainer() {
           <button 
             onClick={() => setActiveTab('flashcard')}
             className={cn(
-              "px-4 py-2 flex items-center space-x-2 rounded-xl text-sm font-bold transition-all",
-              activeTab === 'flashcard' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              "px-4 py-2 flex items-center space-x-2  text-sm font-bold transition-all",
+              activeTab === 'flashcard' ? "bg-card text-foreground " : "text-muted-foreground hover:text-foreground"
             )}
           >
             <Brain className="w-4 h-4" />
@@ -159,8 +159,8 @@ export default function VocabTrainer() {
           <button 
             onClick={() => setActiveTab('list')}
             className={cn(
-              "px-4 py-2 flex items-center space-x-2 rounded-xl text-sm font-bold transition-all",
-              activeTab === 'list' ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"
+              "px-4 py-2 flex items-center space-x-2  text-sm font-bold transition-all",
+              activeTab === 'list' ? "bg-card text-foreground " : "text-muted-foreground hover:text-foreground"
             )}
           >
             <List className="w-4 h-4" />
@@ -173,7 +173,7 @@ export default function VocabTrainer() {
         <div className="max-w-xl mx-auto">
           {!currentCard ? (
             <div className="text-center py-12">
-              <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+              <div className="w-24 h-24 bg-green-100  flex items-center justify-center mx-auto mb-6">
                 <Check className="w-12 h-12 text-green-500" />
               </div>
               <h2 className="text-4xl font-extrabold tracking-tight mb-4">Selesai untuk saat ini!</h2>
@@ -192,7 +192,7 @@ export default function VocabTrainer() {
                   <div className="absolute inset-0 backface-hidden bg-card border-2 border-border  p-8 flex flex-col items-center justify-center  hover:border-border transition-colors">
                     {currentCard.article && (
                       <span className={cn(
-                        "text-sm font-bold px-3 py-1.5 rounded-lg text-white mb-4 uppercase tracking-widest",
+                        "text-sm font-bold px-3 py-1.5  bg-[#0a0a0a] mb-4 uppercase tracking-widest",
                         articleColors[currentCard.article] || 'bg-gray-500'
                       )}>{currentCard.article}</span>
                     )}
@@ -201,33 +201,33 @@ export default function VocabTrainer() {
                   </div>
 
                   {/* Back */}
-                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-slate-900 border-2 border-slate-800  p-6 md:p-8 flex flex-col items-center justify-center  overflow-y-auto">
-                    <h2 className="text-4xl md:text-5xl font-extrabold text-white mb-2">{currentCard.translation}</h2>
+                  <div className="absolute inset-0 backface-hidden rotate-y-180 bg-[#0a0a0a] border-2 border-slate-800  p-6 md:p-8 flex flex-col items-center justify-center  overflow-y-auto">
+                    <h2 className="text-4xl md:text-5xl font-extrabold bg-[#0a0a0a] mb-2">{currentCard.translation}</h2>
                     <p className="text-muted-foreground text-lg mb-6">Level: {currentCard.level}</p>
                     
                     <div className="w-full space-y-4 text-left">
                       {!pronunciation && (
-                        <Button onClick={fetchPronunciation} variant="outline" className="w-full  border-slate-700 bg-slate-800 text-white hover:bg-slate-700 hover:text-white" disabled={pronunciationLoading}>
+                        <Button onClick={fetchPronunciation} variant="outline" className="w-full  border-slate-700 bg-slate-800 bg-[#0a0a0a] hover:bg-slate-700 hover:bg-[#0a0a0a]" disabled={pronunciationLoading}>
                           {pronunciationLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Volume2 className="w-4 h-4 mr-2" />}
                           Cara Baca
                         </Button>
                       )}
                       {pronunciation && (
-                        <div className="bg-slate-800 border border-slate-700 p-4  text-white">
+                        <div className="bg-slate-800 border border-slate-700 p-4  bg-[#0a0a0a]">
                           <p className="text-sm text-muted-foreground mb-1">Ejaan IPA / Fonetik:</p>
                           <p className="text-xl font-mono text-yellow-400 mb-2">{pronunciation.phonetic}</p>
-                          <p className="text-sm italic text-slate-300">💡 {pronunciation.tip}</p>
+                          <p className="text-sm italic text-[#0a0a0a]/30">💡 {pronunciation.tip}</p>
                         </div>
                       )}
 
                       {!examples && (
-                        <Button onClick={fetchExamples} variant="outline" className="w-full  border-slate-700 bg-slate-800 text-white hover:bg-slate-700 hover:text-white" disabled={examplesLoading}>
+                        <Button onClick={fetchExamples} variant="outline" className="w-full  border-slate-700 bg-slate-800 bg-[#0a0a0a] hover:bg-slate-700 hover:bg-[#0a0a0a]" disabled={examplesLoading}>
                           {examplesLoading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Search className="w-4 h-4 mr-2" />}
                           Lihat Contoh Kalimat
                         </Button>
                       )}
                       {examples && (
-                        <div className="bg-slate-800 border border-slate-700 p-4  text-white space-y-4">
+                        <div className="bg-slate-800 border border-slate-700 p-4  bg-[#0a0a0a] space-y-4">
                           {examples.map((ex, i) => (
                             <div key={i} className="space-y-1">
                                 <p className="font-medium text-blue-300">"{ex.german}"</p>
@@ -273,7 +273,7 @@ export default function VocabTrainer() {
                  <select 
                    value={filter}
                    onChange={(e) => setFilter(e.target.value as FilterType)}
-                   className="w-full bg-muted border border-border rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   className="w-full bg-muted border border-border  px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
                  >
                    <option value="all">Semua Kata</option>
                    <option value="learned">Sudah Dipelajari</option>
@@ -287,7 +287,7 @@ export default function VocabTrainer() {
                  <select 
                    value={sort}
                    onChange={(e) => setSort(e.target.value as SortType)}
-                   className="w-full bg-muted border border-border rounded-xl px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
+                   className="w-full bg-muted border border-border  px-4 py-2 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
                  >
                    <option value="default">Default</option>
                    <option value="german">Abjad Jerman (A-Z)</option>
@@ -303,22 +303,22 @@ export default function VocabTrainer() {
                 const status = vocab[v.id]?.status;
                 const lc = levelColors[v.level] || levelColors.A1;
                 return (
-                  <div key={v.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card  border border-border shadow-sm hover: transition-shadow gap-4">
+                  <div key={v.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-card  border border-border  hover: transition-shadow gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center border border-border flex-shrink-0">
+                      <div className="w-12 h-12  bg-muted flex items-center justify-center border border-border flex-shrink-0">
                          {status === 'known' ? (
                            <Check className="w-6 h-6 text-green-500" />
                          ) : status === 'learning' ? (
                            <RotateCcw className="w-5 h-5 text-amber-500" />
                          ) : (
-                           <div className="w-2 h-2 rounded-full bg-slate-300"></div>
+                           <div className="w-2 h-2  bg-slate-300"></div>
                          )}
                       </div>
                       <div>
                         <div className="flex items-center gap-2 mb-1">
                           {v.article && (
                             <span className={cn(
-                              "text-[10px] font-bold px-1.5 py-0.5 rounded text-white uppercase tracking-wider",
+                              "text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#0a0a0a] uppercase tracking-wider",
                               articleColors[v.article] || 'bg-gray-500'
                             )}>{v.article}</span>
                           )}
@@ -329,7 +329,7 @@ export default function VocabTrainer() {
                     </div>
                     <div className="text-left sm:text-right flex items-center gap-2 sm:flex-col sm:items-end sm:gap-1">
                        <span className={cn(
-                         "px-2 py-1 rounded-md text-xs font-bold uppercase",
+                         "px-2 py-1  text-xs font-bold uppercase",
                          lc.bg, lc.text
                        )}>{v.level}</span>
                        <span className="text-xs font-medium text-muted-foreground">

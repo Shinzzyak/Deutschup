@@ -98,7 +98,7 @@ export default function Admin() {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
         <div>
           <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-[#F2C94C]/10 rounded-xl">
+            <div className="p-2 bg-[#F2C94C]/10 ">
               <ShieldCheck className="w-6 h-6 text-[#F2C94C]" />
             </div>
             <h1 className="text-4xl font-black tracking-tight text-foreground">
@@ -112,7 +112,7 @@ export default function Admin() {
           size="sm"
           onClick={handleRefresh}
           disabled={refreshing}
-          className="rounded-xl border-border hover:bg-muted gap-2"
+          className=" border-border hover:bg-muted gap-2"
         >
           <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
           Refresh Data
@@ -123,7 +123,7 @@ export default function Admin() {
       {health && (
         <div className={`mb-8 p-4  border flex items-center gap-3 ${
           health.status === 'ok' 
-            ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-700 dark:text-emerald-400' 
+            ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-700 text-emerald-400' 
             : 'bg-destructive/5 border-destructive/20 text-destructive'
         }`}>
           {health.status === 'ok' ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
@@ -193,7 +193,7 @@ export default function Admin() {
         </h2>
         <Button
           onClick={() => navigate('/admin/ai')}
-          className=" px-6 py-5 font-bold  shadow-[#F2C94C]/20 gap-2"
+          className=" px-6 py-5 font-bold   gap-2"
         >
           <Zap className="w-4 h-4" />
           Kelola AI Provider & Model
@@ -215,7 +215,7 @@ function StatCard({ icon: Icon, label, value, accent, bg }: {
     <Card className=" border-border bg-card hover: transition-shadow">
       <CardContent className="p-5">
         <div className="flex items-center justify-between mb-3">
-          <div className={`p-2 rounded-xl ${bg}`}>
+          <div className={`p-2  ${bg}`}>
             <Icon className={`w-5 h-5 ${accent}`} />
           </div>
           <TrendingUp className="w-4 h-4 text-muted-foreground/30" />
@@ -229,7 +229,7 @@ function StatCard({ icon: Icon, label, value, accent, bg }: {
 
 function ServicePill({ icon: Icon, label, ok }: { icon: any; label: string; ok: boolean }) {
   return (
-    <div className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
+    <div className={`flex items-center gap-3 px-4 py-3  border transition-colors ${
       ok 
         ? 'bg-emerald-500/5 border-emerald-500/20' 
         : 'bg-rose-500/5 border-rose-500/20'
@@ -319,7 +319,7 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
       {/* Toggle header — click to expand/collapse */}
       <button
         onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3  border border-border bg-card hover:bg-muted/30 transition-colors"
       >
         <div className="flex items-center gap-2">
           <Users className="w-5 h-5 text-muted-foreground" />
@@ -339,7 +339,7 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
               placeholder="Cari nama atau ID..."
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-3 pr-3 py-2 rounded-lg border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
+              className="w-full pl-3 pr-3 py-2  border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
             />
           </div>
 
@@ -355,15 +355,15 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
                 const isPro = u.subscription === 'pro' || u.tier === 'pro';
                 const initial = (u.full_name || u.id).charAt(0).toUpperCase();
                 return (
-                  <div key={u.id} className="flex items-center gap-3 px-4 py-3 rounded-xl border border-border bg-card hover:bg-muted/30 transition-colors">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937] shrink-0">
+                  <div key={u.id} className="flex items-center gap-3 px-4 py-3  border border-border bg-card hover:bg-muted/30 transition-colors">
+                    <div className="w-8 h-8   from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937] shrink-0">
                       {initial}
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-medium text-foreground truncate">{u.full_name || 'Unnamed'}</p>
                       <p className="text-[10px] text-muted-foreground font-mono">{u.id.slice(0, 8)}…</p>
                     </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md shrink-0 ${
+                    <span className={`text-[10px] font-bold px-2 py-0.5  shrink-0 ${
                       isPro ? 'bg-[#F2C94C]/15 text-[#B8952E]' : 'bg-muted text-muted-foreground'
                     }`}>
                       {isPro ? 'Pro' : 'Free'}
@@ -372,7 +372,7 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
                       value={u.role || 'user'}
                       onChange={e => handleUpdateRole(u.id, e.target.value)}
                       disabled={updating === u.id}
-                      className="text-[10px] font-medium px-2 py-1 rounded-md border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 shrink-0"
+                      className="text-[10px] font-medium px-2 py-1  border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 shrink-0"
                     >
                       <option value="user">User</option>
                       <option value="admin">Admin</option>
@@ -380,7 +380,7 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
                     <button
                       onClick={() => handleTogglePro(u.id)}
                       disabled={updating === u.id}
-                      className="text-[10px] font-bold px-2.5 py-1 rounded-md border border-border hover:bg-muted transition-colors disabled:opacity-50 shrink-0"
+                      className="text-[10px] font-bold px-2.5 py-1  border border-border hover:bg-muted transition-colors disabled:opacity-50 shrink-0"
                     >
                       {updating === u.id ? '…' : isPro ? '↓ Free' : '↑ Pro'}
                     </button>

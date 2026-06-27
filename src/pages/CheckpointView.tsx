@@ -124,7 +124,7 @@ export default function CheckpointView() {
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {reviewLessons.map(lesson => lesson && (
-            <div key={lesson.id} className="bg-card p-3 rounded-xl border border-amber-100">
+            <div key={lesson.id} className="bg-card p-3  border border-amber-100">
               <p className="font-bold text-sm text-amber-900">{lesson.title}</p>
               <p className="text-xs text-amber-600 mt-1">
                 {lesson.vocabulary?.slice(0, 3).map(v => v.word).join(', ')}
@@ -144,18 +144,18 @@ export default function CheckpointView() {
       </Link>
 
       {/* Header */}
-      <div className="bg-[#c8956c]  p-6 md:p-8 text-white mb-8">
+      <div className="bg-[#c8956c]  p-6 md:p-8 bg-[#0a0a0a] mb-8">
         <div className="flex items-center space-x-3 mb-2">
           <Target className="w-8 h-8" />
           <div>
             <h1 className="text-2xl md:text-3xl font-bold">{checkpointData.title}</h1>
-            <p className="text-white/80 text-sm">Checkpoint Level {level}</p>
+            <p className="bg-[#0a0a0a]/80 text-sm">Checkpoint Level {level}</p>
           </div>
         </div>
         <div className="mt-4 flex items-center space-x-4 text-sm">
           <span>🎯 Target: {Math.round(requiredScore * 100)}%</span>
           <span>📝 {totalQuestions} Soal</span>
-          {alreadyPassed && <span className="bg-card/20 px-2 py-1 rounded-lg">✅ Sudah Lulus</span>}
+          {alreadyPassed && <span className="bg-card/20 px-2 py-1 ">✅ Sudah Lulus</span>}
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export default function CheckpointView() {
               <span>Soal {currentQuestionIndex + 1} / {totalQuestions}</span>
               <span>{Math.round((currentQuestionIndex / totalQuestions) * 100)}%</span>
             </div>
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div className="h-2 bg-muted  overflow-hidden">
               <div
                 className="h-full bg-amber-500 transition-all duration-300"
                 style={{ width: `${(currentQuestionIndex / totalQuestions) * 100}%` }}
@@ -181,7 +181,7 @@ export default function CheckpointView() {
 
           {/* Question */}
           {currentQuestion && (
-            <div className="bg-card p-6 md:p-8  shadow-sm border border-border">
+            <div className="bg-card p-6 md:p-8   border border-border">
               <p className="text-lg font-bold mb-6">{currentQuestion.question}</p>
 
               <div className="space-y-3">
@@ -222,14 +222,14 @@ export default function CheckpointView() {
                   <Button
                     onClick={checkAnswer}
                     disabled={!selectedAnswer}
-                    className="w-full h-12  bg-slate-900 hover:bg-slate-800 text-white"
+                    className="w-full h-12  bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]"
                   >
                     Cek Jawaban
                   </Button>
                 ) : (
                   <Button
                     onClick={nextQuestion}
-                    className="w-full h-12  bg-amber-500 hover:bg-amber-600 text-white"
+                    className="w-full h-12  bg-amber-500 hover:bg-amber-600 bg-[#0a0a0a]"
                   >
                     {currentQuestionIndex < totalQuestions - 1 ? "Soal Berikutnya" : "Lihat Hasil"}
                   </Button>
@@ -240,9 +240,9 @@ export default function CheckpointView() {
         </>
       ) : (
         /* Result */
-        <div className="bg-card p-8 md:p-10  shadow-sm border border-border text-center">
+        <div className="bg-card p-8 md:p-10   border border-border text-center">
           <div className={cn(
-            "w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6",
+            "w-24 h-24  flex items-center justify-center mx-auto mb-6",
             passed ? "bg-green-100" : "bg-amber-100"
           )}>
             {passed ? (
@@ -277,7 +277,7 @@ export default function CheckpointView() {
             </Link>
             {passed && nextLevel && (
               <Link to={`/level/${nextLevel}`}>
-                <Button className=" bg-blue-600 hover:bg-blue-700 text-white">
+                <Button className=" bg-blue-600 hover:bg-blue-700 bg-[#0a0a0a]">
                   Lanjut ke Level {nextLevel}
                 </Button>
               </Link>
@@ -293,7 +293,7 @@ export default function CheckpointView() {
                   setFinalScore(0);
                   setPassed(false);
                 }}
-                className=" bg-amber-500 hover:bg-amber-600 text-white"
+                className=" bg-amber-500 hover:bg-amber-600 bg-[#0a0a0a]"
               >
                 Coba Lagi
               </Button>

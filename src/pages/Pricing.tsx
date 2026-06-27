@@ -143,7 +143,7 @@ export default function Pricing() {
          <h1 className="text-4xl font-extrabold text-foreground mb-4 tracking-tight">Pilih Paket Belajarmu</h1>
          <p className="text-lg text-muted-foreground">Investasi terbaik untuk masa depan bahasamu. Mulai gratis, upgrade kapan saja.</p>
          {activePro && (
-           <div className="mt-4 inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2 rounded-full text-sm font-medium border border-green-200">
+           <div className="mt-4 inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2  text-sm font-medium border border-green-200">
              <Check className="w-4 h-4" />
              Pro Aktif — {daysRemaining} hari tersisa
            </div>
@@ -152,10 +152,10 @@ export default function Pricing() {
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
-          <div key={plan.id} className={`relative bg-card  p-8 border ${plan.popular ? 'border-[#F2C94C]  shadow-[#F2C94C]/20 scale-105 z-10' : 'border-border shadow-sm'} flex flex-col`}>
+          <div key={plan.id} className={`relative bg-card  p-8 border ${plan.popular ? 'border-[#F2C94C]   scale-105 z-10' : 'border-border '} flex flex-col`}>
             {plan.popular && (
               <div className="absolute -top-4 inset-x-0 flex justify-center">
-                 <span className="bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] flex items-center  text-[#1F2937] text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                 <span className=" from-[#F2C94C] to-[#E0B73A] flex items-center  text-[#1F2937] text-xs font-bold px-3 py-1  uppercase tracking-wider">
                    <Sparkles className="w-3 h-3 mr-1" /> Paling Laris
                  </span>
               </div>
@@ -182,7 +182,7 @@ export default function Pricing() {
               onClick={() => handleUpgrade(plan.id)}
               disabled={loading !== null || plan.id === 'free' || activePro}
               variant={plan.buttonVariant}
-              className={`w-full  py-6 text-lg font-bold  ${plan.popular && !activePro ? 'bg-gradient-to-r from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937]' : ''}`}
+              className={`w-full  py-6 text-lg font-bold  ${plan.popular && !activePro ? ' from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937]' : ''}`}
             >
               {loading === plan.id ? <Loader2 className="w-6 h-6 animate-spin" /> : plan.buttonText}
             </Button>
@@ -232,7 +232,7 @@ export default function Pricing() {
                       </td>
                       <td className="px-6 py-4 text-sm text-muted-foreground uppercase">{order.payment_method}</td>
                       <td className="px-6 py-4">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-50 text-green-700 border border-green-200">
+                        <span className="inline-flex items-center px-2.5 py-0.5  text-xs font-medium bg-green-50 text-green-700 border border-green-200">
                           Lunas
                         </span>
                       </td>

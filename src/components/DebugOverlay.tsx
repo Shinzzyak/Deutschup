@@ -68,13 +68,13 @@ export default function DebugOverlay() {
       {/* Floating toggle button — admin only, visually detached from user actions */}
       <button
         onClick={() => setOpen(!open)}
-        className="fixed right-3 z-[99998] w-9 h-9 rounded-full bg-slate-800/70 hover:bg-slate-700 text-slate-500 hover:text-slate-300 shadow-sm flex items-center justify-center transition-all duration-200 opacity-60 hover:opacity-100"
+        className="fixed right-3 z-[99998] w-9 h-9  bg-[#0a0a0a]/90/70 hover:bg-[#0a0a0a]/80 text-[#0a0a0a]/50 hover:text-[#0a0a0a]/30  flex items-center justify-center transition-all duration-200 opacity-60 hover:opacity-100"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 56px)' }}
         aria-label="Toggle debug overlay"
       >
         <Bug className="w-3.5 h-3.5" />
         {errorCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-red-500 text-[8px] font-bold flex items-center justify-center">
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5  bg-[#8b2500] text-[8px] font-bold flex items-center justify-center">
             {errorCount}
           </span>
         )}
@@ -85,7 +85,7 @@ export default function DebugOverlay() {
         <>
           {/* Backdrop */}
           <div
-            className={`fixed inset-0 z-[99998] bg-black/30 backdrop-blur-sm transition-opacity duration-200 ${
+            className={`fixed inset-0 z-[99998] bg-black/30 -sm transition-opacity duration-200 ${
               open ? 'opacity-100' : 'opacity-0 pointer-events-none'
             }`}
             onClick={handleBackdropClick}
@@ -95,7 +95,7 @@ export default function DebugOverlay() {
           {/* Drawer panel */}
           <div
             ref={panelRef}
-            className={`fixed top-0 right-0 bottom-0 z-[99999] bg-slate-950 text-white shadow-2xl flex flex-col transition-transform duration-200 ease-out ${
+            className={`fixed top-0 right-0 bottom-0 z-[99999] bg-[#0a0a0a] bg-[#0a0a0a]  flex flex-col transition-transform duration-200 ease-out ${
               open ? 'translate-x-0' : 'translate-x-full'
             }`}
             style={{
@@ -104,23 +104,23 @@ export default function DebugOverlay() {
             }}
           >
             {/* Header */}
-            <div className="flex items-center justify-between px-4 py-3 border-b border-slate-800 shrink-0">
+            <div className="flex items-center justify-between px-4 py-3 border-b border-[#0a0a0a]/10 shrink-0">
               <div className="flex items-center gap-2">
                 <Bug className="w-4 h-4 text-yellow-400" />
                 <span className="text-sm font-bold">DEBUG</span>
-                <span className="text-[10px] text-slate-500">{logs.length} entries</span>
+                <span className="text-[10px] text-[#0a0a0a]/50">{logs.length} entries</span>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => { clearDebugLogs(); setLogs([]); }}
-                  className="p-1.5 text-slate-500 hover:text-red-400 transition-colors rounded-lg hover:bg-slate-800"
+                  className="p-1.5 text-[#0a0a0a]/50 hover:text-[#8b2500] transition-colors  hover:bg-[#0a0a0a]/90"
                   aria-label="Clear debug logs"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setOpen(false)}
-                  className="p-1.5 text-slate-500 hover:text-white transition-colors rounded-lg hover:bg-slate-800"
+                  className="p-1.5 text-[#0a0a0a]/50 hover:bg-[#0a0a0a] transition-colors  hover:bg-[#0a0a0a]/90"
                   aria-label="Close debug panel"
                 >
                   <X className="w-4 h-4" />
@@ -129,15 +129,15 @@ export default function DebugOverlay() {
             </div>
 
             {/* Tabs */}
-            <div className="flex border-b border-slate-800 shrink-0">
+            <div className="flex border-b border-[#0a0a0a]/10 shrink-0">
               {(['all', 'errors', 'auth'] as const).map(t => (
                 <button
                   key={t}
                   onClick={() => setTab(t)}
                   className={`flex-1 py-2 text-xs font-medium transition-colors ${
                     tab === t
-                      ? 'text-white border-b-2 border-blue-500'
-                      : 'text-slate-500 hover:text-slate-300'
+                      ? 'bg-[#0a0a0a] border-b-2 border-[#0a0a0a]/70'
+                      : 'text-[#0a0a0a]/50 hover:text-[#0a0a0a]/30'
                   }`}
                 >
                   {t === 'all' ? 'All' : t === 'errors' ? `Errors (${errorCount})` : 'Auth'}
@@ -148,25 +148,25 @@ export default function DebugOverlay() {
             {/* Log entries */}
             <div className="flex-1 overflow-y-auto p-3 space-y-1">
               {filtered.length === 0 ? (
-                <div className="text-center text-slate-600 text-xs py-8">No entries</div>
+                <div className="text-center text-[#0a0a0a]/60 text-xs py-8">No entries</div>
               ) : (
                 filtered.map((e, i) => (
-                  <div key={i} className="text-xs font-mono px-2 py-2 rounded-lg bg-slate-900/50">
+                  <div key={i} className="text-xs font-mono px-2 py-2  bg-[#0a0a0a]/50">
                     <div className="flex items-center gap-1.5">
                       <span
-                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        className="w-2 h-2  flex-shrink-0"
                         style={{ background: TYPE_COLORS[e.type] || '#6b7280' }}
                       />
-                      <span className="text-slate-500">{timeAgo(e.timestamp)}</span>
+                      <span className="text-[#0a0a0a]/50">{timeAgo(e.timestamp)}</span>
                       <span className="font-bold" style={{ color: TYPE_COLORS[e.type] || '#9ca3af' }}>
                         {e.type}
                       </span>
                     </div>
                     {e.message && (
-                      <div className="mt-1 text-slate-300 break-all">{e.message}</div>
+                      <div className="mt-1 text-[#0a0a0a]/30 break-all">{e.message}</div>
                     )}
                     {e.detail && (
-                      <div className="mt-1 text-slate-500 break-all text-[10px]">{e.detail}</div>
+                      <div className="mt-1 text-[#0a0a0a]/50 break-all text-[10px]">{e.detail}</div>
                     )}
                   </div>
                 ))
@@ -174,10 +174,10 @@ export default function DebugOverlay() {
             </div>
 
             {/* Footer */}
-            <div className="border-t border-slate-800 px-4 py-2 shrink-0">
+            <div className="border-t border-[#0a0a0a]/10 px-4 py-2 shrink-0">
               <a
                 href="/debug-auth"
-                className="text-xs text-blue-400 hover:text-blue-300 font-medium"
+                className="text-xs text-[#0a0a0a]/60 hover:text-blue-300 font-medium"
               >
                 Open full debug page →
               </a>

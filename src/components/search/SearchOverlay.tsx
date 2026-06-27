@@ -12,9 +12,9 @@ const typeLabels = {
 };
 
 const typeColors = {
-  vocabulary: 'bg-blue-100 text-blue-700',
-  lesson: 'bg-green-100 text-green-700',
-  verb: 'bg-purple-100 text-purple-700',
+  vocabulary: 'bg-[#0a0a0a]/5 text-blue-700',
+  lesson: 'bg-[#2d8a4e]/10 text-green-700',
+  verb: 'bg-[#0a0a0a]/5 text-purple-700',
 };
 
 export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -87,47 +87,47 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
           initial={{ opacity: 0, scale: 0.95, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
-          className="w-full max-w-xl bg-white dark:bg-slate-900 rounded-2xl shadow-2xl overflow-hidden"
+          className="w-full max-w-xl bg-[#f5f0eb] bg-[#0a0a0a]   overflow-hidden"
           onClick={e => e.stopPropagation()}
         >
           {/* Input */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-200 dark:border-slate-700">
-            <Search className="w-5 h-5 text-slate-400 shrink-0" />
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-[#0a0a0a]/10 border-[#0a0a0a]/10">
+            <Search className="w-5 h-5 text-[#0a0a0a]/40 shrink-0" />
             <input
               ref={inputRef}
               type="text"
               placeholder="Cari kosakata, pelajaran, atau verba..."
-              className="flex-1 text-lg outline-none bg-transparent text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+              className="flex-1 text-lg outline-none bg-transparent text-[#0a0a0a] bg-[#0a0a0a] placeholder:text-[#0a0a0a]/40 placeholder:text-[#0a0a0a]/50"
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-slate-400 bg-slate-100 dark:bg-slate-800 rounded-md">
+            <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-[#0a0a0a]/40 bg-[#0a0a0a]/5 bg-[#0a0a0a]/90 ">
               ESC
             </kbd>
             <button onClick={onClose} className="md:hidden p-1">
-              <X className="w-5 h-5 text-slate-400" />
+              <X className="w-5 h-5 text-[#0a0a0a]/40" />
             </button>
           </div>
 
           {/* Results */}
           <div className="max-h-[60vh] overflow-y-auto">
             {query && allResults.length === 0 && (
-              <div className="p-8 text-center text-slate-500 dark:text-slate-400">
+              <div className="p-8 text-center text-[#0a0a0a]/50 text-[#0a0a0a]/40">
                 Tidak ada hasil untuk "{query}"
               </div>
             )}
 
             {!query && recentSearches.length > 0 && (
               <div className="p-3">
-                <p className="text-xs font-medium text-slate-400 px-2 mb-2">Pencarian Terakhir</p>
+                <p className="text-xs font-medium text-[#0a0a0a]/40 px-2 mb-2">Pencarian Terakhir</p>
                 {recentSearches.map((r, i) => (
                   <button
                     key={i}
                     onClick={() => setQuery(r)}
-                    className="w-full flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 text-left text-sm text-slate-700 dark:text-slate-300"
+                    className="w-full flex items-center gap-2 px-3 py-2  hover:bg-[#f5f0eb] hover:bg-[#0a0a0a]/90 text-left text-sm text-[#0a0a0a]/70 text-[#0a0a0a]/30"
                   >
-                    <Clock className="w-4 h-4 text-slate-400" />
+                    <Clock className="w-4 h-4 text-[#0a0a0a]/40" />
                     {r}
                   </button>
                 ))}
@@ -141,7 +141,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                   if (items.length === 0) return null;
                   return (
                     <div key={type} className="mb-2">
-                      <p className="text-xs font-medium text-slate-400 px-3 py-1">
+                      <p className="text-xs font-medium text-[#0a0a0a]/40 px-3 py-1">
                         {typeLabels[type]} ({items.length})
                       </p>
                       {items.map(item => {
@@ -151,27 +151,27 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                             key={item.id}
                             onClick={() => handleSelect(item)}
                             className={cn(
-                              "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-left transition-colors",
-                              idx === selectedIndex ? "bg-amber-50 dark:bg-amber-950/30" : "hover:bg-slate-50 dark:hover:bg-slate-800"
+                              "w-full flex items-center gap-3 px-3 py-2.5  text-left transition-colors",
+                              idx === selectedIndex ? "bg-[#f5f0eb] bg-amber-950/30" : "hover:bg-[#f5f0eb] hover:bg-[#0a0a0a]/90"
                             )}
                           >
                             {item.article && (
                               <span className={cn(
-                                "text-xs font-bold px-1.5 py-0.5 rounded text-white",
-                                item.article === 'der' ? 'bg-blue-500' :
-                                item.article === 'die' ? 'bg-red-500' : 'bg-green-500'
+                                "text-xs font-bold px-1.5 py-0.5 rounded bg-[#0a0a0a]",
+                                item.article === 'der' ? 'bg-[#0a0a0a]/70' :
+                                item.article === 'die' ? 'bg-[#8b2500]' : 'bg-[#2d8a4e]'
                               )}>
                                 {item.article}
                               </span>
                             )}
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-slate-900 dark:text-white truncate">{item.primary}</p>
-                              <p className="text-sm text-slate-500 dark:text-slate-400 truncate">{item.secondary}</p>
+                              <p className="font-medium text-[#0a0a0a] bg-[#0a0a0a] truncate">{item.primary}</p>
+                              <p className="text-sm text-[#0a0a0a]/50 text-[#0a0a0a]/40 truncate">{item.secondary}</p>
                             </div>
-                            <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full", typeColors[item.type])}>
+                            <span className={cn("text-xs font-medium px-2 py-0.5 ", typeColors[item.type])}>
                               {typeLabels[item.type]}
                             </span>
-                            <ArrowRight className="w-4 h-4 text-slate-300 shrink-0" />
+                            <ArrowRight className="w-4 h-4 text-[#0a0a0a]/30 shrink-0" />
                           </button>
                         );
                       })}

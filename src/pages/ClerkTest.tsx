@@ -121,8 +121,8 @@ export default function ClerkTest() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center space-x-3 mb-8">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
+          <div className="w-10 h-10  bg-blue-600 flex items-center justify-center">
+            <Shield className="w-5 h-5 bg-[#0a0a0a]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold">Clerk + Supabase POC</h1>
@@ -133,13 +133,13 @@ export default function ClerkTest() {
         {/* Test Results */}
         <div className="space-y-3">
           {results.map((result, idx) => (
-            <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-border bg-card">
+            <div key={idx} className="flex items-center justify-between p-4  border border-border bg-card">
               <div className="flex items-center space-x-3">
                 {statusIcon(result.status)}
                 <span className="font-medium text-sm">{result.label}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <code className="text-xs text-muted-foreground bg-muted px-2 py-1 rounded-lg max-w-[200px] truncate">
+                <code className="text-xs text-muted-foreground bg-muted px-2 py-1  max-w-[200px] truncate">
                   {result.value}
                 </code>
                 <button onClick={() => copyToClipboard(result.value)}
@@ -162,7 +162,7 @@ export default function ClerkTest() {
 
         {/* Summary */}
         {!loading && (
-          <div className="mt-8 p-6 rounded-3xl border border-border bg-card">
+          <div className="mt-8 p-6  border border-border bg-card">
             <h2 className="font-bold text-lg mb-4">Summary</h2>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
@@ -189,17 +189,17 @@ export default function ClerkTest() {
 
         {/* Actions */}
         <div className="mt-6 flex space-x-3">
-          <Button variant="outline" onClick={() => runTests()} className="rounded-xl">
+          <Button variant="outline" onClick={() => runTests()} className="">
             Re-run Tests
           </Button>
-          <Button variant="outline" onClick={() => navigate('/admin')} className="rounded-xl">
+          <Button variant="outline" onClick={() => navigate('/admin')} className="">
             Back to Admin
           </Button>
         </div>
 
         {/* Info */}
-        <div className="mt-8 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10">
-          <p className="text-sm text-blue-600 dark:text-blue-400">
+        <div className="mt-8 p-4  bg-blue-500/5 border border-blue-500/10">
+          <p className="text-sm text-blue-600 text-blue-400">
             <strong>POC Note:</strong> This page validates that Supabase Auth still works after Clerk installation.
             Clerk user_id resolution will show "No Clerk mapping" until Clerk project is configured and webhook is deployed.
           </p>

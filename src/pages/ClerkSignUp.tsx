@@ -20,7 +20,7 @@ export default function ClerkSignUp() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-[#0a0a0a]/40" />
       </div>
     );
   }
@@ -43,7 +43,7 @@ export default function ClerkSignUp() {
           appearance={{
             elements: {
               rootBox: 'mx-auto',
-              card: 'shadow-lg',
+              card: '',
             }
           }}
         />

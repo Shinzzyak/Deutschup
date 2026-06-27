@@ -42,7 +42,7 @@ const features = [
 
 export default function ProductShowcase() {
   return (
-    <section className="py-20 md:py-32 bg-[#0a0a0a] text-white relative" id="fitur">
+    <section className="py-20 md:py-32 bg-[#0a0a0a] bg-[#0a0a0a] relative" id="fitur">
       {/* Grid texture */}
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
@@ -74,7 +74,7 @@ export default function ProductShowcase() {
         </motion.div>
 
         {/* Feature list — editorial grid, NOT bento */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-px bg-[#f5f0eb]/10">
           {features.map((feature, i) => {
             const Icon = feature.icon;
             return (
@@ -88,10 +88,10 @@ export default function ProductShowcase() {
               >
                 {/* Number + Icon */}
                 <div className="flex items-center justify-between mb-6">
-                  <span className="font-serif text-3xl font-bold text-white/10 group-hover:text-[#c8956c]/30 transition-colors">
+                  <span className="font-serif text-3xl font-bold bg-[#0a0a0a]/10 group-hover:text-[#c8956c]/30 transition-colors">
                     {feature.number}
                   </span>
-                  <Icon className="w-5 h-5 text-white/30 group-hover:text-[#c8956c] transition-colors" />
+                  <Icon className="w-5 h-5 bg-[#0a0a0a]/30 group-hover:text-[#c8956c] transition-colors" />
                 </div>
 
                 {/* Title */}
@@ -100,12 +100,12 @@ export default function ProductShowcase() {
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-white/40 leading-relaxed group-hover:text-white/60 transition-colors">
+                <p className="text-sm bg-[#0a0a0a]/40 leading-relaxed group-hover:bg-[#0a0a0a]/60 transition-colors">
                   {feature.description}
                 </p>
 
                 {/* Bottom accent line */}
-                <div className="mt-8 h-px bg-white/10 group-hover:bg-[#c8956c]/40 transition-colors" />
+                <div className="mt-8 h-px bg-[#f5f0eb]/10 group-hover:bg-[#c8956c]/40 transition-colors" />
               </motion.div>
             );
           })}

@@ -7,23 +7,23 @@ export function DashboardSkeleton() {
       {/* Stat cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="p-4 bg-white rounded-xl border border-slate-200">
+          <div key={i} className="p-4 bg-[#f5f0eb]  border border-[#0a0a0a]/10">
             <Skeleton className="h-4 w-20 mb-2" />
             <Skeleton className="h-8 w-16" />
           </div>
         ))}
       </div>
       {/* Progress chart */}
-      <div className="p-6 bg-white rounded-xl border border-slate-200">
+      <div className="p-6 bg-[#f5f0eb]  border border-[#0a0a0a]/10">
         <Skeleton className="h-4 w-32 mb-4" />
         <Skeleton className="h-48 w-full" />
       </div>
       {/* Recent activity */}
-      <div className="p-6 bg-white rounded-xl border border-slate-200">
+      <div className="p-6 bg-[#f5f0eb]  border border-[#0a0a0a]/10">
         <Skeleton className="h-4 w-40 mb-4" />
         {[...Array(3)].map((_, i) => (
           <div key={i} className="flex items-center gap-3 mb-3">
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 " />
             <div className="flex-1">
               <Skeleton className="h-4 w-48 mb-1" />
               <Skeleton className="h-3 w-32" />
@@ -39,10 +39,10 @@ export function DashboardSkeleton() {
 export function VocabSkeleton() {
   return (
     <div className="space-y-6">
-      <Skeleton className="h-12 w-full rounded-xl" />
+      <Skeleton className="h-12 w-full " />
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {[...Array(6)].map((_, i) => (
-          <div key={i} className="p-5 bg-white  border border-slate-200">
+          <div key={i} className="p-5 bg-[#f5f0eb]  border border-[#0a0a0a]/10">
             <Skeleton className="h-6 w-32 mb-2" />
             <Skeleton className="h-4 w-48 mb-3" />
             <Skeleton className="h-3 w-full" />
@@ -57,12 +57,12 @@ export function VocabSkeleton() {
 export function VerbSkeleton() {
   return (
     <div className="space-y-6">
-      <Skeleton className="h-12 w-full rounded-xl" />
+      <Skeleton className="h-12 w-full " />
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="p-6 bg-white  border border-slate-200">
+        <div key={i} className="p-6 bg-[#f5f0eb]  border border-[#0a0a0a]/10">
           <div className="flex items-center gap-3 mb-4">
             <Skeleton className="h-8 w-24" />
-            <Skeleton className="h-5 w-16 rounded-md" />
+            <Skeleton className="h-5 w-16 " />
           </div>
           <div className="grid grid-cols-3 gap-4">
             {[...Array(18)].map((_, j) => (
@@ -83,12 +83,12 @@ export function LevelSkeleton() {
   return (
     <div className="space-y-6">
       <Skeleton className="h-8 w-48" />
-      <Skeleton className="h-4 w-full rounded-full" />
+      <Skeleton className="h-4 w-full " />
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[...Array(4)].map((_, i) => (
-          <div key={i} className="p-5 bg-white rounded-xl border border-slate-200">
+          <div key={i} className="p-5 bg-[#f5f0eb]  border border-[#0a0a0a]/10">
             <div className="flex items-center gap-3">
-              <Skeleton className="h-12 w-12 rounded-xl" />
+              <Skeleton className="h-12 w-12 " />
               <div className="flex-1">
                 <Skeleton className="h-5 w-40 mb-1" />
                 <Skeleton className="h-3 w-24" />
@@ -106,13 +106,13 @@ export function PricingSkeleton() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {[...Array(3)].map((_, i) => (
-        <div key={i} className="p-8 bg-white  border border-slate-200">
+        <div key={i} className="p-8 bg-[#f5f0eb]  border border-[#0a0a0a]/10">
           <Skeleton className="h-6 w-24 mb-2" />
           <Skeleton className="h-10 w-32 mb-4" />
           <Skeleton className="h-4 w-full mb-2" />
           <Skeleton className="h-4 w-full mb-2" />
           <Skeleton className="h-4 w-3/4 mb-6" />
-          <Skeleton className="h-12 w-full rounded-xl" />
+          <Skeleton className="h-12 w-full " />
         </div>
       ))}
     </div>

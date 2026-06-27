@@ -152,7 +152,7 @@ export default function MockTest() {
   if (testState === 'SETUP') {
     return (
       <div className="max-w-3xl mx-auto pb-20 text-center space-y-8">
-        <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-12  border border-border shadow-sm">
+        <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-12  border border-border ">
            <FileText className="w-16 h-16 mx-auto mb-6 text-blue-600" />
            <h1 className="text-4xl font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
            <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
@@ -184,7 +184,7 @@ export default function MockTest() {
               })}
            </div>
            
-           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-slate-900 hover:bg-slate-800 text-white">
+           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-[#0a0a0a] hover:bg-slate-800 bg-[#0a0a0a]">
              <PlayCircle className="w-6 h-6 mr-2" /> Mulai Simulasi
            </Button>
         </div>
@@ -212,17 +212,17 @@ export default function MockTest() {
 
     return (
        <div className="max-w-3xl mx-auto pb-20">
-         <div className="flex items-center justify-between mb-6 bg-card p-4 rounded-xl shadow-sm border border-border">
+         <div className="flex items-center justify-between mb-6 bg-card p-4   border border-border">
             <div className="flex space-x-2">
-               <span className="bg-white border border-[#0a0a0a]/10 text-foreground font-bold px-3 py-1 rounded-lg text-sm">{q.category}</span>
+               <span className="bg-[#f5f0eb] border border-[#0a0a0a]/10 text-foreground font-bold px-3 py-1  text-sm">{q.category}</span>
                <span className="text-muted-foreground font-medium px-3 py-1 text-sm">Soal {currentIdx + 1} dari {questions.length}</span>
             </div>
-            <div className="flex items-center text-orange-700 font-bold bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-2 rounded-full border border-orange-200 shadow-sm">
+            <div className="flex items-center text-orange-700 font-bold  from-orange-50 to-amber-50 px-4 py-2  border border-orange-200 ">
                <Timer className="w-5 h-5 mr-2" /> <span className="font-mono text-lg tabular-nums">{formatTime(timeLeft)}</span>
             </div>
          </div>
 
-         <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border shadow-sm flex flex-col min-h-[400px]">
+         <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border  flex flex-col min-h-[400px]">
             {q.context && (
                <div className="bg-blue-50 p-4  mb-6 text-blue-900 border border-blue-100 italic">
                   {q.context}
@@ -238,8 +238,8 @@ export default function MockTest() {
                        key={i}
                        onClick={() => setAnswers({...answers, [q.id]: opt})}
                        className={cn(
-                          "w-full text-left p-4 rounded-xl border-2 font-medium transition-all hover:scale-[1.01]",
-                          isSelected ? "border-blue-600 bg-blue-50 text-blue-800 shadow-sm" : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 text-foreground bg-card"
+                          "w-full text-left p-4  border-2 font-medium transition-all hover:scale-[1.01]",
+                          isSelected ? "border-blue-600 bg-blue-50 text-blue-800 " : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 text-foreground bg-card"
                        )}
                      >
                        {opt}
@@ -251,7 +251,7 @@ export default function MockTest() {
             <div className="mt-8 pt-6 border-t border-border flex justify-between">
                <Button variant="outline" disabled={currentIdx === 0} onClick={() => setCurrentIdx(prev => prev - 1)}>Sebelumnya</Button>
                {currentIdx === questions.length - 1 ? (
-                 <Button onClick={submitTest} className="bg-green-600 hover:bg-green-700 text-white font-bold">Kumpulkan</Button>
+                 <Button onClick={submitTest} className="bg-green-600 hover:bg-green-700 bg-[#0a0a0a] font-bold">Kumpulkan</Button>
                ) : (
                  <Button onClick={() => setCurrentIdx(prev => prev + 1)}>Selanjutnya</Button>
                )}
@@ -264,7 +264,7 @@ export default function MockTest() {
   // EVALUATING & RESULT
   return (
     <div className="max-w-4xl mx-auto pb-20">
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 md:p-12  border border-border shadow-sm text-center mb-8">
+      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 md:p-12  border border-border  text-center mb-8">
         {testState === 'EVALUATING' ? (
            <>
              <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />
@@ -315,7 +315,7 @@ export default function MockTest() {
                            <p className="font-bold text-green-700">Benar: {q.correctAnswer}</p>
                         )}
                         {!isAccurate && feedbacks[q.id] && (
-                           <div className="mt-4 p-4 bg-card/70 rounded-xl border border-red-100 flex items-start space-x-3 text-red-900">
+                           <div className="mt-4 p-4 bg-card/70  border border-red-100 flex items-start space-x-3 text-red-900">
                              <AlertCircle className="w-5 h-5 flex-shrink-0 mt-0.5" />
                              <div className="text-sm prose prose-sm prose-red"><ReactMarkdown>{feedbacks[q.id]}</ReactMarkdown></div>
                            </div>

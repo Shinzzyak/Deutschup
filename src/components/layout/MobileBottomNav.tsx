@@ -29,13 +29,8 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/60 dark:border-slate-700/60"
-      style={{
-        background: 'rgba(255,255,255,0.88)',
-        backdropFilter: 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-        paddingBottom: 'env(safe-area-inset-bottom, 0px)',
-      }}
+      className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t-2 border-[#0a0a0a]/10 bg-[#f5f0eb]"
+
       aria-label="Navigasi mobile"
     >
       <div className="flex justify-around items-end py-1.5 px-1">
@@ -45,10 +40,10 @@ export default function MobileBottomNav() {
             <Link
               key={item.name}
               to={item.href}
-              className={`relative flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-all duration-200 min-w-[48px] ${
+              className={`relative flex flex-col items-center gap-0.5 px-2 py-1.5 transition-all duration-200 min-w-[48px] ${
                 active
-                  ? 'text-blue-600 dark:text-blue-400'
-                  : 'text-slate-400 dark:text-slate-500 active:text-slate-600'
+                  ? 'text-[#8b2500]'
+                  : 'text-[#0a0a0a]/40 active:text-[#0a0a0a]/60'
               }`}
               aria-label={item.name}
             >
@@ -59,7 +54,7 @@ export default function MobileBottomNav() {
                   }`}
                 />
                 {active && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-blue-500" />
+                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#8b2500]" />
                 )}
               </div>
               <span
@@ -75,10 +70,10 @@ export default function MobileBottomNav() {
         {profileData?.role === 'admin' && (
           <Link
             to="/admin"
-            className={`relative flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-xl transition-all duration-200 min-w-[48px] ${
+            className={`relative flex flex-col items-center gap-0.5 px-2 py-1.5  transition-all duration-200 min-w-[48px] ${
               location.pathname.startsWith('/admin')
-                ? 'text-red-500 dark:text-red-400'
-                : 'text-slate-400 dark:text-slate-500 active:text-slate-600'
+                ? 'text-[#8b2500]'
+                : 'text-[#0a0a0a]/40 active:text-[#0a0a0a]/60'
             }`}
             aria-label="Admin"
           >
@@ -89,7 +84,7 @@ export default function MobileBottomNav() {
                 }`}
               />
               {location.pathname.startsWith('/admin') && (
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-red-500" />
+                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#8b2500]" />
               )}
             </div>
             <span

@@ -7,7 +7,7 @@ export default function CTASection() {
   const { loginWithGoogle } = useAuthStore();
 
   return (
-    <section className="py-20 md:py-32 bg-[#0a0a0a] text-white relative overflow-hidden">
+    <section className="py-20 md:py-32 bg-[#0a0a0a] bg-[#0a0a0a] relative overflow-hidden">
       {/* Grid texture */}
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
@@ -39,7 +39,7 @@ export default function CTASection() {
             <span className="italic text-[#c8956c]">Bahasa Jerman?</span>
           </h2>
 
-          <p className="text-lg text-white/40 leading-relaxed mb-10 max-w-xl font-light">
+          <p className="text-lg bg-[#0a0a0a]/40 leading-relaxed mb-10 max-w-xl font-light">
             Mulai perjalanan dari A1 hingga B2 dengan bantuan AI Tutor DeutschUp. Gratis selamanya.
           </p>
 
@@ -47,14 +47,14 @@ export default function CTASection() {
           <div className="flex flex-col sm:flex-row gap-4">
             <Button
               onClick={loginWithGoogle}
-              className="bg-[#c8956c] hover:bg-[#b8854c] text-white text-base px-10 py-6 rounded-none font-bold tracking-wide transition-all group"
+              className="bg-[#c8956c] hover:bg-[#b8854c] bg-[#0a0a0a] text-base px-10 py-6  font-bold tracking-wide transition-all group"
             >
               Mulai Gratis
               <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
             </Button>
             <a
               href="#fitur"
-              className="inline-flex items-center justify-center text-white/60 hover:text-white font-semibold text-base px-10 py-6 border border-white/20 hover:border-white/40 rounded-none transition-all"
+              className="inline-flex items-center justify-center bg-[#0a0a0a]/60 hover:bg-[#0a0a0a] font-semibold text-base px-10 py-6 border border-white/20 hover:border-white/40  transition-all"
             >
               Pelajari Lebih Lanjut
             </a>

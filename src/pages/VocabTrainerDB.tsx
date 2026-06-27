@@ -16,10 +16,10 @@ type FilterType = 'all' | 'learned' | 'learning' | 'new';
 type SortType = 'default' | 'german' | 'indonesian';
 
 const levelColors: Record<string, { bg: string; text: string; border: string }> = {
-  A1: { bg: 'bg-emerald-500', text: 'text-white', border: 'border-emerald-500' },
-  A2: { bg: 'bg-teal-500', text: 'text-white', border: 'border-teal-500' },
-  B1: { bg: 'bg-blue-500', text: 'text-white', border: 'border-blue-500' },
-  B2: { bg: 'bg-indigo-500', text: 'text-white', border: 'border-indigo-500' },
+  A1: { bg: 'bg-emerald-500', text: 'bg-[#0a0a0a]', border: 'border-emerald-500' },
+  A2: { bg: 'bg-teal-500', text: 'bg-[#0a0a0a]', border: 'border-teal-500' },
+  B1: { bg: 'bg-blue-500', text: 'bg-[#0a0a0a]', border: 'border-blue-500' },
+  B2: { bg: 'bg-indigo-500', text: 'bg-[#0a0a0a]', border: 'border-indigo-500' },
 };
 
 const articleColors: Record<string, string> = {
@@ -193,7 +193,7 @@ export default function VocabTrainerDB() {
           <p className="text-muted-foreground">Master German vocabulary with spaced repetition</p>
         </div>
         
-        <div className="flex items-center gap-2 bg-muted p-1 rounded-lg">
+        <div className="flex items-center gap-2 bg-muted p-1 ">
           {['A1', 'A2', 'B1', 'B2'].map(lvl => (
             <Button 
               key={lvl} 
@@ -213,7 +213,7 @@ export default function VocabTrainerDB() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input 
-            className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-md focus:ring-2 focus:ring-primary outline-none transition-all"
+            className="w-full pl-9 pr-4 py-2 bg-card border border-border  focus:ring-2 focus:ring-primary outline-none transition-all"
             placeholder="Search words..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -223,7 +223,7 @@ export default function VocabTrainerDB() {
         <div className="flex items-center gap-2">
           <Filter className="w-4 h-4 text-muted-foreground" />
           <select 
-            className="flex-1 bg-card border border-border rounded-md py-2 px-3 outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 bg-card border border-border  py-2 px-3 outline-none focus:ring-2 focus:ring-primary"
             value={filter}
             onChange={(e) => setFilter(e.target.value as FilterType)}
           >
@@ -237,7 +237,7 @@ export default function VocabTrainerDB() {
         <div className="flex items-center gap-2">
           <ArrowUpDown className="w-4 h-4 text-muted-foreground" />
           <select 
-            className="flex-1 bg-card border border-border rounded-md py-2 px-3 outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 bg-card border border-border  py-2 px-3 outline-none focus:ring-2 focus:ring-primary"
             value={sort}
             onChange={(e) => setSort(e.target.value as SortType)}
           >
@@ -249,10 +249,10 @@ export default function VocabTrainerDB() {
       </div>
 
       {/* Tab Switcher */}
-      <div className="flex gap-1 bg-muted p-1 rounded-xl w-fit">
+      <div className="flex gap-1 bg-muted p-1  w-fit">
         <Button 
           variant={activeTab === 'flashcard' ? 'default' : 'ghost'} 
-          className="rounded-lg px-4"
+          className=" px-4"
           onClick={() => setActiveTab('flashcard')}
         >
           <LayoutGrid className="w-4 h-4 mr-2" />
@@ -260,7 +260,7 @@ export default function VocabTrainerDB() {
         </Button>
         <Button 
           variant={activeTab === 'list' ? 'default' : 'ghost'} 
-          className="rounded-lg px-4"
+          className=" px-4"
           onClick={() => setActiveTab('list')}
         >
           <List className="w-4 h-4 mr-2" />
@@ -292,7 +292,7 @@ export default function VocabTrainerDB() {
                   <span>{Math.round(progressPercent)}% complete</span>
                 </div>
                 
-                <div className="w-full bg-muted h-2 rounded-full overflow-hidden">
+                <div className="w-full bg-muted h-2  overflow-hidden">
                   <motion.div 
                     className="h-full bg-primary" 
                     initial={{ width: 0 }}
@@ -311,14 +311,14 @@ export default function VocabTrainerDB() {
                   >
                     {/* Front */}
                     <div className="absolute inset-0 backface-hidden flex flex-col items-center justify-center p-8 bg-card border-2 border-border   text-center">
-                      <div className={cn("px-3 py-1 rounded-full text-xs font-bold mb-6", levelColors[selectedLevel].bg, levelColors[selectedLevel].text)}>
+                      <div className={cn("px-3 py-1  text-xs font-bold mb-6", levelColors[selectedLevel].bg, levelColors[selectedLevel].text)}>
                         {selectedLevel}
                       </div>
                       <h2 className="text-5xl font-bold mb-4 tracking-tight">
                         {currentCard.word}
                       </h2>
                       {currentCard.article && (
-                        <div className={cn("px-3 py-1 rounded-full text-xs font-medium mb-4", articleColors[currentCard.article])}>
+                        <div className={cn("px-3 py-1  text-xs font-medium mb-4", articleColors[currentCard.article])}>
                           {currentCard.article}
                         </div>
                       )}
@@ -354,7 +354,7 @@ export default function VocabTrainerDB() {
                         <motion.div 
                           initial={{ opacity: 0, height: 0 }}
                           animate={{ opacity: 1, height: 'auto' }}
-                          className="mt-4 p-3 bg-muted rounded-lg text-sm text-center w-full"
+                          className="mt-4 p-3 bg-muted  text-sm text-center w-full"
                         >
                           <p className="font-mono font-bold text-primary">{pronunciation.phonetic}</p>
                           <p className="text-muted-foreground italic">{pronunciation.tip}</p>
@@ -402,7 +402,7 @@ export default function VocabTrainerDB() {
               </>
             ) : (
               <div className="flex flex-col items-center justify-center py-20 text-center space-y-4 bg-card border border-dashed border-border ">
-                <div className="p-4 bg-primary/10 rounded-full">
+                <div className="p-4 bg-primary/10 ">
                   <Trophy className="w-12 h-12 text-primary" />
                 </div>
                 <h3 className="text-2xl font-bold">Level Cleared!</h3>
@@ -422,12 +422,12 @@ export default function VocabTrainerDB() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border border-border  overflow-hidden shadow-sm"
+            className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border border-border  overflow-hidden "
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="bg-white border border-[#0a0a0a]/10/50 text-muted-foreground text-sm uppercase tracking-wider">
+                  <tr className="bg-[#f5f0eb] border border-[#0a0a0a]/10/50 text-muted-foreground text-sm uppercase tracking-wider">
                     <th className="px-6 py-4 font-semibold">Word</th>
                     <th className="px-6 py-4 font-semibold">Translation</th>
                     <th className="px-6 py-4 font-semibold">Status</th>
@@ -440,7 +440,7 @@ export default function VocabTrainerDB() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           {v.article && (
-                            <span className={cn("w-2 h-2 rounded-full", articleColors[v.article])} />
+                            <span className={cn("w-2 h-2 ", articleColors[v.article])} />
                           )}
                           <span className="font-medium">{v.word}</span>
                         </div>
@@ -449,11 +449,11 @@ export default function VocabTrainerDB() {
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           {vocab[v.id]?.status === 'known' ? (
-                            <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">KNOWN</span>
+                            <span className="px-2 py-1  text-[10px] font-bold bg-emerald-500/10 text-emerald-500 border border-emerald-500/20">KNOWN</span>
                           ) : vocab[v.id]?.status === 'learning' ? (
-                            <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">LEARNING</span>
+                            <span className="px-2 py-1  text-[10px] font-bold bg-amber-500/10 text-amber-500 border border-amber-500/20">LEARNING</span>
                           ) : (
-                            <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-muted text-muted-foreground border border-border">NEW</span>
+                            <span className="px-2 py-1  text-[10px] font-bold bg-muted text-muted-foreground border border-border">NEW</span>
                           )}
                         </div>
                       </td>

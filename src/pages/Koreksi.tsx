@@ -39,7 +39,7 @@ export default function Koreksi() {
         <p className="text-muted-foreground text-lg md:text-xl">Tuliskan kalimat bahasa Jermanmu, AI kami akan memeriksa tata bahasa dan strukturnya.</p>
       </div>
 
-      <div className="bg-card p-6 md:p-8  border border-border shadow-sm mb-8">
+      <div className="bg-card p-6 md:p-8  border border-border  mb-8">
         <label className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
         <textarea
           value={input}
@@ -51,7 +51,7 @@ export default function Koreksi() {
           onClick={handleKoreksi} 
           disabled={loading || !input.trim()}
           size="lg" 
-          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-slate-900 hover:bg-slate-800"
+          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-[#0a0a0a] hover:bg-slate-800"
         >
           {loading ? (
              <><Loader2 className="w-5 h-5 mr-3 animate-spin"/> Menganalisis...</>
@@ -64,7 +64,7 @@ export default function Koreksi() {
       {result && (
         <div className="animate-in fade-in-50 slide-in-from-bottom-4 duration-500 space-y-6">
           <div className={cn(
-            "p-6 md:p-8  border-2 shadow-sm flex flex-col sm:flex-row gap-6",
+            "p-6 md:p-8  border-2  flex flex-col sm:flex-row gap-6",
             result.isPerfect ? "bg-green-50 border-green-200" : "bg-orange-50 border-orange-200"
           )}>
             <div className="flex-shrink-0">

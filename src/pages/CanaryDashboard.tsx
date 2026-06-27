@@ -16,7 +16,7 @@ export default function CanaryDashboard() {
 
   if (user?.email !== import.meta.env.VITE_ADMIN_EMAIL) {
     return (
-      <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
+      <div className="min-h-screen bg-gray-950 bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-400">⛔ Access Denied</h1>
           <p className="text-gray-400 mt-2">Admin only</p>
@@ -26,11 +26,11 @@ export default function CanaryDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
+    <div className="min-h-screen bg-gray-950 bg-[#0a0a0a] p-6">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+          <h1 className="text-3xl font-bold bg-[#0a0a0a] flex items-center gap-3">
             🔐 Auth Dashboard
           </h1>
           <p className="text-gray-400 mt-2">
@@ -40,19 +40,19 @@ export default function CanaryDashboard() {
 
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+          <div className="bg-gray-900 border border-gray-800  p-4">
             <div className="text-sm text-gray-400">Clerk SDK</div>
             <div className={`text-2xl font-bold ${status?.clerkEnabled ? 'text-green-400' : 'text-yellow-400'}`}>
               {status?.clerkEnabled ? '✅ Enabled' : '⚠️ Not Configured'}
             </div>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+          <div className="bg-gray-900 border border-gray-800  p-4">
             <div className="text-sm text-gray-400">Auth Mode</div>
             <div className="text-2xl font-bold text-blue-400">
               Full Clerk
             </div>
           </div>
-          <div className="bg-gray-900 border border-gray-800 rounded-xl p-4">
+          <div className="bg-gray-900 border border-gray-800  p-4">
             <div className="text-sm text-gray-400">Publishable Key</div>
             <div className="text-sm font-mono text-gray-300 mt-1">
               {status?.publishableKeyPrefix || 'NOT SET'}
@@ -61,16 +61,16 @@ export default function CanaryDashboard() {
         </div>
 
         {/* Current User */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6 mb-8">
+        <div className="bg-gray-900 border border-gray-800  p-6 mb-8">
           <h2 className="text-lg font-semibold mb-4">Current Session</h2>
           <div className="space-y-2">
             <div className="flex justify-between">
               <span className="text-gray-400">Email:</span>
-              <span className="text-white">{user?.email}</span>
+              <span className="bg-[#0a0a0a]">{user?.email}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">User ID:</span>
-              <span className="text-white font-mono text-sm">{user?.id}</span>
+              <span className="bg-[#0a0a0a] font-mono text-sm">{user?.id}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-400">Auth Provider:</span>
@@ -80,9 +80,9 @@ export default function CanaryDashboard() {
         </div>
 
         {/* Architecture */}
-        <div className="bg-gray-900 border border-gray-800 rounded-xl p-6">
+        <div className="bg-gray-900 border border-gray-800  p-6">
           <h2 className="text-lg font-semibold mb-4">Auth Architecture</h2>
-          <pre className="bg-gray-800 rounded-lg p-4 text-sm text-gray-300 overflow-auto whitespace-pre">
+          <pre className="bg-gray-800  p-4 text-sm text-gray-300 overflow-auto whitespace-pre">
 {`┌─────────────────────────────────────────────────────┐
 │                  USER BROWSER                        │
 ├─────────────────────────────────────────────────────┤

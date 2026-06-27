@@ -11,13 +11,13 @@ export default function NotFound() {
         Sepertinya halaman yang kamu cari sudah dipindahkan atau tidak tersedia.
       </p>
       <div className="flex gap-3">
-        <Button asChild variant="outline" className="rounded-2xl">
+        <Button asChild variant="outline" className="">
           <Link to="/">
             <Home className="w-4 h-4 mr-2" />
             Kembali ke Beranda
           </Link>
         </Button>
-        <Button variant="outline" className="rounded-2xl" onClick={() => window.history.back()}>
+        <Button variant="outline" className="" onClick={() => window.history.back()}>
           <ArrowLeft className="w-4 h-4 mr-2" />
           Kembali
         </Button>

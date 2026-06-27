@@ -53,7 +53,7 @@ export default function QuickNoteWidget() {
       {/* Floating button — unchanged */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed right-6 w-14 h-14 rounded-full bg-yellow-400 text-yellow-900 flex items-center justify-center shadow-xl hover:scale-110 transition-transform z-40 border-4 border-background"
+        className="fixed right-6 w-14 h-14  bg-yellow-400 text-yellow-900 flex items-center justify-center  hover:scale-110 transition-transform z-40 border-4 border-background"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 144px)' }}
         aria-label={isOpen ? "Tutup quick note" : "Buka quick note"}
       >
@@ -81,7 +81,7 @@ export default function QuickNoteWidget() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="fixed z-[99999] bg-[#FFF8E1] rounded-2xl shadow-2xl border border-yellow-300/60 flex flex-col overflow-hidden"
+                className="fixed z-[99999] bg-[#FFF8E1]   border border-yellow-300/60 flex flex-col overflow-hidden"
                 style={{
                   bottom: 'calc(env(safe-area-inset-bottom, 0px) + 220px)',
                   right: '16px',
@@ -97,7 +97,7 @@ export default function QuickNoteWidget() {
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1.5 text-yellow-700 hover:text-yellow-900 transition-colors rounded-lg hover:bg-yellow-200/60"
+                    className="p-1.5 text-yellow-700 hover:text-yellow-900 transition-colors  hover:bg-yellow-200/60"
                     aria-label="Tutup quick note"
                   >
                     <X className="w-4 h-4" />
@@ -117,7 +117,7 @@ export default function QuickNoteWidget() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="w-full px-4 py-2.5 bg-gradient-to-r from-[#F2C94C] to-yellow-500 hover:from-yellow-500 hover:to-[#F2C94C] text-yellow-900 text-sm font-bold rounded-xl flex items-center justify-center shadow-sm transition-all duration-200"
+                    className="w-full px-4 py-2.5  from-[#F2C94C] to-yellow-500 hover:from-yellow-500 hover:to-[#F2C94C] text-yellow-900 text-sm font-bold  flex items-center justify-center  transition-all duration-200"
                     aria-label="Simpan catatan"
                   >
                     {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}

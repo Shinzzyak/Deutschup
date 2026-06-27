@@ -172,12 +172,12 @@ export default function VerbTrainer() {
             
             <div className="space-y-4">
               {filteredVocab.map(v => (
-                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-card  border border-border shadow-sm hover: transition-shadow">
+                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-card  border border-border  hover: transition-shadow">
                   <div>
                     <div className="flex items-center space-x-3 mb-1">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1 rounded-md text-white shadow-sm",
+                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] ",
                           articleColors[v.article] || 'bg-gray-500'
                         )}>{v.article}</span>
                       )}
@@ -187,7 +187,7 @@ export default function VerbTrainer() {
                     <p className="text-muted-foreground italic font-medium whitespace-pre-wrap">{v.exampleSentence}</p>
                   </div>
                   <div className="mt-3 sm:mt-0 text-left sm:text-right">
-                    <span className="bg-muted text-muted-foreground px-3 py-1 rounded-full text-xs font-bold uppercase">{v.level}</span>
+                    <span className="bg-muted text-muted-foreground px-3 py-1  text-xs font-bold uppercase">{v.level}</span>
                   </div>
                 </div>
               ))}
@@ -208,13 +208,13 @@ export default function VerbTrainer() {
           </div>
         )}
         {(searchTerm && filteredVerbs.map(verb => (
-            <div key={verb.infinitive} className="bg-card  border border-border overflow-hidden shadow-sm">
+            <div key={verb.infinitive} className="bg-card  border border-border overflow-hidden ">
               <div className="p-6 md:p-8 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center space-x-3 mb-1">
                     <h2 className="text-3xl font-extrabold text-foreground">{verb.infinitive}</h2>
                     <span className={cn(
-                      "text-xs font-bold px-2 py-1 rounded-md uppercase tracking-wider",
+                      "text-xs font-bold px-2 py-1  uppercase tracking-wider",
                       verb.type === 'irregular' ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
                     )}>
                       {verb.type === 'irregular' ? 'Kuat / Tidak Beraturan' : 'Lemah / Beraturan'}
@@ -223,7 +223,7 @@ export default function VerbTrainer() {
                   <p className="text-muted-foreground text-lg">{verb.translation}</p>
                 </div>
                 
-                <div className="flex flex-col text-sm border border-border p-3 rounded-xl bg-muted">
+                <div className="flex flex-col text-sm border border-border p-3  bg-muted">
                   <span className="text-muted-foreground font-medium">Perfekt</span>
                   <span className="font-bold">{verb.perfekt}</span>
                 </div>

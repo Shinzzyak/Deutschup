@@ -23,7 +23,7 @@ function ErrorState({
         className
       )}
     >
-      <div className="rounded-full bg-destructive/10 p-4 mb-4">
+      <div className=" bg-destructive/10 p-4 mb-4">
         <AlertTriangle className="h-8 w-8 text-destructive" />
       </div>
       <h3 className="text-lg font-semibold text-foreground mb-1">{title}</h3>

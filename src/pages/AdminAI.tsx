@@ -543,7 +543,7 @@ export default function AdminAI() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
           <div>
             <div className="flex items-center gap-3 mb-2">
-              <div className="p-2 bg-[#F2C94C]/10 rounded-xl">
+              <div className="p-2 bg-[#F2C94C]/10 ">
                 <Shield className="w-6 h-6 text-[#F2C94C]" />
               </div>
               <h1 className="text-4xl font-black tracking-tight text-foreground">
@@ -557,7 +557,7 @@ export default function AdminAI() {
             size="sm"
             onClick={fetchData}
             disabled={loading}
-            className="rounded-xl border-border hover:bg-muted gap-2"
+            className=" border-border hover:bg-muted gap-2"
           >
             <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
             Refresh Data
@@ -576,7 +576,7 @@ export default function AdminAI() {
             <Card key={label} className=" border-border bg-card hover: transition-shadow">
               <CardContent className="p-5">
                 <div className="flex items-center justify-between mb-3">
-                  <div className={`p-2 rounded-xl ${bg}`}>
+                  <div className={`p-2  ${bg}`}>
                     <Icon className={`w-5 h-5 ${accent}`} />
                   </div>
                 </div>
@@ -601,7 +601,7 @@ export default function AdminAI() {
                 { label: 'Database', ok: systemHealth.config?.databaseConfigured },
                 { label: 'Webhooks', ok: systemHealth.config?.webhookConfigured },
               ].map(({ label, ok, detail }) => (
-                <div key={label} className={`flex items-center gap-3 px-4 py-3 rounded-xl border transition-colors ${
+                <div key={label} className={`flex items-center gap-3 px-4 py-3  border transition-colors ${
                   ok
                     ? 'bg-emerald-500/5 border-emerald-500/20'
                     : 'bg-rose-500/5 border-rose-500/20'
@@ -627,9 +627,9 @@ export default function AdminAI() {
               key={id}
               onClick={() => setActiveTab(id)}
               className={cn(
-                "flex items-center space-x-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all",
+                "flex items-center space-x-2 px-4 py-2.5  text-sm font-medium transition-all",
                 activeTab === id
-                  ? "bg-[#F2C94C] text-[#1F2937]  shadow-[#F2C94C]/20 font-bold"
+                  ? "bg-[#F2C94C] text-[#1F2937]   font-bold"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
               )}
             >
@@ -690,7 +690,7 @@ export default function AdminAI() {
                               <p className="text-xs text-muted-foreground">Priority: {provider.priority}</p>
                             </div>
                           </div>
-                          <span className={cn("px-2 py-1 rounded-lg text-xs font-medium", getStatusBadge(status))}>
+                          <span className={cn("px-2 py-1  text-xs font-medium", getStatusBadge(status))}>
                             {getStatusLabel(status)}
                           </span>
                         </div>
@@ -800,7 +800,7 @@ export default function AdminAI() {
                         size="sm"
                         onClick={() => toggleProvider(provider.id, !provider.enabled)}
                         disabled={saving}
-                        className={cn("rounded-lg text-xs", provider.enabled ? "border-emerald-500/30 text-emerald-600" : "border-border text-muted-foreground")}
+                        className={cn(" text-xs", provider.enabled ? "border-emerald-500/30 text-emerald-600" : "border-border text-muted-foreground")}
                       >
                         {provider.enabled ? 'ON' : 'OFF'}
                       </Button>
@@ -815,7 +815,7 @@ export default function AdminAI() {
                         value={currentKey}
                         onChange={e => setProviderKeys(prev => ({ ...prev, [provider.id]: e.target.value }))}
                         placeholder={hasKey ? '•••••••• (key saved)' : 'Paste API key here...'}
-                        className="w-full px-3 py-2 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 focus:border-[#F2C94C] pr-10"
+                        className="w-full px-3 py-2  border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 focus:border-[#F2C94C] pr-10"
                       />
                       <button
                         type="button"
@@ -829,7 +829,7 @@ export default function AdminAI() {
                       size="sm"
                       onClick={() => saveKey(provider.id)}
                       disabled={!currentKey || currentKey === '••••••••' || savingKey === provider.id}
-                      className="rounded-lg bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold"
+                      className=" bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold"
                     >
                       {savingKey === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Save'}
                     </Button>
@@ -838,7 +838,7 @@ export default function AdminAI() {
                       size="sm"
                       onClick={() => validateProvider(provider.id)}
                       disabled={validating === provider.id}
-                      className="rounded-lg"
+                      className=""
                     >
                       {validating === provider.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <TestTube className="w-4 h-4" />}
                     </Button>
@@ -848,7 +848,7 @@ export default function AdminAI() {
                         size="sm"
                         onClick={() => deleteKey(provider.id)}
                         disabled={savingKey === provider.id}
-                        className="rounded-lg text-red-500 hover:text-red-600 hover:bg-red-50"
+                        className=" text-red-500 hover:text-red-600 hover:bg-red-50"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -890,7 +890,7 @@ export default function AdminAI() {
             {/* Header */}
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
-                <div className="w-10 h-10 rounded-xl bg-[#F2C94C]/10 flex items-center justify-center">
+                <div className="w-10 h-10  bg-[#F2C94C]/10 flex items-center justify-center">
                   <Puzzle className="w-5 h-5 text-[#F2C94C]" />
                 </div>
                 <div>
@@ -944,7 +944,7 @@ export default function AdminAI() {
                         });
                         setShowAddProvider(true);
                       }}
-                      className="flex flex-col items-center gap-2 p-4 rounded-xl border border-border bg-background hover:border-[#F2C94C]/50 hover:bg-[#F2C94C]/5 transition-all"
+                      className="flex flex-col items-center gap-2 p-4  border border-border bg-background hover:border-[#F2C94C]/50 hover:bg-[#F2C94C]/5 transition-all"
                     >
                       <Globe className="w-6 h-6 text-[#F2C94C]" />
                       <span className="text-sm font-medium text-foreground">{preset.name}</span>
@@ -952,7 +952,7 @@ export default function AdminAI() {
                   ))}
                 </div>
                 <div className="mt-4 pt-4 border-t border-border">
-                  <Button variant="outline" onClick={() => setShowAddProvider(true)} className="rounded-xl border-border">
+                  <Button variant="outline" onClick={() => setShowAddProvider(true)} className=" border-border">
                     <Plus className="w-4 h-4 mr-1" /> Add Custom Provider
                   </Button>
                 </div>
@@ -968,24 +968,24 @@ export default function AdminAI() {
                     <label className="text-sm text-muted-foreground mb-1 block">Provider ID *</label>
                     <input value={newProvider.id} onChange={e => setNewProvider(p => ({ ...p, id: e.target.value }))}
                       placeholder="e.g. openrouter, together, groq"
-                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                      className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
                     <label className="text-sm text-muted-foreground mb-1 block">Display Name *</label>
                     <input value={newProvider.name} onChange={e => setNewProvider(p => ({ ...p, name: e.target.value }))}
                       placeholder="e.g. OpenRouter"
-                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                      className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div className="md:col-span-2">
                     <label className="text-sm text-muted-foreground mb-1 block">Base URL *</label>
                     <input value={newProvider.base_url} onChange={e => setNewProvider(p => ({ ...p, base_url: e.target.value }))}
                       placeholder="https://openrouter.ai/api/v1"
-                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                      className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
                     <label className="text-sm text-muted-foreground mb-1 block">Auth Type</label>
                     <select value={newProvider.auth_type} onChange={e => setNewProvider(p => ({ ...p, auth_type: e.target.value }))}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none">
+                      className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none">
                       <option value="bearer">Bearer Token</option>
                       <option value="x-api-key">X-API-Key Header</option>
                     </select>
@@ -1002,7 +1002,7 @@ export default function AdminAI() {
                                        '/chat/completions'
                       }));
                     }}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none">
+                      className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none">
                       <option value="openai">OpenAI Compatible</option>
                       <option value="gemini">Google Gemini</option>
                       <option value="anthropic">Anthropic Claude</option>
@@ -1013,12 +1013,12 @@ export default function AdminAI() {
                   <div>
                     <label className="text-sm text-muted-foreground mb-1 block">Chat Endpoint</label>
                     <input value={newProvider.chat_endpoint} onChange={e => setNewProvider(p => ({ ...p, chat_endpoint: e.target.value }))}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                      className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
                     <label className="text-sm text-muted-foreground mb-1 block">Priority</label>
                     <input type="number" value={newProvider.priority} onChange={e => setNewProvider(p => ({ ...p, priority: Number(e.target.value) }))}
-                      className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                      className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3 mt-4">
@@ -1059,7 +1059,7 @@ export default function AdminAI() {
                   <input
                     type="password"
                     placeholder={providerKey ? '•••••••• (key saved)' : 'Paste API key...'}
-                    className="flex-1 min-w-0 px-3 py-1.5 rounded-lg border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
+                    className="flex-1 min-w-0 px-3 py-1.5  border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
                     id={`custom-key-${provider.id}`}
                   />
                   <div className="flex gap-2"><Button size="sm" onClick={async () => {
@@ -1074,10 +1074,10 @@ export default function AdminAI() {
                     input.value = '';
                     setSavingKey(null);
                     await fetchData();
-                  }} disabled={savingKey === provider.id} className="bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold rounded-lg text-xs px-3">
+                  }} disabled={savingKey === provider.id} className="bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold  text-xs px-3">
                     {savingKey === provider.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Save'}
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => testCustomProvider(provider.id)} disabled={testing} className="rounded-lg">
+                  <Button size="sm" variant="outline" onClick={() => testCustomProvider(provider.id)} disabled={testing} className="">
                     {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <TestTube className="w-3 h-3" />}
                   </Button>
                 </div></div>
@@ -1095,10 +1095,10 @@ export default function AdminAI() {
 
                 {/* Actions */}
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)} className="rounded-lg text-xs">
+                  <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)} className=" text-xs">
                     <Plus className="w-3 h-3 mr-1" /> Model
                   </Button>
-                  <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)} className="rounded-lg text-xs text-red-500 hover:text-red-600">
+                  <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)} className=" text-xs text-red-500 hover:text-red-600">
                     <Trash2 className="w-3 h-3 mr-1" /> Delete
                   </Button>
                 </div>
@@ -1110,10 +1110,10 @@ export default function AdminAI() {
                     <div className="flex flex-col sm:flex-row gap-2">
                       <input value={newModel.model_id} onChange={e => setNewModel(m => ({ ...m, model_id: e.target.value }))}
                         placeholder="Model ID (e.g. anthropic/claude-3.5-sonnet)"
-                        className="flex-1 min-w-0 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                        className="flex-1 min-w-0 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input value={newModel.display_name} onChange={e => setNewModel(m => ({ ...m, display_name: e.target.value }))}
                         placeholder="Display Name"
-                        className="flex-1 min-w-0 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                        className="flex-1 min-w-0 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => createCustomModel(provider.id)} disabled={saving || !newModel.model_id || !newModel.display_name}
                           className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
@@ -1130,10 +1130,10 @@ export default function AdminAI() {
                     <div className="flex flex-col sm:flex-row gap-2">
                       <input value={newKey.key_name} onChange={e => setNewKey(k => ({ ...k, key_name: e.target.value }))}
                         placeholder="Key Name"
-                        className="sm:w-32 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                        className="sm:w-32 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input type="password" value={newKey.api_key} onChange={e => setNewKey(k => ({ ...k, api_key: e.target.value }))}
                         placeholder="sk-..."
-                        className="flex-1 min-w-0 bg-background border border-border rounded-xl px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
+                        className="flex-1 min-w-0 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <Button size="sm" onClick={() => createCustomKey(provider.id)} disabled={saving || !newKey.api_key}
                         className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
                       <Button size="sm" variant="outline" onClick={() => setShowAddKey(null)} className="bg-background border-border">Cancel</Button>
@@ -1147,7 +1147,7 @@ export default function AdminAI() {
                     <p className="text-sm font-medium text-muted-foreground mb-2">Models ({customModels.filter(m => m.provider_id === provider.id).length})</p>
                     <div className="space-y-1">
                       {customModels.filter(m => m.provider_id === provider.id).map(model => (
-                        <div key={model.id} className="flex items-center justify-between bg-card rounded-xl px-3 py-2">
+                        <div key={model.id} className="flex items-center justify-between bg-card  px-3 py-2">
                           <div>
                             <span className="text-sm text-foreground">{model.display_name}</span>
                             <span className="text-xs text-muted-foreground ml-2 font-mono">{model.model_id}</span>
@@ -1166,10 +1166,10 @@ export default function AdminAI() {
                     <p className="text-sm font-medium text-muted-foreground mb-2">Keys ({customKeys.filter(k => k.provider_id === provider.id).length})</p>
                     <div className="space-y-1">
                       {customKeys.filter(k => k.provider_id === provider.id).map(key => (
-                        <div key={key.id} className="flex items-center justify-between bg-card rounded-xl px-3 py-2">
+                        <div key={key.id} className="flex items-center justify-between bg-card  px-3 py-2">
                           <div>
                             <span className="text-sm text-foreground">{key.key_name}</span>
-                            <span className={cn("text-xs ml-2 px-1.5 py-0.5 rounded-lg",
+                            <span className={cn("text-xs ml-2 px-1.5 py-0.5 ",
                               key.status === 'valid' ? 'bg-emerald-500/10 text-emerald-400' :
                               key.status === 'invalid' ? 'bg-red-500/10 text-red-400' :
                               'bg-muted/50 text-muted-foreground'
@@ -1204,7 +1204,7 @@ export default function AdminAI() {
         {activeTab === 'secrets' && (
           <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-border p-6">
             <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center">
+              <div className="w-10 h-10  bg-amber-500/10 flex items-center justify-center">
                 <Key className="w-5 h-5 text-amber-400" />
               </div>
               <div>
