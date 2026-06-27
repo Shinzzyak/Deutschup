@@ -29,7 +29,7 @@ function ButtonLoading({ className }: { className?: string }) {
 /** Card skeleton placeholder */
 function CardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn(" border bg-card p-6 space-y-4", className)}>
+    <div className={cn("border-2 border-[#0a0a0a]/10 bg-[#f5f0eb] p-6 space-y-4", className)}>
       <Skeleton className="h-4 w-1/3" />
       <Skeleton className="h-3 w-full" />
       <Skeleton className="h-3 w-2/3" />

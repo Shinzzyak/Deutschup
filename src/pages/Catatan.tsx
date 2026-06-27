@@ -64,8 +64,8 @@ export default function Catatan() {
   return (
     <div className="max-w-5xl mx-auto pb-20 px-4">
       <div className="mb-12">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 flex items-center space-x-3">
-          <BookOpen className="w-8 h-8 text-[#F2C94C]" />
+        <h1 className="text-3xl md:text-5xl font-serif font-extrabold tracking-tight mb-4 flex items-center space-x-3">
+          <BookOpen className="w-8 h-8 text-[#c8956c]" />
           <span>Catatan Belajar & Rencana</span>
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl">Kelola catatan pribadi Anda dan dapatkan rencana belajar AI.</p>
@@ -75,25 +75,25 @@ export default function Catatan() {
         
         {/* Kolom 1: Rencana Belajar */}
         <div className="space-y-6">
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border ">
+          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center">
-                 <CalendarCheck2 className="w-6 h-6 mr-2 text-[#F2C94C]" />
+                 <CalendarCheck2 className="w-6 h-6 mr-2 text-[#c8956c]" />
                  Rencana Belajar AI
               </h2>
             </div>
             
             {!studyPlan || studyPlan.tasks.length === 0 ? (
               <div className="text-center py-8">
-                <div className="w-16 h-16 bg-[#FFF8E1]  flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="w-8 h-8 text-[#F2C94C]" />
+                <div className="w-16 h-16 bg-[#c8956c]/10 flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-8 h-8 text-[#c8956c]" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Belum ada rencana!</h3>
                 <p className="text-muted-foreground mb-6">Minta Herr Deutsch membuatkan daftar fokus belajar berdasarkan level pencapaianmu.</p>
                 <Button 
                    onClick={handleGeneratePlan} 
                    disabled={generatingPlan}
-                   className="w-full  from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937] font-bold  h-12"
+                   className="w-full bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb] font-bold h-12"
                 >
                   {generatingPlan ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Sparkles className="w-5 h-5 mr-2" />}
                   Buat Rencana Belajar
@@ -103,7 +103,7 @@ export default function Catatan() {
               <div className="space-y-4">
                 <div className="flex justify-between items-center text-sm font-semibold text-muted-foreground bg-muted p-4 ">
                    <span>Progres: {studyPlan.tasks.filter(t => t.completed).length}/{studyPlan.tasks.length} Selesai</span>
-                   <Button onClick={handleGeneratePlan} disabled={generatingPlan} variant="ghost" size="sm" className="text-[#F2C94C] hover:text-[#E0B73A] h-8">
+                   <Button onClick={handleGeneratePlan} disabled={generatingPlan} variant="ghost" size="sm" className="text-[#c8956c] hover:text-[#c8956c]/80 h-8">
                      {generatingPlan ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />} Update
                    </Button>
                 </div>
@@ -127,7 +127,7 @@ export default function Catatan() {
 
         {/* Kolom 2: Catatan Pribadi */}
         <div className="space-y-6">
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border  flex flex-col h-full">
+          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8 flex flex-col h-full">
             <h2 className="text-2xl font-bold mb-6">Catatan Pribadi</h2>
             
             <div className="mb-8">

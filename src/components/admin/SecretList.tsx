@@ -35,17 +35,17 @@ export default function SecretList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold text-gray-900">AI Provider Secrets</h2>
+        <h2 className="text-xl font-serif font-semibold text-[#0a0a0a]">AI Provider Secrets</h2>
         <button
           onClick={fetchProviders}
           disabled={loading}
-          className="px-3 py-1.5 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5  hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-gray-500 disabled:opacity-50"
+          className="px-3 py-1.5 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-[#0a0a0a]/20 disabled:opacity-50"
         >
           {loading ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
 
-      <div className="bg-[#f5f0eb] border border-[#0a0a0a]/20  p-4 mb-4">
+      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]/20 p-4 mb-4">
         <p className="text-sm text-blue-800">
           <strong>Security Note:</strong> API keys are stored securely in the database with RLS protection. 
           Only service role can access them. Keys are never displayed in full after storage.

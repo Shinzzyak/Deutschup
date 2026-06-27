@@ -86,7 +86,7 @@ export default function ChatWidget() {
       <div className="fixed right-4 z-50" style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 68px)' }}>
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-14 h-14 bg-[#0a0a0a]/80   flex items-center justify-center hover:bg-blue-700 transition-colors"
+          className="w-14 h-14 bg-[#0a0a0a] flex items-center justify-center hover:bg-[#0a0a0a]/80 transition-colors"
           aria-label={isOpen ? 'Tutup chat Herr Deutsch' : 'Buka chat Herr Deutsch'}
           aria-expanded={isOpen}
           aria-controls="chat-panel"
@@ -120,7 +120,7 @@ export default function ChatWidget() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="fixed z-[99999] bg-[#f5f0eb] bg-[#0a0a0a]   border border-[#0a0a0a]/10 border-[#0a0a0a]/10 flex flex-col overflow-hidden"
+                className="fixed z-[99999] bg-[#f5f0eb] border-2 border-[#0a0a0a] flex flex-col overflow-hidden"
                 style={{
                   bottom: 'calc(env(safe-area-inset-bottom, 0px) + 140px)',
                   right: '16px',
@@ -129,18 +129,18 @@ export default function ChatWidget() {
                 }}
               >
                 {/* Header — German Gold accent */}
-                <div className=" from-[#F2C94C] to-yellow-500 text-[#1F2937] p-3 flex items-center gap-3 shrink-0">
+                <div className="bg-[#0a0a0a] text-[#f5f0eb] p-3 flex items-center gap-3 shrink-0">
                   {/* Bot avatar — circular, German flag inspired */}
-                  <div className="w-9 h-9  bg-[#1F2937] flex items-center justify-center ring-2 ring-[#F2C94C]/50">
-                    <Bot className="w-5 h-5 text-[#F2C94C]" />
+                  <div className="w-9 h-9 bg-[#c8956c] flex items-center justify-center">
+                    <Bot className="w-5 h-5 text-[#0a0a0a]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-sm">Herr Deutsch</h3>
-                    <p className="text-[11px] text-[#1F2937]/60">Tutor Bahasa Jerman AI</p>
+                    <p className="text-[11px] text-[#f5f0eb]/60">Tutor Bahasa Jerman AI</p>
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1.5 text-[#1F2937]/60 hover:text-[#1F2937] transition-colors  hover:bg-[#1F2937]/10"
+                    className="p-1.5 text-[#f5f0eb]/60 hover:text-[#f5f0eb] transition-colors hover:bg-[#f5f0eb]/10"
                     aria-label="Tutup chat"
                   >
                     <X className="w-4 h-4" />
@@ -151,8 +151,8 @@ export default function ChatWidget() {
                 <div className="flex-1 overflow-y-auto p-3 space-y-3" aria-label="Riwayat chat" role="log">
                   {messages.length === 0 && (
                     <div className="text-center text-gray-400 mt-6">
-                      <div className="w-10 h-10 mx-auto mb-2  bg-[#F2C94C]/20 flex items-center justify-center">
-                        <Bot className="w-5 h-5 text-[#F2C94C]" />
+                      <div className="w-10 h-10 mx-auto mb-2 bg-[#c8956c]/10 flex items-center justify-center">
+                        <Bot className="w-5 h-5 text-[#c8956c]" />
                       </div>
                       <p className="text-sm">Ada yang bisa saya bantu?</p>
                       <p className="text-xs mt-1 text-gray-400/70">Grammar, vocab, atau latihan!</p>
@@ -161,14 +161,14 @@ export default function ChatWidget() {
                   {messages.map((msg, i) => (
                     <div key={i} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`} role="article" aria-label={msg.role === 'user' ? 'Pesan Anda' : 'Balasan Herr Deutsch'}>
                       {msg.role === 'model' && (
-                        <div className="w-6 h-6  bg-[#F2C94C]/20 flex items-center justify-center mr-2 mt-1 shrink-0">
-                          <Bot className="w-3 h-3 text-[#F2C94C]" />
+                        <div className="w-6 h-6 bg-[#c8956c]/10 flex items-center justify-center mr-2 mt-1 shrink-0">
+                          <Bot className="w-3 h-3 text-[#c8956c]" />
                         </div>
                       )}
-                      <div className={`max-w-[80%] px-3 py-2  text-sm ${
+                      <div className={`max-w-[80%] px-3 py-2 text-sm ${
                         msg.role === 'user'
-                          ? 'bg-[#1F2937] bg-[#0a0a0a] '
-                          : 'bg-[#FFF8E1] text-[#1F2937]  border border-[#F2C94C]/30'
+                          ? 'bg-[#0a0a0a] text-[#f5f0eb]'
+                          : 'bg-[#f5f0eb] text-[#0a0a0a] border border-[#0a0a0a]/10'
                       }`}>
                         <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
                       </div>
@@ -176,11 +176,11 @@ export default function ChatWidget() {
                   ))}
                   {isLoading && (
                     <div className="flex justify-start" role="status" aria-label="Herr Deutsch sedang mengetik">
-                      <div className="w-6 h-6  bg-[#F2C94C]/20 flex items-center justify-center mr-2 mt-1 shrink-0">
-                        <Bot className="w-3 h-3 text-[#F2C94C]" />
+                      <div className="w-6 h-6 bg-[#c8956c]/10 flex items-center justify-center mr-2 mt-1 shrink-0">
+                        <Bot className="w-3 h-3 text-[#c8956c]" />
                       </div>
-                      <div className="bg-[#FFF8E1] border border-[#F2C94C]/30 px-3 py-2  ">
-                        <Loader2 className="w-4 h-4 animate-spin text-[#F2C94C]" />
+                      <div className="bg-[#f5f0eb] border border-[#0a0a0a]/10 px-3 py-2">
+                        <Loader2 className="w-4 h-4 animate-spin text-[#c8956c]" />
                       </div>
                     </div>
                   )}
@@ -197,14 +197,14 @@ export default function ChatWidget() {
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       placeholder="Ketik pesan..."
-                      className="flex-1 px-3 py-2 border border-[#0a0a0a]/10 border-[#0a0a0a]/20  focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 bg-[#0a0a0a]/90 bg-[#0a0a0a] text-sm"
+                      className="flex-1 px-3 py-2 border-2 border-[#0a0a0a]/20 focus:outline-none focus:ring-2 focus:ring-[#8b2500]/20 bg-[#f5f0eb] text-sm"
                       disabled={isLoading}
                       aria-describedby="chat-hint"
                     />
                     <button
                       type="submit"
                       disabled={isLoading || !input.trim()}
-                      className="px-3 py-2 bg-[#1F2937] bg-[#0a0a0a]  hover:bg-[#1F2937]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      className="px-3 py-2 bg-[#0a0a0a] hover:bg-[#0a0a0a]/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                       aria-label="Kirim pesan"
                     >
                       <Send className="w-4 h-4" />

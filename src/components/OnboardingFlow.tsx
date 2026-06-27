@@ -44,7 +44,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
   };
 
   return (
-    <div className="min-h-screen  from-slate-50 via-white to-amber-50/30 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#f5f0eb] flex items-center justify-center p-4">
       <div className="w-full max-w-lg">
         <AnimatePresence mode="wait">
           {step === 'welcome' && (
@@ -55,10 +55,10 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               exit={{ opacity: 0, y: -20 }}
               className="text-center"
             >
-              <div className="w-20 h-20  from-amber-400 to-amber-600  flex items-center justify-center mx-auto mb-6 ">
+              <div className="w-20 h-20 bg-[#c8956c] flex items-center justify-center mx-auto mb-6">
                 <Sparkles className="w-10 h-10 bg-[#0a0a0a]" />
               </div>
-              <h1 className="text-3xl font-bold text-[#0a0a0a] mb-3">
+              <h1 className="text-3xl font-serif font-bold text-[#0a0a0a] mb-3">
                 Selamat Datang di Deutschup! 🇩🇪
               </h1>
               <p className="text-lg text-[#0a0a0a]/60 mb-8">
@@ -67,7 +67,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               </p>
               <button
                 onClick={() => setStep('level')}
-                className=" from-amber-500 to-amber-600 bg-[#0a0a0a] px-8 py-3.5  font-semibold text-lg hover:from-amber-600 hover:to-amber-700 transition-all  hover: flex items-center gap-2 mx-auto"
+                className="bg-[#0a0a0a] px-8 py-3.5 font-semibold text-lg hover:bg-[#0a0a0a]/90 transition-all flex items-center gap-2 mx-auto text-[#f5f0eb]"
               >
                 Mulai <ChevronRight className="w-5 h-5" />
               </button>
@@ -87,7 +87,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               >
                 <ChevronLeft className="w-4 h-4" /> Kembali
               </button>
-              <h2 className="text-2xl font-bold text-[#0a0a0a] mb-2">
+              <h2 className="text-2xl font-serif font-bold text-[#0a0a0a] mb-2">
                 Level bahasa Jerman kamu? 🎯
               </h2>
               <p className="text-[#0a0a0a]/60 mb-6">
@@ -115,9 +115,9 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               <button
                 onClick={() => selectedLevel && setStep('goal')}
                 disabled={!selectedLevel}
-                className={`w-full py-3.5  font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-3.5 font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
                   selectedLevel
-                    ? ' from-amber-500 to-amber-600 bg-[#0a0a0a] hover:from-amber-600 hover:to-amber-700 '
+                    ? 'bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]'
                     : 'bg-[#0a0a0a]/5 text-[#0a0a0a]/40 cursor-not-allowed'
                 }`}
               >
@@ -139,7 +139,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               >
                 <ChevronLeft className="w-4 h-4" /> Kembali
               </button>
-              <h2 className="text-2xl font-bold text-[#0a0a0a] mb-2">
+              <h2 className="text-2xl font-serif font-bold text-[#0a0a0a] mb-2">
                 Tujuan belajar kamu? 🚀
               </h2>
               <p className="text-[#0a0a0a]/60 mb-6">
@@ -167,9 +167,9 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               <button
                 onClick={() => selectedGoal && handleComplete()}
                 disabled={!selectedGoal}
-                className={`w-full py-3.5  font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
+                className={`w-full py-3.5 font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
                   selectedGoal
-                    ? ' from-amber-500 to-amber-600 bg-[#0a0a0a] hover:from-amber-600 hover:to-amber-700 '
+                    ? 'bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]'
                     : 'bg-[#0a0a0a]/5 text-[#0a0a0a]/40 cursor-not-allowed'
                 }`}
               >
@@ -184,9 +184,9 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
           {['welcome', 'level', 'goal'].map((s, i) => (
             <div
               key={s}
-              className={`w-2 h-2  transition-all ${
-                s === step ? 'bg-[#f5f0eb]0 w-6' : 
-                ['welcome', 'level', 'goal'].indexOf(step) > i ? 'bg-[#c8956c]/80' : 'bg-slate-200'
+              className={`w-2 h-2 transition-all ${
+                s === step ? 'bg-[#0a0a0a] w-6' : 
+                ['welcome', 'level', 'goal'].indexOf(step) > i ? 'bg-[#c8956c]/80' : 'bg-[#0a0a0a]/20'
               }`}
             />
           ))}

@@ -5,20 +5,20 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 const badgeVariants = cva(
-  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden  border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
+  "group/badge inline-flex h-5 w-fit shrink-0 items-center justify-center gap-1 overflow-hidden border border-transparent px-2 py-0.5 text-xs font-medium whitespace-nowrap transition-all focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 aria-invalid:border-destructive aria-invalid:ring-destructive/20 aria-invalid:ring-destructive/40 [&>svg]:pointer-events-none [&>svg]:size-3!",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground [a]:hover:bg-primary/80",
+        default: "bg-[#0a0a0a] text-[#f5f0eb] [a]:hover:bg-[#0a0a0a]/80",
         secondary:
-          "bg-secondary text-secondary-foreground [a]:hover:bg-secondary/80",
+          "bg-[#f5f0eb] text-[#0a0a0a] border border-[#0a0a0a]/20 [a]:hover:bg-[#0a0a0a]/5",
         destructive:
-          "bg-destructive/10 text-destructive focus-visible:ring-destructive/20 bg-destructive/20 focus-visible:ring-destructive/40 [a]:hover:bg-destructive/20",
+          "bg-[#8b2500]/10 text-[#8b2500] focus-visible:ring-[#8b2500]/20 [a]:hover:bg-[#8b2500]/20",
         outline:
-          "border-border text-foreground [a]:hover:bg-muted [a]:hover:text-muted-foreground",
+          "border-2 border-[#0a0a0a] text-[#0a0a0a] [a]:hover:bg-[#0a0a0a]/5",
         ghost:
-          "hover:bg-muted hover:text-muted-foreground hover:bg-muted/50",
-        link: "text-primary underline-offset-4 hover:underline",
+          "hover:bg-[#0a0a0a]/5 text-[#0a0a0a]",
+        link: "text-[#8b2500] underline-offset-4 hover:underline",
       },
     },
     defaultVariants: {

@@ -38,9 +38,9 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#f5f0eb]   w-full max-w-md mx-4">
-        <div className="px-6 py-4 border-b border-[#0a0a0a]/20">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] w-full max-w-md mx-4">
+        <div className="px-6 py-4 border-b border-[#0a0a0a]/10">
           <h3 className="text-lg font-semibold text-gray-900">
             {success ? 'Success' : `Add API Key for ${providerName}`}
           </h3>
@@ -63,7 +63,7 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
                   id="apiKey"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full px-3 py-2 border border-[#0a0a0a]/30   focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-[#0a0a0a]/70"
+                  className="w-full px-3 py-2 border-2 border-[#0a0a0a]/20 bg-[#f5f0eb] focus:outline-none focus:ring-2 focus:ring-[#8b2500]/20 focus:border-[#8b2500]"
                   placeholder="Enter your API key"
                   autoFocus
                 />
@@ -82,14 +82,14 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5  hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  className="px-4 py-2 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-[#0a0a0a]/20"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-2 text-sm font-medium bg-[#0a0a0a] bg-[#0a0a0a]/80  hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-medium bg-[#0a0a0a] hover:bg-[#0a0a0a]/80 focus:outline-none focus:ring-2 focus:ring-[#0a0a0a]/20 disabled:opacity-50 text-[#f5f0eb]"
                 >
                   {loading ? 'Saving...' : 'Save Key'}
                 </button>

@@ -148,8 +148,8 @@ export default function CheckpointView() {
         <div className="flex items-center space-x-3 mb-2">
           <Target className="w-8 h-8" />
           <div>
-            <h1 className="text-2xl md:text-3xl font-bold">{checkpointData.title}</h1>
-            <p className="bg-[#0a0a0a]/80 text-sm">Checkpoint Level {level}</p>
+            <h1 className="text-2xl md:text-3xl font-serif font-bold">{checkpointData.title}</h1>
+            <p className="text-white/80 text-sm">Checkpoint Level {level}</p>
           </div>
         </div>
         <div className="mt-4 flex items-center space-x-4 text-sm">
@@ -252,7 +252,7 @@ export default function CheckpointView() {
             )}
           </div>
 
-          <h2 className="text-3xl font-extrabold mb-2">
+          <h2 className="text-3xl font-serif font-extrabold mb-2">
             {passed ? "Lulus! 🎉" : "Belum Cukup 😅"}
           </h2>
 

@@ -154,7 +154,7 @@ export default function MockTest() {
       <div className="max-w-3xl mx-auto pb-20 text-center space-y-8">
         <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-12  border border-border ">
            <FileText className="w-16 h-16 mx-auto mb-6 text-blue-600" />
-           <h1 className="text-4xl font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
+           <h1 className="text-4xl font-serif font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
            <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
              Ikuti simulasi ujian berstandar TELC/Goethe. Terdiri dari sesi Reading, Grammar, dan Vocabulary. 
              Waktu pengerjaan: 30 menit.

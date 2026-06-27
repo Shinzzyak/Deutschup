@@ -140,10 +140,10 @@ export default function Pricing() {
   return (
     <div className="max-w-6xl mx-auto py-8 md:py-12 px-4">
       <div className="text-center mb-16">
-         <h1 className="text-4xl font-extrabold text-foreground mb-4 tracking-tight">Pilih Paket Belajarmu</h1>
+         <h1 className="text-4xl font-serif font-extrabold text-[#0a0a0a] mb-4 tracking-tight">Pilih Paket Belajarmu</h1>
          <p className="text-lg text-muted-foreground">Investasi terbaik untuk masa depan bahasamu. Mulai gratis, upgrade kapan saja.</p>
          {activePro && (
-           <div className="mt-4 inline-flex items-center gap-2 bg-green-50 text-green-700 px-4 py-2  text-sm font-medium border border-green-200">
+           <div className="mt-4 inline-flex items-center gap-2 bg-[#2d8a4e]/10 text-[#2d8a4e] px-4 py-2 text-sm font-medium border border-[#2d8a4e]/20">
              <Check className="w-4 h-4" />
              Pro Aktif — {daysRemaining} hari tersisa
            </div>
@@ -152,16 +152,16 @@ export default function Pricing() {
 
       <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
         {plans.map((plan) => (
-          <div key={plan.id} className={`relative bg-card  p-8 border ${plan.popular ? 'border-[#F2C94C]   scale-105 z-10' : 'border-border '} flex flex-col`}>
+          <div key={plan.id} className={`relative bg-[#f5f0eb] p-8 border-2 ${plan.popular ? 'border-[#8b2500] z-10' : 'border-[#0a0a0a]'} flex flex-col`}>
             {plan.popular && (
               <div className="absolute -top-4 inset-x-0 flex justify-center">
-                 <span className=" from-[#F2C94C] to-[#E0B73A] flex items-center  text-[#1F2937] text-xs font-bold px-3 py-1  uppercase tracking-wider">
+                 <span className="bg-[#8b2500] flex items-center text-[#f5f0eb] text-xs font-bold px-3 py-1 uppercase tracking-wider">
                    <Sparkles className="w-3 h-3 mr-1" /> Paling Laris
                  </span>
               </div>
             )}
 
-            <h2 className="text-2xl font-bold mb-2">{plan.name}</h2>
+            <h2 className="text-2xl font-serif font-bold mb-2">{plan.name}</h2>
             <p className="text-muted-foreground mb-6 min-h-12">{plan.description}</p>
 
             <div className="mb-8">
@@ -182,7 +182,7 @@ export default function Pricing() {
               onClick={() => handleUpgrade(plan.id)}
               disabled={loading !== null || plan.id === 'free' || activePro}
               variant={plan.buttonVariant}
-              className={`w-full  py-6 text-lg font-bold  ${plan.popular && !activePro ? ' from-[#F2C94C] to-[#E0B73A] hover:from-[#E0B73A] hover:to-[#F2C94C] text-[#1F2937]' : ''}`}
+              className={`w-full py-6 text-lg font-bold ${plan.popular && !activePro ? 'bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]' : ''}`}
             >
               {loading === plan.id ? <Loader2 className="w-6 h-6 animate-spin" /> : plan.buttonText}
             </Button>

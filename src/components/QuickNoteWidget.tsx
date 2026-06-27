@@ -53,7 +53,7 @@ export default function QuickNoteWidget() {
       {/* Floating button — unchanged */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed right-6 w-14 h-14  bg-yellow-400 text-yellow-900 flex items-center justify-center  hover:scale-110 transition-transform z-40 border-4 border-background"
+        className="fixed right-6 w-14 h-14 bg-[#c8956c] text-[#0a0a0a] flex items-center justify-center hover:scale-110 transition-transform z-40 border-4 border-[#f5f0eb]"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 144px)' }}
         aria-label={isOpen ? "Tutup quick note" : "Buka quick note"}
       >
@@ -81,7 +81,7 @@ export default function QuickNoteWidget() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="fixed z-[99999] bg-[#FFF8E1]   border border-yellow-300/60 flex flex-col overflow-hidden"
+                className="fixed z-[99999] bg-[#f5f0eb] border-2 border-[#0a0a0a] flex flex-col overflow-hidden"
                 style={{
                   bottom: 'calc(env(safe-area-inset-bottom, 0px) + 220px)',
                   right: '16px',
@@ -90,14 +90,14 @@ export default function QuickNoteWidget() {
                 }}
               >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 h-12 border-b border-yellow-300/60 shrink-0 bg-[#FFF8E1]">
+                <div className="flex items-center justify-between px-4 h-12 border-b border-[#0a0a0a]/10 shrink-0">
                   <div className="flex items-center gap-2">
-                    <Edit3 className="w-4 h-4 text-yellow-700" />
-                    <span className="text-sm font-bold text-yellow-900">Quick Note</span>
+                    <Edit3 className="w-4 h-4 text-[#c8956c]" />
+                    <span className="text-sm font-bold text-[#0a0a0a]">Quick Note</span>
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1.5 text-yellow-700 hover:text-yellow-900 transition-colors  hover:bg-yellow-200/60"
+                    className="p-1.5 text-[#0a0a0a]/50 hover:text-[#0a0a0a] transition-colors hover:bg-[#0a0a0a]/5"
                     aria-label="Tutup quick note"
                   >
                     <X className="w-4 h-4" />
@@ -109,15 +109,15 @@ export default function QuickNoteWidget() {
                   value={text}
                   onChange={(e) => setText(e.target.value)}
                   placeholder="Tuliskan coretan cepat di sini..."
-                  className="flex-1 bg-transparent p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 text-yellow-900 placeholder:text-yellow-700/40 text-sm leading-relaxed"
+                  className="flex-1 bg-transparent p-4 resize-none focus:outline-none focus:ring-2 focus:ring-[#8b2500]/20 text-[#0a0a0a] placeholder:text-[#0a0a0a]/30 text-sm leading-relaxed"
                 />
 
                 {/* Footer — Save button with German Gold gradient */}
-                <div className="px-4 py-3 border-t border-yellow-300/60 shrink-0 bg-[#FFF8E1]">
+                <div className="px-4 py-3 border-t border-[#0a0a0a]/10 shrink-0">
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="w-full px-4 py-2.5  from-[#F2C94C] to-yellow-500 hover:from-yellow-500 hover:to-[#F2C94C] text-yellow-900 text-sm font-bold  flex items-center justify-center  transition-all duration-200"
+                    className="w-full px-4 py-2.5 bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb] text-sm font-bold flex items-center justify-center transition-all duration-200"
                     aria-label="Simpan catatan"
                   >
                     {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}

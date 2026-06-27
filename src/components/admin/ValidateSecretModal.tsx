@@ -30,10 +30,10 @@ export default function ValidateSecretModal({ providerId, providerName, onClose 
   }, [providerId, validateSecret]);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-[#f5f0eb]   w-full max-w-md mx-4">
-        <div className="px-6 py-4 border-b border-[#0a0a0a]/20">
-          <h3 className="text-lg font-semibold text-gray-900">
+    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
+      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] w-full max-w-md mx-4">
+        <div className="px-6 py-4 border-b border-[#0a0a0a]/10">
+          <h3 className="text-lg font-serif font-semibold text-[#0a0a0a]">
             Validate {providerName} API Key
           </h3>
         </div>
@@ -70,7 +70,7 @@ export default function ValidateSecretModal({ providerId, providerName, onClose 
         <div className="px-6 py-4 border-t border-[#0a0a0a]/20">
           <button
             onClick={onClose}
-            className="w-full px-4 py-2 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5  hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-gray-500"
+            className="w-full px-4 py-2 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-[#0a0a0a]/20"
           >
             Close
           </button>

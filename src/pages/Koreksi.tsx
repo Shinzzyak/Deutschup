@@ -32,20 +32,20 @@ export default function Koreksi() {
   return (
     <div className="max-w-3xl mx-auto pb-20">
       <div className="mb-12">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4 flex items-center space-x-3">
-          <Sparkles className="w-8 h-8 text-yellow-500" />
+        <h1 className="text-3xl md:text-5xl font-serif font-extrabold tracking-tight mb-4 flex items-center space-x-3">
+          <Sparkles className="w-8 h-8 text-[#c8956c]" />
           <span>Koreksi Kalimat Pintar</span>
         </h1>
         <p className="text-muted-foreground text-lg md:text-xl">Tuliskan kalimat bahasa Jermanmu, AI kami akan memeriksa tata bahasa dan strukturnya.</p>
       </div>
 
-      <div className="bg-card p-6 md:p-8  border border-border  mb-8">
+      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8 mb-8">
         <label className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Misal: Ich habe einen auto gekauft..."
-          className="w-full min-h-[120px] bg-muted border-2 border-border  p-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium resize-none mb-6"
+          className="w-full min-h-[120px] bg-[#f5f0eb] border-2 border-[#0a0a0a]/20 p-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium resize-none mb-6"
         />
         <Button 
           onClick={handleKoreksi} 
@@ -64,7 +64,7 @@ export default function Koreksi() {
       {result && (
         <div className="animate-in fade-in-50 slide-in-from-bottom-4 duration-500 space-y-6">
           <div className={cn(
-            "p-6 md:p-8  border-2  flex flex-col sm:flex-row gap-6",
+            "p-6 md:p-8 border-2 flex flex-col sm:flex-row gap-6",
             result.isPerfect ? "bg-green-50 border-green-200" : "bg-orange-50 border-orange-200"
           )}>
             <div className="flex-shrink-0">

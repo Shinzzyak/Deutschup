@@ -87,22 +87,22 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
           initial={{ opacity: 0, scale: 0.95, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
-          className="w-full max-w-xl bg-[#f5f0eb] bg-[#0a0a0a]   overflow-hidden"
+          className="w-full max-w-xl bg-[#f5f0eb] border-2 border-[#0a0a0a] overflow-hidden"
           onClick={e => e.stopPropagation()}
         >
           {/* Input */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-[#0a0a0a]/10 border-[#0a0a0a]/10">
+          <div className="flex items-center gap-3 px-4 py-3 border-b border-[#0a0a0a]/10">
             <Search className="w-5 h-5 text-[#0a0a0a]/40 shrink-0" />
             <input
               ref={inputRef}
               type="text"
               placeholder="Cari kosakata, pelajaran, atau verba..."
-              className="flex-1 text-lg outline-none bg-transparent text-[#0a0a0a] bg-[#0a0a0a] placeholder:text-[#0a0a0a]/40 placeholder:text-[#0a0a0a]/50"
+              className="flex-1 text-lg outline-none bg-transparent text-[#0a0a0a] placeholder:text-[#0a0a0a]/40"
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-[#0a0a0a]/40 bg-[#0a0a0a]/5 bg-[#0a0a0a]/90 ">
+            <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-[#0a0a0a]/40 bg-[#0a0a0a]/5">
               ESC
             </kbd>
             <button onClick={onClose} className="md:hidden p-1">
@@ -113,7 +113,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
           {/* Results */}
           <div className="max-h-[60vh] overflow-y-auto">
             {query && allResults.length === 0 && (
-              <div className="p-8 text-center text-[#0a0a0a]/50 text-[#0a0a0a]/40">
+              <div className="p-8 text-center text-[#0a0a0a]/40">
                 Tidak ada hasil untuk "{query}"
               </div>
             )}
@@ -125,7 +125,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                   <button
                     key={i}
                     onClick={() => setQuery(r)}
-                    className="w-full flex items-center gap-2 px-3 py-2  hover:bg-[#f5f0eb] hover:bg-[#0a0a0a]/90 text-left text-sm text-[#0a0a0a]/70 text-[#0a0a0a]/30"
+                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#0a0a0a]/5 text-left text-sm text-[#0a0a0a]/70"
                   >
                     <Clock className="w-4 h-4 text-[#0a0a0a]/40" />
                     {r}
@@ -151,8 +151,8 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                             key={item.id}
                             onClick={() => handleSelect(item)}
                             className={cn(
-                              "w-full flex items-center gap-3 px-3 py-2.5  text-left transition-colors",
-                              idx === selectedIndex ? "bg-[#f5f0eb] bg-amber-950/30" : "hover:bg-[#f5f0eb] hover:bg-[#0a0a0a]/90"
+                              "w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors",
+                              idx === selectedIndex ? "bg-[#c8956c]/10" : "hover:bg-[#0a0a0a]/5"
                             )}
                           >
                             {item.article && (
@@ -165,8 +165,8 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                               </span>
                             )}
                             <div className="flex-1 min-w-0">
-                              <p className="font-medium text-[#0a0a0a] bg-[#0a0a0a] truncate">{item.primary}</p>
-                              <p className="text-sm text-[#0a0a0a]/50 text-[#0a0a0a]/40 truncate">{item.secondary}</p>
+                              <p className="font-medium text-[#0a0a0a] truncate">{item.primary}</p>
+                              <p className="text-sm text-[#0a0a0a]/50 truncate">{item.secondary}</p>
                             </div>
                             <span className={cn("text-xs font-medium px-2 py-0.5 ", typeColors[item.type])}>
                               {typeLabels[item.type]}

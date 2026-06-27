@@ -149,7 +149,7 @@ export default function VerbTrainer() {
   return (
     <div className="max-w-4xl mx-auto pb-20">
       <div className="mb-12">
-        <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight mb-4">Kamus Mini (Semua Kata)</h1>
+        <h1 className="text-3xl md:text-5xl font-serif font-extrabold tracking-tight mb-4">Kamus Mini (Semua Kata)</h1>
         <p className="text-muted-foreground text-lg md:text-xl">Cari kata sifat, kata benda, maupun kata kerja. Bahasa Indonesia atau Jerman!</p>
       </div>
 
@@ -160,7 +160,7 @@ export default function VerbTrainer() {
         <input 
           type="text" 
           placeholder="Cari kata (misal: rumah, gehen, schön)..."
-          className="w-full bg-card border-2 border-border  py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium"
+          className="w-full bg-[#f5f0eb] border-2 border-[#0a0a0a]/20 py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -168,11 +168,11 @@ export default function VerbTrainer() {
 
       {searchTerm && (filteredVerbs.length > 0 || filteredVocab.length > 0) && (
          <div className="mb-8">
-            <h2 className="text-2xl font-bold mb-6 text-foreground border-b border-border pb-4">Hasil Pencarian ({filteredVerbs.length + filteredVocab.length})</h2>
+            <h2 className="text-2xl font-serif font-bold mb-6 text-[#0a0a0a] border-b border-[#0a0a0a]/10 pb-4">Hasil Pencarian ({filteredVerbs.length + filteredVocab.length})</h2>
             
             <div className="space-y-4">
               {filteredVocab.map(v => (
-                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-card  border border-border  hover: transition-shadow">
+                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-[#f5f0eb] border border-[#0a0a0a]/10 hover:bg-[#0a0a0a]/3 transition-colors">
                   <div>
                     <div className="flex items-center space-x-3 mb-1">
                       {v.article && (
@@ -197,7 +197,7 @@ export default function VerbTrainer() {
 
       {searchTerm && filteredVerbs.length > 0 && (
           <div className="mb-8 mt-12">
-            <h2 className="text-2xl font-bold mb-6 text-foreground border-b border-border pb-4">Tabel Konjugasi Verba Terkait</h2>
+            <h2 className="text-2xl font-serif font-bold mb-6 text-[#0a0a0a] border-b border-[#0a0a0a]/10 pb-4">Tabel Konjugasi Verba Terkait</h2>
           </div>
       )}
 
@@ -208,11 +208,11 @@ export default function VerbTrainer() {
           </div>
         )}
         {(searchTerm && filteredVerbs.map(verb => (
-            <div key={verb.infinitive} className="bg-card  border border-border overflow-hidden ">
-              <div className="p-6 md:p-8 border-b border-border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div key={verb.infinitive} className="bg-[#f5f0eb] border-2 border-[#0a0a0a] overflow-hidden">
+              <div className="p-6 md:p-8 border-b border-[#0a0a0a]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center space-x-3 mb-1">
-                    <h2 className="text-3xl font-extrabold text-foreground">{verb.infinitive}</h2>
+                    <h2 className="text-3xl font-serif font-extrabold text-[#0a0a0a]">{verb.infinitive}</h2>
                     <span className={cn(
                       "text-xs font-bold px-2 py-1  uppercase tracking-wider",
                       verb.type === 'irregular' ? "bg-red-100 text-red-700" : "bg-green-100 text-green-700"
@@ -229,7 +229,7 @@ export default function VerbTrainer() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0 bg-muted">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-0">
                 <div className="p-6 border-b md:border-b-0 md:border-r border-border">
                   <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Präsens</h3>
                   <div className="space-y-3">

@@ -85,7 +85,7 @@ export default function LevelView() {
                     {meta.title}
                   </span>
                 </div>
-                <p className="bg-[#0a0a0a]/50 text-sm mt-0.5">{meta.description}</p>
+                <p className="text-white/50 text-sm mt-0.5">{meta.description}</p>
               </div>
             </div>
             <div className="mt-5 flex items-center gap-5 text-sm">
@@ -197,7 +197,7 @@ export default function LevelView() {
           <p className="text-sm text-[#0a0a0a]/50 mb-4">
             Kamu telah menyelesaikan semua pelajaran di level {levelId}!
           </p>
-          <Button onClick={() => navigate('/')} className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 bg-[#0a0a0a] font-bold h-11 px-6">
+          <Button onClick={() => navigate('/')} className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 font-bold h-11 px-6">
             Kembali ke Dashboard
           </Button>
         </div>

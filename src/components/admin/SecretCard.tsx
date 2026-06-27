@@ -33,10 +33,10 @@ export default function SecretCard({ provider }: SecretCardProps) {
 
   return (
     <>
-      <div className="bg-[#f5f0eb]   p-4 mb-4">
+      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 mb-4">
         <div className="flex items-start justify-between mb-3">
           <div>
-            <h3 className="text-lg font-semibold text-gray-900">{provider.name}</h3>
+            <h3 className="text-lg font-serif font-semibold text-[#0a0a0a]">{provider.name}</h3>
             <p className="text-sm text-[#0a0a0a]/50">Priority: {provider.priority}</p>
           </div>
           <span className={`px-2 py-1 text-xs font-medium  ${statusColors[provider.status]}`}>
@@ -73,7 +73,7 @@ export default function SecretCard({ provider }: SecretCardProps) {
           {provider.status === 'missing_key' ? (
             <button
               onClick={() => setShowAddModal(true)}
-              className="px-3 py-1.5 bg-[#0a0a0a]/80 bg-[#0a0a0a] text-sm font-medium  hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-3 py-1.5 bg-[#0a0a0a] text-sm font-medium hover:bg-[#0a0a0a]/80 focus:outline-none focus:ring-2 focus:ring-[#0a0a0a]/20 text-[#f5f0eb]"
             >
               Add Key
             </button>
@@ -81,13 +81,13 @@ export default function SecretCard({ provider }: SecretCardProps) {
             <>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="px-3 py-1.5 bg-gray-600 bg-[#0a0a0a] text-sm font-medium  hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                className="px-3 py-1.5 bg-[#0a0a0a]/70 text-sm font-medium hover:bg-[#0a0a0a] focus:outline-none focus:ring-2 focus:ring-[#0a0a0a]/20 text-[#f5f0eb]"
               >
                 Update Key
               </button>
               <button
                 onClick={() => setShowValidateModal(true)}
-                className="px-3 py-1.5 bg-green-600 bg-[#0a0a0a] text-sm font-medium  hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                className="px-3 py-1.5 bg-[#2d8a4e] text-sm font-medium hover:bg-[#2d8a4e]/80 focus:outline-none focus:ring-2 focus:ring-[#2d8a4e]/20 text-[#f5f0eb]"
               >
                 Validate
               </button>

@@ -65,7 +65,7 @@ export default function GoetheExam() {
     return (
       <div className="max-w-4xl mx-auto">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold mb-2">🎯 Goethe Prüfung Simulator</h1>
+          <h1 className="text-3xl font-serif font-bold mb-2">🎯 Goethe Prüfung Simulator</h1>
           <p className="text-[#0a0a0a]/40">Pilih level untuk memulai simulasi ujian</p>
         </div>
 
@@ -78,7 +78,7 @@ export default function GoetheExam() {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setSelectedLevel(level.id as Level)}
-                className={`p-6  border-2 text-left transition-all ${
+                className={`p-6 border-2 text-left transition-all ${
                   level.color === 'green' ? 'border-green-500/30 bg-green-500/5 hover:border-green-500/60' :
                   level.color === 'blue' ? 'border-blue-500/30 bg-blue-500/5 hover:border-blue-500/60' :
                   level.color === 'purple' ? 'border-purple-500/30 bg-purple-500/5 hover:border-purple-500/60' :
@@ -104,7 +104,7 @@ export default function GoetheExam() {
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
-          className="bg-[#0a0a0a]/90/50  p-8 border border-[#0a0a0a]/10"
+          className="bg-[#f5f0eb] p-8 border-2 border-[#0a0a0a]"
         >
           <Trophy className="w-16 h-16 mx-auto text-amber-400 mb-4" />
           <h2 className="text-2xl font-bold mb-2">Selesai! 🎉</h2>
@@ -128,7 +128,7 @@ export default function GoetheExam() {
           <div className="flex gap-3 justify-center">
             <button
               onClick={resetExam}
-              className="flex items-center gap-2 px-6 py-3 bg-[#0a0a0a]/80  hover:bg-[#0a0a0a]/70 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 bg-[#0a0a0a]/80 hover:bg-[#0a0a0a]/70 transition-colors"
             >
               <RotateCcw className="w-4 h-4" /> Ulangi
             </button>
@@ -180,7 +180,7 @@ export default function GoetheExam() {
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          className="bg-[#0a0a0a]/90/50  p-6 border border-[#0a0a0a]/10 mb-6"
+          className="bg-[#f5f0eb] p-6 border-2 border-[#0a0a0a] mb-6"
         >
           <div className="flex items-center gap-2 mb-4">
             <span className={`px-2 py-1 rounded text-xs font-medium ${
@@ -240,7 +240,7 @@ export default function GoetheExam() {
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-4 p-4 bg-[#0a0a0a]/80/50  border border-[#0a0a0a]/20"
+              className="mt-4 p-4 bg-[#0a0a0a]/5 border border-[#0a0a0a]/10"
             >
               <p className="text-sm text-[#0a0a0a]/30">
                 💡 {currentQ.explanation}
