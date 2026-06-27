@@ -38,3 +38,20 @@
 - **Pattern:** SPA routes always return 200 (server rewrite) — test client-side routing
 - **Pattern:** Use `page.on('response')` for network monitoring (404s, size, redirects)
 - **Pattern:** Security tests use `request` fixture (no browser needed) — faster
+
+## 2026-06-27 — Landing Page "Deutsche Präzision"
+- **Outcome:** ✅ SUCCESS — User: "Anjayyy bagus bet cok"
+- **What worked:**
+  - Editorial Brutalist direction (serif headlines, sharp edges, flat surfaces)
+  - DM Serif Display font for editorial feel
+  - Black/cream/amber/red palette (NOT purple/blue gradients)
+  - Asymmetric 12-col grid (NOT centered symmetric)
+  - Grid texture background (NOT glass/blur)
+  - German flag as vertical stripe (NOT horizontal bar)
+  - `rounded-none` everywhere (NOT rounded-3xl)
+  - Numbered feature list (NOT bento grid)
+- **What failed (before):**
+  - Glassmorphism + purple gradients = "AI slop"
+  - Floating glass cards with ambient glow = generic
+  - Sparkles badge + gradient text = overused AI pattern
+- **Key insight:** "AI slop" = generic modern patterns. "Editorial" = intentional typography, sharp edges, flat surfaces. Difference is INTENTIONALITY.
