@@ -53,7 +53,7 @@ export function createMockSupabase() {
     signUp: vi.fn().mockResolvedValue({
       data: { session: null, user: null },
       error: null,
-    },
+    }),
     signOut: vi.fn().mockResolvedValue({ error: null }),
     onAuthStateChange: vi.fn().mockReturnValue({
       data: { subscription: { unsubscribe: vi.fn() } },

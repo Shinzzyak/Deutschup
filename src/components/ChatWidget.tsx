@@ -53,13 +53,16 @@ export default function ChatWidget() {
     setIsLoading(true);
 
     try {
-      const token = (await supabase.auth.getSession()).data.session?.access_token;
+      const clerk = (window as any).Clerk;
+      const clerkToken = clerk?.session ? await clerk.session.getToken() : null;
+      const chatHeaders: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'x-user-email': (window as any).__CLERK_USER_EMAIL || '',
+      };
+      if (clerkToken) chatHeaders['Authorization'] = `Bearer ${clerkToken}`;
       const resp = await fetch('/api/ai?action=chat', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
+        headers: chatHeaders,
         body: JSON.stringify({
           message: userMsg,
           history: messages.slice(-6),

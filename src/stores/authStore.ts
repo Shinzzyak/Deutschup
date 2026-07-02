@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 import { create } from 'zustand';
-import { User } from '@supabase/supabase-js';
-import { supabase } from '../lib/supabase';
+import type { User } from '@supabase/supabase-js';
+import { supabase, dbProxy } from '../lib/supabase';
 import { resolveInternalId } from '../lib/clerk/identity';
 import { captureAuth } from './debugStore';
 
@@ -26,7 +26,8 @@ interface AuthState {
   tierData: TierData;
   profileData: ProfileData;
   loading: boolean;
-  profileLoaded: boolean; // P1: tracks if profile has been hydrated
+  profileLoaded: boolean;
+  setUser: (user: User | null) => void;
   loginWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -34,13 +35,10 @@ interface AuthState {
 const SESSION_CACHE = 'deutschup_session';
 const PROFILE_CACHE_PREFIX = 'deutschup_profile_';
 
-// P3: Cache profile in localStorage
 function cacheProfile(userId: string, tierData: TierData, profileData: ProfileData) {
   try {
     localStorage.setItem(`${PROFILE_CACHE_PREFIX}${userId}`, JSON.stringify({
-      tierData,
-      profileData,
-      cachedAt: Date.now(),
+      tierData, profileData, cachedAt: Date.now(),
     }));
   } catch {}
 }
@@ -50,7 +48,6 @@ function loadCachedProfile(userId: string): { tierData: TierData; profileData: P
     const raw = localStorage.getItem(`${PROFILE_CACHE_PREFIX}${userId}`);
     if (!raw) return null;
     const { tierData, profileData, cachedAt } = JSON.parse(raw);
-    // Use cache if less than 24h old
     if (Date.now() - cachedAt > 24 * 60 * 60 * 1000) {
       localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
       return null;
@@ -65,8 +62,7 @@ function cacheSession(session: any) {
   try {
     if (session?.user) {
       localStorage.setItem(SESSION_CACHE, JSON.stringify({
-        user: session.user,
-        expires_at: session.expires_at,
+        user: session.user, expires_at: session.expires_at,
       }));
     } else {
       localStorage.removeItem(SESSION_CACHE);
@@ -94,161 +90,115 @@ function parseProfileData(data: any): { tierData: TierData; profileData: Profile
   const now = Date.now();
   const isPro = data.subscription === 'pro' && data.pro_expires_at && new Date(data.pro_expires_at).getTime() > now;
   const effectiveTier = isPro ? 'pro' : 'free';
-
   return {
     tierData: {
-      tier: effectiveTier,
-      tierExpiry: data.tier_expiry,
+      tier: effectiveTier, tierExpiry: data.tier_expiry,
       subscription: data.subscription || 'free',
-      pro_expires_at: data.pro_expires_at,
-      role: data.role || 'user',
+      pro_expires_at: data.pro_expires_at, role: data.role || 'user',
     },
     profileData: {
-      full_name: data.full_name,
-      avatar_url: data.avatar_url,
-      role: data.role,
+      full_name: data.full_name, avatar_url: data.avatar_url, role: data.role,
     },
   };
 }
 
-export const useAuthStore = create<AuthState>((set, get) => {
-  // Fetch profile data from Supabase (database only)
-  const fetchProfile = async (clerkUserId: string) => {
-    console.log('[AUTH_STATE] fetchProfile:', { clerkUserId: clerkUserId.substring(0, 12) });
-    let tierData: TierData = { tier: 'free' };
-    let profileData: ProfileData = {};
+async function fetchProfile(set: any, clerkUserId: string) {
+  console.log('[AUTH_STATE] fetchProfile:', { clerkUserId: clerkUserId.substring(0, 12) });
+  let tierData: TierData = { tier: 'free' };
+  let profileData: ProfileData = {};
 
-    // Resolve Clerk ID → internal UUID
-    let userId: string;
-    try {
-      const resolved = await resolveInternalId(clerkUserId);
-      if (!resolved) {
-        console.error('[AUTH] Could not resolve Clerk ID to internal UUID:', clerkUserId.substring(0, 12));
-        set({ tierData, profileData, profileLoaded: true });
-        return;
-      }
-      userId = resolved;
-    } catch (resolveErr) {
-      console.error('[AUTH] resolveUserId error:', resolveErr);
+  let userId: string;
+  try {
+    const resolved = await resolveInternalId(clerkUserId);
+    if (!resolved) {
+      console.error('[AUTH] Could not resolve Clerk ID to internal UUID:', clerkUserId.substring(0, 12));
       set({ tierData, profileData, profileLoaded: true });
       return;
     }
-
-    // Check cache first
-    const cached = loadCachedProfile(userId);
-    if (cached) {
-      tierData = cached.tierData;
-      profileData = cached.profileData;
-      // Return cached data immediately, fetch fresh in background
-      set({ tierData, profileData, profileLoaded: true });
-    }
-
-    try {
-      // 3s timeout for profile fetch
-      const PROFILE_TIMEOUT_MS = 3000;
-
-      const profilePromise = supabase
-        .from('profiles')
-        .select('tier, tier_expiry, full_name, avatar_url, role, subscription, pro_expires_at')
-        .eq('id', userId)
-        .maybeSingle();
-
-      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
-        setTimeout(
-          () => resolve({ data: null, error: new Error('[AUTH] profile fetch timeout') }),
-          PROFILE_TIMEOUT_MS
-        )
-      );
-
-      const result = await Promise.race([profilePromise, timeoutPromise]);
-      const { data, error } = result;
-
-      if (error) {
-        console.error('[AUTH] profile fetch error:', error.message);
-        if (error.message !== '[AUTH] profile fetch timeout') {
-          try {
-            const { error: createError } = await supabase
-              .from('profiles')
-              .insert({ id: userId, full_name: '', tier: 'free', role: 'user', subscription: 'free' });
-            if (createError) console.error('[AUTH] profile create error:', createError.message);
-          } catch (insertErr) {
-            console.error('[AUTH] profile insert exception:', insertErr);
-          }
-        }
-      } else if (data) {
-        const parsed = parseProfileData(data);
-        tierData = parsed.tierData;
-        profileData = parsed.profileData;
-        // Cache fresh profile data
-        cacheProfile(userId, tierData, profileData);
-      }
-    } catch (e) {
-      console.error('[AUTH] sync error:', e);
-    }
-
-    console.log('[AUTH_STATE] profile set:', { userId: userId.substring(0, 8), tier: tierData.tier });
+    userId = resolved;
+  } catch (resolveErr) {
+    console.error('[AUTH] resolveUserId error:', resolveErr);
     set({ tierData, profileData, profileLoaded: true });
-  };
+    return;
+  }
 
-  return {
-    // Set user from Clerk (called by useAuthSync hook)
-    setUser: (user: User | null) => {
-      const currentUser = get().user;
-      if (user && (!currentUser || currentUser.id !== user.id)) {
-        console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
-        
-        // Clear stale profile cache on new login
-        try { localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${user.id}`); } catch {}
-        
-        // Set user immediately, profile will be fetched from Supabase
-        set({ user, loading: false });
-        
-        // Fetch profile from Supabase (source of truth for tier/role)
-        fetchProfile(user.id);
-      } else if (!user && currentUser) {
-        console.log('[AUTH_STATE] setUser null — signing out');
-        set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
-      }
-    },
-    loginWithGoogle: async () => { 
-      console.log('[AUTH_STATE] loginWithGoogle — redirecting to Clerk sign-in');
-      window.location.href = '/sign-in';
-    },
-    logout: async () => {
-      const currentUser = get().user;
-      
-      console.log('[AUTH] logout — clearing state');
-      
-      // Sign out from Clerk (if available)
-      try {
-        const clerk = (window as any).Clerk;
-        if (clerk && typeof clerk.signOut === 'function') {
-          await clerk.signOut();
-          console.log('[AUTH] Clerk signOut done');
+  const cached = loadCachedProfile(userId);
+  if (cached) {
+    tierData = cached.tierData;
+    profileData = cached.profileData;
+    set({ tierData, profileData, profileLoaded: true });
+  }
+
+  try {
+    const PROFILE_TIMEOUT_MS = 3000;
+    const profilePromise = dbProxy('get-profile', { userId });
+    const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+      setTimeout(() => resolve({ data: null, error: new Error('[AUTH] profile fetch timeout') }), PROFILE_TIMEOUT_MS)
+    );
+    const result: any = await Promise.race([profilePromise, timeoutPromise]);
+
+    if (result.error) {
+      console.error('[AUTH] profile fetch error:', result.error);
+      if (result.error !== '[AUTH] profile fetch timeout') {
+        try {
+          const createResult = await dbProxy('upsert-profile', { userId, full_name: '', tier: 'free', role: 'user', subscription: 'free' });
+          if (createResult.error) console.error('[AUTH] profile create error:', createResult.error);
+        } catch (insertErr) {
+          console.error('[AUTH] profile insert exception:', insertErr);
         }
-      } catch (e) {
-        console.warn('[AUTH] Clerk signOut failed:', e);
       }
-      
-      // Clear Clerk localStorage keys
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('clerk-') || key.startsWith('__clerk')) {
-          localStorage.removeItem(key);
-        }
-      });
-      
-      // Sign out from Supabase (for database connection)
-      await supabase.auth.signOut();
-      
-      // Clear cached session
-      cacheSession(null);
-      const userId = currentUser?.id;
-      if (userId) localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
-      
+    } else if (result.data) {
+      const parsed = parseProfileData(result.data);
+      tierData = parsed.tierData;
+      profileData = parsed.profileData;
+      cacheProfile(userId, tierData, profileData);
+    }
+  } catch (e) {
+    console.error('[AUTH] sync error:', e);
+  }
+
+  console.log('[AUTH_STATE] profile set:', { userId: userId.substring(0, 8), tier: tierData.tier });
+  set({ tierData, profileData, profileLoaded: true });
+}
+
+export const useAuthStore = create<AuthState>()((set, get) => ({
+  user: null,
+  session: null,
+  tierData: { tier: 'free' },
+  profileData: {},
+  loading: false,
+  profileLoaded: false,
+  setUser: (user: User | null) => {
+    const currentUser = get().user;
+    if (user && (!currentUser || currentUser.id !== user.id)) {
+      console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
+      try { localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${user.id}`); } catch {}
+      set({ user, loading: false });
+      fetchProfile(set, user.id);
+    } else if (!user && currentUser) {
+      console.log('[AUTH_STATE] setUser null — signing out');
       set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
-      
-      // Redirect to home page
-      window.location.href = '/';
-    },
-  };
-});
+    }
+  },
+  loginWithGoogle: async () => {
+    console.log('[AUTH_STATE] loginWithGoogle — redirecting to Clerk sign-in');
+    window.location.href = '/sign-in';
+  },
+  logout: async () => {
+    const currentUser = get().user;
+    console.log('[AUTH] logout — clearing state');
+    try {
+      const clerk = (window as any).Clerk;
+      if (clerk && typeof clerk.signOut === 'function') await clerk.signOut();
+    } catch (e) { console.warn('[AUTH] Clerk signOut failed:', e); }
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('clerk-') || key.startsWith('__clerk')) localStorage.removeItem(key);
+    });
+    await supabase.auth.signOut();
+    cacheSession(null);
+    const userId = currentUser?.id;
+    if (userId) localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
+    set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
+    window.location.href = '/';
+  },
+}));

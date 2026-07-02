@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { supabase } from '../lib/supabase';
 
 // ============================================================
 // Types
@@ -53,9 +52,22 @@ function maskKey(key: string): string {
 }
 
 async function authHeaders(): Promise<Record<string, string>> {
-  const { data } = await supabase.auth.getSession();
-  const token = data.session?.access_token;
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  // Use Clerk JWT for API auth
+  try {
+    const clerk = (window as any).Clerk;
+    if (clerk?.session && typeof clerk.session.getToken === 'function') {
+      const token = await clerk.session.getToken();
+      if (token) {
+        return {
+          Authorization: `Bearer ${token}`,
+          'x-user-email': (window as any).__CLERK_USER_EMAIL || '',
+        };
+      }
+    }
+  } catch (e) {
+    console.warn('[aiSecretsStore] Clerk token unavailable:', e);
+  }
+  return { 'x-user-email': (window as any).__CLERK_USER_EMAIL || '' };
 }
 
 // ============================================================

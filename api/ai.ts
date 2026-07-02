@@ -275,7 +275,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: `Invalid action. Valid: ${Object.keys(HANDLERS).join(', ')}` });
   }
 
-  // Extract UID from JWT token (not request body) — prevents spoofing
+  // Extract UID from JWT token or Clerk email
   let uid = 'anonymous';
   const authHeader = req.headers.authorization;
   if (authHeader?.startsWith('Bearer ')) {
@@ -284,9 +284,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
       if (!error && user) {
         uid = user.id;
+      } else {
+        // Try Clerk JWT — extract email as identifier
+        try {
+          const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
+          if (payload.email) uid = payload.email;
+        } catch {}
       }
     } catch (e) {
-      // Token invalid — fall through to anonymous
+      // Token invalid — try Clerk JWT
+      try {
+        const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
+        if (payload.email) uid = payload.email;
+      } catch {}
     }
   }
   const startTime = Date.now();

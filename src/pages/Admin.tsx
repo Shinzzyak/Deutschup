@@ -49,9 +49,9 @@ export default function Admin() {
 
   const getAdminHeaders = async (): Promise<Record<string, string>> => {
     if (!user) return {};
-    const { data: { session } } = await import('../lib/supabase').then(m => m.supabase.auth.getSession());
+    // 🔒 Clerk auth: no Supabase session needed
+    // Backend authMiddleware accepts x-user-email for Clerk flow
     return {
-      'Authorization': `Bearer ${session?.access_token}`,
       'x-user-email': user.email || '',
     };
   };

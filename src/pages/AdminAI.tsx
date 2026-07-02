@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useNavigate } from 'react-router';
-import { supabase } from '../lib/supabase';
+
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import SecretList from '../components/admin/SecretList';
@@ -60,8 +60,18 @@ interface UsageStats {
 
 
 async function getToken(): Promise<string | null> {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.access_token || null;
+  // Get Clerk JWT for API auth (no Supabase session needed)
+  // Backend decodes the JWT to verify admin email
+  try {
+    const clerk = (window as any).Clerk;
+    if (clerk?.session && typeof clerk.session.getToken === 'function') {
+      const token = await clerk.session.getToken();
+      if (token) return token;
+    }
+  } catch (e) {
+    console.warn('[AdminAI] Clerk token unavailable:', e);
+  }
+  return null;
 }
 
 export default function AdminAI() {

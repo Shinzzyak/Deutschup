@@ -4,7 +4,7 @@ import { resolveInternalId } from '../lib/clerk/identity';
 import { isUserPro, getProDaysRemaining, type SubscriptionData } from '../lib/subscription';
 import { Check, Loader2, Sparkles, Clock, Receipt } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { supabase } from '../lib/supabase';
+import { supabase, dbProxy } from '../lib/supabase';
 
 type PlanVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 
@@ -49,13 +49,9 @@ export default function Pricing() {
       const userId = await resolveInternalId(user.id);
       if (!userId) { setOrdersLoading(false); return; }
       try {
-        const { data, error } = await supabase
-          .from('orders')
-          .select('id, status, amount, payment_method, paid_at, created_at')
-          .eq('user_id', userId)
-          .eq('status', 'paid')
-          .order('created_at', { ascending: false });
-        console.log("[PAYMENT-HISTORY] user.id:", user.id, "rows:", data?.length, "error:", error); if (!error && data) setOrders(data);
+        const result = await dbProxy('get-orders', { userId });
+        console.log("[PAYMENT-HISTORY] user.id:", user.id, "rows:", result.data?.length, "error:", result.error);
+        if (!result.error && result.data) setOrders(result.data);
       } catch (e) {
         console.error('Failed to fetch orders:', e);
       } finally {

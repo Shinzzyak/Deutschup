@@ -85,10 +85,30 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   }
 };
 
+function decodeJwtPayload(token: string): Record<string, any> | null {
+  try {
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    return JSON.parse(atob(parts[1]));
+  } catch { return null; }
+}
+
 export const adminMiddleware = async (req: any, res: any, next: any) => {
   const adminEmail = process.env.ADMIN_EMAIL;
-  // For Clerk users, get email from req.user or from body
-  const userEmail = req.user?.email || req.body?.email || req.headers['x-user-email'];
+  // Check various sources for user email
+  let userEmail = req.user?.email || req.body?.email || req.headers['x-user-email'];
+  
+  // Decode Clerk/any JWT from Authorization header for email
+  if (!userEmail) {
+    const authHeader = req.headers.authorization;
+    if (authHeader?.startsWith('Bearer ')) {
+      const payload = decodeJwtPayload(authHeader.split('Bearer ')[1]);
+      if (payload?.email) {
+        userEmail = payload.email;
+        console.log('[AdminMiddleware] Email extracted from JWT:', userEmail);
+      }
+    }
+  }
   
   console.log(`[AdminMiddleware] Checking access for: ${userEmail}`);
   console.log(`[AdminMiddleware] Expected Admin Email: ${adminEmail}`);

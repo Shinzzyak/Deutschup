@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { supabase } from '../lib/supabase';
+import { dbProxy } from '../lib/supabase';
 import { isUserPro, getProDaysRemaining } from '../lib/subscription';
 import { User, Mail, Calendar, Shield, CreditCard, Loader2, Save, Award, Zap, CheckCircle2, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -26,19 +26,15 @@ export default function Profile() {
 
   const handleSave = async () => {
     if (!user) return;
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session?.access_token) return;
     setSaving(true);
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .upsert({ id: user.id, full_name: fullName }, { onConflict: 'id' });
-      if (error) throw error;
+      const result = await dbProxy('upsert-profile', { userId: user.id, full_name: fullName });
+      if (result.error) throw new Error(result.error);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
-    } catch (e) {
+    } catch (e: any) {
       console.error('Failed to update profile:', e);
-      alert('Gagal menyimpan profil');
+      alert('Gagal menyimpan profil: ' + e.message);
     } finally {
       setSaving(false);
     }
