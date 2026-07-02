@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a1a2e"/>
+      <stop offset="100%" stop-color="#16213e"/>
+    </linearGradient>
+    <linearGradient id="flag" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#000000"/>
+      <stop offset="33%" stop-color="#DD0000"/>
+      <stop offset="66%" stop-color="#FFCC00"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded square background -->
+  <rect x="5" y="5" width="90" height="90" rx="18" ry="18" fill="url(#bg)" stroke="#F2C94C" stroke-width="2"/>
+  <!-- Bold D with German flag gradient -->
+  <text x="50" y="72" text-anchor="middle" font-family="'Arial Black', 'Helvetica Neue', sans-serif" font-size="62" font-weight="900" fill="url(#flag)" stroke="#F2C94C" stroke-width="0.5">D</text>
+</svg>
