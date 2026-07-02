@@ -32,7 +32,7 @@ function getFriendlyError(error: any): { message: string; status: number } {
   return { message: 'Herr Deutsch mengalami gangguan teknis. Silakan coba lagi.', status: 500 };
 }
 
-async function handleChat(uid: string, body: any): Promise<any> {
+async function handleChat(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { message, history, level } = body;
   if (!message || typeof message !== 'string') {
     return { status: 400, data: { error: 'Message is required' } };
@@ -50,13 +50,14 @@ async function handleChat(uid: string, body: any): Promise<any> {
     async (client) => {
       const text = await client.chat(message, systemPrompt, history);
       return { status: 200, data: { text } };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handlePronunciation(uid: string, body: any): Promise<any> {
+async function handlePronunciation(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { word } = body;
   if (!word) return { status: 400, data: { error: 'Word is required' } };
   const prompt = `Berikan panduan singkat membaca kata berbahasa Jerman '${word}' untuk lidah orang Indonesia. Berikan format transliterasi sederhana yang mudah. Berikan satu kalimat tips cepat.`;
@@ -72,13 +73,14 @@ async function handlePronunciation(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handleVocabExamples(uid: string, body: any): Promise<any> {
+async function handleVocabExamples(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { word, level } = body;
   if (!word) return { status: 400, data: { error: 'Word is required' } };
   const prompt = `Buatkan 2 contoh kalimat sederhana berbahasa Jerman menggunakan kata '${word}' untuk siswa level ${level || 'A1'}. Sertakan terjemahannya di bahasa Indonesia.`;
@@ -94,13 +96,14 @@ async function handleVocabExamples(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data: { examples: data } };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handleCheckAnswer(uid: string, body: any): Promise<any> {
+async function handleCheckAnswer(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { question, answer, level } = body;
   if (!question || !answer) return { status: 400, data: { error: 'Question and answer are required' } };
   const prompt = `Soal: ${question}\nJawaban siswa (${level || 'A1'}): ${answer}\n\nKoreksi jawaban ini. Berikan skor benar/salah, penjelasan dalam bahasa Indonesia, dan perbaikannya bila ada kesalahan.`;
@@ -116,13 +119,14 @@ async function handleCheckAnswer(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handleKoreksiKalimat(uid: string, body: any): Promise<any> {
+async function handleKoreksiKalimat(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { sentence } = body;
   if (!sentence) return { status: 400, data: { error: 'Sentence is required' } };
   const prompt = `Saya mencoba menulis kalimat bahasa Jerman ini: "${sentence}".\nTolong periksa tata bahasa, penggunaan artikel, kata kerja, dan susunan kalimatnya. Beri penjelasan dalam bahasa Indonesia, dan berikan kalimat yang benar.`;
@@ -138,13 +142,14 @@ async function handleKoreksiKalimat(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handleGenerateExercises(uid: string, body: any): Promise<any> {
+async function handleGenerateExercises(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { level, grammarTopic, vocabulary } = body;
   if (!grammarTopic) return { status: 400, data: { error: 'Grammar topic is required' } };
   const prompt = `Buatkan 3 soal kuis mini pilihan ganda Bahasa Jerman untuk level ${level || 'A1'} berdasarkan materi: ${grammarTopic}. Gunakan kosa kata: ${vocabulary?.map((v: any) => v.word).join(', ') || '-'}. 4 opsi jawaban.`;
@@ -160,13 +165,14 @@ async function handleGenerateExercises(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data: { exercises: data } };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handleGenerateStudyPlan(uid: string, body: any): Promise<any> {
+async function handleGenerateStudyPlan(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { level, xp, lessonsCompleted } = body;
   const prompt = `Saya adalah siswa bahasa Jerman di level ${level || 'A1'}. Saya memiliki ${xp || 0} XP dan telah menyelesaikan: ${(lessonsCompleted || []).join(",")}.\nBuatkan 10 poin fokus (checklist) yang spesifik. Gunakan bahasa Indonesia. JSON array dengan keys "id", "text", "completed" (selalu false).`;
   const schema = { type: "ARRAY", items: { type: "OBJECT", properties: { id: { type: "STRING" }, text: { type: "STRING" }, completed: { type: "BOOLEAN" } }, required: ["id", "text", "completed"] } };
@@ -181,13 +187,14 @@ async function handleGenerateStudyPlan(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data: { tasks: data } };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handleGenerateMockTest(uid: string, body: any): Promise<any> {
+async function handleGenerateMockTest(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { level } = body;
   const prompt = `Buatkan ujian simulasi bahasa Jerman level ${level || 'A1'} format Goethe/TELC. Total 20 soal pilihan ganda (Reading: 5, Grammar: 8, Vocab: 7). Output JSON array.`;
   const schema = { type: "ARRAY", items: { type: "OBJECT", properties: { id: { type: "STRING" }, category: { type: "STRING" }, context: { type: "STRING" }, question: { type: "STRING" }, options: { type: "ARRAY", items: { type: "STRING" } }, correctAnswer: { type: "STRING" } }, required: ["id", "category", "question", "options", "correctAnswer"] } };
@@ -202,13 +209,14 @@ async function handleGenerateMockTest(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data: { questions: data } };
-    }
+    },
+    userTier
   );
 
   return result;
 }
 
-async function handleCheckMockTest(uid: string, body: any): Promise<any> {
+async function handleCheckMockTest(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { wrongAnswers, level } = body;
   if (!wrongAnswers || !Array.isArray(wrongAnswers)) {
     return { status: 400, data: { error: 'wrongAnswers array is required' } };
@@ -226,7 +234,8 @@ async function handleCheckMockTest(uid: string, body: any): Promise<any> {
     async (client) => {
       const data = await client.generateJson(prompt, schema);
       return { status: 200, data: { feedback: data } };
-    }
+    },
+    userTier
   );
 
   return result;
@@ -244,7 +253,9 @@ async function handleListModels(uid: string, body: any): Promise<any> {
   return { status: 200, data: { models, primary: config.primary.id, fallback: config.fallback.id } };
 }
 
-const HANDLERS: Record<string, (uid: string, body: any) => Promise<any>> = {
+type AIHandler = (uid: string, body: any, userTier?: 'free' | 'pro') => Promise<any>;
+
+const HANDLERS: Record<string, AIHandler> = {
   'chat': handleChat,
   'pronunciation': handlePronunciation,
   'vocab-examples': handleVocabExamples,
@@ -302,7 +313,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const startTime = Date.now();
 
   try {
-    const result = await HANDLERS[action](uid, req.body);
+    const userTier = (req.body?.userTier as 'free' | 'pro') || 'free';
+    const result = await HANDLERS[action](uid, req.body, userTier);
     return res.status(result.status).json(result.data);
   } catch (error: any) {
     const { message: friendlyMessage, status: errorStatus } = getFriendlyError(error);

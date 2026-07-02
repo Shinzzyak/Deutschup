@@ -1210,6 +1210,203 @@ export default function AdminAI() {
           </div>
         )}
 
+        {/* Routing Tab */}
+        {activeTab === 'routing' && (
+          <div className="space-y-6">
+            {/* Routing Overview -- primary + fallback */}
+            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-[#F2C94C]" />
+                Current Routing Configuration
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                {/* Primary Model */}
+                <div className="bg-card border border-emerald-500/30 rounded-lg p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-3 h-3 rounded-full bg-emerald-500" />
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Primary</span>
+                  </div>
+                  {(() => {
+                    const pm = models.find(m => m.is_primary);
+                    return pm ? (
+                      <>
+                        <p className="text-xl font-black text-foreground mb-1">{pm.display_name || pm.name}</p>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span className="bg-emerald-500/10 text-emerald-400 px-2 py-0.5 rounded text-xs">{pm.provider_id}</span>
+                          <span>{pm.enabled ? 'Active' : 'Disabled'}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-amber-400 text-sm">No primary model configured</p>
+                    );
+                  })()}
+                </div>
+
+                {/* Fallback Model */}
+                <div className="bg-card border border-amber-500/30 rounded-lg p-5">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-3 h-3 rounded-full bg-amber-500" />
+                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Fallback</span>
+                  </div>
+                  {(() => {
+                    const fm = models.find(m => m.is_fallback);
+                    return fm ? (
+                      <>
+                        <p className="text-xl font-black text-foreground mb-1">{fm.display_name || fm.name}</p>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <span className="bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded text-xs">{fm.provider_id}</span>
+                          <span>{fm.enabled ? 'Active' : 'Disabled'}</span>
+                        </div>
+                      </>
+                    ) : (
+                      <p className="text-amber-400 text-sm">No fallback configured</p>
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* Tier Assignment */}
+              <div className="bg-card/50 border border-border rounded-lg p-5">
+                <h4 className="font-bold text-foreground mb-4">User Tier Model Assignment</h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
+                    <p className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Free Users</p>
+                    <p className="text-lg font-bold text-foreground">
+                      Primary model only
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      No fallback — if primary fails, free users get an error
+                    </p>
+                  </div>
+                  <div className="p-4 bg-purple-500/5 border border-purple-500/20 rounded-lg">
+                    <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Pro Users</p>
+                    <p className="text-lg font-bold text-foreground">
+                      Primary + Fallback
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Full fallback chain: tries primary first, then fallback on failure
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* All Models List */}
+            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                <Cpu className="w-5 h-5 text-[#F2C94C]" />
+                All Models
+              </h3>
+              <div className="space-y-2">
+                {models.map(model => {
+                  const role = model.is_primary ? 'primary' : model.is_fallback ? 'fallback' : 'secondary';
+                  const roleColor = role === 'primary' ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' :
+                                    role === 'fallback' ? 'text-amber-400 bg-amber-500/10 border-amber-500/30' :
+                                    'text-muted-foreground bg-muted/30 border-border';
+                  return (
+                    <div key={model.id} className="flex items-center justify-between p-3 bg-card border border-border rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <div className={cn("px-2 py-0.5 rounded text-xs font-medium border", roleColor)}>
+                          {role}
+                        </div>
+                        <div>
+                          <p className="font-medium text-foreground text-sm">{model.display_name || model.name}</p>
+                          <p className="text-xs text-muted-foreground">{model.provider_id} | Model: {model.name}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={cn(
+                          "px-2 py-0.5 rounded text-xs font-medium",
+                          model.enabled
+                            ? "bg-emerald-500/10 text-emerald-400"
+                            : "bg-muted/50 text-muted-foreground"
+                        )}>
+                          {model.enabled ? 'Enabled' : 'Disabled'}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+                {models.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8 text-sm">No models configured</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Usage Tab */}
+        {activeTab === 'usage' && (
+          <div className="space-y-6">
+            {/* Summary Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { label: 'Total Requests', value: totalRequests.toLocaleString(), icon: TrendingUp, color: 'text-[#F2C94C]' },
+                { label: 'Success Rate', value: `${successRate}%`, icon: CheckCircle2, color: successRate >= 90 ? 'text-emerald-400' : successRate >= 70 ? 'text-amber-400' : 'text-red-400' },
+                { label: 'Avg Latency', value: `${avgLatency}ms`, icon: Clock, color: avgLatency < 500 ? 'text-emerald-400' : avgLatency < 1000 ? 'text-amber-400' : 'text-red-400' },
+                { label: 'Failed Requests', value: totalFailed.toLocaleString(), icon: XCircle, color: totalFailed === 0 ? 'text-emerald-400' : 'text-red-400' },
+              ].map(({ label, value, icon: Icon, color }) => (
+                <div key={label} className="bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 border border-border">
+                  <div className="flex items-center space-x-2 mb-2">
+                    <Icon className={cn("w-4 h-4", color)} />
+                    <span className="text-xs text-muted-foreground">{label}</span>
+                  </div>
+                  <p className={cn("text-xl font-bold", color)}>{value}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Per-Model Breakdown */}
+            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-[#F2C94C]" />
+                Per-Model Usage (7 days)
+              </h3>
+              {usageStats.length > 0 ? (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-3 px-3 text-muted-foreground font-medium">Model</th>
+                        <th className="text-right py-3 px-3 text-muted-foreground font-medium">Requests</th>
+                        <th className="text-right py-3 px-3 text-muted-foreground font-medium">Success</th>
+                        <th className="text-right py-3 px-3 text-muted-foreground font-medium">Failed</th>
+                        <th className="text-right py-3 px-3 text-muted-foreground font-medium">Avg Latency</th>
+                        <th className="text-right py-3 px-3 text-muted-foreground font-medium">Tokens</th>
+                        <th className="text-right py-3 px-3 text-muted-foreground font-medium">Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {usageStats.map(s => {
+                        const lat = s.total_requests > 0 ? Math.round(s.total_latency_ms / s.total_requests) : 0;
+                        const sr = s.total_requests > 0 ? Math.round((s.successful_requests / s.total_requests) * 100) : 0;
+                        return (
+                          <tr key={`${s.provider_id}-${s.model_id}`} className="border-b border-border/50 hover:bg-muted/20 transition-colors">
+                            <td className="py-3 px-3 text-foreground font-medium">{s.model_id || s.provider_id}</td>
+                            <td className="py-3 px-3 text-right text-foreground">{s.total_requests.toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right text-emerald-400">{s.successful_requests.toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right text-red-400">{s.failed_requests.toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right text-muted-foreground">{lat}ms</td>
+                            <td className="py-3 px-3 text-right text-muted-foreground">{(s.total_tokens_in + s.total_tokens_out).toLocaleString()}</td>
+                            <td className="py-3 px-3 text-right text-muted-foreground">${s.total_cost_usd?.toFixed(4) || '0.0000'}</td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <BarChart3 className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
+                  <p className="text-muted-foreground">No usage data in the last 7 days</p>
+                  <p className="text-sm text-muted-foreground/50 mt-1">Usage statistics will appear after users interact with Herr Deutsch</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Secrets Tab */}
         {activeTab === 'secrets' && (
           <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-border p-6">

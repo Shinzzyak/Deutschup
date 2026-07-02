@@ -559,14 +559,19 @@ export async function executeWithRouting<T>(
   endpoint: string,
   userId: string,
   primaryFn: (client: AIProviderClient) => Promise<T>,
-  fallbackFn: (client: AIProviderClient) => Promise<T>
+  fallbackFn: (client: AIProviderClient) => Promise<T>,
+  userTier?: 'free' | 'pro'
 ): Promise<{ result: T; providerId: string; modelId: string; latencyMs: number }> {
   const startTime = Date.now();
   const config = await getRoutingConfig();
   const errors: string[] = [];
 
-  // Try all available models in priority order
-  for (let i = 0; i < config.models.length; i++) {
+  // Free users: only try primary model (index 0), no fallback
+  // Pro users: try all models with fallback chain
+  const maxModels = userTier === 'free' ? 1 : config.models.length;
+
+  // Try available models in priority order
+  for (let i = 0; i < maxModels; i++) {
     const model = config.models[i];
     const fn = i === 0 ? primaryFn : fallbackFn;
 
