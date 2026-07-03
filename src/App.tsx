@@ -65,7 +65,8 @@ function Layout({ children }: { children: React.ReactNode }) {
   console.log('[LAYOUT] mount:', { hasUser: !!user, userId: user?.id?.substring(0, 8) });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background relative">
+      <div className="glass-bg-ambient" aria-hidden="true" />
       {/* Desktop: top nav + sidebar layout */}
       <div className="hidden lg:flex flex-col h-screen">
         <TopNav />

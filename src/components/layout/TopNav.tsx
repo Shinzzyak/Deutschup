@@ -59,7 +59,7 @@ export default function TopNav() {
   return (
     <>
       <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <nav className="sticky top-0 z-50 bg-[#f5f0eb] border-b-2 border-[#0a0a0a]" aria-label="Navigasi utama">
+      <nav className="glass-nav sticky top-0 z-50" aria-label="Navigasi utama">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
@@ -136,7 +136,7 @@ export default function TopNav() {
                 </button>
 
                 {showUserMenu && (
-                  <div className="absolute right-0 mt-2 w-56 bg-[#f5f0eb] border-2 border-[#0a0a0a] z-50">
+                  <div className="glass absolute right-0 mt-2 w-56 z-50">
                     <div className="px-4 py-3 border-b border-[#0a0a0a]/10">
                       <p className="text-sm font-bold text-[#0a0a0a] truncate">{profileData?.full_name || 'Learner'}</p>
                       <p className="text-xs text-[#0a0a0a]/40 truncate mt-0.5">{user?.email}</p>

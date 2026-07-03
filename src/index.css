@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "./styles/liquid-glass.css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 @import "@fontsource/dm-serif-display/400.css";

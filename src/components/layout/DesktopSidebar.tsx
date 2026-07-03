@@ -42,7 +42,7 @@ export default function DesktopSidebar() {
 
   return (
     <aside
-      className={`hidden lg:flex flex-col bg-[#f5f0eb] border-r-2 border-[#0a0a0a] transition-all duration-300 ease-in-out shrink-0 ${
+      className={`hidden lg:flex flex-col glass-nav transition-all duration-300 ease-in-out shrink-0 ${
         collapsed ? 'w-[68px]' : 'w-64'
       }`}
 
@@ -50,7 +50,7 @@ export default function DesktopSidebar() {
       {/* Collapse toggle */}
       <button
         onClick={() => setCollapsed(!collapsed)}
-        className="absolute top-20 -right-3 w-6 h-6 bg-[#f5f0eb] border-2 border-[#0a0a0a] flex items-center justify-center text-[#0a0a0a]/50 hover:text-[#0a0a0a] z-10 transition-colors"
+        className="absolute top-20 -right-3 w-6 h-6 glass-subtle flex items-center justify-center text-[#0a0a0a]/50 hover:text-[#0a0a0a] z-10 transition-colors"
         aria-label={collapsed ? 'Perluas sidebar' : 'Ciutkan sidebar'}
       >
         {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
@@ -126,7 +126,7 @@ export default function DesktopSidebar() {
       {/* Progress summary at bottom */}
       {!collapsed && (
         <div className="p-3 border-t-2 border-[#0a0a0a]/10">
-          <div className="bg-[#0a0a0a]/5 p-3 space-y-2.5">
+          <div className="glass-subtle p-3 space-y-2.5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
                 <Flame className="w-3.5 h-3.5 text-[#c8956c]" />

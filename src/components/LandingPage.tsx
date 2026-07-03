@@ -15,7 +15,7 @@ function Header() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="w-full bg-[#f5f0eb] border-b-2 border-[#0a0a0a] sticky top-0 z-50"
+      className="w-full glass-nav sticky top-0 z-50"
     >
       <nav className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 py-4 flex items-center justify-between" aria-label="Navigasi utama">
         <a href="/" className="flex items-center space-x-3">
@@ -42,7 +42,7 @@ function Header() {
 
 function Footer() {
   return (
-    <footer className="bg-[#0a0a0a] py-16 relative text-[#f5f0eb]">
+    <footer className="glass-nav-dark py-16 relative text-[#f5f0eb]">
       <div className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
         <div className="flex flex-col md:flex-row items-start justify-between gap-8 mb-12">
           {/* Logo + flag */}
