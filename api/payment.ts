@@ -217,8 +217,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(401).json({ error: 'Invalid webhook signature' });
       }
       console.log('[payment/callback] Signature verified OK');
-
-      const webhookPayload = req.body;
       console.log('[payment/callback] Received webhook:', JSON.stringify(webhookPayload, null, 2));
 
       const { invoice_id, status, paid_at, payment_method, paid_reff_num } = webhookPayload;
