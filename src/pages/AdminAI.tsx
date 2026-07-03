@@ -1297,28 +1297,47 @@ export default function AdminAI() {
                           <p className="text-xs text-muted-foreground">{model.provider_id} | Model: {model.name}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className={cn(
-                          "px-2 py-0.5 rounded text-xs font-medium",
-                          model.enabled
-                            ? "bg-emerald-500/10 text-emerald-400"
-                            : "bg-muted/50 text-muted-foreground"
-                        )}>
-                          {model.enabled ? 'Enabled' : 'Disabled'}
-                        </span>
-                      </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setPrimary(model.id)}
+                        disabled={saving || model.is_primary}
+                        className={cn("h-7 px-2 text-xs", model.is_primary && "opacity-50")}
+                      >
+                        Set Primary
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setFallback(model.id)}
+                        disabled={saving || model.is_fallback}
+                        className={cn("h-7 px-2 text-xs", model.is_fallback && "opacity-50")}
+                      >
+                        Set Fallback
+                      </Button>
+                      <Button
+                        variant={model.enabled ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => toggleModel(model.id, !model.enabled)}
+                        disabled={saving}
+                        className={cn("h-7 px-3 text-xs", model.enabled ? "bg-emerald-600 hover:bg-emerald-700" : "bg-background border-border hover:bg-muted")}
+                      >
+                        {model.enabled ? 'Enabled' : 'Disabled'}
+                      </Button>
                     </div>
-                  );
-                })}
-                {models.length === 0 && (
-                  <p className="text-center text-muted-foreground py-8 text-sm">No models configured</p>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
+                   </div>
+                 );
+               })}
+               {models.length === 0 && (
+                 <p className="text-center text-muted-foreground py-8 text-sm">No models configured</p>
+               )}
+             </div>
+           </div>
+         </div>
+       )}
 
-        {/* Usage Tab */}
+       {/* Usage Tab */}
         {activeTab === 'usage' && (
           <div className="space-y-6">
             {/* Summary Stats */}

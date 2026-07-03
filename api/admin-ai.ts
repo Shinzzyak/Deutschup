@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { runMiddleware, authMiddleware, adminMiddleware, getSupabaseAdminClient } from '../lib/api-utils.js';
+import { invalidateCache } from '../lib/ai-router.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
@@ -105,6 +106,7 @@ async function handleProviderUpdate(req: VercelRequest, res: VercelResponse, sup
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -128,6 +130,7 @@ async function handleProviderToggle(req: VercelRequest, res: VercelResponse, sup
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -167,6 +170,7 @@ async function handleModelUpdate(req: VercelRequest, res: VercelResponse, supaba
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -186,6 +190,7 @@ async function handleModelToggle(req: VercelRequest, res: VercelResponse, supaba
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -224,6 +229,7 @@ async function handleSetPrimary(req: VercelRequest, res: VercelResponse, supabas
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -262,6 +268,7 @@ async function handleSetFallback(req: VercelRequest, res: VercelResponse, supaba
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -443,6 +450,7 @@ async function handleSecretAdd(req: VercelRequest, res: VercelResponse, supabase
       if (error) throw error;
     }
 
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -465,6 +473,7 @@ async function handleSecretUpdate(req: VercelRequest, res: VercelResponse, supab
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
@@ -484,6 +493,7 @@ async function handleSecretDelete(req: VercelRequest, res: VercelResponse, supab
       .eq('id', id);
 
     if (error) throw error;
+    invalidateCache();
     return res.json({ success: true });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
