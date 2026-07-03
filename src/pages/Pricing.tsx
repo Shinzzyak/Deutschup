@@ -5,6 +5,7 @@ import { isUserPro, getProDaysRemaining, type SubscriptionData } from '../lib/su
 import { Check, Loader2, Sparkles, Clock, Receipt } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { supabase, dbProxy } from '../lib/supabase';
+import { getAuthHeaders } from '../lib/auth-headers';
 
 type PlanVariant = 'default' | 'outline' | 'secondary' | 'ghost' | 'link' | 'destructive';
 
@@ -101,14 +102,13 @@ export default function Pricing() {
 
       const res = await fetch('/api/payment?action=create', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ 
-          userId: internalUserId, 
-          planType: planId, 
-          email: user.email, 
-          name: profileData?.full_name || user.email 
+        headers: await getAuthHeaders(true),
+        body: JSON.stringify({
+          // Kept for legacy request shape only; server ignores userId/email and uses verified Bearer identity.
+          userId: internalUserId,
+          planType: planId,
+          email: user.email,
+          name: profileData?.full_name || user.email
         })
       });
 
