@@ -193,7 +193,7 @@ export default function VocabTrainer() {
                   <div className="absolute inset-0 backface-hidden bg-card border-2 border-border  p-8 flex flex-col items-center justify-center  hover:border-border transition-colors">
                     {currentCard.article && (
                       <span className={cn(
-                        "text-sm font-bold px-3 py-1.5  text-[#f5f0eb] bg-[#0a0a0a] mb-4 uppercase tracking-widest",
+                        "text-sm font-bold px-3 py-1.5 text-[#f5f0eb] mb-4 uppercase tracking-widest",
                         articleColors[currentCard.article] || 'bg-gray-500'
                       )}>{currentCard.article}</span>
                     )}
@@ -319,7 +319,7 @@ export default function VocabTrainer() {
                         <div className="flex items-center gap-2 mb-1">
                           {v.article && (
                             <span className={cn(
-                              "text-[10px] font-bold px-1.5 py-0.5 rounded bg-[#0a0a0a] text-[#f5f0eb] uppercase tracking-wider",
+                              "text-[10px] font-bold px-1.5 py-0.5 rounded text-[#f5f0eb] uppercase tracking-wider",
                               articleColors[v.article] || 'bg-gray-500'
                             )}>{v.article}</span>
                           )}

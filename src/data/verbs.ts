@@ -528,7 +528,7 @@ export const verbDatabase: VerbConjugation[] = [
   {
     infinitive: 'rufen',
     translation: 'memanggil',
-    type: 'regular',
+    type: 'irregular',
     present: {
       ich: 'rufe',
       du: 'rufst',

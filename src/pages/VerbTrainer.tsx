@@ -60,12 +60,6 @@ export default function VerbTrainer() {
     let correct = 0;
     let total = 0;
     
-    const conjugations = activeTense === 'present' 
-      ? selectedVerb.present 
-      : activeTense === 'prateritum' 
-        ? selectedVerb.prateritum 
-        : null;
-    
     if (activeTense === 'present') {
       Object.entries(selectedVerb.present).forEach(([pronoun, correctAnswer]) => {
         total++;
@@ -177,7 +171,7 @@ export default function VerbTrainer() {
                     <div className="flex items-center space-x-3 mb-1">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1  bg-[#0a0a0a] text-[#f5f0eb] ",
+                          "text-xs font-bold px-2 py-1 text-[#f5f0eb]",
                           articleColors[v.article] || 'bg-gray-500'
                         )}>{v.article}</span>
                       )}
@@ -243,7 +237,7 @@ export default function VerbTrainer() {
                 </div>
                 
                 <div className="p-6">
-                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Präteritum (Lampu)</h3>
+                  <h3 className="text-sm font-bold text-muted-foreground uppercase tracking-widest mb-4">Präteritum (Lampau)</h3>
                   <div className="space-y-3">
                     {Object.entries(verb.prateritum).map(([pronoun, conj]) => (
                       <div key={pronoun} className="flex justify-between items-center border-b border-border pb-2 last:border-0 last:pb-0">
