@@ -177,11 +177,24 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           `https://www.bayar.gg/api/check-payment.php?invoice=${encodeURIComponent(invoice_id)}`,
           { headers: { 'X-API-Key': BAYAR_GG_API_KEY, 'Accept': 'application/json' } }
         );
-        verifyData = await checkRes.json() as any;
+        const checkText = await checkRes.text();
+        try {
+          verifyData = JSON.parse(checkText);
+        } catch {
+          // Non-JSON response from gateway — treat as "not paid"
+          console.error('[payment/callback] Non-JSON gateway response:', checkText.slice(0, 200));
+          return res.status(202).json({ success: true, message: 'Not paid yet' });
+        }
+        // HTTP 404 or success=false from gateway → invoice not found → not paid
+        if (!checkRes.ok || verifyData?.success === false) {
+          console.log('[payment/callback] Invoice not found or not paid:', invoice_id);
+          return res.status(202).json({ success: true, message: 'Not paid yet' });
+        }
         if (DEBUG_CB) console.log('[payment/callback] check-payment status:', verifyData?.status);
         verifyStatus = verifyData?.status;
       } catch (verifyErr) {
-        console.error('[payment/callback] Failed to verify payment:', verifyErr);
+        // Network error (timeout, DNS, connection refused) — genuinely unreachable
+        console.error('[payment/callback] Network error verifying payment:', verifyErr);
         return res.status(502).json({ error: 'Failed to verify payment with gateway' });
       }
 
