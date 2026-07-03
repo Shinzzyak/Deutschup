@@ -47,10 +47,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
       const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
-      console.log('[payment/create] Provider: bayar_gg');
-      console.log('[payment/create] API_KEY_LENGTH', BAYAR_GG_API_KEY?.length);
-      console.log('[payment/create] BASE_URL', BAYAR_GG_BASE_URL);
-      console.log('[payment/create] APP_URL', APP_URL);
+      const DEBUG = process.env.DEBUG_PAYMENTS === 'true';
+      if (DEBUG) console.log('[payment/create] started, test mode:', isTestMode);
+      // NOTE: Do not log API key length, full payloads, or raw gateway responses in production.
 
       const { planType, name } = req.body;
 
@@ -58,7 +57,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const TEST_PRICE = 1000;
       const PROD_PRICE = 49000;
       const price = isTestMode ? TEST_PRICE : PROD_PRICE;
-      console.log('[payment/create] TEST_PAYMENT_MODE:', isTestMode, '| price:', price);
+      if (DEBUG) console.log('[payment/create] price:', price);
 
       const payload = {
         amount: price,
@@ -71,9 +70,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         payment_url: 'https://www.bayar.gg/pay',
       };
 
-      console.log('[BAYARGG REQUEST]', JSON.stringify(payload, null, 2));
-      console.log('[payment/create] CALLBACK_URL', payload.callback_url);
-      console.log('[payment/create] REDIRECT_URL', payload.redirect_url);
+      if (DEBUG) console.log('[payment/create] callback_url:', payload.callback_url);
 
       const bayarRes = await fetch(`${BAYAR_GG_BASE_URL}/create-payment.php`, {
         method: 'POST',
@@ -84,12 +81,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         body: JSON.stringify(payload),
       });
 
-      console.log('[payment/create] STATUS', bayarRes.status);
-      console.log('[payment/create] CONTENT_TYPE', bayarRes.headers.get('content-type'));
+      if (DEBUG) console.log('[payment/create] gateway status:', bayarRes.status);
 
       const raw = await bayarRes.text();
-      console.log('[payment/create] RAW_RESPONSE_FIRST_3000');
-      console.log(raw.slice(0, 3000));
 
       let bayarData: any;
       try {
@@ -103,7 +97,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         });
       }
 
-      console.log('[BAYARGG RESPONSE]', JSON.stringify(bayarData, null, 2));
+      if (DEBUG) console.log('[payment/create] gateway response keys:', Object.keys(bayarData));
 
       if (bayarData.success && bayarData.data?.invoice_id) {
         const { error } = await getDb()
@@ -160,7 +154,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // → only trust API response, never body status.
 
       const webhookPayload = req.body;
-      console.log('[payment/callback] Received webhook:', JSON.stringify(webhookPayload, null, 2));
+      const DEBUG_CB = process.env.DEBUG_PAYMENTS === 'true';
+      if (DEBUG_CB) console.log('[payment/callback] received invoice_id:', webhookPayload?.invoice_id);
 
       const { invoice_id, paid_at, payment_method, paid_reff_num } = webhookPayload;
 
@@ -176,15 +171,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(500).json({ error: 'Payment gateway misconfigured' });
       }
 
-      let verifyStatus: string | undefined;
+      let verifyData: any;
       try {
         const checkRes = await fetch(
           `https://www.bayar.gg/api/check-payment.php?invoice=${encodeURIComponent(invoice_id)}`,
           { headers: { 'X-API-Key': BAYAR_GG_API_KEY, 'Accept': 'application/json' } }
         );
-        const checkData = await checkRes.json() as any;
-        console.log('[payment/callback] check-payment result:', JSON.stringify(checkData, null, 2));
-        verifyStatus = checkData?.status;
+        verifyData = await checkRes.json() as any;
+        if (DEBUG_CB) console.log('[payment/callback] check-payment status:', verifyData?.status);
+        verifyStatus = verifyData?.status;
       } catch (verifyErr) {
         console.error('[payment/callback] Failed to verify payment:', verifyErr);
         return res.status(502).json({ error: 'Failed to verify payment with gateway' });
@@ -204,8 +199,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           .single();
 
         if (orderError || !order) {
-          console.error('[payment/callback] Order not found:', invoice_id, orderError);
+          console.error('[payment/callback] Order not found:', invoice_id);
           return res.status(404).json({ error: 'Order not found' });
+        }
+
+        // Idempotency guard: skip if already processed
+        if (order.status === 'paid') {
+          console.log('[payment/callback] Already paid, idempotent skip:', invoice_id);
+          return res.json({ success: true, message: 'Already processed' });
+        }
+
+        // Verify final_amount matches order amount (defense-in-depth per official docs)
+        const finalAmount = verifyData?.final_amount;
+        if (finalAmount && Number(finalAmount) !== Number(order.amount)) {
+          console.error('[payment/callback] Amount mismatch: order=', order.amount, 'gateway=', finalAmount);
+          return res.status(400).json({ error: 'Amount verification failed' });
         }
 
         const now = new Date();
