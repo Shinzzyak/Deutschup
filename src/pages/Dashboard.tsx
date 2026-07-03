@@ -14,7 +14,7 @@ import { generateReportPDF } from '../lib/pdf-report';
 import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
 
 export default function Dashboard() {
-  const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress } = useProgressStore();
+  const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress, streak, lastPracticeDate } = useProgressStore();
   const { mockTests } = useLearningStore();
   const { user, tierData, profileData } = useAuthStore();
   const role = tierData?.role || profileData?.role;
@@ -56,11 +56,19 @@ export default function Dashboard() {
     return Math.round((completedLessons.length / courseIndex.length) * 100);
   }, [completedLessons]);
 
-  const streakData = useMemo(() => ({
-    current: 3,
-    best: 7,
-    todayCompleted: 1,
-  }), []);
+  const streakData = useMemo(() => {
+    // Best streak: persist in localStorage, update when current exceeds
+    const bestKey = 'deutschup_best_streak';
+    const stored = parseInt(localStorage.getItem(bestKey) || '0', 10);
+    const best = Math.max(stored, streak);
+    if (streak > stored) localStorage.setItem(bestKey, String(streak));
+
+    // Today completed: check if lastPracticeDate is today
+    const today = new Date().toISOString().split('T')[0];
+    const todayCompleted = lastPracticeDate === today ? 1 : 0;
+
+    return { current: streak, best, todayCompleted };
+  }, [streak, lastPracticeDate]);
 
   const learningStats = useMemo(() => ({
     totalVocab: Object.keys(vocab).length,
