@@ -652,24 +652,6 @@ export default function AdminAI() {
         {/* Health Tab */}
         {activeTab === 'health' && (
           <div className="space-y-6">
-            {/* Summary Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {[
-                { label: 'Total Requests', value: totalRequests.toLocaleString(), icon: TrendingUp, color: 'text-[#F2C94C]' },
-                { label: 'Success Rate', value: `${successRate}%`, icon: CheckCircle2, color: successRate >= 90 ? 'text-emerald-400' : successRate >= 70 ? 'text-amber-400' : 'text-red-400' },
-                { label: 'Avg Latency', value: `${avgLatency}ms`, icon: Clock, color: avgLatency < 500 ? 'text-emerald-400' : avgLatency < 1000 ? 'text-amber-400' : 'text-red-400' },
-                { label: 'Failed Requests', value: totalFailed.toLocaleString(), icon: XCircle, color: totalFailed === 0 ? 'text-emerald-400' : 'text-red-400' },
-              ].map(({ label, value, icon: Icon, color }) => (
-                <div key={label} className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  p-4 border border-border">
-                  <div className="flex items-center space-x-2 mb-2">
-                    <Icon className={cn("w-4 h-4", color)} />
-                    <span className="text-xs text-muted-foreground">{label}</span>
-                  </div>
-                  <p className={cn("text-xl font-bold", color)}>{value}</p>
-                </div>
-              ))}
-            </div>
-
             {/* Provider Health Cards */}
             <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-border p-6">
               <h3 className="text-lg font-bold text-foreground mb-4 flex items-center">
