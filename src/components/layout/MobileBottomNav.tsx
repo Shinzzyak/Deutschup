@@ -29,7 +29,7 @@ export default function MobileBottomNav() {
 
   return (
     <nav
-      className="glass-nav md:hidden fixed bottom-0 left-0 right-0 z-50"
+      className="glass-nav lg:hidden fixed bottom-0 left-0 right-0 z-50"
 
       aria-label="Navigasi mobile"
     >

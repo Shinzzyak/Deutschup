@@ -116,19 +116,25 @@ function AnimatedRoutes() {
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageWrapper><DashboardWithPaymentRefresh /></PageWrapper>} />
+        <Route path="/dashboard" element={<PageWrapper><DashboardWithPaymentRefresh /></PageWrapper>} />
         <Route path="/level/:id" element={<PageWrapper><LevelView /></PageWrapper>} />
+        <Route path="/lessons" element={<Navigate to="/level/A1" replace />} />
         <Route path="/checkpoint/:id" element={<PageWrapper><CheckpointView /></PageWrapper>} />
         <Route path="/lesson/:id" element={<PageWrapper><LessonView /></PageWrapper>} />
         <Route path="/vocab" element={<PageWrapper><VocabTrainer /></PageWrapper>} />
+        <Route path="/vocab-trainer" element={<PageWrapper><VocabTrainer /></PageWrapper>} />
         <Route path="/verbs" element={<PageWrapper><VerbTrainer /></PageWrapper>} />
+        <Route path="/verb-trainer" element={<PageWrapper><VerbTrainer /></PageWrapper>} />
         <Route path="/koreksi" element={<PageWrapper><Koreksi /></PageWrapper>} />
         <Route path="/catatan" element={<PageWrapper><Catatan /></PageWrapper>} />
         <Route path="/simulasi" element={<PageWrapper><Simulasi /></PageWrapper>} />
         <Route path="/goethe" element={<PageWrapper><GoetheExam /></PageWrapper>} />
+        <Route path="/exam" element={<PageWrapper><GoetheExam /></PageWrapper>} />
         <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
         <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
         <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
         <Route path="/admin/ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
+        <Route path="/admin-ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
         <Route path="/admin/canary" element={<PageWrapper><CanaryDashboard /></PageWrapper>} />
         <Route path="/clerk-test" element={<PageWrapper><ClerkTest /></PageWrapper>} />
         <Route path="/debug-auth" element={<PageWrapper><DebugAuth /></PageWrapper>} />
