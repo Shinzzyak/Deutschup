@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { runMiddleware, authMiddleware, getDb, getSupabaseAdminClient } from '../lib/api-utils.js';
+import { runMiddleware, authMiddleware, getDb, getVerifiedIdentity } from '../lib/api-utils.js';
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -31,37 +31,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       await runMiddleware(req, res, authMiddleware);
 
-      // H3 FIX: Never trust userId/email from body — extract from verified token
-      let userId: string | undefined;
-      let email: string | undefined;
-      const authHeader = req.headers.authorization;
-      if (authHeader?.startsWith('Bearer ')) {
-        const token = authHeader.split('Bearer ')[1];
-        try {
-          const { data: { user }, error: authError } = await getSupabaseAdminClient().auth.getUser(token);
-          if (!authError && user) {
-            userId = user.id;
-            email = user.email;
-          } else {
-            // Clerk JWT — extract email, lookup internal_id
-            try {
-              const parts = token.split('.');
-              if (parts.length === 3) {
-                const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
-                if (payload?.email) {
-                  email = payload.email;
-                  const { data: identity } = await getDb()
-                    .from('user_identities')
-                    .select('internal_id')
-                    .eq('email', payload.email.toLowerCase().trim())
-                    .maybeSingle();
-                  if (identity?.internal_id) userId = identity.internal_id;
-                }
-              }
-            } catch {}
-          }
-        } catch {}
-      }
+      // H3 FIX: Never trust userId/email from body — extract from verified identity.
+      const identity = await getVerifiedIdentity(req);
+      const userId = identity?.internalId;
+      const email = identity?.email;
       if (!userId) return res.status(401).json({ error: 'Unauthorized — token required' });
 
       // Rate limit on create (M2 fix)

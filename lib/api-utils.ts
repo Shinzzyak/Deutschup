@@ -1,4 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
+import { verifyToken } from "@clerk/backend";
 import { createClient } from "@supabase/supabase-js";
 import "dotenv/config";
 
@@ -112,22 +113,44 @@ export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | 
     }
   } catch {}
 
-  // Clerk JWT: decode email then resolve to internal UUID mapping.
-  // NOTE: Full Clerk signature verification is ideal later; this mapping lookup prevents raw email/userId trust.
-  const payload = decodeJwtPayload(token);
+  // Clerk token: verify signature first, then map Clerk subject to internal UUID.
+  let payload: Record<string, any> | null = null;
+  try {
+    if (!process.env.CLERK_SECRET_KEY) return null;
+    payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY }) as Record<string, any>;
+  } catch (e: any) {
+    console.warn('[AUTH] Clerk token verification failed:', e.message);
+    return null;
+  }
+
+  const clerkId = typeof payload?.sub === 'string' ? payload.sub.trim() : '';
   const email = payload?.email?.toLowerCase?.().trim?.();
-  if (!email) return null;
 
   try {
-    const { data: identity } = await getDb()
-      .from('user_identities')
-      .select('internal_id')
-      .eq('email', email)
-      .maybeSingle();
-    if (identity?.internal_id) {
-      return { internalId: identity.internal_id, email, provider: 'clerk' };
+    if (clerkId) {
+      const { data: identity } = await getDb()
+        .from('user_identities')
+        .select('internal_id, email')
+        .eq('clerk_id', clerkId)
+        .maybeSingle();
+      if (identity?.internal_id) {
+        return { internalId: identity.internal_id, email: identity.email || email, provider: 'clerk' };
+      }
     }
-  } catch {}
+
+    if (email) {
+      const { data: identity } = await getDb()
+        .from('user_identities')
+        .select('internal_id, email')
+        .eq('email', email)
+        .maybeSingle();
+      if (identity?.internal_id) {
+        return { internalId: identity.internal_id, email: identity.email || email, provider: 'clerk' };
+      }
+    }
+  } catch (e: any) {
+    console.error('[AUTH] getVerifiedIdentity clerk lookup error:', e.message);
+  }
 
   return null;
 }
