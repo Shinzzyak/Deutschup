@@ -6,15 +6,16 @@ import { useAuthStore } from '../stores/authStore';
 import { getCanaryStatus, isClerkEnabled } from '../lib/clerk/canary';
 
 export default function CanaryDashboard() {
-  const { user } = useAuthStore();
+  const { user, profileData } = useAuthStore();
   const [status, setStatus] = useState<any>(null);
+  const isAdmin = profileData?.role === 'admin';
 
   useEffect(() => {
-    if (user?.email !== import.meta.env.VITE_ADMIN_EMAIL) return;
+    if (!isAdmin) return;
     setStatus(getCanaryStatus());
-  }, [user]);
+  }, [isAdmin]);
 
-  if (user?.email !== import.meta.env.VITE_ADMIN_EMAIL) {
+  if (!isAdmin) {
     return (
       <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
         <div className="text-center">

@@ -182,7 +182,7 @@ async function handleTogglePro(req: VercelRequest, res: VercelResponse) {
       .from('profiles')
       .select('subscription')
       .eq('id', userId)
-      .single();
+      .maybeSingle();
 
     const newTier = profile?.subscription === 'pro' ? 'free' : 'pro';
     const expiry = newTier === 'pro' 

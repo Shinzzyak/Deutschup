@@ -62,13 +62,26 @@ export function captureAuth(event: string, detail?: string) {
   append({ timestamp: new Date().toISOString(), type: 'auth', message: event, detail, route: window.location.pathname });
 }
 
+let debugCleanup: (() => void) | null = null;
+
 export function initDebugCapture() {
+  if (debugCleanup) return debugCleanup; // already initialized
+
   // Global error handlers
-  window.addEventListener('error', (e) => captureError(e, 'window.error'));
-  window.addEventListener('unhandledrejection', (e) => captureError(e, 'unhandledrejection'));
+  const onError = (e: ErrorEvent) => captureError(e, 'window.error');
+  const onRejection = (e: PromiseRejectionEvent) => captureError(e, 'unhandledrejection');
+  window.addEventListener('error', onError);
+  window.addEventListener('unhandledrejection', onRejection);
 
   // Capture initial route
   captureRoute('', window.location.pathname);
+
+  debugCleanup = () => {
+    window.removeEventListener('error', onError);
+    window.removeEventListener('unhandledrejection', onRejection);
+    debugCleanup = null;
+  };
+  return debugCleanup;
 }
 
 // Convenience: get last N errors

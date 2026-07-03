@@ -115,15 +115,18 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     const userId = await resolveInternalId(clerkUserId);
     if (!userId) return;
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('notes')
         .insert({
           user_id: userId,
           text,
           tag,
           createdAt: Date.now()
-        });
+        })
+        .select()
+        .single();
       if (error) throw error;
+      if (data) set({ notes: [data as Note, ...get().notes] });
     } catch (error) {
       console.error(`Error adding note for ${userId}:`, error);
     }
@@ -139,6 +142,7 @@ export const useLearningStore = create<LearningState>((set, get) => ({
         .eq('id', noteId)
         .eq('user_id', userId);
       if (error) throw error;
+      set({ notes: get().notes.filter(n => n.id !== noteId) });
     } catch (error) {
       console.error(`Error deleting note ${noteId} for ${userId}:`, error);
     }
@@ -190,10 +194,13 @@ export const useLearningStore = create<LearningState>((set, get) => ({
     const userId = await resolveInternalId(clerkUserId);
     if (!userId) return;
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('mock_tests')
-        .insert({ user_id: userId, ...result });
+        .insert({ user_id: userId, ...result })
+        .select()
+        .single();
       if (error) throw error;
+      if (data) set({ mockTests: [data as MockTestResult, ...get().mockTests] });
     } catch (error) {
       console.error(`Error saving mock test for ${userId}:`, error);
     }
