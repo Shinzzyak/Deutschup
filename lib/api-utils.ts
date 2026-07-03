@@ -198,79 +198,13 @@ export async function isVerifiedAdmin(req: any): Promise<boolean> {
 }
 
 export const adminMiddleware = async (req: any, res: any, next: any) => {
-  const adminEmail = process.env.ADMIN_EMAIL;
-  // M1 FIX: Only trust JWT-decoded email or req.user.email — NEVER body or headers
-  let userEmail: string | undefined = req.user?.email;
-  
-  // Decode Clerk/any JWT from Authorization header for email
-  if (!userEmail) {
-    const authHeader = req.headers.authorization;
-    if (authHeader?.startsWith('Bearer ')) {
-      const payload = decodeJwtPayload(authHeader.split('Bearer ')[1]);
-      if (payload?.email) {
-        userEmail = payload.email;
-        console.log('[AdminMiddleware] Email extracted from JWT:', userEmail);
-      }
-    }
+  // Use unified verified admin check — verifies Clerk JWT via @clerk/backend,
+  // maps sub → user_identities.clerk_id → internal_id, checks ADMIN_EMAIL + profiles.role
+  const isAdmin = await isVerifiedAdmin(req);
+  if (!isAdmin) {
+    console.warn('[AdminMiddleware] Access DENIED');
+    return res.status(403).json({ error: 'Forbidden: Admin privileges required' });
   }
-  
-  console.log(`[AdminMiddleware] Checking access for: ${userEmail}`);
-  console.log(`[AdminMiddleware] Expected Admin Email: ${adminEmail}`);
-
-  if (adminEmail && userEmail && userEmail.toLowerCase().trim() === adminEmail.toLowerCase().trim()) {
-    console.log(`[AdminMiddleware] Access GRANTED via Email Override for: ${userEmail}`);
-    return next();
-  }
-
-  // For Clerk users, check role by email in profiles table
-  if (userEmail) {
-    try {
-      // First find the internal user ID from user_identities
-      const { data: identity, error: idError } = await getDb()
-        .from('user_identities')
-        .select('internal_id')
-        .eq('email', userEmail.toLowerCase().trim())
-        .single();
-      
-      if (!idError && identity) {
-        const { data: profile, error: profileError } = await getDb()
-          .from('profiles')
-          .select('role')
-          .eq('id', identity.internal_id)
-          .single();
-        
-        if (!profileError && profile?.role === 'admin') {
-          console.log(`[AdminMiddleware] Access GRANTED via Clerk email lookup for: ${userEmail}`);
-          return next();
-        }
-      }
-    } catch (e) {
-      console.error(`[AdminMiddleware] Clerk email check error for ${userEmail}:`, e);
-    }
-  }
-
-  // Fallback: check req.user.id (Supabase auth)
-  if (req.user?.id) {
-    try {
-      const { data: profile, error } = await getDb()
-        .from('profiles')
-        .select('role')
-        .eq('id', req.user.id)
-        .single();
-
-      if (!error && profile?.role === 'admin') {
-        console.log(`[AdminMiddleware] Access GRANTED via DB Role for: ${userEmail}`);
-        return next();
-      }
-    } catch (e) {
-      console.error(`[AdminMiddleware] DB check error for ${userEmail}:`, e);
-    }
-  }
-
-  console.warn(`[AdminMiddleware] Access DENIED for: ${userEmail}`);
-  res.status(403).json({ 
-    error: 'Forbidden: Admin privileges required',
-    debug: process.env.NODE_ENV === 'development' ? { userEmail, adminEmail } : undefined 
-  });
-  return next(new Error('Forbidden'));
+  console.log('[AdminMiddleware] Access GRANTED via isVerifiedAdmin');
+  return next();
 };
