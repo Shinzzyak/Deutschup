@@ -217,10 +217,10 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   const pillH = 34;
 
   const pills = [
-    { label: 'XP PUNKTE', value: data.xp.toLocaleString(), color: C.accent, bg: C.accentSoft, icon: '⚡' },
-    { label: 'WORTSCHATZ', value: String(data.vocabCount), color: C.success, bg: C.successSoft, icon: '📖' },
-    { label: 'LEKTIONEN', value: `${data.completedCount}/${data.totalLessons}`, color: C.warning, bg: C.warningSoft, icon: '✅' },
-    { label: 'FORTSCHRITT', value: `${data.overallProgress}%`, color: C.danger, bg: C.dangerSoft, icon: '📊' },
+    { label: 'XP PUNKTE', value: data.xp.toLocaleString(), color: C.accent, bg: C.accentSoft, dot: true },
+    { label: 'WORTSCHATZ', value: String(data.vocabCount), color: C.success, bg: C.successSoft, dot: true },
+    { label: 'LEKTIONEN', value: `${data.completedCount}/${data.totalLessons}`, color: C.warning, bg: C.warningSoft, dot: true },
+    { label: 'FORTSCHRITT', value: `${data.overallProgress}%`, color: C.danger, bg: C.dangerSoft, dot: true },
   ];
 
   pills.forEach((p, i) => {
@@ -233,11 +233,9 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     doc.setLineWidth(0.2);
     doc.roundedRect(px, y, pillW, pillH, 4, 4, 'S');
 
-    // Icon
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(10);
-    doc.setTextColor(...p.color);
-    doc.text(p.icon, px + 4, y + 6);
+    // Colored dot indicator (emoji not supported by jsPDF helvetica)
+    doc.setFillColor(...p.color);
+    doc.circle(px + 5, y + 7, 2, 'F');
 
     // Value — centered in top 50%
     doc.setFont('helvetica', 'bold');
@@ -264,10 +262,10 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   // ── INSIGHTS CARD ──
   const padX = 10, padY = 8, lineH = 6.5;
   const insights = [
-    { icon: '🔥', text: `${data.streak} hari streak — pertahankan!`, color: C.danger },
-    { icon: '⏱️', text: `${data.studyHours} jam total waktu belajar`, color: C.info },
-    { icon: '🎯', text: `Rata-rata skor: ${data.averageScore}%`, color: C.warning },
-    { icon: '📚', text: `${data.vocabCount} kosakata dikuasai`, color: C.success },
+    { text: `${data.streak} hari streak — pertahankan!`, color: C.danger },
+    { text: `${data.studyHours} jam total waktu belajar`, color: C.info },
+    { text: `Rata-rata skor: ${data.averageScore}%`, color: C.warning },
+    { text: `${data.vocabCount} kosakata dikuasai`, color: C.success },
   ];
   const cardH = padY + 8 + insights.length * lineH + padY;
 
@@ -281,23 +279,22 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(...C.ink);
-  doc.text('📊 Catatan Belajar', M + padX, y + padY + 5);
+  doc.text('Catatan Belajar', M + padX, y + padY + 5);
 
   // Left accent bar inside card
   doc.setFillColor(...C.accent);
   doc.rect(M, y + padY + 7, 2, cardH - padY * 2 - 8, 'F');
 
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8.5);
   insights.forEach((ins, i) => {
     const iy = y + padY + 14 + i * lineH;
-    doc.setTextColor(...ins.color);
-    doc.setFontSize(9);
-    doc.text(ins.icon, M + padX + 3, iy);
+    // Colored dot
+    doc.setFillColor(...ins.color);
+    doc.circle(M + padX + 3, iy - 1.5, 1.5, 'F');
+    // Text
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
     doc.setTextColor(...C.inkLight);
-    doc.text(trunc(doc, ins.text, CW - padX * 2 - 14), M + padX + 10, iy);
+    doc.text(trunc(doc, ins.text, CW - padX * 2 - 10), M + padX + 10, iy);
   });
 
   y += cardH + 12;
@@ -378,13 +375,9 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
       for (const lesson of lessons.slice(0, 5)) {
         y = checkPage(doc, y, 265);
 
-        // Checkmark bullet
+        // Solid success bullet (no glyph)
         doc.setFillColor(...C.success);
-        doc.circle(M + 3, y - 1, 1.5, 'F');
-        doc.setTextColor(...C.white);
-        doc.setFont('helvetica', 'bold');
-        doc.setFontSize(6);
-        doc.text('✓', M + 2.7, y - 0.3, { align: 'center' });
+        doc.circle(M + 3, y - 1.5, 1.5, 'F');
 
         // Title
         doc.setFont('helvetica', 'normal');
@@ -461,7 +454,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
           new Date(t.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
           t.level,
           `${t.score}/${t.total} (${pct}%)`,
-          pct >= 70 ? 'Lulus ✓' : 'Belum',
+          pct >= 70 ? 'Lulus' : 'Belum',
         ];
       }),
       theme: 'plain',
@@ -488,7 +481,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
       didParseCell(d: any) {
         if (d.section === 'body' && d.column.index === 4) {
           d.cell.styles.fontStyle = 'bold';
-          d.cell.styles.textColor = d.cell.raw === 'Lulus ✓' ? C.success : C.warning;
+          d.cell.styles.textColor = d.cell.raw === 'Lulus' ? C.success : C.warning;
         }
       },
     });
@@ -513,7 +506,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     recoms.push('Bangun rutinitas harian — belajar 15 menit setiap hari lebih efektif!');
   }
   if (recoms.length === 0) {
-    recoms.push('Sehr gut! Pertahankan konsistensi belajarmu. Weiter so! 🎉');
+    recoms.push('Sehr gut! Pertahankan konsistensi belajarmu. Weiter so!');
   }
   recoms.push('Coba simulasi ujian Goethe level berikutnya untuk tantangan baru!');
 
@@ -531,7 +524,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(...C.accent);
-  doc.text('💡 Empfehlung — Rekomendasi', M + 10, y + 8);
+  doc.text('Empfehlung — Rekomendasi', M + 10, y + 8);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
@@ -539,7 +532,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   recoms.forEach((r, i) => {
     const ry = y + 14 + i * 6;
     doc.setFillColor(...C.accent);
-    doc.circle(M + 12, ry - 1, 1, 'F');
+    doc.circle(M + 12, ry - 1.5, 1, 'F');
     doc.text(trunc(doc, r, CW - 25), M + 16, ry);
   });
 
