@@ -97,6 +97,20 @@
   border-color: rgba(255, 255, 255, 0.08);
 }
 
+/* Panel — solid content panels (Koreksi, Catatan, etc.) where glass is too transparent */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow), var(--glass-inset-highlight);
+  transition: var(--glass-transition);
+}
+.dark .glass-panel {
+  background: rgba(30, 30, 30, 0.88);
+}
+
 /* Heavy — modal overlays, main panels */
 .glass-heavy {
   background: var(--glass-bg);
@@ -183,7 +197,7 @@
    Glass Card — dashboard/lesson cards
    ============================================ */
 .glass-card {
-  background: var(--glass-bg);
+  background: rgba(255, 255, 255, 0.78);
   backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
   -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
   border: 1px solid var(--glass-border);
@@ -198,6 +212,9 @@
 }
 .dark .glass-card:hover {
   border-color: rgba(255, 255, 255, 0.18);
+}
+.dark .glass-card {
+  background: rgba(30, 30, 30, 0.82);
 }
 
 /* ============================================

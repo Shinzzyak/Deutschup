@@ -40,7 +40,7 @@ export default function Koreksi() {
         <p className="text-muted-foreground text-lg md:text-xl">Tuliskan kalimat bahasa Jermanmu, AI kami akan memeriksa tata bahasa dan strukturnya.</p>
       </div>
 
-      <div className="glass-card p-6 md:p-8 mb-8">
+      <div className="glass-panel p-6 md:p-8 mb-8">
         <label className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
         <textarea
           value={input}
