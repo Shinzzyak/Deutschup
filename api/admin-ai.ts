@@ -505,6 +505,7 @@ interface HealthCheckResult {
   latency_ms: number | null;
   checked_at: string;
   error_message: string | null;
+  key_source?: string;
 }
 
 const PROVIDER_ENDPOINTS: Record<string, string> = {
