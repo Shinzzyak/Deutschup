@@ -1,4 +1,4 @@
-import { runMiddleware, authMiddleware, getDb } from '../lib/api-utils.js';
+import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../lib/api-utils.js';
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
@@ -11,10 +11,11 @@ export default async function handler(req: any, res: any) {
   
   try {
     await runMiddleware(req, res, authMiddleware);
-
-    const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
-    if (req.user.email !== adminEmail) {
-      return res.status(403).json({ error: 'Admin only' });
+    try {
+      await runMiddleware(req, res, adminMiddleware);
+    } catch {
+      if (res.headersSent) return;
+      return res.status(403).json({ error: 'Forbidden: Admin privileges required' });
     }
 
     const days = parseInt(req.query.days as string) || 1;
@@ -70,6 +71,7 @@ export default async function handler(req: any, res: any) {
 
   } catch (e: any) {
     console.error('[ADMIN-STATS] Error:', e);
+    if (res.headersSent) return;
     return res.status(500).json({ error: e.message });
   }
 }
