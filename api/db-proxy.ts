@@ -1,11 +1,41 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import "dotenv/config";
+import { getSupabaseAdminClient } from '../lib/api-utils.js';
 
-const getAdminClient = () => createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
+const getAdminClient = () => getSupabaseAdminClient();
+
+// Extract verified user ID from JWT (Supabase or Clerk)
+// Returns null if no valid token — never trust body/query for identity
+async function getVerifiedUserId(req: VercelRequest): Promise<string | null> {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) return null;
+  const token = authHeader.split('Bearer ')[1];
+
+  // Try Supabase auth
+  try {
+    const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
+    if (!error && user) return user.id;
+  } catch {}
+
+  // Try Clerk JWT — extract email, lookup internal_id from user_identities
+  try {
+    const parts = token.split('.');
+    if (parts.length === 3) {
+      const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+      if (payload?.email) {
+        const { data: identity } = await getSupabaseAdminClient()
+          .from('user_identities')
+          .select('internal_id')
+          .eq('email', payload.email.toLowerCase().trim())
+          .maybeSingle();
+        if (identity?.internal_id) return identity.internal_id;
+      }
+    }
+  } catch {}
+
+  return null;
+}
 
 const ALLOWED_ACTIONS = new Set([
   'get-profile', 'upsert-profile',
@@ -31,8 +61,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     switch (action) {
       case 'get-profile': {
-        const userId = req.query.userId as string || req.body?.userId;
-        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
         const { data, error } = await db
           .from('profiles')
           .select('tier, tier_expiry, full_name, avatar_url, role, subscription, pro_expires_at')
@@ -46,8 +76,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       case 'upsert-profile': {
-        const { userId, full_name } = req.body || {};
-        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { full_name } = req.body || {};
         const { data, error } = await db
           .from('profiles')
           .upsert({ id: userId, full_name }, { onConflict: 'id' })
@@ -61,8 +92,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       case 'get-orders': {
-        const userId = req.query.userId as string || req.body?.userId;
-        if (!userId) return res.status(400).json({ error: 'Missing userId' });
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
         const { data, error } = await db
           .from('orders')
           .select('id, status, amount, payment_method, paid_at, created_at')
@@ -77,9 +108,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       case 'get-session': {
-        const email = req.headers['x-user-email'] as string || req.query.email as string;
-        if (!email) return res.status(400).json({ error: 'Missing user email' });
-        return res.json({ email, provider: 'clerk' });
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        return res.json({ id: userId, provider: 'clerk' });
       }
 
       default:

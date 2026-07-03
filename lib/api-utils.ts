@@ -95,8 +95,8 @@ function decodeJwtPayload(token: string): Record<string, any> | null {
 
 export const adminMiddleware = async (req: any, res: any, next: any) => {
   const adminEmail = process.env.ADMIN_EMAIL;
-  // Check various sources for user email
-  let userEmail = req.user?.email || req.body?.email || req.headers['x-user-email'];
+  // M1 FIX: Only trust JWT-decoded email or req.user.email — NEVER body or headers
+  let userEmail: string | undefined = req.user?.email;
   
   // Decode Clerk/any JWT from Authorization header for email
   if (!userEmail) {

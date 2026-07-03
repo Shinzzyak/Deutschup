@@ -296,17 +296,40 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!error && user) {
         uid = user.id;
       } else {
-        // Try Clerk JWT — extract email as identifier
+        // Try Clerk JWT — extract email, lookup internal_id from user_identities
         try {
           const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
-          if (payload.email) uid = payload.email;
+          if (payload?.email) {
+            const { data: identity } = await getSupabaseAdminClient()
+              .from('user_identities')
+              .select('internal_id')
+              .eq('email', payload.email.toLowerCase().trim())
+              .maybeSingle();
+            if (identity?.internal_id) {
+              uid = identity.internal_id;
+            } else {
+              // No identity mapping — use email hash as uid (not raw email for log safety)
+              uid = 'clerk_unmapped_' + payload.email.split('@')[0];
+            }
+          }
         } catch {}
       }
     } catch (e) {
-      // Token invalid — try Clerk JWT
+      // Token invalid — try Clerk JWT lookup
       try {
         const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
-        if (payload.email) uid = payload.email;
+        if (payload?.email) {
+          const { data: identity } = await getSupabaseAdminClient()
+            .from('user_identities')
+            .select('internal_id')
+            .eq('email', payload.email.toLowerCase().trim())
+            .maybeSingle();
+          if (identity?.internal_id) {
+            uid = identity.internal_id;
+          } else {
+            uid = 'clerk_unmapped_' + payload.email.split('@')[0];
+          }
+        }
       } catch {}
     }
   }

@@ -32,6 +32,45 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       await runMiddleware(req, res, authMiddleware);
 
+      // H3 FIX: Never trust userId/email from body — extract from verified token
+      let userId: string | undefined;
+      let email: string | undefined;
+      const authHeader = req.headers.authorization;
+      if (authHeader?.startsWith('Bearer ')) {
+        const token = authHeader.split('Bearer ')[1];
+        try {
+          const { data: { user }, error: authError } = await getSupabaseAdminClient().auth.getUser(token);
+          if (!authError && user) {
+            userId = user.id;
+            email = user.email;
+          } else {
+            // Clerk JWT — extract email, lookup internal_id
+            try {
+              const parts = token.split('.');
+              if (parts.length === 3) {
+                const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
+                if (payload?.email) {
+                  email = payload.email;
+                  const { data: identity } = await getDb()
+                    .from('user_identities')
+                    .select('internal_id')
+                    .eq('email', payload.email.toLowerCase().trim())
+                    .maybeSingle();
+                  if (identity?.internal_id) userId = identity.internal_id;
+                }
+              }
+            } catch {}
+          }
+        } catch {}
+      }
+      if (!userId) return res.status(401).json({ error: 'Unauthorized — token required' });
+
+      // Rate limit on create (M2 fix)
+      const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
+      if (!checkRateLimit(clientIp, 5, 60000)) {
+        return res.status(429).json({ error: 'Too many requests' });
+      }
+
       const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY || process.env.BAYAR_GG_API_KEY_FALLBACK;
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
       const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
@@ -41,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       console.log('[payment/create] BASE_URL', BAYAR_GG_BASE_URL);
       console.log('[payment/create] APP_URL', APP_URL);
 
-      const { userId, planType, email, name } = req.body;
+      const { planType, name } = req.body;
 
       const isTestMode = process.env.TEST_PAYMENT_MODE === 'true';
       const TEST_PRICE = 1000;
@@ -145,38 +184,39 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const webhookSignature = req.headers['x-webhook-signature'] as string;
       const webhookTimestamp = req.headers['x-webhook-timestamp'] as string;
 
-      if (webhookSecret) {
-        if (!webhookSignature || !webhookTimestamp) {
-          console.error('[payment/callback] Missing signature headers from IP:', clientIp);
-          return res.status(401).json({ error: 'Missing webhook signature' });
-        }
-
-        // Verify timestamp is within 5 minutes (replay protection)
-        const timestamp = parseInt(webhookTimestamp, 10);
-        const nowSeconds = Math.floor(Date.now() / 1000);
-        if (isNaN(timestamp) || Math.abs(nowSeconds - timestamp) > 300) {
-          console.error('[payment/callback] Webhook timestamp expired from IP:', clientIp);
-          return res.status(401).json({ error: 'Webhook timestamp expired' });
-        }
-
-        const webhookPayload = req.body;
-        const signatureData = `${webhookPayload.invoice_id}|${webhookPayload.status}|${webhookPayload.final_amount}|${webhookTimestamp}`;
-        const expectedSignature = crypto.createHmac('sha256', webhookSecret).update(signatureData).digest('hex');
-
-        // Verify signature length matches (HMAC SHA256 hex = 64 chars)
-        if (expectedSignature.length !== webhookSignature.length) {
-          console.error('[payment/callback] Invalid webhook signature length from IP:', clientIp);
-          return res.status(401).json({ error: 'Invalid webhook signature' });
-        }
-
-        if (!crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(webhookSignature))) {
-          console.error('[payment/callback] Invalid webhook signature from IP:', clientIp);
-          return res.status(401).json({ error: 'Invalid webhook signature' });
-        }
-        console.log('[payment/callback] Signature verified OK');
-      } else {
-        console.warn('[payment/callback] No BAYARGG_WEBHOOK_SECRET set — skipping signature verification');
+      if (!webhookSecret) {
+        console.error('[payment/callback] CRITICAL: BAYARGG_WEBHOOK_SECRET not set — refusing to process webhook');
+        return res.status(500).json({ error: 'Webhook misconfigured' });
       }
+
+      if (!webhookSignature || !webhookTimestamp) {
+        console.error('[payment/callback] Missing signature headers from IP:', clientIp);
+        return res.status(401).json({ error: 'Missing webhook signature' });
+      }
+
+      // Verify timestamp is within 5 minutes (replay protection)
+      const timestamp = parseInt(webhookTimestamp, 10);
+      const nowSeconds = Math.floor(Date.now() / 1000);
+      if (isNaN(timestamp) || Math.abs(nowSeconds - timestamp) > 300) {
+        console.error('[payment/callback] Webhook timestamp expired from IP:', clientIp);
+        return res.status(401).json({ error: 'Webhook timestamp expired' });
+      }
+
+      const webhookPayload = req.body;
+      const signatureData = `${webhookPayload.invoice_id}|${webhookPayload.status}|${webhookPayload.final_amount}|${webhookTimestamp}`;
+      const expectedSignature = crypto.createHmac('sha256', webhookSecret).update(signatureData).digest('hex');
+
+      // Verify signature length matches (HMAC SHA256 hex = 64 chars)
+      if (expectedSignature.length !== webhookSignature.length) {
+        console.error('[payment/callback] Invalid webhook signature length from IP:', clientIp);
+        return res.status(401).json({ error: 'Invalid webhook signature' });
+      }
+
+      if (!crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(webhookSignature))) {
+        console.error('[payment/callback] Invalid webhook signature from IP:', clientIp);
+        return res.status(401).json({ error: 'Invalid webhook signature' });
+      }
+      console.log('[payment/callback] Signature verified OK');
 
       const webhookPayload = req.body;
       console.log('[payment/callback] Received webhook:', JSON.stringify(webhookPayload, null, 2));
