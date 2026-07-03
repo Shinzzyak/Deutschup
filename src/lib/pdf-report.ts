@@ -1,5 +1,17 @@
 /**
- * PDF Report v5 — Centered text, proper bounds
+ * PDF Report v6 — DeutschUp Brand Identity
+ *
+ * Design system match:
+ * - Ink: #0a0a0a (from web --foreground)
+ * - Paper: #f5f0eb (from web --card / cream)
+ * - Accent: #8b2500 (from web Progress indicator)
+ * - Success: oklch(0.6 0.15 145) → #22863a
+ * - Warning: oklch(0.75 0.15 75) → #d97706
+ * - Destructive: oklch(0.577 0.245 27.325) → #dc2626
+ * - Font heading: DM Serif Display (simulated via helvetica bold + size)
+ * - Font body: Geist (simulated via helvetica normal)
+ *
+ * Cultural touch: German "Lernbericht" + "Weiter lernen!" encouragement
  */
 
 import type { jsPDF } from 'jspdf';
@@ -19,24 +31,44 @@ interface ReportData {
   mockTests: Array<{ createdAt: string; level: string; score: number; total: number }>;
 }
 
+// ════════════════════════════════════════════════════════════
+// DESIGN TOKENS — Match Web Design System
+// ════════════════════════════════════════════════════════════
 const C = {
-  ink: [30, 30, 35] as [number, number, number],
-  inkLight: [100, 105, 115] as [number, number, number],
-  inkMuted: [160, 165, 175] as [number, number, number],
-  paper: [252, 250, 247] as [number, number, number],
-  cream: [245, 241, 235] as [number, number, number],
-  accent: [37, 99, 235] as [number, number, number],
-  accentSoft: [219, 234, 254] as [number, number, number],
-  success: [22, 163, 74] as [number, number, number],
+  // Ink scale (from --foreground: oklch(0.145 0 0) ≈ #0a0a0a)
+  ink:        [10, 10, 10] as [number, number, number],
+  inkLight:   [80, 85, 95] as [number, number, number],
+  inkMuted:   [140, 145, 155] as [number, number, number],
+  inkFaint:   [200, 200, 210] as [number, number, number],
+
+  // Paper scale (from --card / cream: #f5f0eb)
+  paper:      [245, 240, 235] as [number, number, number],
+  paperLight: [250, 248, 244] as [number, number, number],
+  cream:      [238, 232, 225] as [number, number, number],
+
+  // Accent (from Progress indicator: #8b2500)
+  accent:     [139, 37, 0] as [number, number, number],
+  accentSoft: [245, 230, 220] as [number, number, number],
+
+  // Semantic (from oklch values)
+  success:    [34, 134, 58] as [number, number, number],
   successSoft: [220, 252, 231] as [number, number, number],
-  amber: [217, 119, 6] as [number, number, number],
-  amberSoft: [254, 243, 199] as [number, number, number],
-  red: [220, 38, 38] as [number, number, number],
-  redSoft: [254, 226, 226] as [number, number, number],
-  white: [255, 255, 255] as [number, number, number],
-  divider: [230, 225, 218] as [number, number, number],
+  warning:    [217, 119, 6] as [number, number, number],
+  warningSoft: [254, 243, 199] as [number, number, number],
+  danger:     [220, 38, 38] as [number, number, number],
+  dangerSoft: [254, 226, 226] as [number, number, number],
+  info:       [37, 99, 235] as [number, number, number],
+  infoSoft:   [219, 234, 254] as [number, number, number],
+
+  // Neutrals
+  white:      [255, 255, 255] as [number, number, number],
+  divider:    [225, 218, 208] as [number, number, number],
+  dividerLight: [235, 230, 222] as [number, number, number],
 };
 
+// ════════════════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════════════════
 function trunc(doc: jsPDF, text: string, maxW: number): string {
   if (doc.getTextWidth(text) <= maxW) return text;
   let t = text;
@@ -57,11 +89,52 @@ function wrapText(doc: jsPDF, text: string, maxW: number): string[] {
   return lines;
 }
 
-/** Draw text vertically centered inside a box at (bx, by, bw, bh) */
 function centeredText(doc: jsPDF, text: string, bx: number, by: number, bw: number, bh: number) {
   doc.text(text, bx + bw / 2, by + bh / 2, { align: 'center' });
 }
 
+/** Decorative diamond pattern (brand motif) */
+function drawBrandMark(doc: jsPDF, x: number, y: number, size: number) {
+  // 3-dot brand mark (like web footer)
+  const r = size / 5;
+  const gap = size / 2.5;
+  doc.setFillColor(...C.ink);
+  doc.circle(x, y, r, 'F');
+  doc.setFillColor(...C.accent);
+  doc.circle(x + gap, y, r, 'F');
+  doc.setFillColor(...C.warning);
+  doc.circle(x + gap * 2, y, r, 'F');
+}
+
+/** Section divider with brand accent */
+function drawSectionDivider(doc: jsPDF, x: number, y: number, w: number) {
+  doc.setDrawColor(...C.divider);
+  doc.setLineWidth(0.3);
+  doc.line(x, y, x + w - 6, y);
+  // Accent dot at end
+  doc.setFillColor(...C.accent);
+  doc.circle(x + w - 3, y, 1, 'F');
+}
+
+/** Page background fill */
+function fillBg(doc: jsPDF, paper: [number, number, number] = C.paper) {
+  doc.setFillColor(...paper);
+  doc.rect(0, 0, 210, 297, 'F');
+}
+
+/** Check page overflow, add new page if needed */
+function checkPage(doc: jsPDF, y: number, threshold = 250): number {
+  if (y > threshold) {
+    doc.addPage();
+    fillBg(doc);
+    return 20;
+  }
+  return y;
+}
+
+// ════════════════════════════════════════════════════════════
+// MAIN
+// ════════════════════════════════════════════════════════════
 export async function generateReportPDF(data: ReportData): Promise<Blob> {
   const [{ jsPDF }, autoTable] = await Promise.all([
     import('jspdf'),
@@ -73,140 +146,188 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   const M = 18;
   const CW = W - M * 2;
 
-  // Page background
-  doc.setFillColor(...C.paper);
-  doc.rect(0, 0, W, 297, 'F');
+  fillBg(doc);
+  let y = 22;
 
-  let y = 20;
+  // ── HEADER: Brand strip ──
+  // Top accent bar
+  doc.setFillColor(...C.ink);
+  doc.rect(0, 0, W, 8, 'F');
+  doc.setFillColor(...C.accent);
+  doc.rect(0, 8, W, 2, 'F');
 
-  // ── HEADER ──
-  doc.setFillColor(...C.ink);  doc.circle(M + 3, y + 2, 2, 'F');
-  doc.setFillColor(...C.red);  doc.circle(M + 10, y + 2, 2, 'F');
-  doc.setFillColor(...C.amber); doc.circle(M + 17, y + 2, 2, 'F');
+  y = 24;
 
+  // Brand mark + name
+  drawBrandMark(doc, M, y + 2, 6);
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(24);
+  doc.setFontSize(20);
   doc.setTextColor(...C.ink);
-  doc.text('Laporan Pembelajaran', M, y + 12);
+  doc.text('DeutschUp', M + 22, y + 4);
 
+  // Subtitle
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(...C.inkLight);
-  doc.text('DeutschUp - Belajar Bahasa Jerman', M, y + 26);
+  doc.text('Lernbericht — Belajar Bahasa Jerman', M + 22, y + 9);
 
-  // Date (right, safe bounds)
-  const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-  doc.text(trunc(doc, dateStr, 70), W - M, y + 8, { align: 'right' });
+  // Date (right)
+  const dateStr = new Date().toLocaleDateString('id-ID', {
+    day: 'numeric', month: 'long', year: 'numeric'
+  });
+  doc.setFontSize(8);
+  doc.setTextColor(...C.inkMuted);
+  doc.text(dateStr, W - M, y + 2, { align: 'right' });
 
-  // Level badge
-  const bx = W - M - 16, by = y + 12;
-  doc.setFillColor(...C.accent);
-  doc.roundedRect(bx, by, 16, 10, 2, 2, 'F');
+  // Level badge (right, below date)
+  const bx = W - M - 20, by = y + 5;
+  doc.setFillColor(...C.ink);
+  doc.roundedRect(bx, by, 20, 11, 2.5, 2.5, 'F');
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...C.white);
-  centeredText(doc, data.currentLevel, bx, by, 16, 10);
+  doc.setFontSize(12);
+  doc.setTextColor(...C.paper);
+  centeredText(doc, data.currentLevel.toUpperCase(), bx, by, 20, 11);
+
+  y += 22;
 
   // Divider
-  doc.setDrawColor(...C.divider);
-  doc.setLineWidth(0.3);
-  doc.line(M, y + 34, W - M, y + 34);
-
-  y = 48;
+  drawSectionDivider(doc, M, y, CW);
+  y += 10;
 
   // ── GREETING ──
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(10);
-  doc.setTextColor(...C.inkLight);
-  doc.text(trunc(doc, `Halo, ${data.userName}! Berikut ringkasan belajarmu.`, CW, 10), M, y);
-  y += 12;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.setTextColor(...C.ink);
+  doc.text(`Hallo, ${data.userName}!`, M, y);
+  y += 6;
 
-  // ── STAT PILLS ──
-  // jsPDF text() uses CENTER baseline = top + height/2 + fontSize*0.35
-  // So for a pill of height H, text at y+H/2 will be centered
-  const gap = 3;
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(9);
+  doc.setTextColor(...C.inkLight);
+  const greetLines = wrapText(doc, 'Hier ist dein Lernbericht — ein Überblick über deine Fortschritte beim Deutschlernen. Weiter so!', CW);
+  for (const line of greetLines.slice(0, 2)) {
+    doc.text(line, M, y);
+    y += 5;
+  }
+  y += 6;
+
+  // ── STAT PILLS (4 grid) ──
+  const gap = 4;
   const pillW = (CW - gap * 3) / 4;
-  const pillH = 30;
+  const pillH = 34;
 
   const pills = [
-    { label: 'XP', value: data.xp.toLocaleString(), color: C.accent, bg: C.accentSoft },
-    { label: 'KOSAKATA', value: String(data.vocabCount), color: C.success, bg: C.successSoft },
-    { label: 'PELAJARAN', value: `${data.completedCount}/${data.totalLessons}`, color: C.amber, bg: C.amberSoft },
-    { label: 'PROGRES', value: `${data.overallProgress}%`, color: C.red, bg: C.redSoft },
+    { label: 'XP PUNKTE', value: data.xp.toLocaleString(), color: C.accent, bg: C.accentSoft, icon: '⚡' },
+    { label: 'WORTSCHATZ', value: String(data.vocabCount), color: C.success, bg: C.successSoft, icon: '📖' },
+    { label: 'LEKTIONEN', value: `${data.completedCount}/${data.totalLessons}`, color: C.warning, bg: C.warningSoft, icon: '✅' },
+    { label: 'FORTSCHRITT', value: `${data.overallProgress}%`, color: C.danger, bg: C.dangerSoft, icon: '📊' },
   ];
 
   pills.forEach((p, i) => {
     const px = M + i * (pillW + gap);
 
-    // Pill background
+    // Pill background with border
     doc.setFillColor(...p.bg);
-    doc.roundedRect(px, y, pillW, pillH, 3, 3, 'F');
+    doc.roundedRect(px, y, pillW, pillH, 4, 4, 'F');
+    doc.setDrawColor(...C.dividerLight);
+    doc.setLineWidth(0.2);
+    doc.roundedRect(px, y, pillW, pillH, 4, 4, 'S');
 
-    // Value — centered in top 60% of pill
+    // Icon
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(...p.color);
+    doc.text(p.icon, px + 4, y + 6);
+
+    // Value — centered in top 50%
     doc.setFont('helvetica', 'bold');
-    let fs = 18;
-    while (fs > 11 && doc.getTextWidth(p.value) > pillW - 6) fs--;
+    let fs = 17;
+    while (fs > 10 && doc.getTextWidth(p.value) > pillW - 8) fs--;
     doc.setFontSize(fs);
     doc.setTextColor(...p.color);
-    // Top half center: y + pillH*0.28
-    doc.text(trunc(doc, p.value, pillW - 4), px + pillW / 2, y + pillH * 0.38, { align: 'center' });
+    doc.text(trunc(doc, p.value, pillW - 6), px + pillW / 2, y + pillH * 0.42, { align: 'center' });
 
-    // Label — centered in bottom 40% of pill
+    // Label — centered in bottom 35%
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(7);
+    doc.setFontSize(6.5);
     doc.setTextColor(...C.inkLight);
-    doc.text(p.label, px + pillW / 2, y + pillH * 0.78, { align: 'center' });
+    doc.text(p.label, px + pillW / 2, y + pillH * 0.82, { align: 'center' });
+
+    // Bottom accent line
+    doc.setDrawColor(...p.color);
+    doc.setLineWidth(1.5);
+    doc.line(px + 6, y + pillH - 3, px + pillW - 6, y + pillH - 3);
   });
 
-  y += pillH + 10;
+  y += pillH + 12;
 
   // ── INSIGHTS CARD ──
-  const padX = 8, padY = 6, lineH = 6;
+  const padX = 10, padY = 8, lineH = 6.5;
   const insights = [
-    { text: `${data.streak} hari streak - pertahankan!`, color: C.accent },
-    { text: `${data.studyHours} jam waktu belajar`, color: C.success },
-    { text: `Rata-rata skor: ${data.averageScore}%`, color: C.amber },
-    { text: `${data.vocabCount} kosakata dikuasai`, color: C.red },
+    { icon: '🔥', text: `${data.streak} hari streak — pertahankan!`, color: C.danger },
+    { icon: '⏱️', text: `${data.studyHours} jam total waktu belajar`, color: C.info },
+    { icon: '🎯', text: `Rata-rata skor: ${data.averageScore}%`, color: C.warning },
+    { icon: '📚', text: `${data.vocabCount} kosakata dikuasai`, color: C.success },
   ];
-  const cardH = padY + 10 + insights.length * lineH + padY;
+  const cardH = padY + 8 + insights.length * lineH + padY;
 
   doc.setFillColor(...C.cream);
-  doc.roundedRect(M, y, CW, cardH, 3, 3, 'F');
+  doc.roundedRect(M, y, CW, cardH, 4, 4, 'F');
+  doc.setDrawColor(...C.dividerLight);
+  doc.setLineWidth(0.2);
+  doc.roundedRect(M, y, CW, cardH, 4, 4, 'S');
 
+  // Card header
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(...C.ink);
-  doc.text('Catatan Belajar', M + padX, y + padY + 6);
+  doc.text('📊 Catatan Belajar', M + padX, y + padY + 5);
+
+  // Left accent bar inside card
+  doc.setFillColor(...C.accent);
+  doc.rect(M, y + padY + 7, 2, cardH - padY * 2 - 8, 'F');
 
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(8);
+  doc.setFontSize(8.5);
   insights.forEach((ins, i) => {
-    const iy = y + padY + 12 + i * lineH;
-    doc.setFillColor(...ins.color);
-    doc.circle(M + padX + 2, iy - 1, 1.2, 'F');
+    const iy = y + padY + 14 + i * lineH;
+    doc.setTextColor(...ins.color);
+    doc.setFontSize(9);
+    doc.text(ins.icon, M + padX + 3, iy);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8.5);
     doc.setTextColor(...C.inkLight);
-    doc.text(trunc(doc, ins.text, CW - padX * 2 - 8), M + padX + 7, iy);
+    doc.text(trunc(doc, ins.text, CW - padX * 2 - 14), M + padX + 10, iy);
   });
 
-  y += cardH + 10;
+  y += cardH + 12;
 
-  // ── LESSONS ──
-  if (y > 248) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
+  // ── LESSONS SECTION ──
+  y = checkPage(doc, y, 245);
+  if (y < 25) { // new page — re-draw mini header
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(...C.ink);
+    drawBrandMark(doc, M, y + 2, 4);
+    doc.text('DeutschUp Lernbericht', M + 14, y + 4);
+    drawSectionDivider(doc, M, y + 8, CW);
+    y += 14;
+  }
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
+  doc.setFontSize(13);
   doc.setTextColor(...C.ink);
   doc.text('Pelajaran Selesai', M, y);
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(...C.inkMuted);
-  doc.text(`${data.lessons.filter(l => l.completed).length} pelajaran`, W - M, y, { align: 'right' });
+  const compCount = data.lessons.filter(l => l.completed).length;
+  doc.text(`${compCount} pelajaran`, W - M, y, { align: 'right' });
 
-  y += 3;
-  doc.setDrawColor(...C.divider);
-  doc.line(M, y + 1, W - M, y + 1);
-  y += 7;
+  y += 4;
+  drawSectionDivider(doc, M, y, CW);
+  y += 8;
 
   const completedLessons = data.lessons.filter(l => l.completed);
   if (completedLessons.length === 0) {
@@ -222,70 +343,95 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
       byLevel[l.level].push(l);
     }
 
-    const lc: Record<string, [number, number, number]> = { A1: C.success, A2: C.accent, B1: C.amber, B2: C.red };
+    const lc: Record<string, [number, number, number]> = {
+      A1: C.success, A2: C.info, B1: C.warning, B2: C.danger
+    };
 
     for (const [level, lessons] of Object.entries(byLevel)) {
-      if (y > 250) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
+      y = checkPage(doc, y, 255);
 
-      // Level badge
+      // Level header row
       const lColor = lc[level] || C.ink;
       doc.setFillColor(...lColor);
-      doc.roundedRect(M, y, 14, 7, 2, 2, 'F');
+      doc.roundedRect(M, y, 16, 8, 2, 2, 'F');
       doc.setFont('helvetica', 'bold');
-      doc.setFontSize(7);
+      doc.setFontSize(8);
       doc.setTextColor(...C.white);
-      centeredText(doc, level, M, y, 14, 7);
+      centeredText(doc, level, M, y, 16, 8);
 
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(7);
+      doc.setFontSize(7.5);
       doc.setTextColor(...C.inkMuted);
-      doc.text(`${lessons.length} pelajaran`, M + 18, y + 4.5);
+      doc.text(`${lessons.length} pelajaran`, M + 20, y + 5);
 
-      y += 10;
+      // Progress bar for this level
+      const levelTotal = data.lessons.filter(l => l.level === level).length;
+      const levelProgress = levelTotal > 0 ? lessons.length / levelTotal : 0;
+      const barX = W - M - 40, barY = y + 2, barW = 40, barH = 4;
+      doc.setFillColor(...C.cream);
+      doc.roundedRect(barX, barY, barW, barH, 1, 1, 'F');
+      doc.setFillColor(...lColor);
+      doc.roundedRect(barX, barY, barW * levelProgress, barH, 1, 1, 'F');
+
+      y += 12;
 
       for (const lesson of lessons.slice(0, 5)) {
-        if (y > 265) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
+        y = checkPage(doc, y, 265);
 
-        // Bullet
+        // Checkmark bullet
         doc.setFillColor(...C.success);
         doc.circle(M + 3, y - 1, 1.5, 'F');
+        doc.setTextColor(...C.white);
+        doc.setFont('helvetica', 'bold');
+        doc.setFontSize(6);
+        doc.text('✓', M + 2.7, y - 0.3, { align: 'center' });
 
         // Title
         doc.setFont('helvetica', 'normal');
-        doc.setFontSize(8.5);
+        doc.setFontSize(9);
         doc.setTextColor(...C.ink);
         doc.text(trunc(doc, lesson.title, CW - 14), M + 8, y);
 
-        y += 4.5;
+        y += 5;
 
         // First goal
         if (lesson.goals.length > 0) {
-          doc.setFontSize(7);
+          doc.setFontSize(7.5);
           doc.setTextColor(...C.inkMuted);
           const lines = wrapText(doc, lesson.goals[0], CW - 18);
           for (const line of lines.slice(0, 2)) {
             doc.text(trunc(doc, line, CW - 18), M + 8, y);
-            y += 3.5;
+            y += 4;
           }
         }
         y += 2;
       }
 
       if (lessons.length > 5) {
+        doc.setFont('helvetica', 'italic');
         doc.setFontSize(7);
         doc.setTextColor(...C.inkMuted);
         doc.text(`+ ${lessons.length - 5} pelajaran lainnya`, M + 8, y);
-        y += 4;
+        y += 5;
       }
-      y += 4;
+      y += 5;
     }
   }
 
-  // ── SIMULASI ──
-  if (y > 235) { doc.addPage(); doc.setFillColor(...C.paper); doc.rect(0, 0, W, 297, 'F'); y = 20; }
+  // ── SIMULASI (Exam History) ──
+  y = checkPage(doc, y, 235);
+  if (y < 25) {
+    drawBrandMark(doc, M, y + 2, 4);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.setTextColor(...C.ink);
+    doc.text('DeutschUp Lernbericht', M + 14, y + 4);
+    drawSectionDivider(doc, M, y + 8, CW);
+    y += 14;
+  }
 
   doc.setFont('helvetica', 'bold');
-  doc.setFontSize(12);
+  doc.setFontSize(13);
   doc.setTextColor(...C.ink);
   doc.text('Riwayat Simulasi', M, y);
 
@@ -294,9 +440,8 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setTextColor(...C.inkMuted);
   doc.text(`${data.mockTests.length} simulasi`, W - M, y, { align: 'right' });
 
-  y += 3;
-  doc.setDrawColor(...C.divider);
-  doc.line(M, y + 1, W - M, y + 1);
+  y += 4;
+  drawSectionDivider(doc, M, y, CW);
   y += 8;
 
   if (data.mockTests.length === 0) {
@@ -304,45 +449,120 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     doc.setFontSize(9);
     doc.setTextColor(...C.inkMuted);
     doc.text('Belum ada riwayat simulasi ujian.', M, y);
+    y += 8;
   } else {
     autoTable(doc, {
       startY: y,
       head: [['#', 'Tanggal', 'Level', 'Skor', 'Hasil']],
       body: data.mockTests.map((t, i) => {
         const pct = Math.round((t.score / t.total) * 100);
-        return [String(i + 1), new Date(t.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }), t.level, `${t.score}/${t.total} (${pct}%)`, pct >= 70 ? 'Lulus' : 'Belum'];
+        return [
+          String(i + 1),
+          new Date(t.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
+          t.level,
+          `${t.score}/${t.total} (${pct}%)`,
+          pct >= 70 ? 'Lulus ✓' : 'Belum',
+        ];
       }),
       theme: 'plain',
-      headStyles: { fillColor: C.cream, textColor: C.inkLight, fontStyle: 'bold', fontSize: 7.5, cellPadding: 3 },
-      bodyStyles: { fontSize: 8, textColor: C.ink, cellPadding: 3 },
+      headStyles: {
+        fillColor: C.cream,
+        textColor: C.inkLight,
+        fontStyle: 'bold' as const,
+        fontSize: 7.5,
+        cellPadding: 3,
+      },
+      bodyStyles: {
+        fontSize: 8,
+        textColor: C.ink,
+        cellPadding: 3,
+      },
       alternateRowStyles: { fillColor: [248, 246, 242] },
-      columnStyles: { 0: { cellWidth: 8, halign: 'center' }, 1: { cellWidth: 35 }, 2: { cellWidth: 15, halign: 'center' }, 3: { cellWidth: 35, halign: 'center' }, 4: { cellWidth: 18, halign: 'center' } },
+      columnStyles: {
+        0: { cellWidth: 8, halign: 'center' as const },
+        1: { cellWidth: 35 },
+        2: { cellWidth: 15, halign: 'center' as const },
+        3: { cellWidth: 35, halign: 'center' as const },
+        4: { cellWidth: 20, halign: 'center' as const },
+      },
       didParseCell(d: any) {
         if (d.section === 'body' && d.column.index === 4) {
           d.cell.styles.fontStyle = 'bold';
-          d.cell.styles.textColor = d.cell.raw === 'Lulus' ? C.success : C.amber;
+          d.cell.styles.textColor = d.cell.raw === 'Lulus ✓' ? C.success : C.warning;
         }
       },
     });
   }
 
+  // ── RECOMMENDATION BOX ──
+  y = (doc as any).lastAutoTable?.finalY || y + 10;
+  y = checkPage(doc, y, 240);
+  y += 8;
+
+  const recoms: string[] = [];
+  if (data.overallProgress < 50) {
+    recoms.push('Fokus menyelesaikan pelajaran yang belum selesai untuk meningkatkan progres.');
+  }
+  if (data.vocabCount < 100) {
+    recoms.push('Tambah latihan kosakata harian — target 10 kata baru per hari.');
+  }
+  if (data.averageScore < 70) {
+    recoms.push('Ulangi materi yang belum tuntas dan kerjakan simulasi lagi.');
+  }
+  if (data.streak < 3) {
+    recoms.push('Bangun rutinitas harian — belajar 15 menit setiap hari lebih efektif!');
+  }
+  if (recoms.length === 0) {
+    recoms.push('Sehr gut! Pertahankan konsistensi belajarmu. Weiter so! 🎉');
+  }
+  recoms.push('Coba simulasi ujian Goethe level berikutnya untuk tantangan baru!');
+
+  const recCardH = 10 + recoms.length * 6 + 8;
+  doc.setFillColor(...C.accentSoft);
+  doc.roundedRect(M, y, CW, recCardH, 4, 4, 'F');
+  doc.setDrawColor(...C.accent);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(M, y, CW, recCardH, 4, 4, 'S');
+
+  // Left accent bar
+  doc.setFillColor(...C.accent);
+  doc.rect(M, y, 3, recCardH, 'F');
+
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9);
+  doc.setTextColor(...C.accent);
+  doc.text('💡 Empfehlung — Rekomendasi', M + 10, y + 8);
+
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...C.inkLight);
+  recoms.forEach((r, i) => {
+    const ry = y + 14 + i * 6;
+    doc.setFillColor(...C.accent);
+    doc.circle(M + 12, ry - 1, 1, 'F');
+    doc.text(trunc(doc, r, CW - 25), M + 16, ry);
+  });
+
   // ── FOOTER ──
   const pc = (doc.internal as any).getNumberOfPages();
   for (let i = 1; i <= pc; i++) {
     doc.setPage(i);
-    doc.setDrawColor(...C.divider);
-    doc.setLineWidth(0.2);
-    doc.line(M, 278, W - M, 278);
 
+    // Bottom accent bar (mirror of top)
+    doc.setFillColor(...C.accent);
+    doc.rect(0, 289, 210, 2, 'F');
+    doc.setFillColor(...C.ink);
+    doc.rect(0, 291, 210, 6, 'F');
+
+    // Footer content
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(6.5);
     doc.setTextColor(...C.inkMuted);
-    doc.text('DeutschUp - Belajar Bahasa Jerman Menyenangkan', M, 282);
-    doc.text(`Halaman ${i}/${pc}`, W - M, 282, { align: 'right' });
+    doc.text('DeutschUp — Belajar Bahasa Jerman Menyenangkan', M, 286);
+    doc.text(`Halaman ${i}/${pc}`, W - M, 286, { align: 'right' });
 
-    doc.setFillColor(...C.ink);   doc.circle(W / 2 - 3, 282, 0.8, 'F');
-    doc.setFillColor(...C.red);   doc.circle(W / 2, 282, 0.8, 'F');
-    doc.setFillColor(...C.amber); doc.circle(W / 2 + 3, 282, 0.8, 'F');
+    // Brand mark centered
+    drawBrandMark(doc, W / 2 - 3, 286, 3);
   }
 
   return doc.output('blob');
