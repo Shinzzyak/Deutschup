@@ -39,7 +39,7 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] w-full max-w-md mx-4">
+      <div className="glass-card w-full max-w-md mx-4">
         <div className="px-6 py-4 border-b border-[#0a0a0a]/10">
           <h3 className="text-lg font-semibold text-gray-900">
             {success ? 'Success' : `Add API Key for ${providerName}`}
@@ -63,7 +63,7 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
                   id="apiKey"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full px-3 py-2 border-2 border-[#0a0a0a]/20 bg-[#f5f0eb] focus:outline-none focus:ring-2 focus:ring-[#8b2500]/20 focus:border-[#8b2500]"
+                  className="w-full px-3 py-2 glass-subtle border-[#0a0a0a]/10 bg-white/35 focus:outline-none focus:ring-2 focus:ring-[#8b2500]/20 focus:border-[#8b2500]"
                   placeholder="Enter your API key"
                   autoFocus
                 />

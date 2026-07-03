@@ -31,7 +31,7 @@ export default function ValidateSecretModal({ providerId, providerName, onClose 
 
   return (
     <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] w-full max-w-md mx-4">
+      <div className="glass-card w-full max-w-md mx-4">
         <div className="px-6 py-4 border-b border-[#0a0a0a]/10">
           <h3 className="text-lg font-serif font-semibold text-[#0a0a0a]">
             Validate {providerName} API Key

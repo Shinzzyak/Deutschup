@@ -91,7 +91,7 @@ export default function Hero() {
               className="relative"
             >
               {/* Chat card — NOT glass, sharp editorial style */}
-              <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 sm:p-8">
+              <div className="glass-card p-6 sm:p-8">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#0a0a0a]/10">
                   <div>

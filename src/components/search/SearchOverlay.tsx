@@ -80,14 +80,14 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center pt-[10vh] px-4"
+        className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm flex items-start justify-center pt-[10vh] px-4"
         onClick={onClose}
       >
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: -10 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
-          className="w-full max-w-xl bg-[#f5f0eb] border-2 border-[#0a0a0a] overflow-hidden"
+          className="glass-heavy w-full max-w-xl overflow-hidden"
           onClick={e => e.stopPropagation()}
         >
           {/* Input */}
@@ -102,7 +102,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-[#0a0a0a]/40 bg-[#0a0a0a]/5">
+            <kbd className="glass-subtle hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-[#0a0a0a]/40">
               ESC
             </kbd>
             <button onClick={onClose} className="md:hidden p-1">

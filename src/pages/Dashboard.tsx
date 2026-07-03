@@ -264,7 +264,7 @@ export default function Dashboard() {
 
         {/* EMPTY STATE */}
         {!loading && completedLessons.length === 0 && (
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-8 text-center">
+          <div className="glass-card rounded-lg p-8 text-center">
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
@@ -282,7 +282,7 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  glass-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-amber-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11  bg-[#c8956c] flex items-center justify-center mb-2.5  ">
@@ -292,7 +292,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  glass-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-blue-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
@@ -302,7 +302,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  glass-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-emerald-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
@@ -365,7 +365,7 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-5 md:p-6 card-hover">
+            <div className="relative overflow-hidden  glass-card rounded-lg p-5 md:p-6 card-hover">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-orange-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -399,7 +399,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-5 md:p-6 card-hover">
+            <div className="relative overflow-hidden  glass-card rounded-lg p-5 md:p-6 card-hover">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-indigo-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -434,7 +434,7 @@ export default function Dashboard() {
 
         {/* SECTION E: ACHIEVEMENTS */}
         {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden  bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-5 md:p-6">
+          <div className="relative overflow-hidden  glass-card rounded-lg p-5 md:p-6">
             <div className="absolute -right-8 -top-8 w-32 h-32  bg-amber-400/8 blur-2xl" />
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-5">
@@ -520,7 +520,7 @@ export default function Dashboard() {
                           className={cn(
                             "flex flex-col p-5 border transition-all duration-200 relative overflow-hidden card-hover rounded-lg",
                             isCompleted ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-emerald-200/40" :
-                            isUnlocked ? "bg-[#f5f0eb] border-2 border-[#0a0a0a] border-blue-200/40  " :
+                            isUnlocked ? "glass-card border-blue-200/40  " :
                             "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50 cursor-not-allowed"
                           )}
                           aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}

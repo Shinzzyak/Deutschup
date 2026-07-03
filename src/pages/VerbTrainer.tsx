@@ -160,7 +160,7 @@ export default function VerbTrainer() {
         <input 
           type="text" 
           placeholder="Cari kata (misal: rumah, gehen, schön)..."
-          className="w-full bg-[#f5f0eb] border-2 border-[#0a0a0a]/20 py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium"
+          className="w-full glass-card/20 py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
@@ -208,7 +208,7 @@ export default function VerbTrainer() {
           </div>
         )}
         {(searchTerm && filteredVerbs.map(verb => (
-            <div key={verb.infinitive} className="bg-[#f5f0eb] border-2 border-[#0a0a0a] overflow-hidden">
+            <div key={verb.infinitive} className="glass-card overflow-hidden">
               <div className="p-6 md:p-8 border-b border-[#0a0a0a]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center space-x-3 mb-1">

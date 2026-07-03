@@ -33,7 +33,7 @@ export default function SecretCard({ provider }: SecretCardProps) {
 
   return (
     <>
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-4 mb-4">
+      <div className="glass-card p-4 mb-4">
         <div className="flex items-start justify-between mb-3">
           <div>
             <h3 className="text-lg font-serif font-semibold text-[#0a0a0a]">{provider.name}</h3>

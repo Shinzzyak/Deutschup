@@ -152,7 +152,7 @@ export default function MockTest() {
   if (testState === 'SETUP') {
     return (
       <div className="max-w-3xl mx-auto pb-20 text-center space-y-8">
-        <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-12  border border-border ">
+        <div className="glass-card p-12  border border-border ">
            <FileText className="w-16 h-16 mx-auto mb-6 text-blue-600" />
            <h1 className="text-4xl font-serif font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
            <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
@@ -222,7 +222,7 @@ export default function MockTest() {
             </div>
          </div>
 
-         <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8  border border-border  flex flex-col min-h-[400px]">
+         <div className="glass-card p-6 md:p-8  border border-border  flex flex-col min-h-[400px]">
             {q.context && (
                <div className="bg-blue-50 p-4  mb-6 text-blue-900 border border-blue-100 italic">
                   {q.context}
@@ -264,7 +264,7 @@ export default function MockTest() {
   // EVALUATING & RESULT
   return (
     <div className="max-w-4xl mx-auto pb-20">
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 md:p-12  border border-border  text-center mb-8">
+      <div className="glass-card p-8 md:p-12  border border-border  text-center mb-8">
         {testState === 'EVALUATING' ? (
            <>
              <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />

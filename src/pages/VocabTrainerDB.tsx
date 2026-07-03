@@ -422,7 +422,7 @@ export default function VocabTrainerDB() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border border-border  overflow-hidden "
+            className="glass-card border border-border  overflow-hidden "
           >
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">

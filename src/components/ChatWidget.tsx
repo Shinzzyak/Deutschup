@@ -124,7 +124,7 @@ export default function ChatWidget() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="fixed z-[99999] bg-[#f5f0eb] border-2 border-[#0a0a0a] flex flex-col overflow-hidden"
+                className="fixed z-[99999] glass-card flex flex-col overflow-hidden"
                 style={{
                   bottom: 'calc(env(safe-area-inset-bottom, 0px) + 140px)',
                   right: '16px',

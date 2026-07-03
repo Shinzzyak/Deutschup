@@ -43,7 +43,7 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center p-6">
-        <div className="w-20 h-20 bg-[#f5f0eb] border-2 border-[#0a0a0a]/10 flex items-center justify-center mb-2">
+        <div className="w-20 h-20 glass-card/10 flex items-center justify-center mb-2">
           <User className="w-10 h-10 text-muted-foreground" />
         </div>
         <h2 className="text-xl font-bold">Sesi Berakhir</h2>
@@ -73,7 +73,7 @@ export default function Profile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Identity Card */}
         <div className="lg:col-span-1">
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 sticky top-24 overflow-hidden">
+          <div className="glass-card p-8 sticky top-24 overflow-hidden">
             <div className="flex flex-col items-center text-center">
               <div className="w-32 h-32 bg-[#c8956c] flex items-center justify-center text-5xl font-black text-[#0a0a0a] mb-6 border-2 border-[#0a0a0a]">
                 {fullName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'}
@@ -104,7 +104,7 @@ export default function Profile() {
         {/* Right Column: Forms & Details */}
         <div className="lg:col-span-2 space-y-8">
           {/* Account Settings Card */}
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 relative overflow-hidden">
+          <div className="glass-card p-8 relative overflow-hidden">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2 bg-[#c8956c]/10">
                 <User className="w-5 h-5 text-[#c8956c]" />
@@ -159,7 +159,7 @@ export default function Profile() {
           </div>
 
           {/* Subscription Perks Card */}
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 relative overflow-hidden">
+          <div className="glass-card p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-5">
               <Zap className="w-32 h-32 text-[#0a0a0a]" />
             </div>

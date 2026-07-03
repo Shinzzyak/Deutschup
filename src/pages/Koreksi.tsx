@@ -39,13 +39,13 @@ export default function Koreksi() {
         <p className="text-muted-foreground text-lg md:text-xl">Tuliskan kalimat bahasa Jermanmu, AI kami akan memeriksa tata bahasa dan strukturnya.</p>
       </div>
 
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-6 md:p-8 mb-8">
+      <div className="glass-card p-6 md:p-8 mb-8">
         <label className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
         <textarea
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Misal: Ich habe einen auto gekauft..."
-          className="w-full min-h-[120px] bg-[#f5f0eb] border-2 border-[#0a0a0a]/20 p-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium resize-none mb-6"
+          className="w-full min-h-[120px] glass-card/20 p-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium resize-none mb-6"
         />
         <Button 
           onClick={handleKoreksi} 

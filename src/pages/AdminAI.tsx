@@ -653,7 +653,7 @@ export default function AdminAI() {
         {activeTab === 'health' && (
           <div className="space-y-6">
             {/* Provider Health Cards */}
-            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-border p-6">
+            <div className="glass-card  border border-border p-6">
               <h3 className="text-lg font-bold text-foreground mb-4 flex items-center">
                 <Activity className="w-5 h-5 mr-2 text-[#F2C94C]" />
                 Provider Fleet Status
@@ -916,7 +916,7 @@ export default function AdminAI() {
 
             {/* Quick Presets */}
             {!showAddProvider && customProviders.length === 0 && (
-              <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-border p-6">
+              <div className="glass-card  border border-border p-6">
                 <h4 className="text-foreground font-bold mb-3">Quick Add Provider</h4>
                 <p className="text-sm text-muted-foreground mb-4">Choose a popular provider or add custom:</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
@@ -953,7 +953,7 @@ export default function AdminAI() {
 
             {/* Add Provider Form */}
             {showAddProvider && (
-              <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-purple-500/30 p-6">
+              <div className="glass-card  border border-purple-500/30 p-6">
                 <h4 className="text-foreground font-bold mb-4">Add Custom Provider</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -1029,7 +1029,7 @@ export default function AdminAI() {
               const providerModels = customModels.filter(m => m.provider_id === provider.id);
               const providerKey = customKeys.find(k => k.provider_id === provider.id);
               return (
-              <div key={provider.id} className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-border p-5">
+              <div key={provider.id} className="glass-card  border border-border p-5">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
@@ -1196,7 +1196,7 @@ export default function AdminAI() {
         {activeTab === 'routing' && (
           <div className="space-y-6">
             {/* Routing Overview -- primary + fallback */}
-            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border-border p-6">
+            <div className="glass-card border-border p-6">
               <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-[#F2C94C]" />
                 Current Routing Configuration
@@ -1275,7 +1275,7 @@ export default function AdminAI() {
             </div>
 
             {/* All Models List */}
-            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border-border p-6">
+            <div className="glass-card border-border p-6">
               <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-[#F2C94C]" />
                 All Models
@@ -1329,7 +1329,7 @@ export default function AdminAI() {
                 { label: 'Avg Latency', value: `${avgLatency}ms`, icon: Clock, color: avgLatency < 500 ? 'text-emerald-400' : avgLatency < 1000 ? 'text-amber-400' : 'text-red-400' },
                 { label: 'Failed Requests', value: totalFailed.toLocaleString(), icon: XCircle, color: totalFailed === 0 ? 'text-emerald-400' : 'text-red-400' },
               ].map(({ label, value, icon: Icon, color }) => (
-                <div key={label} className="bg-[#f5f0eb] border-2 border-[#0a0a0a] rounded-lg p-4 border border-border">
+                <div key={label} className="glass-card rounded-lg p-4 border border-border">
                   <div className="flex items-center space-x-2 mb-2">
                     <Icon className={cn("w-4 h-4", color)} />
                     <span className="text-xs text-muted-foreground">{label}</span>
@@ -1340,7 +1340,7 @@ export default function AdminAI() {
             </div>
 
             {/* Per-Model Breakdown */}
-            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] border-border p-6">
+            <div className="glass-card border-border p-6">
               <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                 <BarChart3 className="w-5 h-5 text-[#F2C94C]" />
                 Per-Model Usage (7 days)
@@ -1391,7 +1391,7 @@ export default function AdminAI() {
 
         {/* Secrets Tab */}
         {activeTab === 'secrets' && (
-          <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  border border-border p-6">
+          <div className="glass-card  border border-border p-6">
             <div className="flex items-center space-x-3 mb-6">
               <div className="w-10 h-10  bg-amber-500/10 flex items-center justify-center">
                 <Key className="w-5 h-5 text-amber-400" />
@@ -1401,7 +1401,7 @@ export default function AdminAI() {
                 <p className="text-sm text-muted-foreground">Manage API keys and credentials for AI providers</p>
               </div>
             </div>
-            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  p-4 border border-border">
+            <div className="glass-card  p-4 border border-border">
               <SecretList />
             </div>
           </div>

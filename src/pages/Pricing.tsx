@@ -205,7 +205,7 @@ export default function Pricing() {
               <p className="text-muted-foreground">Belum ada riwayat pembayaran.</p>
             </div>
           ) : (
-            <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]  overflow-hidden">
+            <div className="glass-card  overflow-hidden">
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-border bg-muted">

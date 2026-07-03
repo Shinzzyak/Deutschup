@@ -107,7 +107,7 @@ export default function LevelView() {
 
       {/* ───────── Locked overlay ───────── */}
       {!isLevelUnlocked && (
-        <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a] p-8 text-center">
+        <div className="glass-card p-8 text-center">
           <div className="w-14 h-14 border-2 border-[#0a0a0a]/15 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-7 h-7 text-[#0a0a0a]/30" />
           </div>

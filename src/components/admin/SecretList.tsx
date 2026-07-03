@@ -45,7 +45,7 @@ export default function SecretList() {
         </button>
       </div>
 
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]/20 p-4 mb-4">
+      <div className="glass-card/20 p-4 mb-4">
         <p className="text-sm text-blue-800">
           <strong>Security Note:</strong> API keys are stored securely in the database with RLS protection. 
           Only service role can access them. Keys are never displayed in full after storage.
