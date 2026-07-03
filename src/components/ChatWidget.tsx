@@ -57,7 +57,6 @@ export default function ChatWidget() {
       const clerkToken = clerk?.session ? await clerk.session.getToken() : null;
       const chatHeaders: Record<string, string> = {
         'Content-Type': 'application/json',
-        'x-user-email': (window as any).__CLERK_USER_EMAIL || '',
       };
       if (clerkToken) chatHeaders['Authorization'] = `Bearer ${clerkToken}`;
       const resp = await fetch('/api/ai?action=chat', {
@@ -66,8 +65,7 @@ export default function ChatWidget() {
         body: JSON.stringify({
           message: userMsg,
           history: messages.slice(-6),
-          level: profile?.level || 'A1',
-          userTier: tierData?.tier || 'free'
+          level: profile?.level || 'A1'
         })
       });
 

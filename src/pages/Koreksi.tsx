@@ -3,6 +3,7 @@ import { Sparkles, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
+import { authedFetch } from '../lib/auth-headers';
 
 export default function Koreksi() {
   const [input, setInput] = useState('');
@@ -15,7 +16,7 @@ export default function Koreksi() {
     setResult(null);
 
     try {
-      const resp = await fetch('/api/ai?action=koreksi-kalimat', {
+      const resp = await authedFetch('/api/ai?action=koreksi-kalimat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ sentence: input.trim() })

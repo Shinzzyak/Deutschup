@@ -1,40 +1,12 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import "dotenv/config";
-import { getSupabaseAdminClient } from '../lib/api-utils.js';
+import { getVerifiedIdentity, getSupabaseAdminClient } from '../lib/api-utils.js';
 
 const getAdminClient = () => getSupabaseAdminClient();
 
-// Extract verified user ID from JWT (Supabase or Clerk)
-// Returns null if no valid token — never trust body/query for identity
 async function getVerifiedUserId(req: VercelRequest): Promise<string | null> {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) return null;
-  const token = authHeader.split('Bearer ')[1];
-
-  // Try Supabase auth
-  try {
-    const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
-    if (!error && user) return user.id;
-  } catch {}
-
-  // Try Clerk JWT — extract email, lookup internal_id from user_identities
-  try {
-    const parts = token.split('.');
-    if (parts.length === 3) {
-      const payload = JSON.parse(Buffer.from(parts[1], 'base64url').toString());
-      if (payload?.email) {
-        const { data: identity } = await getSupabaseAdminClient()
-          .from('user_identities')
-          .select('internal_id')
-          .eq('email', payload.email.toLowerCase().trim())
-          .maybeSingle();
-        if (identity?.internal_id) return identity.internal_id;
-      }
-    }
-  } catch {}
-
-  return null;
+  return (await getVerifiedIdentity(req))?.internalId || null;
 }
 
 const ALLOWED_ACTIONS = new Set([

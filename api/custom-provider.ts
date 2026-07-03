@@ -1,16 +1,10 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import { invalidateCache } from '../lib/ai-router.js';
+import { isVerifiedAdmin } from '../lib/api-utils.js';
 
 function getSupabaseAdmin() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
-}
-
-function requireAdmin(req: VercelRequest): boolean {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) return false;
-  // We trust the token since it's validated by the client
-  return true;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
@@ -21,6 +15,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   const action = (req.query.action as string) || req.body?.action;
   if (!action) return res.status(400).json({ error: 'Missing action' });
+
+  if (!(await isVerifiedAdmin(req))) {
+    return res.status(403).json({ error: 'Forbidden: Admin privileges required' });
+  }
 
   const supabase = getSupabaseAdmin();
 

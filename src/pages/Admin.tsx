@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/authStore';
+import { getAuthHeaders } from '../lib/auth-headers';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { 
@@ -49,11 +50,7 @@ export default function Admin() {
 
   const getAdminHeaders = async (): Promise<Record<string, string>> => {
     if (!user) return {};
-    // 🔒 Clerk auth: no Supabase session needed
-    // Backend authMiddleware accepts x-user-email for Clerk flow
-    return {
-      'x-user-email': user.email || '',
-    };
+    return getAuthHeaders();
   };
 
   const fetchAll = async (silent = false) => {

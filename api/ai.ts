@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { executeWithRouting, getRoutingConfig } from '../lib/ai-router.js';
-import { getSupabaseAdminClient } from '../lib/api-utils.js';
+import { getVerifiedIdentity, getUserTierById, isVerifiedAdmin } from '../lib/api-utils.js';
 
 // Rate limiter per IP
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -286,57 +286,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(400).json({ error: `Invalid action. Valid: ${Object.keys(HANDLERS).join(', ')}` });
   }
 
-  // Extract UID from JWT token or Clerk email
-  let uid = 'anonymous';
-  const authHeader = req.headers.authorization;
-  if (authHeader?.startsWith('Bearer ')) {
-    const token = authHeader.split('Bearer ')[1];
-    try {
-      const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
-      if (!error && user) {
-        uid = user.id;
-      } else {
-        // Try Clerk JWT — extract email, lookup internal_id from user_identities
-        try {
-          const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
-          if (payload?.email) {
-            const { data: identity } = await getSupabaseAdminClient()
-              .from('user_identities')
-              .select('internal_id')
-              .eq('email', payload.email.toLowerCase().trim())
-              .maybeSingle();
-            if (identity?.internal_id) {
-              uid = identity.internal_id;
-            } else {
-              // No identity mapping — use email hash as uid (not raw email for log safety)
-              uid = 'clerk_unmapped_' + payload.email.split('@')[0];
-            }
-          }
-        } catch {}
-      }
-    } catch (e) {
-      // Token invalid — try Clerk JWT lookup
-      try {
-        const payload = JSON.parse(Buffer.from(token.split('.')[1], 'base64url').toString());
-        if (payload?.email) {
-          const { data: identity } = await getSupabaseAdminClient()
-            .from('user_identities')
-            .select('internal_id')
-            .eq('email', payload.email.toLowerCase().trim())
-            .maybeSingle();
-          if (identity?.internal_id) {
-            uid = identity.internal_id;
-          } else {
-            uid = 'clerk_unmapped_' + payload.email.split('@')[0];
-          }
-        }
-      } catch {}
-    }
+  const identity = await getVerifiedIdentity(req);
+  if (!identity) {
+    return res.status(401).json({ error: 'Unauthorized — token required' });
   }
-  const startTime = Date.now();
+
+  if (action === 'list-models' && !(await isVerifiedAdmin(req))) {
+    return res.status(403).json({ error: 'Forbidden: Admin privileges required' });
+  }
+
+  const uid = identity.internalId;
 
   try {
-    const userTier = (req.body?.userTier as 'free' | 'pro') || 'free';
+    const userTier = await getUserTierById(uid);
     const result = await HANDLERS[action](uid, req.body, userTier);
     return res.status(result.status).json(result.data);
   } catch (error: any) {

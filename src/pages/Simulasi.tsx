@@ -7,6 +7,7 @@ import { Button } from '../components/ui/button';
 import { FileText, Loader2, PlayCircle, Timer, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
+import { authedFetch } from '../lib/auth-headers';
 
 type MockQuestion = {
   id: string;
@@ -69,7 +70,7 @@ export default function MockTest() {
 
     setTestState('LOADING');
     try {
-      const resp = await fetch('/api/ai?action=generate-mock-test', {
+      const resp = await authedFetch('/api/ai?action=generate-mock-test', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ level })
@@ -123,7 +124,7 @@ export default function MockTest() {
     }
 
     try {
-       const resp = await fetch('/api/ai?action=check-mock-test', {
+       const resp = await authedFetch('/api/ai?action=check-mock-test', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ level, wrongAnswers })

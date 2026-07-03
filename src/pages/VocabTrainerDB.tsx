@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
+import { authedFetch } from '../lib/auth-headers';
 
 type TabType = 'flashcard' | 'list';
 type FilterType = 'all' | 'learned' | 'learning' | 'new';
@@ -139,7 +140,7 @@ export default function VocabTrainerDB() {
     if (examples || examplesLoading) return;
     setExamplesLoading(true);
     try {
-       const resp = await fetch('/api/ai?action=vocab-examples', {
+       const resp = await authedFetch('/api/ai?action=vocab-examples', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ word: currentCard.word, level: currentCard.level_id })
@@ -158,7 +159,7 @@ export default function VocabTrainerDB() {
     if (pronunciation || pronunciationLoading) return;
     setPronunciationLoading(true);
     try {
-       const resp = await fetch('/api/ai?action=pronunciation', {
+       const resp = await authedFetch('/api/ai?action=pronunciation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ word: currentCard.word })

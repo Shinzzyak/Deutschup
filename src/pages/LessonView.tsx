@@ -11,6 +11,7 @@ import { CheckCircle2, ChevronRight, Brain, Trophy, Loader2, PlayCircle, Star, A
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../components/ui/tooltip';
+import { authedFetch } from '../lib/auth-headers';
 
 const grammarGlossary: Record<string, string> = {
   'Akkusativ': 'Kasus objek langsung (contoh: mich, dich, den Hund).',
@@ -150,7 +151,7 @@ export default function LessonView() {
     
     setExercisesLoading(true);
     try {
-      const resp = await fetch('/api/ai?action=generate-exercises', {
+      const resp = await authedFetch('/api/ai?action=generate-exercises', {
          method: 'POST',
          headers: { 'Content-Type': 'application/json' },
          body: JSON.stringify({ level: lesson.level, grammarTopic: lesson.grammarDescription, vocabulary: lesson.vocabulary || [] })
@@ -184,7 +185,7 @@ export default function LessonView() {
             feedback: isCorrect ? "Tepat sekali!" : `Kurang tepat. Jawaban yang benar adalah: ${currentQuestion.correctAnswerStr}`
          });
       } else {
-         const resp = await fetch('/api/ai?action=check-answer', {
+         const resp = await authedFetch('/api/ai?action=check-answer', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ question: currentQuestion.question, answer: selectedAnswer, level: lesson.level })

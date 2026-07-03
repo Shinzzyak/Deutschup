@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { getAuthHeaders } from './auth-headers';
 
 // 🔒 SECURITY: Anon key only — NEVER bundle service role key in client
 // Profile/fetch operations go through /api/db-proxy (server-side)
@@ -27,9 +28,7 @@ export async function dbProxy(action: string, params?: Record<string, any>): Pro
 
   try {
     const url = `${base}/api/db-proxy?${query}`;
-    const headers: Record<string, string> = {
-      'x-user-email': (window as any).__CLERK_USER_EMAIL || '',
-    };
+    const headers = await getAuthHeaders();
 
     const res = isGet
       ? await fetch(`${url}&${new URLSearchParams(params || {}).toString()}`, { headers })

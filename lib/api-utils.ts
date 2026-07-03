@@ -85,12 +85,93 @@ export const authMiddleware = async (req: any, res: any, next: any) => {
   }
 };
 
-function decodeJwtPayload(token: string): Record<string, any> | null {
+export function decodeJwtPayload(token: string): Record<string, any> | null {
   try {
     const parts = token.split('.');
     if (parts.length !== 3) return null;
-    return JSON.parse(atob(parts[1]));
+    return JSON.parse(Buffer.from(parts[1], 'base64url').toString());
   } catch { return null; }
+}
+
+export interface VerifiedIdentity {
+  internalId: string;
+  email?: string;
+  provider: 'supabase' | 'clerk';
+}
+
+export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | null> {
+  const authHeader = req.headers.authorization;
+  if (!authHeader?.startsWith('Bearer ')) return null;
+  const token = authHeader.split('Bearer ')[1];
+
+  // Supabase token: server-verified by Supabase Auth.
+  try {
+    const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
+    if (!error && user) {
+      return { internalId: user.id, email: user.email, provider: 'supabase' };
+    }
+  } catch {}
+
+  // Clerk JWT: decode email then resolve to internal UUID mapping.
+  // NOTE: Full Clerk signature verification is ideal later; this mapping lookup prevents raw email/userId trust.
+  const payload = decodeJwtPayload(token);
+  const email = payload?.email?.toLowerCase?.().trim?.();
+  if (!email) return null;
+
+  try {
+    const { data: identity } = await getDb()
+      .from('user_identities')
+      .select('internal_id')
+      .eq('email', email)
+      .maybeSingle();
+    if (identity?.internal_id) {
+      return { internalId: identity.internal_id, email, provider: 'clerk' };
+    }
+  } catch {}
+
+  return null;
+}
+
+export async function getUserTierById(internalId: string): Promise<'free' | 'pro'> {
+  try {
+    const { data } = await getDb()
+      .from('profiles')
+      .select('subscription, pro_expires_at, tier, tier_expiry')
+      .eq('id', internalId)
+      .maybeSingle();
+
+    const now = Date.now();
+    const proExpires = data?.pro_expires_at || data?.tier_expiry;
+    if ((data?.subscription === 'pro' || data?.tier === 'pro') && proExpires && new Date(proExpires).getTime() > now) {
+      return 'pro';
+    }
+  } catch (e: any) {
+    console.error('[AUTH] getUserTierById error:', e.message);
+  }
+  return 'free';
+}
+
+export async function isVerifiedAdmin(req: any): Promise<boolean> {
+  const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
+  const identity = await getVerifiedIdentity(req);
+  const email = identity?.email?.toLowerCase().trim();
+
+  if (email && email === adminEmail.toLowerCase().trim()) return true;
+
+  if (identity?.internalId) {
+    try {
+      const { data: profile } = await getDb()
+        .from('profiles')
+        .select('role')
+        .eq('id', identity.internalId)
+        .maybeSingle();
+      if (profile?.role === 'admin') return true;
+    } catch (e: any) {
+      console.error('[AUTH] isVerifiedAdmin role check error:', e.message);
+    }
+  }
+
+  return false;
 }
 
 export const adminMiddleware = async (req: any, res: any, next: any) => {

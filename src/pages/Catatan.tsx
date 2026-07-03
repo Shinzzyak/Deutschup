@@ -5,6 +5,7 @@ import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/button';
 import { BookOpen, CheckCircle2, Circle, Loader2, Plus, Sparkles, Trash2, CalendarCheck2 } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { authedFetch } from '../lib/auth-headers';
 
 export default function Catatan() {
   const { user } = useAuthStore();
@@ -41,7 +42,7 @@ export default function Catatan() {
     if (!user) return;
     setGeneratingPlan(true);
     try {
-      const resp = await fetch('/api/ai?action=generate-study-plan', {
+      const resp = await authedFetch('/api/ai?action=generate-study-plan', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ level: currentLevel, xp, lessonsCompleted: unlockedLessons })
