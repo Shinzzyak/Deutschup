@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { runMiddleware, authMiddleware, getDb, getSupabaseAdminClient } from '../lib/api-utils.js';
-import crypto from 'crypto';
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -177,51 +176,54 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(429).json({ error: 'Too many requests' });
       }
 
-      // Verify webhook signature (HMAC SHA256 per Bayar.gg docs)
-      // Headers: X-Webhook-Signature, X-Webhook-Timestamp
-      // Signature data: invoice_id|status|final_amount|timestamp
-      const webhookSecret = process.env.BAYARGG_WEBHOOK_SECRET;
-      const webhookSignature = req.headers['x-webhook-signature'] as string;
-      const webhookTimestamp = req.headers['x-webhook-timestamp'] as string;
-
-      if (!webhookSecret) {
-        console.error('[payment/callback] CRITICAL: BAYARGG_WEBHOOK_SECRET not set — refusing to process webhook');
-        return res.status(500).json({ error: 'Webhook misconfigured' });
-      }
-
-      if (!webhookSignature || !webhookTimestamp) {
-        console.error('[payment/callback] Missing signature headers from IP:', clientIp);
-        return res.status(401).json({ error: 'Missing webhook signature' });
-      }
-
-      // Verify timestamp is within 5 minutes (replay protection)
-      const timestamp = parseInt(webhookTimestamp, 10);
-      const nowSeconds = Math.floor(Date.now() / 1000);
-      if (isNaN(timestamp) || Math.abs(nowSeconds - timestamp) > 300) {
-        console.error('[payment/callback] Webhook timestamp expired from IP:', clientIp);
-        return res.status(401).json({ error: 'Webhook timestamp expired' });
-      }
+      // Bayar.gg webhook verification: body is NOT signed.
+      // Per official docs (github.com/bayar-global-gateway/bayargg-api-integrations):
+      // "Jangan pernah memenuhi order hanya berdasarkan status di body.
+      //  Setelah membaca invoice_id, panggil check-payment di sisi server
+      //  memakai API Key Anda, dan lanjutkan fulfilment HANYA jika API
+      //  sendiri menyatakan paid."
+      //
+      // Pattern: receive callback → extract invoice_id → call check-payment.php
+      // → only trust API response, never body status.
 
       const webhookPayload = req.body;
-      const signatureData = `${webhookPayload.invoice_id}|${webhookPayload.status}|${webhookPayload.final_amount}|${webhookTimestamp}`;
-      const expectedSignature = crypto.createHmac('sha256', webhookSecret).update(signatureData).digest('hex');
-
-      // Verify signature length matches (HMAC SHA256 hex = 64 chars)
-      if (expectedSignature.length !== webhookSignature.length) {
-        console.error('[payment/callback] Invalid webhook signature length from IP:', clientIp);
-        return res.status(401).json({ error: 'Invalid webhook signature' });
-      }
-
-      if (!crypto.timingSafeEqual(Buffer.from(expectedSignature), Buffer.from(webhookSignature))) {
-        console.error('[payment/callback] Invalid webhook signature from IP:', clientIp);
-        return res.status(401).json({ error: 'Invalid webhook signature' });
-      }
-      console.log('[payment/callback] Signature verified OK');
       console.log('[payment/callback] Received webhook:', JSON.stringify(webhookPayload, null, 2));
 
-      const { invoice_id, status, paid_at, payment_method, paid_reff_num } = webhookPayload;
+      const { invoice_id, paid_at, payment_method, paid_reff_num } = webhookPayload;
 
-      if (status === 'paid') {
+      if (!invoice_id) {
+        console.log('[payment/callback] No invoice_id, ignoring');
+        return res.status(200).json({ success: true, message: 'Ignored' });
+      }
+
+      // Verify payment status via Bayar.gg API (never trust body status)
+      const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY;
+      if (!BAYAR_GG_API_KEY) {
+        console.error('[payment/callback] CRITICAL: BAYAR_GG_API_KEY not set — cannot verify webhook');
+        return res.status(500).json({ error: 'Payment gateway misconfigured' });
+      }
+
+      let verifyStatus: string | undefined;
+      try {
+        const checkRes = await fetch(
+          `https://www.bayar.gg/api/check-payment.php?invoice=${encodeURIComponent(invoice_id)}`,
+          { headers: { 'X-API-Key': BAYAR_GG_API_KEY, 'Accept': 'application/json' } }
+        );
+        const checkData = await checkRes.json() as any;
+        console.log('[payment/callback] check-payment result:', JSON.stringify(checkData, null, 2));
+        verifyStatus = checkData?.status;
+      } catch (verifyErr) {
+        console.error('[payment/callback] Failed to verify payment:', verifyErr);
+        return res.status(502).json({ error: 'Failed to verify payment with gateway' });
+      }
+
+      if (verifyStatus !== 'paid') {
+        console.log('[payment/callback] Payment not confirmed by API, status:', verifyStatus);
+        return res.status(202).json({ success: true, message: 'Not paid yet' });
+      }
+
+      // API confirmed paid — safe to process
+      {
         const { data: order, error: orderError } = await getDb()
           .from('orders')
           .select('*')
