@@ -53,7 +53,7 @@ export default function QuickNoteWidget() {
       {/* Floating button — unchanged */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed right-6 w-14 h-14 bg-[#c8956c] text-[#0a0a0a] flex items-center justify-center hover:scale-110 transition-transform z-40 border-4 border-[#f5f0eb]"
+        className="fixed right-6 w-14 h-14 bg-[#c8956c] text-[#0a0a0a] flex items-center justify-center hover:scale-110 transition-transform z-[100] border-4 border-[#f5f0eb]"
         style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 144px)' }}
         aria-label={isOpen ? "Tutup quick note" : "Buka quick note"}
       >
