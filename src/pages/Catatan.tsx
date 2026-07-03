@@ -136,7 +136,7 @@ export default function Catatan() {
                  value={newNote}
                  onChange={(e) => setNewNote(e.target.value)}
                  placeholder="Tulis hal penting untuk diingat..."
-                 className="w-full h-24 bg-muted border-2 border-border  p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all resize-none mb-3"
+                 className="w-full h-24 bg-white/80 backdrop-blur-sm border-2 border-[#0a0a0a]/10 rounded-xl p-4 text-sm focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500 transition-all resize-none mb-3"
                />
                <div className="flex justify-between items-center">
                   <div className="flex gap-2">

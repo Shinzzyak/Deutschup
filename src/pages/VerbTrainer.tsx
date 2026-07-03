@@ -160,7 +160,7 @@ export default function VerbTrainer() {
         <input 
           type="text" 
           placeholder="Cari kata (misal: rumah, gehen, schön)..."
-          className="w-full glass-card/20 py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium"
+          className="w-full bg-white/80 backdrop-blur-sm border border-[#0a0a0a]/10 rounded-xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />

@@ -63,7 +63,7 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
                   id="apiKey"
                   value={apiKey}
                   onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full px-3 py-2 glass-subtle border-[#0a0a0a]/10 bg-white/35 focus:outline-none focus:ring-2 focus:ring-[#8b2500]/20 focus:border-[#8b2500]"
+                  className="w-full px-3 py-2 glass-subtle border-[#0a0a0a]/10 bg-white/75 focus:outline-none focus:ring-2 focus:ring-[#8b2500]/20 focus:border-[#8b2500]"
                   placeholder="Enter your API key"
                   autoFocus
                 />

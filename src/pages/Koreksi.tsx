@@ -46,7 +46,7 @@ export default function Koreksi() {
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Misal: Ich habe einen auto gekauft..."
-          className="w-full min-h-[120px] glass-card/20 p-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium resize-none mb-6"
+          className="w-full min-h-[120px] bg-white/80 backdrop-blur-sm border border-[#0a0a0a]/10 rounded-xl p-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium resize-none mb-6"
         />
         <Button 
           onClick={handleKoreksi} 
