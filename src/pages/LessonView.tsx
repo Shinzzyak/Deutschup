@@ -4,6 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { courseData } from '../data/lessons';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
+import { useLessonTimer } from '../hooks/useLessonTimer';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import { CheckCircle2, ChevronRight, Brain, Trophy, Loader2, PlayCircle, Star, AlertTriangle, Target, Mic, Headphones, Globe, MessageSquare, ArrowLeft } from 'lucide-react';
@@ -87,6 +88,7 @@ export default function LessonView() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { addXp, unlockLesson, completeLesson, unlockedLessons, completedLessons } = useProgressStore();
+  const { endSession } = useLessonTimer(id);
   
   const lesson = courseData.find(l => l.id === id);
   const lessonIndex = courseData.findIndex(l => l.id === id);
@@ -221,6 +223,7 @@ export default function LessonView() {
 
   const finishLesson = async () => {
     setQuizFinished(true);
+    await endSession();
     if(user && lesson) {
        await completeLesson(user.id, lesson.id);
        await addXp(user.id, 50); // Bonus XP

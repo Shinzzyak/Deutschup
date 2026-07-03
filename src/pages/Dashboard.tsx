@@ -7,6 +7,8 @@
  import { useAuthStore } from '../stores/authStore';
  import { isUserPro } from '../lib/subscription';
 import { generateReportPDF } from '../lib/pdf-report';
+import { supabase } from '../lib/supabase';
+import { resolveInternalId } from '../lib/clerk/identity';
  import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock, Flame, Star, Brain, GraduationCap, Sparkles, Medal, TrendingUp, BarChart3, Award } from 'lucide-react';
  import { cn } from '../lib/utils';
  import { Progress } from '../components/ui/progress';
@@ -70,14 +72,43 @@ export default function Dashboard() {
     return { current: streak, best, todayCompleted };
   }, [streak, lastPracticeDate]);
 
+  const [studyStats, setStudyStats] = useState({ totalSeconds: 0, sessionCount: 0 });
+
+  // Fetch real study time from DB
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
+    (async () => {
+      const internalId = await resolveInternalId(user.id);
+      if (!internalId || cancelled) return;
+      const { data, error } = await supabase
+        .rpc('get_study_time', { p_user_id: internalId });
+      if (error || !data || cancelled) return;
+      setStudyStats({
+        totalSeconds: Number(data[0]?.total_seconds || 0),
+        sessionCount: 0,
+      });
+      // Also get session count (= exercises completed)
+      const { count, error: cntErr } = await supabase
+        .from('study_sessions')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', internalId)
+        .gt('duration_seconds', 0);
+      if (!cntErr && !cancelled) {
+        setStudyStats(prev => ({ ...prev, sessionCount: count || 0 }));
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user?.id]);
+
   const learningStats = useMemo(() => ({
     totalVocab: Object.keys(vocab).length,
-    exercisesCompleted: completedLessons.length * 12,
-    studyHours: Math.round(completedLessons.length * 0.5 * 10) / 10,
+    exercisesCompleted: studyStats.sessionCount || completedLessons.length * 12,
+    studyHours: Math.round((studyStats.totalSeconds / 3600) * 10) / 10,
     averageScore: mockTests.length > 0 
       ? Math.round(mockTests.reduce((acc, t) => acc + (t.score / t.total) * 100, 0) / mockTests.length)
       : 0,
-  }), [vocab, completedLessons, mockTests]);
+  }), [vocab, completedLessons, mockTests, studyStats]);
 
   const achievements = useMemo(() => [
     { id: 'first-lesson', title: 'Pelajaran Pertama', description: 'Selesaikan pelajaran pertama', icon: Star, unlocked: completedLessons.length > 0, color: 'text-yellow-500' },
