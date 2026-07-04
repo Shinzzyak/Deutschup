@@ -244,13 +244,7 @@ export default function AdminAI() {
 
   const detectModels = async (providerId: string) => {
     const key = providerKeys[providerId] || '';
-    const existingSecret = secrets.find(s => s.provider_id === providerId);
     const keyToUse = key && key !== '••••••••' ? key : null;
-    if (!keyToUse) {
-      // Try to use saved key from DB via validate endpoint
-      // But for detection we need the actual key, so prompt user
-      return;
-    }
     setDetectingModels(providerId);
     try {
       const res = await fetch('/api/admin-ai?action=detect-models', {
@@ -259,7 +253,7 @@ export default function AdminAI() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${await getToken()}`
         },
-        body: JSON.stringify({ provider_id: providerId, api_key: keyToUse })
+        body: JSON.stringify({ provider_id: providerId, ...(keyToUse ? { api_key: keyToUse } : {}) })
       });
       if (res.ok) {
         const data = await res.json();
@@ -312,6 +306,64 @@ export default function AdminAI() {
       setSelectedDetected(prev => ({ ...prev, [providerId]: [] }));
     } catch (e) {
       console.error('Import models error:', e);
+    } finally {
+      setImportingModels(null);
+    }
+  };
+
+  const detectCustomModels = async (providerId: string) => {
+    const key = providerKeys[providerId] || '';
+    const keyToUse = key && key !== '••••••••' ? key : null;
+    setDetectingModels(providerId);
+    try {
+      const res = await fetch('/api/custom-provider?action=detect-models', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getToken()}`
+        },
+        body: JSON.stringify({ provider_id: providerId, ...(keyToUse ? { api_key: keyToUse } : {}) })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDetectedModels(prev => ({ ...prev, [providerId]: data.models || [] }));
+        setSelectedDetected(prev => ({
+          ...prev,
+          // Custom catalogs can be huge (OpenRouter returns 300+ models), so do not preselect all.
+          [providerId]: []
+        }));
+      } else {
+        const err = await res.json().catch(() => ({ error: 'Model discovery failed' }));
+        console.error('Custom model discovery failed:', err.error);
+      }
+    } catch (e) {
+      console.error('Custom model discovery error:', e);
+    } finally {
+      setDetectingModels(null);
+    }
+  };
+
+  const importCustomDetectedModels = async (providerId: string) => {
+    const selected = selectedDetected[providerId] || [];
+    const detected = detectedModels[providerId] || [];
+    if (selected.length === 0) return;
+    setImportingModels(providerId);
+    try {
+      const modelsToImport = detected.filter((m: any) => selected.includes(m.model_id));
+      const res = await fetch('/api/custom-provider?action=import-models', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getToken()}`
+        },
+        body: JSON.stringify({ provider_id: providerId, models: modelsToImport })
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Import failed');
+      await fetchData();
+      setDetectedModels(prev => ({ ...prev, [providerId]: [] }));
+      setSelectedDetected(prev => ({ ...prev, [providerId]: [] }));
+    } catch (e) {
+      console.error('Import custom models error:', e);
     } finally {
       setImportingModels(null);
     }
@@ -1248,6 +1300,9 @@ export default function AdminAI() {
             {customProviders.map(provider => {
               const providerModels = customModels.filter(m => m.provider_id === provider.id);
               const providerKey = customKeys.find(k => k.provider_id === provider.id);
+              const detectedForProvider = detectedModels[provider.id] || [];
+              const selectedForProvider = selectedDetected[provider.id] || [];
+              const savedModelIds = providerModels.map(m => m.model_id);
               return (
               <div key={provider.id} className="glass-card  border border-border p-5">
                 {/* Header */}
@@ -1270,6 +1325,8 @@ export default function AdminAI() {
                 <div className="flex flex-col sm:flex-row gap-2 mb-3">
                   <input
                     type="password"
+                    value={providerKeys[provider.id] || ''}
+                    onChange={e => setProviderKeys(prev => ({ ...prev, [provider.id]: e.target.value }))}
                     placeholder={providerKey ? '•••••••• (saved key)' : 'Paste provider API key...'}
                     className="flex-1 min-w-0 px-3 py-1.5  border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
                     id={`custom-key-${provider.id}`}
@@ -1284,6 +1341,7 @@ export default function AdminAI() {
                       body: JSON.stringify({ provider_id: provider.id, key_name: 'default', api_key: input.value })
                     });
                     input.value = '';
+                    setProviderKeys(prev => ({ ...prev, [provider.id]: '' }));
                     setSavingKey(null);
                     await fetchData();
                   }} disabled={savingKey === provider.id} className="bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold  text-xs px-3">
@@ -1293,6 +1351,10 @@ export default function AdminAI() {
                     {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <TestTube className="w-3 h-3" />}
                   </Button>
                 </div></div>
+
+                <p className="text-xs text-muted-foreground mb-3">
+                  Pull models from this provider's API, then add the ones you can access to routing.
+                </p>
 
                 {/* Models */}
                 {providerModels.length > 0 && (
@@ -1310,10 +1372,100 @@ export default function AdminAI() {
                   <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)} className=" text-xs">
                     <Plus className="w-3 h-3 mr-1" /> Add Model
                   </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => detectCustomModels(provider.id)}
+                    disabled={detectingModels === provider.id || (!providerKey && !providerKeys[provider.id])}
+                    className="text-xs"
+                  >
+                    {detectingModels === provider.id ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Scan className="w-3 h-3 mr-1" />}
+                    Pull Models
+                  </Button>
                   <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)} className=" text-xs text-red-500 hover:text-red-600">
                     <Trash2 className="w-3 h-3 mr-1" /> Delete
                   </Button>
                 </div>
+
+                {detectedForProvider.length > 0 && (
+                  <div className="mt-4 p-4 border border-border rounded-lg bg-muted/30">
+                    <div className="flex items-start justify-between gap-3 mb-3">
+                      <div>
+                        <h5 className="text-sm font-semibold text-foreground">Accessible API Models</h5>
+                        <p className="text-xs text-muted-foreground">
+                          Models returned by the provider. Pick only models you want available in routing.
+                        </p>
+                      </div>
+                      <div className="flex flex-wrap justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setSelectedDetected(prev => ({
+                            ...prev,
+                            [provider.id]: detectedForProvider
+                              .map((m: any) => m.model_id)
+                              .filter((id: string) => !savedModelIds.includes(id))
+                          }))}
+                          className="text-xs"
+                        >
+                          Select New
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setSelectedDetected(prev => ({ ...prev, [provider.id]: [] }))}
+                          className="text-xs"
+                        >
+                          Clear
+                        </Button>
+                        <Button
+                          size="sm"
+                          onClick={() => importCustomDetectedModels(provider.id)}
+                          disabled={importingModels === provider.id || selectedForProvider.length === 0}
+                          className="bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold text-xs"
+                        >
+                          {importingModels === provider.id ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Plus className="w-3 h-3 mr-1" />}
+                          Add {selectedForProvider.length}
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+                      {detectedForProvider.map((model: any) => {
+                        const isSaved = savedModelIds.includes(model.model_id);
+                        const isSelected = selectedForProvider.includes(model.model_id);
+                        return (
+                          <label
+                            key={model.model_id}
+                            className={cn(
+                              "flex items-start gap-2 p-2 rounded-md border text-sm transition-colors",
+                              isSaved ? "bg-muted/50 border-border opacity-70" : "bg-background border-border hover:border-[#F2C94C]/60"
+                            )}
+                          >
+                            <input
+                              type="checkbox"
+                              checked={isSelected}
+                              disabled={isSaved}
+                              onChange={(e) => {
+                                setSelectedDetected(prev => ({
+                                  ...prev,
+                                  [provider.id]: e.target.checked
+                                    ? [...(prev[provider.id] || []), model.model_id]
+                                    : (prev[provider.id] || []).filter(id => id !== model.model_id)
+                                }));
+                              }}
+                              className="mt-0.5"
+                            />
+                            <span className="min-w-0">
+                              <span className="block text-foreground truncate">{model.display_name || model.model_id}</span>
+                              <span className="block text-xs text-muted-foreground font-mono truncate">{model.model_id}</span>
+                              {isSaved && <span className="block text-[11px] text-emerald-500 mt-0.5">Already added</span>}
+                            </span>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* Add Model Form */}
                 {showAddModel === provider.id && (

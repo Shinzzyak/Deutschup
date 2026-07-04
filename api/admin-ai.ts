@@ -612,17 +612,30 @@ async function detectOpenAICompatibleModels(
   }
 }
 
+async function getStoredProviderApiKey(supabase: any, providerId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('provider_secrets')
+    .select('secret_value')
+    .eq('provider_id', providerId)
+    .eq('secret_key', 'api_key')
+    .maybeSingle();
+  return data?.secret_value || null;
+}
+
 async function handleDetectModels(req: VercelRequest, res: VercelResponse, supabase: any) {
   const { provider_id, api_key } = req.body;
-  if (!provider_id || !api_key) {
-    return res.status(400).json({ error: 'provider_id and api_key required' });
+  if (!provider_id) {
+    return res.status(400).json({ error: 'provider_id required' });
   }
 
   try {
+    const key = api_key || await getStoredProviderApiKey(supabase, provider_id);
+    if (!key) return res.status(400).json({ error: 'No saved API key available for this provider' });
+
     let models: DetectedModel[] = [];
 
     if (provider_id === 'gemini') {
-      models = await detectGeminiModels(api_key);
+      models = await detectGeminiModels(key);
     } else if (['deepseek', 'openai', 'mimo', 'qwen'].includes(provider_id)) {
       const endpoints: Record<string, string> = {
         deepseek: 'https://api.deepseek.com',
@@ -630,7 +643,7 @@ async function handleDetectModels(req: VercelRequest, res: VercelResponse, supab
         mimo: 'https://api.xiaomimimo.com',
         qwen: 'https://dashscope.aliyuncs.com/compatible-mode',
       };
-      models = await detectOpenAICompatibleModels(endpoints[provider_id] || '', api_key, provider_id);
+      models = await detectOpenAICompatibleModels(endpoints[provider_id] || '', key, provider_id);
     } else {
       // Custom provider: try OpenAI-compatible /v1/models
       const { data: cp } = await supabase
@@ -639,7 +652,7 @@ async function handleDetectModels(req: VercelRequest, res: VercelResponse, supab
         .eq('id', provider_id)
         .maybeSingle();
       if (cp?.base_url) {
-        models = await detectOpenAICompatibleModels(cp.base_url, api_key, provider_id);
+        models = await detectOpenAICompatibleModels(cp.base_url, key, provider_id);
       } else {
         return res.status(400).json({ error: 'Unknown provider and no custom provider config found' });
       }

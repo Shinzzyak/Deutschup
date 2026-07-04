@@ -167,6 +167,18 @@ async function getApiKey(providerId: string): Promise<string | null> {
 
   if (secret?.secret_value) return secret.secret_value;
 
+  // Custom providers store active keys separately from built-in provider_secrets.
+  const { data: customKey } = await supabase
+    .from('custom_provider_keys')
+    .select('api_key')
+    .eq('provider_id', providerId)
+    .eq('is_active', true)
+    .order('priority', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (customKey?.api_key) return customKey.api_key;
+
   // Check env vars (fallback)
   const envKey = `${providerId.toUpperCase()}_API_KEY`;
   return process.env[envKey] || null;

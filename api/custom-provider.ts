@@ -7,6 +7,151 @@ function getSupabaseAdmin() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 }
 
+type DetectedModel = {
+  model_id: string;
+  display_name: string;
+  provider_id: string;
+  available: boolean;
+  description?: string;
+  context_window?: number;
+};
+
+function joinUrl(baseUrl: string, endpoint: string) {
+  if (/^https?:\/\//i.test(endpoint)) return endpoint;
+  return `${baseUrl.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
+}
+
+function buildProviderHeaders(provider: any, apiKey: string): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (provider.auth_type === 'bearer') {
+    headers['Authorization'] = `Bearer ${apiKey}`;
+  } else if (provider.auth_type === 'x-api-key') {
+    headers[provider.auth_header || 'X-API-Key'] = apiKey;
+  }
+  if (provider.config?.headers) Object.assign(headers, provider.config.headers);
+  return headers;
+}
+
+async function getActiveKey(supabase: any, providerId: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('custom_provider_keys')
+    .select('api_key')
+    .eq('provider_id', providerId)
+    .eq('is_active', true)
+    .order('priority', { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  return data?.api_key || null;
+}
+
+async function syncProviderToRouting(supabase: any, provider: any) {
+  const config = {
+    ...(provider.config || {}),
+    source: 'custom_provider',
+    baseUrl: provider.base_url,
+    authType: provider.auth_type,
+    authHeader: provider.auth_header,
+    apiFormat: provider.api_format,
+    chatEndpoint: provider.chat_endpoint,
+  };
+
+  const { data: existing } = await supabase
+    .from('ai_providers')
+    .select('id, config')
+    .eq('id', provider.id)
+    .maybeSingle();
+
+  if (existing && existing.config?.source !== 'custom_provider') {
+    throw new Error(`Provider ID "${provider.id}" conflicts with an existing built-in provider`);
+  }
+
+  if (!existing) {
+    const { error } = await supabase.from('ai_providers').insert({
+      id: provider.id,
+      name: provider.name,
+      enabled: provider.enabled ?? true,
+      priority: provider.priority ?? 50,
+      status: provider.enabled === false ? 'disabled' : 'active',
+      config,
+    });
+    if (error) throw error;
+    return;
+  }
+
+  const { error } = await supabase
+    .from('ai_providers')
+    .update({
+      name: provider.name,
+      enabled: provider.enabled ?? true,
+      priority: provider.priority ?? 50,
+      status: provider.enabled === false ? 'disabled' : 'active',
+      config,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', provider.id);
+  if (error) throw error;
+}
+
+async function syncModelToRouting(supabase: any, provider: any, model: { id: string; model_id: string; display_name: string; config?: any }) {
+  await syncProviderToRouting(supabase, provider);
+  const { error } = await supabase.from('ai_models').upsert({
+    id: model.id,
+    provider_id: provider.id,
+    name: model.model_id,
+    display_name: model.display_name || model.model_id,
+    enabled: true,
+    config: {
+      ...(model.config || {}),
+      source: 'custom_provider',
+      customProviderId: provider.id,
+      customModelId: model.id,
+    },
+    updated_at: new Date().toISOString(),
+  }, { onConflict: 'id' });
+  if (error) throw error;
+}
+
+function normalizeDetectedModels(providerId: string, payload: any): DetectedModel[] {
+  const rows = Array.isArray(payload?.data)
+    ? payload.data
+    : Array.isArray(payload?.models)
+      ? payload.models
+      : Array.isArray(payload)
+        ? payload
+        : [];
+
+  return rows.map((m: any) => {
+    const rawName = typeof m?.name === 'string' ? m.name.replace(/^models\//, '') : '';
+    const modelId = m?.id || m?.model_id || m?.model || rawName;
+    const displayName = m?.display_name || m?.displayName || m?.name || modelId;
+    return {
+      model_id: String(modelId || '').trim(),
+      display_name: String(displayName || modelId || '').replace(/^models\//, '').trim(),
+      provider_id: providerId,
+      available: true,
+      description: m?.description || m?.owned_by || m?.object || '',
+      context_window: m?.context_window || m?.context_length || m?.inputTokenLimit || undefined,
+    };
+  }).filter((m: DetectedModel) => m.model_id);
+}
+
+async function detectProviderModels(provider: any, apiKey: string): Promise<DetectedModel[]> {
+  const endpoint = provider.models_endpoint || '/models';
+  const url = joinUrl(provider.base_url, endpoint);
+  const response = await fetch(url, {
+    headers: buildProviderHeaders(provider, apiKey),
+    signal: AbortSignal.timeout(20000),
+  });
+
+  if (!response.ok) {
+    const errText = await response.text().catch(() => '');
+    throw new Error(`Model discovery failed (${response.status}): ${errText.slice(0, 220) || response.statusText}`);
+  }
+
+  const payload = await response.json();
+  return normalizeDetectedModels(provider.id, payload);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -55,6 +200,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           .select()
           .single();
         if (error) throw error;
+        await syncProviderToRouting(supabase, data);
+        invalidateCache();
         return res.json({ provider: data });
       }
 
@@ -68,6 +215,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           .select()
           .single();
         if (error) throw error;
+        await syncProviderToRouting(supabase, data);
+        invalidateCache();
         return res.json({ provider: data });
       }
 
@@ -76,6 +225,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!id) return res.status(400).json({ error: 'id required' });
         const { error } = await supabase.from('custom_providers').delete().eq('id', id);
         if (error) throw error;
+        await supabase.from('ai_models').delete().eq('provider_id', id).contains('config', { source: 'custom_provider' });
+        await supabase.from('ai_providers').delete().eq('id', id).contains('config', { source: 'custom_provider' });
         invalidateCache();
         return res.json({ ok: true });
       }
@@ -95,13 +246,85 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!id || !provider_id || !model_id || !display_name) {
           return res.status(400).json({ error: 'id, provider_id, model_id, display_name required' });
         }
+        const { data: provider, error: providerError } = await supabase
+          .from('custom_providers')
+          .select('*')
+          .eq('id', provider_id)
+          .single();
+        if (providerError || !provider) return res.status(404).json({ error: 'Provider not found' });
+
         const { data, error } = await supabase
           .from('custom_models')
           .upsert({ id, provider_id, model_id, display_name, config: config || {} })
           .select()
           .single();
         if (error) throw error;
+        await syncModelToRouting(supabase, provider, data);
+        invalidateCache();
         return res.json({ model: data });
+      }
+
+      case 'detect-models': {
+        const provider_id = (req.query.provider_id as string) || req.body?.provider_id;
+        const api_key = req.body?.api_key;
+        if (!provider_id) return res.status(400).json({ error: 'provider_id required' });
+
+        const { data: provider, error: providerError } = await supabase
+          .from('custom_providers')
+          .select('*')
+          .eq('id', provider_id)
+          .single();
+        if (providerError || !provider) return res.status(404).json({ error: 'Provider not found' });
+
+        const key = api_key || await getActiveKey(supabase, provider_id);
+        if (!key) return res.status(400).json({ error: 'No active API key available for this provider' });
+
+        const models = await detectProviderModels(provider, key);
+        return res.json({ models, count: models.length, provider_id });
+      }
+
+      case 'import-models': {
+        const { provider_id, models = [] } = req.body;
+        if (!provider_id || !Array.isArray(models) || models.length === 0) {
+          return res.status(400).json({ error: 'provider_id and non-empty models array required' });
+        }
+
+        const { data: provider, error: providerError } = await supabase
+          .from('custom_providers')
+          .select('*')
+          .eq('id', provider_id)
+          .single();
+        if (providerError || !provider) return res.status(404).json({ error: 'Provider not found' });
+
+        const rows = models.map((model: any) => {
+          const modelId = String(model.model_id || model.id || '').trim();
+          if (!modelId) return null;
+          return {
+            id: `${provider_id}-${modelId}`.replace(/[^a-zA-Z0-9._-]/g, '-'),
+            provider_id,
+            model_id: modelId,
+            display_name: String(model.display_name || model.name || modelId),
+            config: {
+              source: 'detected',
+              description: model.description || '',
+              context_window: model.context_window || null,
+            },
+          };
+        }).filter(Boolean);
+
+        if (rows.length === 0) return res.status(400).json({ error: 'No valid models to import' });
+
+        const { data, error } = await supabase
+          .from('custom_models')
+          .upsert(rows, { onConflict: 'id' })
+          .select();
+        if (error) throw error;
+
+        for (const model of data || []) {
+          await syncModelToRouting(supabase, provider, model);
+        }
+        invalidateCache();
+        return res.json({ models: data || [], count: data?.length || 0 });
       }
 
       case 'delete-model': {
@@ -109,6 +332,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!id) return res.status(400).json({ error: 'id required' });
         const { error } = await supabase.from('custom_models').delete().eq('id', id);
         if (error) throw error;
+        await supabase.from('ai_models').delete().eq('id', id).contains('config', { source: 'custom_provider' });
         invalidateCache();
         return res.json({ ok: true });
       }
