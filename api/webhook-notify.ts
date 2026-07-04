@@ -5,6 +5,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import { isVerifiedAdmin } from '../lib/api-utils.js';
 
 type WebhookField = { name: string; value: string; inline?: boolean };
 
@@ -96,6 +97,10 @@ export async function notifyDiscord(opts: NotifyOptions): Promise<{ ok: boolean;
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  if (!(await isVerifiedAdmin(req))) {
+    return res.status(403).json({ error: 'Forbidden: Admin privileges required' });
   }
 
   const body = req.body || {};
