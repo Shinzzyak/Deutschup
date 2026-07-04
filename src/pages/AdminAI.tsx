@@ -367,7 +367,7 @@ export default function AdminAI() {
     
     setSaving(true);
     try {
-      await fetch('/api/admin-ai?action=model-set-primary', {
+      const res = await fetch('/api/admin-ai?action=model-set-primary', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -375,9 +375,11 @@ export default function AdminAI() {
         },
         body: JSON.stringify({ id })
       });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to set primary model');
       setModels(models.map(m => ({
         ...m,
         is_primary: m.id === id,
+        is_fallback: m.id === id ? false : m.is_fallback,
         enabled: m.id === id ? true : m.enabled
       })));
     } catch (e) {
@@ -391,7 +393,7 @@ export default function AdminAI() {
     
     setSaving(true);
     try {
-      await fetch('/api/admin-ai?action=model-set-fallback', {
+      const res = await fetch('/api/admin-ai?action=model-set-fallback', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -399,6 +401,7 @@ export default function AdminAI() {
         },
         body: JSON.stringify({ id })
       });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Failed to set fallback model');
       setModels(models.map(m => ({
         ...m,
         is_fallback: m.id === id,
@@ -538,6 +541,20 @@ export default function AdminAI() {
   }, [usageStats, totalRequests]);
   const totalTokens = useMemo(() => usageStats.reduce((sum, s) => sum + s.total_tokens_in + s.total_tokens_out, 0), [usageStats]);
   const totalFailed = useMemo(() => usageStats.reduce((sum, s) => sum + s.failed_requests, 0), [usageStats]);
+  const selectableModels = useMemo(
+    () => [...models].sort((a, b) => {
+      if (a.provider_id !== b.provider_id) return a.provider_id.localeCompare(b.provider_id);
+      return (a.display_name || a.name || a.id).localeCompare(b.display_name || b.name || b.id);
+    }),
+    [models]
+  );
+  const primaryModel = useMemo(() => models.find(m => m.is_primary), [models]);
+  const fallbackModel = useMemo(() => models.find(m => m.is_fallback && m.id !== primaryModel?.id), [models, primaryModel?.id]);
+  const modelOptionLabel = (model: Model) => {
+    const label = model.display_name || model.name || model.id;
+    const state = model.enabled ? 'enabled' : 'disabled → will enable';
+    return `${label} (${model.provider_id}, ${state})`;
+  };
 
   // ── Custom Provider CRUD ──
   const createCustomProvider = async () => {
@@ -1404,6 +1421,67 @@ export default function AdminAI() {
                 <Zap className="w-5 h-5 text-[#F2C94C]" />
                 Current Routing Configuration
               </h3>
+
+              <div className="bg-card/60 border border-border rounded-lg p-5 mb-6">
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div>
+                    <h4 className="font-bold text-foreground">Choose Available Models</h4>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Pilih model runtime langsung dari daftar `ai_models`. Disabled model akan otomatis di-enable saat dipilih.
+                    </p>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={fetchData} disabled={loading || saving} className="shrink-0">
+                    <RefreshCw className={cn("w-3.5 h-3.5 mr-1", loading && "animate-spin")} />
+                    Refresh
+                  </Button>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className="block">
+                    <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-2 block">Primary model</span>
+                    <select
+                      value={primaryModel?.id || ''}
+                      onChange={(e) => e.target.value && setPrimary(e.target.value)}
+                      disabled={saving || selectableModels.length === 0}
+                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+                    >
+                      <option value="" disabled>Select primary model...</option>
+                      {selectableModels.map(model => (
+                        <option key={model.id} value={model.id}>
+                          {modelOptionLabel(model)}
+                        </option>
+                      ))}
+                    </select>
+                    <p className="text-[11px] text-muted-foreground mt-1">Free users pakai model ini saja.</p>
+                  </label>
+
+                  <label className="block">
+                    <span className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2 block">Fallback model</span>
+                    <select
+                      value={fallbackModel?.id || ''}
+                      onChange={(e) => e.target.value && setFallback(e.target.value)}
+                      disabled={saving || selectableModels.length === 0}
+                      className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+                    >
+                      <option value="" disabled>Select fallback model...</option>
+                      {selectableModels
+                        .filter(model => model.id !== primaryModel?.id)
+                        .map(model => (
+                          <option key={model.id} value={model.id}>
+                            {modelOptionLabel(model)}
+                          </option>
+                        ))}
+                    </select>
+                    <p className="text-[11px] text-muted-foreground mt-1">Pro users fallback ke model ini kalau primary gagal.</p>
+                  </label>
+                </div>
+
+                {selectableModels.length === 0 && (
+                  <div className="mt-4 rounded-lg border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-amber-300">
+                    Belum ada model. Pakai Auto-Detect Models di tab Providers/Custom lalu import model dulu.
+                  </div>
+                )}
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 {/* Primary Model */}
@@ -1413,7 +1491,7 @@ export default function AdminAI() {
                     <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">Primary</span>
                   </div>
                   {(() => {
-                    const pm = models.find(m => m.is_primary);
+                    const pm = primaryModel;
                     return pm ? (
                       <>
                         <p className="text-xl font-black text-foreground mb-1">{pm.display_name || pm.name}</p>
@@ -1435,7 +1513,7 @@ export default function AdminAI() {
                     <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Fallback</span>
                   </div>
                   {(() => {
-                    const fm = models.find(m => m.is_fallback);
+                    const fm = fallbackModel;
                     return fm ? (
                       <>
                         <p className="text-xl font-black text-foreground mb-1">{fm.display_name || fm.name}</p>
@@ -1514,8 +1592,8 @@ export default function AdminAI() {
                         variant="outline"
                         size="sm"
                         onClick={() => setFallback(model.id)}
-                        disabled={saving || model.is_fallback}
-                        className={cn("h-7 px-2 text-xs", model.is_fallback && "opacity-50")}
+                        disabled={saving || model.is_fallback || model.is_primary}
+                        className={cn("h-7 px-2 text-xs", (model.is_fallback || model.is_primary) && "opacity-50")}
                       >
                         Set Fallback
                       </Button>

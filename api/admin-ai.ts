@@ -257,19 +257,19 @@ async function handleSetPrimary(req: VercelRequest, res: VercelResponse, supabas
       return res.status(404).json({ error: 'Model not found' });
     }
 
-    // Clear all primary flags for this provider
+    // Clear all primary flags globally: runtime routing only supports one primary.
     const { error: clearError } = await supabase
       .from('ai_models')
       .update({ is_primary: false, updated_at: new Date().toISOString() })
-      .eq('provider_id', model.provider_id)
       .eq('is_primary', true);
 
     if (clearError) throw clearError;
 
-    // Set new primary
+    // Set new primary and enable it so it becomes selectable at runtime.
+    // A model cannot be both primary and fallback.
     const { error } = await supabase
       .from('ai_models')
-      .update({ is_primary: true, enabled: true, updated_at: new Date().toISOString() })
+      .update({ is_primary: true, is_fallback: false, enabled: true, updated_at: new Date().toISOString() })
       .eq('id', id);
 
     if (error) throw error;
@@ -285,10 +285,10 @@ async function handleSetFallback(req: VercelRequest, res: VercelResponse, supaba
   if (!id) return res.status(400).json({ error: 'id required' });
 
   try {
-    // Get model to find provider
+    // Get model to validate selection
     const { data: model, error: modelError } = await supabase
       .from('ai_models')
-      .select('provider_id')
+      .select('provider_id,is_primary')
       .eq('id', id)
       .single();
 
@@ -296,16 +296,19 @@ async function handleSetFallback(req: VercelRequest, res: VercelResponse, supaba
       return res.status(404).json({ error: 'Model not found' });
     }
 
-    // Clear all fallback flags for this provider
+    if (model.is_primary) {
+      return res.status(400).json({ error: 'Fallback model must be different from primary model' });
+    }
+
+    // Clear all fallback flags globally: runtime routing only supports one explicit fallback.
     const { error: clearError } = await supabase
       .from('ai_models')
       .update({ is_fallback: false, updated_at: new Date().toISOString() })
-      .eq('provider_id', model.provider_id)
       .eq('is_fallback', true);
 
     if (clearError) throw clearError;
 
-    // Set new fallback
+    // Set new fallback and enable it so it becomes selectable at runtime.
     const { error } = await supabase
       .from('ai_models')
       .update({ is_fallback: true, enabled: true, updated_at: new Date().toISOString() })

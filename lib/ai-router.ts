@@ -104,24 +104,42 @@ export async function getRoutingConfig(): Promise<RoutingConfig> {
 
   // Filter models to only include those from available providers
   const availableProviderIds = new Set(providers.map(p => p.id));
-  const models = (allModels || []).filter(m => availableProviderIds.has(m.provider_id));
+  const providerPriority = new Map(providers.map((p, i) => [p.id, p.priority ?? i]));
+  const models = (allModels || [])
+    .filter(m => availableProviderIds.has(m.provider_id))
+    .sort((a, b) => {
+      const pa = providerPriority.get(a.provider_id) ?? 999;
+      const pb = providerPriority.get(b.provider_id) ?? 999;
+      if (pa !== pb) return pa - pb;
+      return (a.display_name || a.name || a.id).localeCompare(b.display_name || b.name || b.id);
+    });
 
   if (models.length === 0) {
     throw new Error('No available AI models (no providers with API keys)');
   }
 
-  // Find primary model (first available by priority)
-  const primary = models[0];
+  // Respect admin-selected routing. Fallback to provider priority if nothing is selected.
+  const primary = models.find(m => m.is_primary) || models[0];
   if (!primary) throw new Error('No primary model configured');
 
-  // Find fallback model (second available, or primary if only one)
-  const fallback = models.length > 1 ? models[1] : primary;
+  // Prefer explicit fallback; otherwise use the next available model, or primary if only one exists.
+  const fallback =
+    models.find(m => m.is_fallback && m.id !== primary.id) ||
+    models.find(m => m.id !== primary.id) ||
+    primary;
+
+  // Routing order matters: free users get index 0 only; pro users walk the chain.
+  const orderedModels = [
+    primary,
+    ...(fallback.id !== primary.id ? [fallback] : []),
+    ...models.filter(m => m.id !== primary.id && m.id !== fallback.id),
+  ];
 
   cachedConfig = {
     primary,
     fallback,
     providers,
-    models,
+    models: orderedModels,
   };
   cacheTimestamp = now;
   return cachedConfig;
