@@ -24,7 +24,7 @@ function EmptyState({
         className
       )}
     >
-      <div className="bg-[#f5f0eb] border-2 border-[#0a0a0a]/10 p-4 mb-4">
+      <div className="bg-background border-2 border-foreground/10 p-4 mb-4">
         {icon || <Inbox className="h-8 w-8 text-muted-foreground" />}
       </div>
       <h3 className="text-lg font-semibold text-foreground mb-1">{title}</h3>
