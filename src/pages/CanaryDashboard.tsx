@@ -17,73 +17,73 @@ export default function CanaryDashboard() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center text-foreground">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-red-400">⛔ Access Denied</h1>
-          <p className="text-gray-400 mt-2">Admin only</p>
+          <p className="text-muted-foreground mt-2">Admin only</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] p-6">
+    <div className="min-h-screen bg-background p-6 text-foreground">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#f5f0eb] flex items-center gap-3">
+          <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
             🔐 Auth Dashboard
           </h1>
-          <p className="text-gray-400 mt-2">
+          <p className="text-muted-foreground mt-2">
             Clerk is now the default auth for ALL users
           </p>
         </div>
 
         {/* Status Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="bg-gray-900 border border-gray-800  p-4">
-            <div className="text-sm text-gray-400">Clerk SDK</div>
+          <div className="bg-card border border-border p-4 text-card-foreground">
+            <div className="text-sm text-muted-foreground">Clerk SDK</div>
             <div className={`text-2xl font-bold ${status?.clerkEnabled ? 'text-green-400' : 'text-yellow-400'}`}>
               {status?.clerkEnabled ? '✅ Enabled' : '⚠️ Not Configured'}
             </div>
           </div>
-          <div className="bg-gray-900 border border-gray-800  p-4">
-            <div className="text-sm text-gray-400">Auth Mode</div>
+          <div className="bg-card border border-border p-4 text-card-foreground">
+            <div className="text-sm text-muted-foreground">Auth Mode</div>
             <div className="text-2xl font-bold text-blue-400">
               Full Clerk
             </div>
           </div>
-          <div className="bg-gray-900 border border-gray-800  p-4">
-            <div className="text-sm text-gray-400">Publishable Key</div>
-            <div className="text-sm font-mono text-gray-300 mt-1">
+          <div className="bg-card border border-border p-4 text-card-foreground">
+            <div className="text-sm text-muted-foreground">Publishable Key</div>
+            <div className="text-sm font-mono text-foreground mt-1">
               {status?.publishableKeyPrefix || 'NOT SET'}
             </div>
           </div>
         </div>
 
         {/* Current User */}
-        <div className="bg-gray-900 border border-gray-800  p-6 mb-8">
+        <div className="bg-card border border-border p-6 mb-8 text-card-foreground">
           <h2 className="text-lg font-semibold mb-4">Current Session</h2>
           <div className="space-y-2">
             <div className="flex justify-between">
-              <span className="text-gray-400">Email:</span>
-              <span className="text-[#f5f0eb]">{user?.email}</span>
+              <span className="text-muted-foreground">Email:</span>
+              <span className="text-foreground">{user?.email}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">User ID:</span>
-              <span className="text-[#f5f0eb] font-mono text-sm">{user?.id}</span>
+              <span className="text-muted-foreground">User ID:</span>
+              <span className="text-foreground font-mono text-sm">{user?.id}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-400">Auth Provider:</span>
+              <span className="text-muted-foreground">Auth Provider:</span>
               <span className="text-green-400">Clerk</span>
             </div>
           </div>
         </div>
 
         {/* Architecture */}
-        <div className="bg-gray-900 border border-gray-800  p-6">
+        <div className="bg-card border border-border p-6 text-card-foreground">
           <h2 className="text-lg font-semibold mb-4">Auth Architecture</h2>
-          <pre className="bg-gray-800  p-4 text-sm text-gray-300 overflow-auto whitespace-pre">
+          <pre className="bg-muted p-4 text-sm text-foreground overflow-auto whitespace-pre border border-border">
 {`┌─────────────────────────────────────────────────────┐
 │                  USER BROWSER                        │
 ├─────────────────────────────────────────────────────┤

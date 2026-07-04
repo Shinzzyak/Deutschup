@@ -63,48 +63,48 @@ export default class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <div className="min-h-screen bg-[#0a0a0a] flex items-center justify-center p-4 text-[#f5f0eb]">
-          <div className="max-w-lg w-full bg-[#0a0a0a]  border border-[#8b2500]/30 p-6">
+        <div className="min-h-screen bg-background flex items-center justify-center p-4 text-foreground">
+          <div className="max-w-lg w-full bg-card border border-red-500/30 p-6 text-card-foreground shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10  bg-[#8b2500]/20 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-[#8b2500]" />
+              <div className="w-10 h-10 bg-red-950/30 flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-red-400" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-[#f5f0eb]">Terjadi Kesalahan</h1>
-                <p className="text-sm text-[#0a0a0a]/40">
+                <h1 className="text-lg font-bold text-foreground">Terjadi Kesalahan</h1>
+                <p className="text-sm text-muted-foreground">
                   Komposen mengalami error saat render
                 </p>
               </div>
             </div>
 
-            <div className="bg-[#0a0a0a]  p-4 mb-4 border border-[#0a0a0a]/10">
-              <div className="text-xs font-mono text-[#8b2500] mb-1">Error Message</div>
-              <div className="text-sm text-[#0a0a0a]/80 font-mono break-all">
+            <div className="bg-muted/50 p-4 mb-4 border border-border">
+              <div className="text-xs font-mono text-red-400 mb-1">Error Message</div>
+              <div className="text-sm text-foreground font-mono break-all">
                 {this.state.error.message}
               </div>
             </div>
 
             {this.state.errorInfo?.componentStack && (
-              <div className="bg-[#0a0a0a]  p-4 mb-4 border border-[#0a0a0a]/10 max-h-48 overflow-y-auto">
+              <div className="bg-muted/50 p-4 mb-4 border border-border max-h-48 overflow-y-auto">
                 <div className="text-xs font-mono text-yellow-400 mb-1">Component Stack</div>
-                <pre className="text-xs text-[#0a0a0a]/30 font-mono whitespace-pre-wrap">
+                <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap">
                   {this.state.errorInfo.componentStack}
                 </pre>
               </div>
             )}
 
             {this.state.error.stack && (
-              <div className="bg-[#0a0a0a]  p-4 mb-4 border border-[#0a0a0a]/10 max-h-48 overflow-y-auto">
-                <div className="text-xs font-mono text-[#0a0a0a]/60 mb-1">Stack Trace</div>
-                <pre className="text-xs text-[#0a0a0a]/30 font-mono whitespace-pre-wrap">
+              <div className="bg-muted/50 p-4 mb-4 border border-border max-h-48 overflow-y-auto">
+                <div className="text-xs font-mono text-muted-foreground mb-1">Stack Trace</div>
+                <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap">
                   {this.state.error.stack}
                 </pre>
               </div>
             )}
 
-            <div className="bg-[#0a0a0a]  p-4 mb-4 border border-[#0a0a0a]/10">
-              <div className="text-xs font-mono text-[#0a0a0a]/50 mb-1">Context</div>
-              <div className="text-xs text-[#0a0a0a]/40 font-mono">
+            <div className="bg-muted/50 p-4 mb-4 border border-border">
+              <div className="text-xs font-mono text-muted-foreground mb-1">Context</div>
+              <div className="text-xs text-muted-foreground font-mono">
                 Route: {window.location.pathname}<br />
                 Time: {new Date().toLocaleString('id-ID')}<br />
                 User Agent: {navigator.userAgent.substring(0, 80)}
@@ -114,14 +114,14 @@ export default class ErrorBoundary extends Component<Props, State> {
             <div className="flex gap-2">
               <button
                 onClick={this.handleReset}
-                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-[#8b2500] hover:bg-[#8b2500]/80 text-[#f5f0eb]  text-sm font-medium transition-colors"
+                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-medium transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 Coba Lagi
               </button>
               <button
                 onClick={() => window.location.href = '/'}
-                className="flex-1 px-4 py-3 bg-[#0a0a0a]/90 hover:bg-[#0a0a0a]/80  text-sm font-medium transition-colors"
+                className="flex-1 px-4 py-3 bg-muted hover:bg-muted/80 text-foreground border border-border text-sm font-medium transition-colors"
               >
                 Ke Dashboard
               </button>

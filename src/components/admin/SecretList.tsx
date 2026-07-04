@@ -13,18 +13,18 @@ export default function SecretList() {
     return (
       <div className="text-center py-8">
         <div className="animate-spin  h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading providers...</p>
+        <p className="text-muted-foreground">Loading providers...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-[#f5f0eb] border border-[#8b2500]/20  p-4">
-        <p className="text-[#8b2500]">Error: {error}</p>
+      <div className="bg-card border border-red-500/25 p-4 text-card-foreground">
+        <p className="text-red-400">Error: {error}</p>
         <button
           onClick={fetchProviders}
-          className="mt-2 text-sm text-[#8b2500] underline hover:text-red-800"
+          className="mt-2 text-sm text-red-400 underline hover:text-red-300"
         >
           Retry
         </button>
@@ -35,18 +35,18 @@ export default function SecretList() {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-serif font-semibold text-[#0a0a0a]">AI Provider Secrets</h2>
+        <h2 className="text-xl font-serif font-semibold text-foreground">AI Provider Secrets</h2>
         <button
           onClick={fetchProviders}
           disabled={loading}
-          className="px-3 py-1.5 text-sm font-medium text-[#0a0a0a]/70 bg-[#0a0a0a]/5 hover:bg-[#0a0a0a]/10 focus:outline-none focus:ring-2 focus:ring-[#0a0a0a]/20 disabled:opacity-50"
+          className="px-3 py-1.5 text-sm font-medium text-foreground/70 bg-muted hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
         >
           {loading ? 'Refreshing...' : 'Refresh'}
         </button>
       </div>
 
       <div className="glass-subtle p-4 mb-4">
-        <p className="text-sm text-blue-800">
+        <p className="text-sm text-blue-300">
           <strong>Security Note:</strong> API keys are stored securely in the database with RLS protection. 
           Only service role can access them. Keys are never displayed in full after storage.
         </p>
@@ -59,7 +59,7 @@ export default function SecretList() {
       </div>
 
       {providers.length === 0 && !loading && (
-        <div className="text-center py-8 text-[#0a0a0a]/50">
+        <div className="text-center py-8 text-muted-foreground">
           No providers found
         </div>
       )}
