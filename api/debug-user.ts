@@ -20,7 +20,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     .from('profiles')
     .select('id, subscription, tier, pro_expires_at, tier_expiry, updated_at')
     .eq('id', userId)
-    .single();
+    .maybeSingle();
 
   // Fetch orders
   const { data: orders, error: ordersError } = await getDb()
