@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { Send, Bot, User, Loader2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuthStore } from '../stores/authStore';
+import { useProgressStore } from '../stores/progressStore';
 import { supabase } from '../lib/supabase';
 
 interface Message {
@@ -17,7 +18,8 @@ export default function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
-  const { user, profile, tierData } = useAuthStore();
+  const { user, profileData, tierData } = useAuthStore();
+  const { currentLevel } = useProgressStore();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -65,7 +67,7 @@ export default function ChatWidget() {
         body: JSON.stringify({
           message: userMsg,
           history: messages.slice(-6),
-          level: profile?.level || 'A1'
+          level: currentLevel || 'A1'
         })
       });
 

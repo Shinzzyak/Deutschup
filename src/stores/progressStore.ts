@@ -40,7 +40,7 @@ interface ProgressState extends ProgressData {
   addXp: (userId: string, amount: number) => Promise<void>;
   unlockLesson: (userId: string, lessonId: string) => Promise<void>;
   completeLesson: (userId: string, lessonId: string) => Promise<void>;
-  submitCheckpoint: (userId: string, checkpointId: string, score: number) => Promise<boolean>;
+  submitCheckpoint: (userId: string, checkpointId: string, score: number, totalQuestions?: number) => Promise<boolean>;
   updateVocab: (userId: string, wordId: string, status: 'learning' | 'known') => Promise<void>;
   updateStreak: (userId: string) => Promise<void>;
 }

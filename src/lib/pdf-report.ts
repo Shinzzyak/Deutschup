@@ -28,7 +28,7 @@ interface ReportData {
   studyHours: number;
   averageScore: number;
   lessons: Array<{ level: string; title: string; goals: string[]; completed: boolean }>;
-  mockTests: Array<{ createdAt: string; level: string; score: number; total: number }>;
+  mockTests: Array<{ createdAt: number; level: string; score: number; total: number }>;
 }
 
 // ════════════════════════════════════════════════════════════

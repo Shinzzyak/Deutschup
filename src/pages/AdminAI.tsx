@@ -745,7 +745,7 @@ export default function AdminAI() {
               const health = getProviderHealth(provider.id);
               const status = health?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED');
               const hasKey = secrets.some(s => s.provider_id === provider.id);
-              const keySource = health?.key_source || (hasKey ? 'database' : 'none');
+              const keySource = health?.key_exists ? 'database' : (hasKey ? 'database' : 'none');
               const currentKey = providerKeys[provider.id] || '';
 
               return (

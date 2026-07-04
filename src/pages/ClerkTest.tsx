@@ -52,8 +52,8 @@ export default function ClerkTest() {
     // Test 3: Profile data
     tests.push({
       label: 'Profile Loaded',
-      status: profileData?.id ? 'success' : 'error',
-      value: profileData?.id || 'No profile',
+      status: profileData?.full_name ? 'success' : 'error',
+      value: profileData?.full_name || 'No profile',
     });
     setResults([...tests]);
 

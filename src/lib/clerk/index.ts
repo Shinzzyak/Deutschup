@@ -6,5 +6,5 @@ export { validateClerkJWT, extractUserIdentity, isAdmin } from "./jwt";
 export type { ClerkJWTClaims } from "./jwt";
 
 // Canary routing (048G)
-export { isCanaryUser, isClerkEnabled, shouldUseClerk, getCanaryStatus, getCanaryEmails, setCanaryEmails } from "./canary";
+export { isCanaryUser, isClerkEnabled, shouldUseClerk, getCanaryStatus } from "./canary";
 export { canaryLoginWithGoogle, canaryLogout } from "./canary-auth";
