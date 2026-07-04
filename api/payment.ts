@@ -47,13 +47,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
       const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
-      const DEBUG = process.env.DEBUG_PAYMENTS === 'true';
-      if (DEBUG) console.log('[payment/create] started, test mode:', isTestMode);
-      // NOTE: Do not log API key length, full payloads, or raw gateway responses in production.
-
       const { planType, name } = req.body;
 
       const isTestMode = process.env.TEST_PAYMENT_MODE === 'true';
+      const DEBUG = process.env.DEBUG_PAYMENTS === 'true';
+      if (DEBUG) console.log('[payment/create] started, test mode:', isTestMode);
+      // NOTE: Do not log API key length, full payloads, or raw gateway responses in production.
       const TEST_PRICE = 1000;
       const PROD_PRICE = 49000;
       const price = isTestMode ? TEST_PRICE : PROD_PRICE;
@@ -172,6 +171,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       let verifyData: any;
+      let verifyStatus: string | undefined;
       try {
         const checkRes = await fetch(
           `https://www.bayar.gg/api/check-payment.php?invoice=${encodeURIComponent(invoice_id)}`,
