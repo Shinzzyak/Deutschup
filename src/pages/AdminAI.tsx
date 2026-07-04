@@ -298,8 +298,8 @@ export default function AdminAI() {
           },
           body: JSON.stringify({
             provider_id: providerId,
-            model_id: modelInfo.model_id,
-            name: modelInfo.display_name || modelInfo.model_id,
+            model_name: modelInfo.model_id,
+            display_name: modelInfo.display_name || modelInfo.model_id,
             enabled: true,
           })
         });

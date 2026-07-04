@@ -159,43 +159,34 @@ async function handleModels(_req: VercelRequest, res: VercelResponse, supabase: 
 }
 
 async function handleModelAdd(req: VercelRequest, res: VercelResponse, supabase: any) {
-  const { provider_id, model_id, name, enabled } = req.body;
-  if (!provider_id || !model_id || !name) {
-    return res.status(400).json({ error: 'provider_id, model_id, and name required' });
+  const { provider_id, model_name, display_name, enabled } = req.body;
+  if (!provider_id || !model_name || !display_name) {
+    return res.status(400).json({ error: 'provider_id, model_name, and display_name required' });
   }
 
   try {
-    // Check if model already exists
+    // Check if model already exists (by id which equals model_name)
     const { data: existing } = await supabase
       .from('ai_models')
       .select('id')
       .eq('provider_id', provider_id)
-      .eq('model_id', model_id)
+      .eq('id', model_name)
       .maybeSingle();
 
     if (existing) {
       return res.json({ success: true, id: existing.id, message: 'Model already exists' });
     }
 
-    // Get max priority for this provider
-    const { data: maxModel } = await supabase
-      .from('ai_models')
-      .select('priority')
-      .eq('provider_id', provider_id)
-      .order('priority', { ascending: false })
-      .limit(1)
-      .maybeSingle();
-
-    const newPriority = (maxModel?.priority || 0) + 1;
-
     const { data, error } = await supabase
       .from('ai_models')
       .insert({
+        id: model_name,
         provider_id,
-        model_id,
-        display_name: name,
+        name: model_name,
+        display_name,
         enabled: enabled !== false,
-        priority: newPriority,
+        is_primary: false,
+        is_fallback: false,
       })
       .select()
       .single();
