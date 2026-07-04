@@ -50,10 +50,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       case 'upsert-profile': {
         const userId = await getVerifiedUserId(req);
         if (!userId) return res.status(401).json({ error: 'Unauthorized' });
-        const { full_name } = req.body || {};
+        const { full_name, avatar_url } = req.body || {};
+        const update: Record<string, any> = { id: userId };
+        if (typeof full_name === 'string') update.full_name = full_name;
+        if (typeof avatar_url === 'string') update.avatar_url = avatar_url;
         const { data, error } = await db
           .from('profiles')
-          .upsert({ id: userId, full_name }, { onConflict: 'id' })
+          .upsert(update, { onConflict: 'id' })
           .select()
           .single();
         if (error) {

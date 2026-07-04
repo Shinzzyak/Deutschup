@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { dbProxy } from '../lib/supabase';
 import { isUserPro, getProDaysRemaining } from '../lib/subscription';
-import { User, Mail, Calendar, Shield, CreditCard, Loader2, Save, Award, Zap, CheckCircle2, ArrowRight } from 'lucide-react';
+import { User, Mail, Calendar, Shield, CreditCard, Loader2, Save, Award, Zap, CheckCircle2, ArrowRight, Image as ImageIcon, LifeBuoy } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 export default function Profile() {
   const { user, profileData, tierData } = useAuthStore();
   const [fullName, setFullName] = useState(profileData?.full_name || '');
+  const [avatarUrl, setAvatarUrl] = useState(profileData?.avatar_url || '');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -22,13 +23,14 @@ export default function Profile() {
 
   useEffect(() => {
     if (profileData?.full_name) setFullName(profileData.full_name);
-  }, [profileData?.full_name]);
+    if (profileData?.avatar_url) setAvatarUrl(profileData.avatar_url);
+  }, [profileData?.full_name, profileData?.avatar_url]);
 
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
     try {
-      const result = await dbProxy('upsert-profile', { userId: user.id, full_name: fullName });
+      const result = await dbProxy('upsert-profile', { userId: user.id, full_name: fullName, avatar_url: avatarUrl });
       if (result.error) throw new Error(result.error);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -75,8 +77,12 @@ export default function Profile() {
         <div className="lg:col-span-1">
           <div className="glass-card p-8 sticky top-24 overflow-hidden">
             <div className="flex flex-col items-center text-center">
-              <div className="w-32 h-32 bg-[#c8956c] flex items-center justify-center text-5xl font-black text-[#0a0a0a] mb-6 border-2 border-[#0a0a0a]">
-                {fullName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'}
+              <div className="w-32 h-32 bg-[#c8956c] flex items-center justify-center text-5xl font-black text-[#0a0a0a] mb-6 border-2 border-[#0a0a0a] overflow-hidden">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  fullName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'
+                )}
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-1 leading-tight">
                 {fullName || 'User DeutschUp'}
@@ -139,16 +145,33 @@ export default function Profile() {
                     disabled
                     className="w-full px-5 py-4  bg-muted/50 text-muted-foreground cursor-not-allowed"
                   />
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                    <Shield className="w-4 h-4 text-muted-foreground/50" />
-                  </div>
+                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                   <Shield className="w-4 h-4 text-muted-foreground/50" />
+                 </div>
+               </div>
+             </div>
+
+              <div className="group">
+                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1 group-focus-within:text-[#F2C94C] transition-colors">
+                  URL Foto Profil
+                </label>
+                <div className="relative">
+                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
+                  <input
+                    type="url"
+                    value={avatarUrl}
+                    onChange={(e) => setAvatarUrl(e.target.value)}
+                    className="w-full pl-12 pr-5 py-4 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 transition-all"
+                    placeholder="https://... (opsional)"
+                  />
                 </div>
+                <p className="text-xs text-muted-foreground/60 mt-1 ml-1">Kosongkan untuk menggunakan inisial nama.</p>
               </div>
 
               <div className="flex justify-end pt-4">
                 <Button
                   onClick={handleSave}
-                  disabled={saving || fullName === profileData?.full_name}
+                  disabled={saving || (fullName === profileData?.full_name && avatarUrl === (profileData?.avatar_url || ''))}
                   className=" px-8 py-6 text-md font-bold transition-all hover:scale-[1.02] active:scale-[0.98]  "
                 >
                   {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
@@ -208,6 +231,26 @@ export default function Profile() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* Support Card */}
+          <div className="glass-card p-8">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="p-2 bg-[#8b2500]/10">
+                <LifeBuoy className="w-5 h-5 text-[#8b2500]" />
+              </div>
+              <h3 className="text-xl font-bold text-foreground">Butuh Bantuan?</h3>
+            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              Ada kendala atau pertanyaan? Tim support siap membantu.
+            </p>
+            <a
+              href="mailto:avresixx@gmail.com?subject=[DeutschUp%20Support]"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[#8b2500] hover:underline"
+            >
+              <Mail className="w-4 h-4" />
+              avresixx@gmail.com
+            </a>
           </div>
         </div>
       </div>

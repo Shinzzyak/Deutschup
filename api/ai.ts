@@ -15,6 +15,10 @@ function checkRateLimit(ip: string, maxRequests = 10, windowMs = 60000): boolean
   return entry.count <= maxRequests;
 }
 
+// Rate limits: Free=10/min, Pro=30/min
+const FREE_RATE_LIMIT = 10;
+const PRO_RATE_LIMIT = 30;
+
 const CHAT_SYSTEM = `Anda "Herr Deutsch", seorang Tutor Bahasa Jerman profesional dan ramah untuk siswa Indonesia. Siswa ini berada di level {level}. Jawablah SEMUA pertanyaan dalam Bahasa Indonesia, tapi berikan istilah dan contoh dominan dalam bahasa Jerman dengan benar.`;
 
 function getFriendlyError(error: any): { message: string; status: number } {
@@ -275,12 +279,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  // Rate limit
-  const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
-  if (!checkRateLimit(clientIp, 10, 60000)) {
-    return res.status(429).json({ error: 'Terlalu banyak permintaan. Coba lagi dalam 1 menit.' });
-  }
-
   const action = (req.query.action as string) || req.body?.action;
   if (!action || !HANDLERS[action]) {
     return res.status(400).json({ error: `Invalid action. Valid: ${Object.keys(HANDLERS).join(', ')}` });
@@ -299,6 +297,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const userTier = await getUserTierById(uid);
+
+    // Rate limit — Pro gets higher limit
+    const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
+    const maxReq = userTier === 'pro' ? PRO_RATE_LIMIT : FREE_RATE_LIMIT;
+    if (!checkRateLimit(clientIp, maxReq, 60000)) {
+      return res.status(429).json({ error: 'Terlalu banyak permintaan. Coba lagi dalam 1 menit.' });
+    }
+
     const result = await HANDLERS[action](uid, req.body, userTier);
     return res.status(result.status).json(result.data);
   } catch (error: any) {
