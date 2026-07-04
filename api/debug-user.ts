@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { runMiddleware, authMiddleware, getDb } from '../lib/api-utils.js';
+import { getDb, getVerifiedIdentity } from '../lib/api-utils.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
@@ -7,13 +7,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  try {
-    await runMiddleware(req, res, authMiddleware);
-  } catch {
-    return res.status(401).json({ error: 'Unauthorized' });
+  const identity = await getVerifiedIdentity(req);
+  const userId = identity?.internalId;
+  if (!userId) {
+    return res.status(401).json({ error: 'Unauthorized — token required' });
   }
-
-  const userId = (req as any).userId;
 
   // Fetch profile
   const { data: profile, error: profileError } = await getDb()

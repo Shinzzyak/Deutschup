@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { runMiddleware, authMiddleware, getSupabaseAdminClient } from '../lib/api-utils.js';
+import { getSupabaseAdminClient, isVerifiedAdmin } from '../lib/api-utils.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
@@ -9,10 +9,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).end();
   }
 
-  try {
-    await runMiddleware(req, res, authMiddleware);
-  } catch {
-    return res.status(401).json({ error: 'Unauthorized' });
+  if (!(await isVerifiedAdmin(req))) {
+    return res.status(403).json({ error: 'Forbidden: Admin privileges required' });
   }
 
   const action = req.query.action as string;

@@ -1,4 +1,4 @@
-import { runMiddleware, authMiddleware, adminMiddleware, getDb } from '../lib/api-utils.js';
+import { getDb, isVerifiedAdmin } from '../lib/api-utils.js';
 
 export default async function handler(req: any, res: any) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
@@ -10,11 +10,7 @@ export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') return res.status(405).end();
   
   try {
-    await runMiddleware(req, res, authMiddleware);
-    try {
-      await runMiddleware(req, res, adminMiddleware);
-    } catch {
-      if (res.headersSent) return;
+    if (!(await isVerifiedAdmin(req))) {
       return res.status(403).json({ error: 'Forbidden: Admin privileges required' });
     }
 

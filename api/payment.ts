@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { runMiddleware, authMiddleware, getDb, getVerifiedIdentity } from '../lib/api-utils.js';
+import { getDb, getVerifiedIdentity } from '../lib/api-utils.js';
 import { notifyDiscord } from './webhook-notify';
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
@@ -29,8 +29,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // === action=create (POST, auth required) ===
     if (action === 'create') {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
-      await runMiddleware(req, res, authMiddleware);
 
       // H3 FIX: Never trust userId/email from body — extract from verified identity.
       const identity = await getVerifiedIdentity(req);
