@@ -97,7 +97,7 @@ async function handleSystemHealth(_req: VercelRequest, res: VercelResponse) {
         paymentConfigured: !!(process.env.BAYAR_GG_API_KEY && process.env.BAYAR_GG_API_KEY.length > 10),
         aiConfigured,
         databaseConfigured: !!(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY),
-        webhookConfigured: !!process.env.BAYARGG_WEBHOOK_SECRET,
+        webhookConfigured: !!process.env.DISCORD_WEBHOOK_URL,
       },
       ai: {
         builtInKeys,

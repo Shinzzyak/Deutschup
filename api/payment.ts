@@ -1,5 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { runMiddleware, authMiddleware, getDb, getVerifiedIdentity } from '../lib/api-utils.js';
+import { notifyDiscord } from './webhook-notify';
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -263,6 +264,19 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         }
 
         console.log('[payment/callback] Payment processed successfully for user:', order.user_id);
+
+        // Discord webhook notification (non-blocking, never affects payment flow)
+        notifyDiscord({
+          title: '💸 Payment Success',
+          description: `Plan: ${order.plan_type} | User: ${order.user_id.slice(0, 8)}...`,
+          color: 'success',
+          fields: [
+            { name: 'Invoice', value: invoice_id, inline: true },
+            { name: 'Method', value: payment_method || 'QRIS', inline: true },
+            { name: 'Plan', value: order.plan_type, inline: true },
+          ],
+          event: 'payment.success',
+        }).catch(e => console.error('[webhook] Discord notify failed:', e));
       }
 
       return res.json({ success: true });
@@ -272,6 +286,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(404).json({ error: 'Payment endpoint not found' });
   } catch (e: any) {
     console.error('[payment] Unhandled error:', e);
+    // Discord webhook for payment errors (non-blocking)
+    notifyDiscord({
+      title: '⚠️ Payment Error',
+      description: e.message || 'Unknown error',
+      color: 'warning',
+      event: 'payment.error',
+    }).catch(err => console.error('[webhook] Discord notify failed:', err));
     if (!res.headersSent) {
       return res.status(500).json({ error: e.message || 'Internal server error' });
     }

@@ -9,7 +9,8 @@ import {
   Loader2, RefreshCw, CheckCircle2, XCircle, AlertTriangle,
   Server, Cpu, Activity, Zap, ArrowLeft, BarChart3, Key,
   Shield, TrendingUp, Clock, AlertCircle, EyeOff, Eye,
-  ChevronRight, Gauge, Puzzle, Plus, Trash2, TestTube, Globe
+  ChevronRight, Gauge, Puzzle, Plus, Trash2, TestTube, Globe,
+  Bell, Send
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -29,6 +30,7 @@ interface HealthCheckResult {
   name: string;
   enabled: boolean;
   key_exists: boolean;
+  key_source?: string;
   runtime_status: RuntimeStatus;
   latency_ms: number | null;
   checked_at: string;
@@ -87,7 +89,7 @@ export default function AdminAI() {
   const [systemHealth, setSystemHealth] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState<'health' | 'providers' | 'custom' | 'routing' | 'usage' | 'secrets'>('health');
+  const [activeTab, setActiveTab] = useState<'health' | 'providers' | 'custom' | 'routing' | 'usage' | 'secrets' | 'webhooks'>('health');
 
   // Custom providers state
   const [customProviders, setCustomProviders] = useState<any[]>([]);
@@ -102,6 +104,8 @@ export default function AdminAI() {
   const [providerKeys, setProviderKeys] = useState<Record<string, string>>({});
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
   const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [webhookTesting, setWebhookTesting] = useState(false);
+  const [webhookResult, setWebhookResult] = useState<{ ok: boolean; message: string } | null>(null);
   const [newProvider, setNewProvider] = useState({ id: '', name: '', base_url: '', auth_type: 'bearer', api_format: 'openai', chat_endpoint: '/chat/completions', priority: 50 });
   const [newModel, setNewModel] = useState({ id: '', model_id: '', display_name: '' });
   const [newKey, setNewKey] = useState({ key_name: 'default', api_key: '' });
@@ -363,6 +367,32 @@ export default function AdminAI() {
     return healthData.find(h => h.provider === providerId);
   };
 
+  const testWebhook = async () => {
+    setWebhookTesting(true);
+    setWebhookResult(null);
+    try {
+      const token = await getToken();
+      const res = await fetch('/api/webhook-notify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ test: true }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setWebhookResult({ ok: true, message: 'Test notification sent to Discord!' });
+      } else {
+        setWebhookResult({ ok: false, message: data.error || 'Unknown error' });
+      }
+    } catch (e: any) {
+      setWebhookResult({ ok: false, message: e.message || 'Request failed' });
+    } finally {
+      setWebhookTesting(false);
+    }
+  };
+
   const getModelStats = (modelId: string) => {
     return usageStats.find(s => s.model_id === modelId);
   };
@@ -529,6 +559,7 @@ export default function AdminAI() {
     { id: 'routing' as const, label: 'Routing', icon: Zap },
     { id: 'usage' as const, label: 'Usage', icon: BarChart3 },
     { id: 'secrets' as const, label: 'Secrets', icon: Key },
+    { id: 'webhooks' as const, label: 'Webhooks', icon: Bell },
   ];
 
   if (loading) {
@@ -745,7 +776,7 @@ export default function AdminAI() {
               const health = getProviderHealth(provider.id);
               const status = health?.runtime_status || (provider.enabled ? 'ACTIVE' : 'DISABLED');
               const hasKey = secrets.some(s => s.provider_id === provider.id);
-              const keySource = health?.key_exists ? 'database' : (hasKey ? 'database' : 'none');
+              const keySource = health?.key_source || (hasKey ? 'database' : 'none');
               const currentKey = providerKeys[provider.id] || '';
 
               return (
@@ -1422,6 +1453,102 @@ export default function AdminAI() {
             </div>
             <div className="glass-card  p-4 border border-border">
               <SecretList />
+            </div>
+          </div>
+        )}
+
+        {/* Webhooks Tab */}
+        {activeTab === 'webhooks' && (
+          <div className="space-y-6">
+            {/* Webhook Status */}
+            <div className="glass-card border border-border p-6">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-10 h-10 bg-blue-500/10 flex items-center justify-center">
+                  <Bell className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <h3 className="text-lg font-bold text-foreground">Discord Webhook</h3>
+                  <p className="text-sm text-muted-foreground">Admin notifications via Discord</p>
+                </div>
+              </div>
+
+              {/* Status indicator */}
+              <div className={`flex items-center gap-3 px-4 py-3 border rounded-lg mb-6 ${
+                systemHealth.config?.webhookConfigured
+                  ? 'bg-emerald-500/5 border-emerald-500/20'
+                  : 'bg-rose-500/5 border-rose-500/20'
+              }`}>
+                {systemHealth.config?.webhookConfigured
+                  ? <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                  : <XCircle className="w-4 h-4 text-rose-500" />}
+                <div className="min-w-0 flex-1">
+                  <span className="text-sm font-medium text-foreground">DISCORD_WEBHOOK_URL</span>
+                  <p className="text-xs text-muted-foreground">
+                    {systemHealth.config?.webhookConfigured
+                      ? 'Configured — notifications will be sent to Discord'
+                      : 'Not configured — set DISCORD_WEBHOOK_URL env var'}
+                  </p>
+                </div>
+                <span className={`ml-auto text-xs font-bold ${
+                  systemHealth.config?.webhookConfigured ? 'text-emerald-600' : 'text-rose-600'
+                }`}>
+                  {systemHealth.config?.webhookConfigured ? 'ON' : 'OFF'}
+                </span>
+              </div>
+
+              {/* Test button */}
+              <div className="flex items-center gap-4">
+                <Button
+                  variant="outline"
+                  onClick={testWebhook}
+                  disabled={webhookTesting || !systemHealth.config?.webhookConfigured}
+                  className=""
+                >
+                  {webhookTesting
+                    ? <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    : <Send className="w-4 h-4 mr-2" />}
+                  {webhookTesting ? 'Sending...' : 'Send Test Notification'}
+                </Button>
+                {webhookResult && (
+                  <div className={`flex items-center gap-2 text-sm ${
+                    webhookResult.ok ? 'text-emerald-400' : 'text-red-400'
+                  }`}>
+                    {webhookResult.ok
+                      ? <CheckCircle2 className="w-4 h-4" />
+                      : <XCircle className="w-4 h-4" />}
+                    {webhookResult.message}
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Trigger Info */}
+            <div className="glass-card border border-border p-6">
+              <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
+                <Zap className="w-5 h-5 text-[#F2C94C]" />
+                Notification Triggers
+              </h3>
+              <div className="space-y-3">
+                {[
+                  { event: 'Payment Success', desc: 'When a user completes a QRIS payment', status: 'active' },
+                  { event: 'AI Provider Down', desc: 'When a provider health check fails', status: 'active' },
+                  { event: 'Payment Failure', desc: 'When a payment webhook reports failure', status: 'active' },
+                ].map(({ event, desc, status }) => (
+                  <div key={event} className="flex items-center justify-between p-3 bg-card border border-border rounded-lg">
+                    <div>
+                      <p className="font-medium text-foreground text-sm">{event}</p>
+                      <p className="text-xs text-muted-foreground">{desc}</p>
+                    </div>
+                    <span className={`text-xs font-bold px-2 py-1 rounded ${
+                      status === 'active'
+                        ? 'text-emerald-400 bg-emerald-500/10'
+                        : 'text-muted-foreground bg-muted/30'
+                    }`}>
+                      {status === 'active' ? 'ACTIVE' : 'DRAFT'}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
