@@ -29,6 +29,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     // Model actions
     case 'models':
       return handleModels(req, res, supabase);
+    case 'model-add':
+      return handleModelAdd(req, res, supabase);
     case 'model-update':
       return handleModelUpdate(req, res, supabase);
     case 'model-toggle':
@@ -57,6 +59,10 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       return handleSecretUpdate(req, res, supabase);
     case 'secret-delete':
       return handleSecretDelete(req, res, supabase);
+
+    // Auto-detect models
+    case 'detect-models':
+      return handleDetectModels(req, res, supabase);
 
     // Health check
     case 'health-check':
@@ -147,6 +153,56 @@ async function handleModels(_req: VercelRequest, res: VercelResponse, supabase: 
 
     if (error) throw error;
     return res.json(data || []);
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+async function handleModelAdd(req: VercelRequest, res: VercelResponse, supabase: any) {
+  const { provider_id, model_id, name, enabled } = req.body;
+  if (!provider_id || !model_id || !name) {
+    return res.status(400).json({ error: 'provider_id, model_id, and name required' });
+  }
+
+  try {
+    // Check if model already exists
+    const { data: existing } = await supabase
+      .from('ai_models')
+      .select('id')
+      .eq('provider_id', provider_id)
+      .eq('model_id', model_id)
+      .maybeSingle();
+
+    if (existing) {
+      return res.json({ success: true, id: existing.id, message: 'Model already exists' });
+    }
+
+    // Get max priority for this provider
+    const { data: maxModel } = await supabase
+      .from('ai_models')
+      .select('priority')
+      .eq('provider_id', provider_id)
+      .order('priority', { ascending: false })
+      .limit(1)
+      .maybeSingle();
+
+    const newPriority = (maxModel?.priority || 0) + 1;
+
+    const { data, error } = await supabase
+      .from('ai_models')
+      .insert({
+        provider_id,
+        model_id,
+        display_name: name,
+        enabled: enabled !== false,
+        priority: newPriority,
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    invalidateCache();
+    return res.json({ success: true, id: data.id });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
   }
@@ -492,6 +548,110 @@ async function handleSecretDelete(req: VercelRequest, res: VercelResponse, supab
     if (error) throw error;
     invalidateCache();
     return res.json({ success: true });
+  } catch (e: any) {
+    return res.status(500).json({ error: e.message });
+  }
+}
+
+// ============================================================
+// Model Auto-Detection
+// ============================================================
+
+type DetectedModel = {
+  model_id: string;
+  display_name: string;
+  provider_id: string;
+  available: boolean;
+  description?: string;
+  context_window?: number;
+};
+
+async function detectGeminiModels(apiKey: string): Promise<DetectedModel[]> {
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`,
+      { signal: AbortSignal.timeout(15000) }
+    );
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    return (data.models || []).map((m: any) => ({
+      model_id: m.name?.replace('models/', '') || '',
+      display_name: m.displayName || m.name?.replace('models/', '') || '',
+      provider_id: 'gemini',
+      available: true,
+      description: m.description || '',
+      context_window: m.inputTokenLimit || undefined,
+    })).filter((m: DetectedModel) => m.model_id);
+  } catch (e: any) {
+    throw new Error(`Gemini model detection failed: ${e.message}`);
+  }
+}
+
+async function detectOpenAICompatibleModels(
+  baseUrl: string,
+  apiKey: string,
+  providerId: string
+): Promise<DetectedModel[]> {
+  try {
+    const url = baseUrl.replace(/\/+$/, '') + '/v1/models';
+    const response = await fetch(url, {
+      headers: { 'Authorization': `Bearer ${apiKey}` },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error?.message || `HTTP ${response.status}`);
+    }
+    const data = await response.json();
+    return (data.data || []).map((m: any) => ({
+      model_id: m.id || '',
+      display_name: m.id || '',
+      provider_id: providerId,
+      available: true,
+      description: m.owned_by || '',
+    })).filter((m: DetectedModel) => m.model_id);
+  } catch (e: any) {
+    throw new Error(`${providerId} model detection failed: ${e.message}`);
+  }
+}
+
+async function handleDetectModels(req: VercelRequest, res: VercelResponse, supabase: any) {
+  const { provider_id, api_key } = req.body;
+  if (!provider_id || !api_key) {
+    return res.status(400).json({ error: 'provider_id and api_key required' });
+  }
+
+  try {
+    let models: DetectedModel[] = [];
+
+    if (provider_id === 'gemini') {
+      models = await detectGeminiModels(api_key);
+    } else if (['deepseek', 'openai', 'mimo', 'qwen'].includes(provider_id)) {
+      const endpoints: Record<string, string> = {
+        deepseek: 'https://api.deepseek.com',
+        openai: 'https://api.openai.com',
+        mimo: 'https://api.xiaomimimo.com',
+        qwen: 'https://dashscope.aliyuncs.com/compatible-mode',
+      };
+      models = await detectOpenAICompatibleModels(endpoints[provider_id] || '', api_key, provider_id);
+    } else {
+      // Custom provider: try OpenAI-compatible /v1/models
+      const { data: cp } = await supabase
+        .from('custom_providers')
+        .select('base_url')
+        .eq('id', provider_id)
+        .maybeSingle();
+      if (cp?.base_url) {
+        models = await detectOpenAICompatibleModels(cp.base_url, api_key, provider_id);
+      } else {
+        return res.status(400).json({ error: 'Unknown provider and no custom provider config found' });
+      }
+    }
+
+    return res.json({ models, count: models.length });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
   }

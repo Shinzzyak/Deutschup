@@ -10,7 +10,7 @@ import {
   Server, Cpu, Activity, Zap, ArrowLeft, BarChart3, Key,
   Shield, TrendingUp, Clock, AlertCircle, EyeOff, Eye,
   ChevronRight, Gauge, Puzzle, Plus, Trash2, TestTube, Globe,
-  Bell, Send
+  Bell, Send, Scan
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 
@@ -104,6 +104,10 @@ export default function AdminAI() {
   const [providerKeys, setProviderKeys] = useState<Record<string, string>>({});
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
   const [savingKey, setSavingKey] = useState<string | null>(null);
+  const [detectedModels, setDetectedModels] = useState<Record<string, any[]>>({});
+  const [detectingModels, setDetectingModels] = useState<string | null>(null);
+  const [importingModels, setImportingModels] = useState<string | null>(null);
+  const [selectedDetected, setSelectedDetected] = useState<Record<string, string[]>>({});
   const [webhookTesting, setWebhookTesting] = useState(false);
   const [webhookResult, setWebhookResult] = useState<{ ok: boolean; message: string } | null>(null);
   const [newProvider, setNewProvider] = useState({ id: '', name: '', base_url: '', auth_type: 'bearer', api_format: 'openai', chat_endpoint: '/chat/completions', priority: 50 });
@@ -235,6 +239,81 @@ export default function AdminAI() {
       console.error('Save key failed:', e);
     } finally {
       setSavingKey(null);
+    }
+  };
+
+  const detectModels = async (providerId: string) => {
+    const key = providerKeys[providerId] || '';
+    const existingSecret = secrets.find(s => s.provider_id === providerId);
+    const keyToUse = key && key !== '••••••••' ? key : null;
+    if (!keyToUse) {
+      // Try to use saved key from DB via validate endpoint
+      // But for detection we need the actual key, so prompt user
+      return;
+    }
+    setDetectingModels(providerId);
+    try {
+      const res = await fetch('/api/admin-ai?action=detect-models', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await getToken()}`
+        },
+        body: JSON.stringify({ provider_id: providerId, api_key: keyToUse })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setDetectedModels(prev => ({ ...prev, [providerId]: data.models || [] }));
+        // Auto-select all detected models
+        setSelectedDetected(prev => ({
+          ...prev,
+          [providerId]: (data.models || []).map((m: any) => m.model_id)
+        }));
+      } else {
+        const err = await res.json().catch(() => ({ error: 'Detection failed' }));
+        console.error('Model detection failed:', err.error);
+      }
+    } catch (e) {
+      console.error('Model detection error:', e);
+    } finally {
+      setDetectingModels(null);
+    }
+  };
+
+  const importDetectedModels = async (providerId: string) => {
+    const selected = selectedDetected[providerId] || [];
+    const detected = detectedModels[providerId] || [];
+    if (selected.length === 0) return;
+    setImportingModels(providerId);
+    try {
+      let imported = 0;
+      for (const modelId of selected) {
+        const modelInfo = detected.find((m: any) => m.model_id === modelId);
+        if (!modelInfo) continue;
+        const res = await fetch('/api/admin-ai?action=model-add', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${await getToken()}`
+          },
+          body: JSON.stringify({
+            provider_id: providerId,
+            model_id: modelInfo.model_id,
+            name: modelInfo.display_name || modelInfo.model_id,
+            enabled: true,
+          })
+        });
+        if (res.ok) imported++;
+      }
+      // Refresh models
+      await fetchData();
+      // Clear detected after import
+      setDetectedModels(prev => ({ ...prev, [providerId]: [] }));
+      setSelectedDetected(prev => ({ ...prev, [providerId]: [] }));
+    } catch (e) {
+      console.error('Import models error:', e);
+    } finally {
+      setImportingModels(null);
     }
   };
 
@@ -877,6 +956,99 @@ export default function AdminAI() {
                       </Button>
                     )}
                   </div>
+
+                  {/* Auto-Detect Models */}
+                  {currentKey && currentKey !== '••••••••' && !detectedModels[provider.id]?.length && (
+                    <div className="mt-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => detectModels(provider.id)}
+                        disabled={detectingModels === provider.id || !currentKey || currentKey === '••••••••'}
+                        className="text-xs"
+                      >
+                        {detectingModels === provider.id ? (
+                          <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Detecting models...</>
+                        ) : (
+                          <><Scan className="w-3 h-3 mr-1" /> Auto-Detect Models</>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Detected Models List */}
+                  {detectedModels[provider.id]?.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-muted-foreground">
+                          Detected {detectedModels[provider.id].length} models — select to import
+                        </span>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedDetected(prev => ({
+                              ...prev,
+                              [provider.id]: detectedModels[provider.id].map((m: any) => m.model_id)
+                            }))}
+                            className="text-[10px] h-6 px-2"
+                          >Select All</Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => setSelectedDetected(prev => ({ ...prev, [provider.id]: [] }))}
+                            className="text-[10px] h-6 px-2"
+                          >None</Button>
+                        </div>
+                      </div>
+                      <div className="max-h-40 overflow-y-auto space-y-1 pr-1">
+                        {detectedModels[provider.id].map((m: any) => (
+                          <label key={m.model_id} className="flex items-center gap-2 p-1.5 rounded hover:bg-muted cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={(selectedDetected[provider.id] || []).includes(m.model_id)}
+                              onChange={e => {
+                                setSelectedDetected(prev => {
+                                  const curr = prev[provider.id] || [];
+                                  return {
+                                    ...prev,
+                                    [provider.id]: e.target.checked
+                                      ? [...curr, m.model_id]
+                                      : curr.filter(id => id !== m.model_id)
+                                  };
+                                });
+                              }}
+                              className="accent-[#F2C94C]"
+                            />
+                            <span className="text-xs font-mono text-foreground">{m.model_id}</span>
+                            {m.context_window && (
+                              <span className="text-[10px] text-muted-foreground">({(m.context_window/1000).toFixed(0)}k)</span>
+                            )}
+                          </label>
+                        ))}
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        <Button
+                          size="sm"
+                          onClick={() => importDetectedModels(provider.id)}
+                          disabled={!selectedDetected[provider.id]?.length || importingModels === provider.id}
+                          className="bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold text-xs"
+                        >
+                          {importingModels === provider.id ? (
+                            <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Importing...</>
+                          ) : (
+                            `Import ${selectedDetected[provider.id]?.length || 0} model(s)`
+                          )}
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => { setDetectedModels(prev => ({ ...prev, [provider.id]: [] })); setSelectedDetected(prev => ({ ...prev, [provider.id]: [] })); }}
+                          className="text-xs"
+                        >Cancel</Button>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Models */}
                   {models.filter(m => m.provider_id === provider.id).length > 0 && (
