@@ -552,7 +552,7 @@ export default function AdminAI() {
   const fallbackModel = useMemo(() => models.find(m => m.is_fallback && m.id !== primaryModel?.id), [models, primaryModel?.id]);
   const modelOptionLabel = (model: Model) => {
     const label = model.display_name || model.name || model.id;
-    const state = model.enabled ? 'enabled' : 'disabled → will enable';
+    const state = model.enabled ? 'Enabled' : 'Disabled; auto-enable on select';
     return `${label} (${model.provider_id}, ${state})`;
   };
 
@@ -687,7 +687,7 @@ export default function AdminAI() {
                 AI <span className="text-[#F2C94C]">Command Center</span>
               </h1>
             </div>
-            <p className="text-muted-foreground ml-14">Monitor, configure, and control your AI infrastructure.</p>
+            <p className="text-muted-foreground ml-14">Monitor providers, model routing, API keys, and AI runtime health.</p>
           </div>
           <Button
             variant="outline"
@@ -729,7 +729,7 @@ export default function AdminAI() {
           <div className="mb-10">
             <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
               <Globe className="w-5 h-5 text-muted-foreground" />
-              Status Layanan
+              Service Status
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {[
@@ -863,8 +863,8 @@ export default function AdminAI() {
             <div className="bg-[#F2C94C]/5 border border-[#F2C94C]/20  p-4 flex items-center gap-3">
               <Key className="w-5 h-5 text-[#F2C94C] shrink-0" />
               <div>
-                <p className="text-sm font-medium text-foreground">API Key Management</p>
-                <p className="text-xs text-muted-foreground">Paste your API keys below. Keys are stored securely in the database and used by the AI chat engine.</p>
+                <p className="text-sm font-medium text-foreground">Provider API Keys</p>
+                <p className="text-xs text-muted-foreground">Paste a provider key, save it, then validate. Saved keys are used by the AI runtime.</p>
               </div>
             </div>
 
@@ -933,7 +933,7 @@ export default function AdminAI() {
                         type={showKeys[provider.id] ? 'text' : 'password'}
                         value={currentKey}
                         onChange={e => setProviderKeys(prev => ({ ...prev, [provider.id]: e.target.value }))}
-                        placeholder={hasKey ? '•••••••• (key saved)' : 'Paste API key here...'}
+                        placeholder={hasKey ? '•••••••• (saved key)' : 'Paste provider API key...'}
                         className="w-full px-3 py-2  border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 focus:border-[#F2C94C] pr-10"
                       />
                       <button
@@ -987,7 +987,7 @@ export default function AdminAI() {
                         {detectingModels === provider.id ? (
                           <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Detecting models...</>
                         ) : (
-                          <><Scan className="w-3 h-3 mr-1" /> Auto-Detect Models</>
+                          <><Scan className="w-3 h-3 mr-1" /> Detect Models</>
                         )}
                       </Button>
                     </div>
@@ -998,7 +998,7 @@ export default function AdminAI() {
                     <div className="mt-3 pt-3 border-t border-border">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-xs font-medium text-muted-foreground">
-                          Detected {detectedModels[provider.id].length} models — select to import
+                          Found {detectedModels[provider.id].length} models — choose which ones to add
                         </span>
                         <div className="flex gap-1">
                           <Button
@@ -1054,7 +1054,7 @@ export default function AdminAI() {
                           {importingModels === provider.id ? (
                             <><Loader2 className="w-3 h-3 animate-spin mr-1" /> Importing...</>
                           ) : (
-                            `Import ${selectedDetected[provider.id]?.length || 0} model(s)`
+                            `Add ${selectedDetected[provider.id]?.length || 0} model(s)`
                           )}
                         </Button>
                         <Button
@@ -1107,7 +1107,7 @@ export default function AdminAI() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold text-foreground">Custom Providers</h3>
-                  <p className="text-sm text-muted-foreground">Add OpenRouter, Together, Groq, or any OpenAI-compatible provider</p>
+                  <p className="text-sm text-muted-foreground">Add extra provider configs for non-default AI endpoints.</p>
                 </div>
               </div>
               <Button onClick={() => setShowAddProvider(true)} className="bg-[#F2C94C] hover:bg-[#E0B73A]">
@@ -1137,8 +1137,8 @@ export default function AdminAI() {
             {/* Quick Presets */}
             {!showAddProvider && customProviders.length === 0 && (
               <div className="glass-card  border border-border p-6">
-                <h4 className="text-foreground font-bold mb-3">Quick Add Provider</h4>
-                <p className="text-sm text-muted-foreground mb-4">Choose a popular provider or add custom:</p>
+                <h4 className="text-foreground font-bold mb-3">Provider Presets</h4>
+                <p className="text-sm text-muted-foreground mb-4">Start from a preset, then review the URL and format before saving.</p>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                   {[
                     { id: 'openrouter', name: 'OpenRouter', url: 'https://openrouter.ai/api/v1', fmt: 'openai', auth: 'bearer' },
@@ -1183,13 +1183,13 @@ export default function AdminAI() {
                       className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Display Name *</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Provider Name *</label>
                     <input value={newProvider.name} onChange={e => setNewProvider(p => ({ ...p, name: e.target.value }))}
                       placeholder="e.g. OpenRouter"
                       className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div className="md:col-span-2">
-                    <label className="text-sm text-muted-foreground mb-1 block">Base URL *</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">API Base URL *</label>
                     <input value={newProvider.base_url} onChange={e => setNewProvider(p => ({ ...p, base_url: e.target.value }))}
                       placeholder="https://openrouter.ai/api/v1"
                       className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
@@ -1228,7 +1228,7 @@ export default function AdminAI() {
                       className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
                   <div>
-                    <label className="text-sm text-muted-foreground mb-1 block">Priority</label>
+                    <label className="text-sm text-muted-foreground mb-1 block">Priority <span className="text-xs text-muted-foreground/70">(lower runs earlier)</span></label>
                     <input type="number" value={newProvider.priority} onChange={e => setNewProvider(p => ({ ...p, priority: Number(e.target.value) }))}
                       className="w-full bg-background border border-border  px-4 py-2.5 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                   </div>
@@ -1237,7 +1237,7 @@ export default function AdminAI() {
                   <Button onClick={createCustomProvider} disabled={saving || !newProvider.id || !newProvider.name || !newProvider.base_url}
                     className="bg-[#F2C94C] hover:bg-[#E0B73A] w-full sm:w-auto">
                     {saving ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : <Plus className="w-4 h-4 mr-1" />}
-                    Create Provider
+                    Save Provider
                   </Button>
                   <Button variant="outline" onClick={() => setShowAddProvider(false)} className="bg-background border-border w-full sm:w-auto">Cancel</Button>
                 </div>
@@ -1270,7 +1270,7 @@ export default function AdminAI() {
                 <div className="flex flex-col sm:flex-row gap-2 mb-3">
                   <input
                     type="password"
-                    placeholder={providerKey ? '•••••••• (key saved)' : 'Paste API key...'}
+                    placeholder={providerKey ? '•••••••• (saved key)' : 'Paste provider API key...'}
                     className="flex-1 min-w-0 px-3 py-1.5  border border-border bg-background text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
                     id={`custom-key-${provider.id}`}
                   />
@@ -1287,7 +1287,7 @@ export default function AdminAI() {
                     setSavingKey(null);
                     await fetchData();
                   }} disabled={savingKey === provider.id} className="bg-[#F2C94C] hover:bg-[#E0B73A] text-[#1F2937] font-bold  text-xs px-3">
-                    {savingKey === provider.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Save'}
+                    {savingKey === provider.id ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Save Key'}
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => testCustomProvider(provider.id)} disabled={testing} className="">
                     {testing ? <Loader2 className="w-3 h-3 animate-spin" /> : <TestTube className="w-3 h-3" />}
@@ -1308,7 +1308,7 @@ export default function AdminAI() {
                 {/* Actions */}
                 <div className="flex flex-wrap gap-2">
                   <Button size="sm" variant="outline" onClick={() => setShowAddModel(provider.id)} className=" text-xs">
-                    <Plus className="w-3 h-3 mr-1" /> Model
+                    <Plus className="w-3 h-3 mr-1" /> Add Model
                   </Button>
                   <Button size="sm" variant="outline" onClick={() => deleteCustomProvider(provider.id)} className=" text-xs text-red-500 hover:text-red-600">
                     <Trash2 className="w-3 h-3 mr-1" /> Delete
@@ -1318,17 +1318,17 @@ export default function AdminAI() {
                 {/* Add Model Form */}
                 {showAddModel === provider.id && (
                   <div className="mt-4 pt-4 border-t border-border">
-                    <h5 className="text-sm font-medium text-foreground mb-3">Add Model</h5>
+                    <h5 className="text-sm font-medium text-foreground mb-3">Add Provider Model</h5>
                     <div className="flex flex-col sm:flex-row gap-2">
                       <input value={newModel.model_id} onChange={e => setNewModel(m => ({ ...m, model_id: e.target.value }))}
-                        placeholder="Model ID (e.g. anthropic/claude-3.5-sonnet)"
+                        placeholder="Provider model ID, e.g. claude-3-5-sonnet"
                         className="flex-1 min-w-0 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input value={newModel.display_name} onChange={e => setNewModel(m => ({ ...m, display_name: e.target.value }))}
-                        placeholder="Display Name"
+                        placeholder="Display name, e.g. Claude 3.5 Sonnet"
                         className="flex-1 min-w-0 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <div className="flex gap-2">
                         <Button size="sm" onClick={() => createCustomModel(provider.id)} disabled={saving || !newModel.model_id || !newModel.display_name}
-                          className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
+                          className="bg-[#F2C94C] hover:bg-[#E0B73A]">Save Model</Button>
                         <Button size="sm" variant="outline" onClick={() => setShowAddModel(null)} className="bg-background border-border">Cancel</Button>
                       </div>
                     </div>
@@ -1341,13 +1341,13 @@ export default function AdminAI() {
                     <h5 className="text-sm font-medium text-foreground mb-3">Add API Key</h5>
                     <div className="flex flex-col sm:flex-row gap-2">
                       <input value={newKey.key_name} onChange={e => setNewKey(k => ({ ...k, key_name: e.target.value }))}
-                        placeholder="Key Name"
+                        placeholder="Key name, e.g. default"
                         className="sm:w-32 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <input type="password" value={newKey.api_key} onChange={e => setNewKey(k => ({ ...k, api_key: e.target.value }))}
-                        placeholder="sk-..."
+                        placeholder="Paste provider API key..."
                         className="flex-1 min-w-0 bg-background border border-border  px-4 py-2 text-foreground text-sm focus:border-[#F2C94C] focus:outline-none" />
                       <Button size="sm" onClick={() => createCustomKey(provider.id)} disabled={saving || !newKey.api_key}
-                        className="bg-[#F2C94C] hover:bg-[#E0B73A]">Add</Button>
+                        className="bg-[#F2C94C] hover:bg-[#E0B73A]">Save Key</Button>
                       <Button size="sm" variant="outline" onClick={() => setShowAddKey(null)} className="bg-background border-border">Cancel</Button>
                     </div>
                   </div>
@@ -1370,7 +1370,7 @@ export default function AdminAI() {
                         </div>
                       ))}
                       {customModels.filter(m => m.provider_id === provider.id).length === 0 && (
-                        <p className="text-xs text-muted-foreground/50">No models added yet</p>
+                        <p className="text-xs text-muted-foreground/50">No models saved for this provider yet</p>
                       )}
                     </div>
                   </div>
@@ -1393,7 +1393,7 @@ export default function AdminAI() {
                         </div>
                       ))}
                       {customKeys.filter(k => k.provider_id === provider.id).length === 0 && (
-                        <p className="text-xs text-muted-foreground/50">No keys added yet</p>
+                        <p className="text-xs text-muted-foreground/50">No API keys saved yet</p>
                       )}
                     </div>
                   </div>
@@ -1406,7 +1406,7 @@ export default function AdminAI() {
               <div className="text-center py-12">
                 <Puzzle className="w-12 h-12 text-muted-foreground/50 mx-auto mb-3" />
                 <p className="text-muted-foreground">No custom providers yet</p>
-                <p className="text-sm text-muted-foreground/50">Add OpenRouter, Together, Groq, or any OpenAI-compatible API</p>
+                <p className="text-sm text-muted-foreground/50">Use a preset above or create a provider manually.</p>
               </div>
             )}
           </div>
@@ -1419,15 +1419,15 @@ export default function AdminAI() {
             <div className="glass-card border-border p-6">
               <h3 className="text-lg font-bold text-foreground mb-6 flex items-center gap-2">
                 <Zap className="w-5 h-5 text-[#F2C94C]" />
-                Current Routing Configuration
+                Active Model Routing
               </h3>
 
               <div className="bg-card/60 border border-border rounded-lg p-5 mb-6">
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div>
-                    <h4 className="font-bold text-foreground">Choose Available Models</h4>
+                    <h4 className="font-bold text-foreground">Select Runtime Models</h4>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Pilih model runtime langsung dari daftar `ai_models`. Disabled model akan otomatis di-enable saat dipilih.
+                      Choose the models the AI runtime should try first. Disabled models are enabled automatically when selected.
                     </p>
                   </div>
                   <Button variant="outline" size="sm" onClick={fetchData} disabled={loading || saving} className="shrink-0">
@@ -1445,14 +1445,14 @@ export default function AdminAI() {
                       disabled={saving || selectableModels.length === 0}
                       className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
                     >
-                      <option value="" disabled>Select primary model...</option>
+                      <option value="" disabled>Choose primary model...</option>
                       {selectableModels.map(model => (
                         <option key={model.id} value={model.id}>
                           {modelOptionLabel(model)}
                         </option>
                       ))}
                     </select>
-                    <p className="text-[11px] text-muted-foreground mt-1">Free users pakai model ini saja.</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">First model attempted for every AI request.</p>
                   </label>
 
                   <label className="block">
@@ -1463,7 +1463,7 @@ export default function AdminAI() {
                       disabled={saving || selectableModels.length === 0}
                       className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
                     >
-                      <option value="" disabled>Select fallback model...</option>
+                      <option value="" disabled>Choose fallback model...</option>
                       {selectableModels
                         .filter(model => model.id !== primaryModel?.id)
                         .map(model => (
@@ -1472,13 +1472,13 @@ export default function AdminAI() {
                           </option>
                         ))}
                     </select>
-                    <p className="text-[11px] text-muted-foreground mt-1">Pro users fallback ke model ini kalau primary gagal.</p>
+                    <p className="text-[11px] text-muted-foreground mt-1">Backup model used when fallback is allowed and primary fails.</p>
                   </label>
                 </div>
 
                 {selectableModels.length === 0 && (
                   <div className="mt-4 rounded-lg border border-amber-500/25 bg-amber-500/10 p-3 text-sm text-amber-300">
-                    Belum ada model. Pakai Auto-Detect Models di tab Providers/Custom lalu import model dulu.
+                    No saved models yet. Go to Providers, add or validate a key, then Detect Models and add at least one model.
                   </div>
                 )}
               </div>
@@ -1501,7 +1501,7 @@ export default function AdminAI() {
                         </div>
                       </>
                     ) : (
-                      <p className="text-amber-400 text-sm">No primary model configured</p>
+                      <p className="text-amber-400 text-sm">Primary model not selected</p>
                     );
                   })()}
                 </div>
@@ -1523,7 +1523,7 @@ export default function AdminAI() {
                         </div>
                       </>
                     ) : (
-                      <p className="text-amber-400 text-sm">No fallback configured</p>
+                      <p className="text-amber-400 text-sm">Fallback model not selected</p>
                     );
                   })()}
                 </div>
@@ -1531,24 +1531,24 @@ export default function AdminAI() {
 
               {/* Tier Assignment */}
               <div className="bg-card/50 border border-border rounded-lg p-5">
-                <h4 className="font-bold text-foreground mb-4">User Tier Model Assignment</h4>
+                <h4 className="font-bold text-foreground mb-4">Routing Behavior</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="p-4 bg-blue-500/5 border border-blue-500/20 rounded-lg">
-                    <p className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Free Users</p>
+                    <p className="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2">Standard Route</p>
                     <p className="text-lg font-bold text-foreground">
-                      Primary model only
+                      Primary first
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      No fallback — if primary fails, free users get an error
+                      Requests start with the selected primary model.
                     </p>
                   </div>
                   <div className="p-4 bg-purple-500/5 border border-purple-500/20 rounded-lg">
-                    <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Pro Users</p>
+                    <p className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Fallback Route</p>
                     <p className="text-lg font-bold text-foreground">
-                      Primary + Fallback
+                      Retry on backup
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      Full fallback chain: tries primary first, then fallback on failure
+                      When fallback is allowed, runtime retries with the selected backup model.
                     </p>
                   </div>
                 </div>
@@ -1559,7 +1559,7 @@ export default function AdminAI() {
             <div className="glass-card border-border p-6">
               <h3 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
                 <Cpu className="w-5 h-5 text-[#F2C94C]" />
-                All Models
+                Saved Models
               </h3>
               <div className="space-y-2">
                 {models.map(model => {
@@ -1575,7 +1575,7 @@ export default function AdminAI() {
                         </div>
                         <div>
                           <p className="font-medium text-foreground text-sm">{model.display_name || model.name}</p>
-                          <p className="text-xs text-muted-foreground">{model.provider_id} | Model: {model.name}</p>
+                          <p className="text-xs text-muted-foreground">{model.provider_id} · Runtime ID: {model.name}</p>
                         </div>
                       </div>
                     <div className="flex items-center gap-2">
@@ -1586,7 +1586,7 @@ export default function AdminAI() {
                         disabled={saving || model.is_primary}
                         className={cn("h-7 px-2 text-xs", model.is_primary && "opacity-50")}
                       >
-                        Set Primary
+                        Make Primary
                       </Button>
                       <Button
                         variant="outline"
@@ -1595,7 +1595,7 @@ export default function AdminAI() {
                         disabled={saving || model.is_fallback || model.is_primary}
                         className={cn("h-7 px-2 text-xs", (model.is_fallback || model.is_primary) && "opacity-50")}
                       >
-                        Set Fallback
+                        Make Fallback
                       </Button>
                       <Button
                         variant={model.enabled ? "default" : "outline"}
@@ -1611,7 +1611,7 @@ export default function AdminAI() {
                  );
                })}
                {models.length === 0 && (
-                 <p className="text-center text-muted-foreground py-8 text-sm">No models configured</p>
+                 <p className="text-center text-muted-foreground py-8 text-sm">No saved models yet</p>
                )}
              </div>
            </div>
@@ -1697,8 +1697,8 @@ export default function AdminAI() {
                 <Key className="w-5 h-5 text-amber-400" />
               </div>
               <div>
-                <h3 className="text-lg font-bold text-foreground">Secrets Management</h3>
-                <p className="text-sm text-muted-foreground">Manage API keys and credentials for AI providers</p>
+                <h3 className="text-lg font-bold text-foreground">Provider Secrets</h3>
+                <p className="text-sm text-muted-foreground">Review saved provider credentials without exposing secret values.</p>
               </div>
             </div>
             <div className="glass-card  p-4 border border-border">
