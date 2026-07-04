@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getDb, getVerifiedIdentity } from '../lib/api-utils.js';
-import { notifyDiscord } from './webhook-notify';
+import { notifyDiscord } from './webhook-notify.js';
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -87,11 +87,13 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       try {
         bayarData = JSON.parse(raw);
       } catch (parseErr) {
-        return res.status(502).json({
-          error: 'Payment gateway returned non-JSON',
+        console.error('[payment/create] Non-JSON gateway response:', {
           status: bayarRes.status,
           contentType: bayarRes.headers.get('content-type'),
-          rawFirst500: raw.slice(0, 500),
+          preview: raw.slice(0, 200),
+        });
+        return res.status(502).json({
+          error: 'Payment gateway unavailable',
         });
       }
 
@@ -125,7 +127,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         console.error('[BAYARGG ERROR]', JSON.stringify(bayarData, null, 2));
         return res.status(400).json({
           error: 'Payment gateway error',
-          gateway_response: bayarData,
         });
       }
     }
@@ -292,7 +293,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       event: 'payment.error',
     }).catch(err => console.error('[webhook] Discord notify failed:', err));
     if (!res.headersSent) {
-      return res.status(500).json({ error: e.message || 'Internal server error' });
+      return res.status(500).json({ error: 'Internal server error' });
     }
   }
 }
