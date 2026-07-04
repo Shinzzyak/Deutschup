@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
-import { dbProxy } from '../lib/supabase';
+import { dbProxy, supabase } from '../lib/supabase';
 import { isUserPro, getProDaysRemaining } from '../lib/subscription';
-import { User, Mail, Calendar, Shield, CreditCard, Loader2, Save, Award, Zap, CheckCircle2, ArrowRight, Image as ImageIcon, LifeBuoy } from 'lucide-react';
+import { User, Mail, Calendar, Shield, Loader2, Save, Award, Zap, CheckCircle2, ArrowRight, Camera, LifeBuoy } from 'lucide-react';
 import { Button } from '../components/ui/button';
 
 export default function Profile() {
@@ -11,6 +11,8 @@ export default function Profile() {
   const [avatarUrl, setAvatarUrl] = useState(profileData?.avatar_url || '');
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const activePro = isUserPro(
     { subscription: tierData?.subscription, pro_expires_at: tierData?.pro_expires_at },
@@ -26,11 +28,56 @@ export default function Profile() {
     if (profileData?.avatar_url) setAvatarUrl(profileData.avatar_url);
   }, [profileData?.full_name, profileData?.avatar_url]);
 
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user) return;
+
+    // Validate file type + size (max 2MB)
+    if (!file.type.startsWith('image/')) {
+      alert('File harus berupa gambar.');
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Ukuran file maksimal 2MB.');
+      return;
+    }
+
+    setUploadingAvatar(true);
+    try {
+      // Upload to Supabase Storage: avatars/{userId}/avatar
+      const fileExt = file.name.split('.').pop() || 'jpg';
+      const filePath = `${user.id}/avatar.${fileExt}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(filePath);
+
+      const newAvatarUrl = urlData.publicUrl;
+      setAvatarUrl(newAvatarUrl);
+
+      // Auto-save avatar_url to profile
+      const result = await dbProxy('upsert-profile', { userId: user.id, avatar_url: newAvatarUrl });
+      if (result.error) throw new Error(result.error);
+    } catch (err: any) {
+      console.error('Avatar upload failed:', err);
+      alert('Gagal upload foto: ' + err.message);
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
+
   const handleSave = async () => {
     if (!user) return;
     setSaving(true);
     try {
-      const result = await dbProxy('upsert-profile', { userId: user.id, full_name: fullName, avatar_url: avatarUrl });
+      const result = await dbProxy('upsert-profile', { userId: user.id, full_name: fullName });
       if (result.error) throw new Error(result.error);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
@@ -77,12 +124,38 @@ export default function Profile() {
         <div className="lg:col-span-1">
           <div className="glass-card p-8 sticky top-24 overflow-hidden">
             <div className="flex flex-col items-center text-center">
-              <div className="w-32 h-32 bg-[#c8956c] flex items-center justify-center text-5xl font-black text-[#0a0a0a] mb-6 border-2 border-[#0a0a0a] overflow-hidden">
-                {avatarUrl ? (
-                  <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
-                ) : (
-                  fullName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'
-                )}
+              {/* Avatar with upload overlay */}
+              <div className="relative mb-6 group">
+                <div className="w-32 h-32 bg-[#c8956c] flex items-center justify-center text-5xl font-black text-[#0a0a0a] border-2 border-[#0a0a0a] overflow-hidden rounded-none">
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                  ) : (
+                    fullName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'
+                  )}
+                </div>
+                {/* Click overlay to upload */}
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingAvatar}
+                  className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  {uploadingAvatar ? (
+                    <Loader2 className="w-8 h-8 text-white animate-spin" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-1">
+                      <Camera className="w-8 h-8 text-white" />
+                      <span className="text-xs text-white font-medium">Ganti Foto</span>
+                    </div>
+                  )}
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleAvatarUpload}
+                  className="hidden"
+                />
               </div>
               <h2 className="text-2xl font-bold text-foreground mb-1 leading-tight">
                 {fullName || 'User DeutschUp'}
@@ -145,33 +218,16 @@ export default function Profile() {
                     disabled
                     className="w-full px-5 py-4  bg-muted/50 text-muted-foreground cursor-not-allowed"
                   />
-                 <div className="absolute right-4 top-1/2 -translate-y-1/2">
-                   <Shield className="w-4 h-4 text-muted-foreground/50" />
-                 </div>
-               </div>
-             </div>
-
-              <div className="group">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1 group-focus-within:text-[#F2C94C] transition-colors">
-                  URL Foto Profil
-                </label>
-                <div className="relative">
-                  <ImageIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/50" />
-                  <input
-                    type="url"
-                    value={avatarUrl}
-                    onChange={(e) => setAvatarUrl(e.target.value)}
-                    className="w-full pl-12 pr-5 py-4 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 transition-all"
-                    placeholder="https://... (opsional)"
-                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2">
+                    <Shield className="w-4 h-4 text-muted-foreground/50" />
+                  </div>
                 </div>
-                <p className="text-xs text-muted-foreground/60 mt-1 ml-1">Kosongkan untuk menggunakan inisial nama.</p>
               </div>
 
               <div className="flex justify-end pt-4">
                 <Button
                   onClick={handleSave}
-                  disabled={saving || (fullName === profileData?.full_name && avatarUrl === (profileData?.avatar_url || ''))}
+                  disabled={saving || fullName === profileData?.full_name}
                   className=" px-8 py-6 text-md font-bold transition-all hover:scale-[1.02] active:scale-[0.98]  "
                 >
                   {saving ? <Loader2 className="w-5 h-5 animate-spin mr-2" /> : <Save className="w-5 h-5 mr-2" />}
