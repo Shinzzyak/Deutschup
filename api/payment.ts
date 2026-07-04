@@ -163,6 +163,34 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         return res.status(200).json({ success: true, message: 'Ignored' });
       }
 
+      if (typeof invoice_id !== 'string' || invoice_id.length > 128) {
+        console.warn('[payment/callback] Invalid invoice_id shape, ignoring');
+        return res.status(200).json({ success: true, message: 'Ignored' });
+      }
+
+      // Local guard first: only verify invoices we created. This prevents fake
+      // callbacks from turning this endpoint into an outbound Bayar.gg probe.
+      const { data: localOrder, error: orderLookupError } = await getDb()
+        .from('orders')
+        .select('*')
+        .eq('id', invoice_id)
+        .maybeSingle();
+
+      if (orderLookupError) {
+        console.error('[payment/callback] Order lookup error:', orderLookupError);
+        return res.status(500).json({ error: 'Internal server error' });
+      }
+
+      if (!localOrder) {
+        console.warn('[payment/callback] Unknown invoice_id, ignoring:', invoice_id.slice(0, 24));
+        return res.status(202).json({ success: true, message: 'Not paid yet' });
+      }
+
+      if (localOrder.status === 'paid') {
+        console.log('[payment/callback] Already paid, idempotent skip:', invoice_id);
+        return res.json({ success: true, message: 'Already processed' });
+      }
+
       // Verify payment status via Bayar.gg API (never trust body status)
       const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY;
       if (!BAYAR_GG_API_KEY) {
@@ -205,22 +233,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
       // API confirmed paid — safe to process
       {
-        const { data: order, error: orderError } = await getDb()
-          .from('orders')
-          .select('*')
-          .eq('id', invoice_id)
-          .single();
-
-        if (orderError || !order) {
-          console.error('[payment/callback] Order not found:', invoice_id);
-          return res.status(404).json({ error: 'Order not found' });
-        }
-
-        // Idempotency guard: skip if already processed
-        if (order.status === 'paid') {
-          console.log('[payment/callback] Already paid, idempotent skip:', invoice_id);
-          return res.json({ success: true, message: 'Already processed' });
-        }
+        const order = localOrder;
 
         // Verify final_amount matches order amount (defense-in-depth per official docs)
         const finalAmount = verifyData?.final_amount;
