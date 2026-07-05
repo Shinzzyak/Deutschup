@@ -105,6 +105,7 @@ export default function AdminAI() {
   const [showKeys, setShowKeys] = useState<Record<string, boolean>>({});
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [detectedModels, setDetectedModels] = useState<Record<string, any[]>>({});
+  const [detectionMessages, setDetectionMessages] = useState<Record<string, { ok: boolean; message: string }>>({});
   const [detectingModels, setDetectingModels] = useState<string | null>(null);
   const [importingModels, setImportingModels] = useState<string | null>(null);
   const [selectedDetected, setSelectedDetected] = useState<Record<string, string[]>>({});
@@ -129,27 +130,29 @@ export default function AdminAI() {
     
     setLoading(true);
     try {
+      const token = await getToken();
+      const authHeaders = { 'Authorization': `Bearer ${token}` };
       const [providersRes, modelsRes, statsRes, healthRes, customRes, sysHealthRes, secretsRes] = await Promise.all([
         fetch('/api/admin-ai?action=providers', {
-          headers: { 'Authorization': `Bearer ${await getToken()}` }
+          headers: authHeaders
         }),
         fetch('/api/admin-ai?action=models', {
-          headers: { 'Authorization': `Bearer ${await getToken()}` }
+          headers: authHeaders
         }),
         fetch('/api/admin-ai?action=usage-stats&days=7', {
-          headers: { 'Authorization': `Bearer ${await getToken()}` }
+          headers: authHeaders
         }),
         fetch('/api/admin-ai?action=health-check', {
-          headers: { 'Authorization': `Bearer ${await getToken()}` }
+          headers: authHeaders
         }),
         fetch('/api/custom-provider?action=full-config', {
-          headers: { 'Authorization': `Bearer ${await getToken()}` }
+          headers: authHeaders
         }),
         fetch('/api/admin?action=system-health', {
-          headers: { 'Authorization': `Bearer ${await getToken()}` }
+          headers: authHeaders
         }),
         fetch('/api/admin-ai?action=secrets', {
-          headers: { 'Authorization': `Bearer ${await getToken()}` }
+          headers: authHeaders
         })
       ]);
 
@@ -166,6 +169,17 @@ export default function AdminAI() {
         setCustomProviders(custom.providers || []);
         setCustomModels(custom.models || []);
         setCustomKeys(custom.keys || []);
+
+        // Legacy custom providers/models may be mirrored to runtime routing during full-config.
+        // Refresh routing lists once so the UI reflects that sync immediately.
+        if (custom.routing_sync?.synced > 0) {
+          const [freshProvidersRes, freshModelsRes] = await Promise.all([
+            fetch('/api/admin-ai?action=providers', { headers: authHeaders }),
+            fetch('/api/admin-ai?action=models', { headers: authHeaders })
+          ]);
+          if (freshProvidersRes.ok) setProviders(await freshProvidersRes.json());
+          if (freshModelsRes.ok) setModels(await freshModelsRes.json());
+        }
       }
       if (sysHealthRes.ok) setSystemHealth(await sysHealthRes.json());
       if (secretsRes.ok) {
@@ -315,6 +329,7 @@ export default function AdminAI() {
     const key = providerKeys[providerId] || '';
     const keyToUse = key && key !== '••••••••' ? key : null;
     setDetectingModels(providerId);
+    setDetectionMessages(prev => ({ ...prev, [providerId]: { ok: true, message: 'Pulling provider model catalog…' } }));
     try {
       const res = await fetch('/api/custom-provider?action=detect-models', {
         method: 'POST',
@@ -324,20 +339,27 @@ export default function AdminAI() {
         },
         body: JSON.stringify({ provider_id: providerId, ...(keyToUse ? { api_key: keyToUse } : {}) })
       });
-      if (res.ok) {
-        const data = await res.json();
-        setDetectedModels(prev => ({ ...prev, [providerId]: data.models || [] }));
-        setSelectedDetected(prev => ({
-          ...prev,
-          // Custom catalogs can be huge (OpenRouter returns 300+ models), so do not preselect all.
-          [providerId]: []
-        }));
-      } else {
-        const err = await res.json().catch(() => ({ error: 'Model discovery failed' }));
-        console.error('Custom model discovery failed:', err.error);
-      }
-    } catch (e) {
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Model discovery failed');
+
+      const foundModels = data.models || [];
+      setDetectedModels(prev => ({ ...prev, [providerId]: foundModels }));
+      setSelectedDetected(prev => ({
+        ...prev,
+        // Custom catalogs can be huge (OpenRouter returns 300+ models), so do not preselect all.
+        [providerId]: []
+      }));
+      setDetectionMessages(prev => ({
+        ...prev,
+        [providerId]: foundModels.length > 0
+          ? { ok: true, message: `Found ${foundModels.length} accessible API models. Select the ones to add to routing.` }
+          : { ok: false, message: 'Provider responded, but no models were returned.' }
+      }));
+    } catch (e: any) {
       console.error('Custom model discovery error:', e);
+      setDetectedModels(prev => ({ ...prev, [providerId]: [] }));
+      setSelectedDetected(prev => ({ ...prev, [providerId]: [] }));
+      setDetectionMessages(prev => ({ ...prev, [providerId]: { ok: false, message: e.message || 'Model discovery failed' } }));
     } finally {
       setDetectingModels(null);
     }
@@ -348,6 +370,7 @@ export default function AdminAI() {
     const detected = detectedModels[providerId] || [];
     if (selected.length === 0) return;
     setImportingModels(providerId);
+    setDetectionMessages(prev => ({ ...prev, [providerId]: { ok: true, message: `Adding ${selected.length} selected model(s)…` } }));
     try {
       const modelsToImport = detected.filter((m: any) => selected.includes(m.model_id));
       const res = await fetch('/api/custom-provider?action=import-models', {
@@ -358,12 +381,18 @@ export default function AdminAI() {
         },
         body: JSON.stringify({ provider_id: providerId, models: modelsToImport })
       });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || 'Import failed');
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || 'Import failed');
       await fetchData();
       setDetectedModels(prev => ({ ...prev, [providerId]: [] }));
       setSelectedDetected(prev => ({ ...prev, [providerId]: [] }));
-    } catch (e) {
+      setDetectionMessages(prev => ({
+        ...prev,
+        [providerId]: { ok: true, message: `Added ${data.count || modelsToImport.length} model(s) to custom models and runtime routing.` }
+      }));
+    } catch (e: any) {
       console.error('Import custom models error:', e);
+      setDetectionMessages(prev => ({ ...prev, [providerId]: { ok: false, message: e.message || 'Import failed' } }));
     } finally {
       setImportingModels(null);
     }
@@ -1356,6 +1385,17 @@ export default function AdminAI() {
                   Pull models from this provider's API, then add the ones you can access to routing.
                 </p>
 
+                {detectionMessages[provider.id] && (
+                  <div className={cn(
+                    "mb-3 rounded-md border px-3 py-2 text-xs",
+                    detectionMessages[provider.id].ok
+                      ? "border-emerald-500/25 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300"
+                      : "border-red-500/25 bg-red-500/10 text-red-600 dark:text-red-300"
+                  )}>
+                    {detectionMessages[provider.id].message}
+                  </div>
+                )}
+
                 {/* Models */}
                 {providerModels.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-3">
@@ -1376,8 +1416,9 @@ export default function AdminAI() {
                     size="sm"
                     variant="outline"
                     onClick={() => detectCustomModels(provider.id)}
-                    disabled={detectingModels === provider.id || (!providerKey && !providerKeys[provider.id])}
+                    disabled={detectingModels === provider.id || importingModels === provider.id || (!providerKey && !providerKeys[provider.id])}
                     className="text-xs"
+                    title={!providerKey && !providerKeys[provider.id] ? 'Save or paste an API key before pulling models' : undefined}
                   >
                     {detectingModels === provider.id ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Scan className="w-3 h-3 mr-1" />}
                     Pull Models

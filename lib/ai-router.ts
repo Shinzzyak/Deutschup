@@ -439,6 +439,11 @@ async function createMimoClient(model: ModelConfig): Promise<AIProviderClient> {
 // Dynamic Custom Provider Client (OpenAI-compatible)
 // ============================================================
 
+function joinCustomProviderUrl(baseUrl: string, endpoint: string) {
+  if (/^https?:\/\//i.test(endpoint)) return endpoint;
+  return `${baseUrl.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
+}
+
 async function createCustomProviderClient(model: ModelConfig): Promise<AIProviderClient> {
   const supabase = getSupabaseAdmin();
 
@@ -462,8 +467,7 @@ async function createCustomProviderClient(model: ModelConfig): Promise<AIProvide
   if (!keyRow?.api_key) throw new Error(`No API key for custom provider: ${model.provider_id}`);
   const apiKey = keyRow.api_key;
 
-  const baseUrl = provider.base_url.replace(/\/$/, '');
-  const chatUrl = `${baseUrl}${provider.chat_endpoint}`;
+  const chatUrl = joinCustomProviderUrl(provider.base_url, provider.chat_endpoint || '/chat/completions');
 
   function buildHeaders(): Record<string, string> {
     const h: Record<string, string> = { 'Content-Type': 'application/json' };

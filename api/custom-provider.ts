@@ -152,6 +152,50 @@ async function detectProviderModels(provider: any, apiKey: string): Promise<Dete
   return normalizeDetectedModels(provider.id, payload);
 }
 
+async function syncMissingCustomRouting(supabase: any, providers: any[], models: any[]) {
+  const warnings: string[] = [];
+  let synced = 0;
+  const [routingProviders, routingModels] = await Promise.all([
+    supabase.from('ai_providers').select('id'),
+    supabase.from('ai_models').select('id'),
+  ]);
+  if (routingProviders.error) throw routingProviders.error;
+  if (routingModels.error) throw routingModels.error;
+
+  const existingProviderIds = new Set((routingProviders.data || []).map((p: any) => p.id));
+  const existingModelIds = new Set((routingModels.data || []).map((m: any) => m.id));
+  const providerById = new Map(providers.map((provider: any) => [provider.id, provider]));
+
+  for (const provider of providers) {
+    if (existingProviderIds.has(provider.id)) continue;
+    try {
+      await syncProviderToRouting(supabase, provider);
+      existingProviderIds.add(provider.id);
+      synced++;
+    } catch (error: any) {
+      warnings.push(`Provider ${provider.id}: ${error.message}`);
+    }
+  }
+
+  for (const model of models) {
+    if (existingModelIds.has(model.id)) continue;
+    const provider = providerById.get(model.provider_id);
+    if (!provider) continue;
+    try {
+      await syncModelToRouting(supabase, provider, model);
+      existingModelIds.add(model.id);
+      synced++;
+    } catch (error: any) {
+      warnings.push(`Model ${model.id}: ${error.message}`);
+    }
+  }
+
+  if (warnings.length > 0) {
+    console.warn('[CUSTOM-PROVIDER] routing sync warnings:', warnings.join('; '));
+  }
+  return { warnings, synced };
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
@@ -417,16 +461,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         if (!key) return res.status(400).json({ error: 'No API key available' });
 
-        // Build auth header
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (provider.auth_type === 'bearer') {
-          headers['Authorization'] = `Bearer ${key}`;
-        } else if (provider.auth_type === 'x-api-key') {
-          headers[provider.auth_header || 'X-API-Key'] = key;
-        }
-
         // Test with a minimal chat request
-        const testUrl = `${provider.base_url}${provider.chat_endpoint}`;
+        const headers = buildProviderHeaders(provider, key);
+        const testUrl = joinUrl(provider.base_url, provider.chat_endpoint || '/chat/completions');
         const testBody = provider.api_format === 'gemini'
           ? { contents: [{ parts: [{ text: 'Say hi' }] }] }
           : { model: 'gpt-3.5-turbo', messages: [{ role: 'user', content: 'Say hi' }], max_tokens: 5 };
@@ -459,10 +496,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
           supabase.from('custom_models').select('*').order('display_name'),
           supabase.from('custom_provider_keys').select('id, provider_id, key_name, is_active, priority, status, last_checked, requests_today, created_at'),
         ]);
+        if (providers.error) throw providers.error;
+        if (models.error) throw models.error;
+        if (keys.error) throw keys.error;
+
+        const providerRows = providers.data || [];
+        const modelRows = models.data || [];
+        const routing_sync = await syncMissingCustomRouting(supabase, providerRows, modelRows);
+        if (routing_sync.synced > 0) invalidateCache();
+
         return res.json({
-          providers: providers.data || [],
-          models: models.data || [],
+          providers: providerRows,
+          models: modelRows,
           keys: keys.data || [],
+          routing_sync,
         });
       }
 
