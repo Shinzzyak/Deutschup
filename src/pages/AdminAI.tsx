@@ -629,6 +629,7 @@ export default function AdminAI() {
     }),
     [models]
   );
+  const modelRoutingById = useMemo(() => new Map(models.map(model => [model.id, model])), [models]);
   const primaryModel = useMemo(() => models.find(m => m.is_primary), [models]);
   const fallbackModel = useMemo(() => models.find(m => m.is_fallback && m.id !== primaryModel?.id), [models, primaryModel?.id]);
   const modelOptionLabel = (model: Model) => {
@@ -1396,14 +1397,18 @@ export default function AdminAI() {
                   </div>
                 )}
 
-                {/* Models */}
+                {/* Saved models */}
                 {providerModels.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 mb-3">
-                    {providerModels.map(m => (
-                      <span key={m.id} className="text-xs px-2 py-0.5 rounded bg-muted text-muted-foreground">
-                        {m.display_name || m.model_id}
-                      </span>
-                    ))}
+                    {providerModels.map(m => {
+                      const rm = modelRoutingById.get(m.id);
+                      const chipTitle = `${m.display_name || m.model_id} — ${m.model_id}${rm ? rm.is_primary ? ' (Primary)' : rm.is_fallback ? ' (Fallback)' : ' (routing-ready)' : ' (not synced)'}`;
+                      return (
+                        <span key={m.id} className="text-xs px-2 py-0.5 rounded border truncate max-w-full" title={chipTitle}>
+                          <span className="truncate block">{m.display_name || m.model_id}</span>
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
 
@@ -1549,20 +1554,37 @@ export default function AdminAI() {
                 {/* Models & Keys */}
                 <div className="mt-4 pt-4 border-t border-border grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground mb-2">Models ({customModels.filter(m => m.provider_id === provider.id).length})</p>
-                    <div className="space-y-1">
-                      {customModels.filter(m => m.provider_id === provider.id).map(model => (
-                        <div key={model.id} className="flex items-center justify-between bg-card  px-3 py-2">
-                          <div>
-                            <span className="text-sm text-foreground">{model.display_name}</span>
-                            <span className="text-xs text-muted-foreground ml-2 font-mono">{model.model_id}</span>
+                    <p className="text-sm font-medium text-muted-foreground mb-2">Models ({providerModels.length})</p>
+                    <div className="space-y-1.5">
+                      {providerModels.map(model => {
+                        const routingModel = modelRoutingById.get(model.id);
+                        const routingLabel = routingModel?.is_primary
+                          ? 'Primary'
+                          : routingModel?.is_fallback
+                            ? 'Fallback'
+                            : routingModel
+                              ? 'Routing-ready'
+                              : 'Not synced';
+                        return (
+                          <div key={model.id} className="flex items-center justify-between gap-3 bg-card px-3 py-2 rounded-md border border-border/60 min-w-0">
+                            <div className="min-w-0 flex-1" title={`${model.display_name || model.model_id} — ${model.model_id}`}>
+                              <span className="block text-sm text-foreground truncate">{model.display_name || model.model_id}</span>
+                              <span className="block text-xs text-muted-foreground font-mono truncate">{model.model_id}</span>
+                              <span className={cn(
+                                "mt-1 inline-flex text-[10px] px-1.5 py-0.5 rounded border",
+                                routingModel?.is_primary ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 border-emerald-500/20" :
+                                routingModel?.is_fallback ? "bg-amber-500/10 text-amber-600 dark:text-amber-300 border-amber-500/20" :
+                                routingModel ? "bg-blue-500/10 text-blue-600 dark:text-blue-300 border-blue-500/20" :
+                                "bg-red-500/10 text-red-600 dark:text-red-300 border-red-500/20"
+                              )}>{routingLabel}</span>
+                            </div>
+                            <button onClick={() => deleteCustomModel(model.id)} className="shrink-0 text-red-400 hover:text-red-300" aria-label={`Delete ${model.display_name || model.model_id}`}>
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
                           </div>
-                          <button onClick={() => deleteCustomModel(model.id)} className="text-red-400 hover:text-red-300">
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      ))}
-                      {customModels.filter(m => m.provider_id === provider.id).length === 0 && (
+                        );
+                      })}
+                      {providerModels.length === 0 && (
                         <p className="text-xs text-muted-foreground/50">No models saved for this provider yet</p>
                       )}
                     </div>
@@ -1571,16 +1593,16 @@ export default function AdminAI() {
                     <p className="text-sm font-medium text-muted-foreground mb-2">Keys ({customKeys.filter(k => k.provider_id === provider.id).length})</p>
                     <div className="space-y-1">
                       {customKeys.filter(k => k.provider_id === provider.id).map(key => (
-                        <div key={key.id} className="flex items-center justify-between bg-card  px-3 py-2">
-                          <div>
-                            <span className="text-sm text-foreground">{key.key_name}</span>
-                            <span className={cn("text-xs ml-2 px-1.5 py-0.5 ",
-                              key.status === 'valid' ? 'bg-emerald-500/10 text-emerald-400' :
-                              key.status === 'invalid' ? 'bg-red-500/10 text-red-400' :
+                        <div key={key.id} className="flex items-center justify-between gap-3 bg-card px-3 py-2 rounded-md border border-border/60 min-w-0">
+                          <div className="min-w-0 flex-1">
+                            <span className="block text-sm text-foreground truncate">{key.key_name}</span>
+                            <span className={cn("mt-1 inline-flex text-xs px-1.5 py-0.5 rounded",
+                              key.status === 'valid' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-300' :
+                              key.status === 'invalid' ? 'bg-red-500/10 text-red-600 dark:text-red-300' :
                               'bg-muted/50 text-muted-foreground'
                             )}>{key.status}</span>
                           </div>
-                          <button onClick={() => deleteCustomKey(key.id)} className="text-red-400 hover:text-red-300">
+                          <button onClick={() => deleteCustomKey(key.id)} className="shrink-0 text-red-400 hover:text-red-300" aria-label={`Delete ${key.key_name}`}>
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
