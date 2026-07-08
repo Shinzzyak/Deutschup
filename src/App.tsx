@@ -175,12 +175,23 @@ function PublicRoutes() {
 }
 
 function OnboardingWrapper({ children }: { children: React.ReactNode }) {
-  const [showOnboarding, setShowOnboarding] = useState(!hasCompletedOnboarding());
+  const { profileData } = useAuthStore();
+  
+  // If backend says completed, OR local storage says completed (fallback for guest), we hide it
+  const isCompletedInDB = profileData?.onboarding_completed === true;
+  const isCompletedLocally = localStorage.getItem('deutschup_onboarding_complete') === 'true';
+  
+  const [showOnboarding, setShowOnboarding] = useState(!(isCompletedInDB || isCompletedLocally));
 
   const handleOnboardingComplete = () => {
     localStorage.setItem('deutschup_onboarding_complete', 'true');
     setShowOnboarding(false);
   };
+
+  // Auto-hide if profile fetch finishes later and says it's completed
+  useEffect(() => {
+    if (isCompletedInDB) setShowOnboarding(false);
+  }, [isCompletedInDB]);
 
   if (showOnboarding) {
     return <OnboardingFlow onComplete={handleOnboardingComplete} />;

@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useAuthStore } from '../stores/authStore';
+import { dbProxy } from '../lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Target, 
@@ -31,14 +33,26 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
   const [step, setStep] = useState<Step>('welcome');
   const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
   const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
+  const { user } = useAuthStore();
+  const [saving, setSaving] = useState(false);
 
-  const handleComplete = () => {
-    // Store onboarding preferences locally (profile update optional)
-    if (selectedLevel) {
-      localStorage.setItem('deutschup_level', selectedLevel);
-    }
-    if (selectedGoal) {
-      localStorage.setItem('deutschup_goal', selectedGoal);
+  const handleComplete = async () => {
+    if (selectedLevel) localStorage.setItem('deutschup_level', selectedLevel);
+    if (selectedGoal) localStorage.setItem('deutschup_goal', selectedGoal);
+    
+    if (user) {
+      setSaving(true);
+      try {
+        await dbProxy('upsert-profile', { 
+          userId: user.id, 
+          onboarding_completed: true,
+          // We could save selectedLevel/Goal here too if added to backend schema, but flag is enough for now
+        });
+      } catch (e) {
+        console.error('Failed saving onboarding state:', e);
+      } finally {
+        setSaving(false);
+      }
     }
     onComplete();
   };

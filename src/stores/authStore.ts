@@ -12,12 +12,14 @@ export interface TierData {
   subscription?: 'free' | 'pro';
   pro_expires_at?: string | null;
   role?: string;
+  onboarding_completed?: boolean;
 }
 
 interface ProfileData {
   full_name?: string;
   avatar_url?: string;
   role?: string;
+  onboarding_completed?: boolean;
   tier?: string;
 }
 
