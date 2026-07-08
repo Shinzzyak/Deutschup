@@ -162,7 +162,7 @@ export default function LessonView() {
       console.error(e);
       // Fallback
       setExercises([{
-         question: "Network error, please try again.",
+         question: "Terjadi gangguan jaringan, silakan coba lagi.",
          type: "free_text",
          correctAnswerStr: ""
       }]);
@@ -320,7 +320,7 @@ export default function LessonView() {
             <div className="bg-blue-50 p-6 md:p-8   border border-blue-200">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-blue-800">
                 <Globe className="w-6 h-6" />
-                <span>Real-Life Germany Notes</span>
+                <span>Catatan Kehidupan Nyata di Jerman</span>
               </h2>
               <div className="text-blue-900 text-lg">
                 {lesson.culturalNotes}
@@ -332,7 +332,7 @@ export default function LessonView() {
             <div className="bg-indigo-50 p-6 md:p-8   border border-indigo-200">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-indigo-800">
                 <MessageSquare className="w-6 h-6" />
-                <span>Register Notes (Formal/Informal)</span>
+                <span>Catatan Ragam Bahasa (Formal/Nonformal)</span>
               </h2>
               <div className="text-indigo-900 text-lg prose prose-indigo max-w-none">
                 <ReactMarkdown>
@@ -346,7 +346,7 @@ export default function LessonView() {
             <div className="bg-[#f5f0eb] border border-[#0a0a0a]/10 p-6 md:p-8 ">
               <h2 className="text-xl font-bold mb-4 flex items-center space-x-2 text-foreground">
                 <Headphones className="w-6 h-6" />
-                <span>Listening Simulation Transcript</span>
+                <span>Transkrip Simulasi Mendengarkan</span>
               </h2>
               <div className="space-y-4 mb-6">
                 {lesson.listeningSimulation.transcript.map((line, idx) => (
@@ -358,7 +358,7 @@ export default function LessonView() {
               </div>
               {lesson.listeningSimulation.questions && lesson.listeningSimulation.questions.length > 0 && (
                 <div className="bg-card p-4  border border-border">
-                  <span className="font-bold text-sm uppercase text-muted-foreground mb-2 block">Quick Question</span>
+                  <span className="font-bold text-sm uppercase text-muted-foreground mb-2 block">Pertanyaan Singkat</span>
                   <p className="font-medium">{lesson.listeningSimulation.questions[0].question}</p>
                 </div>
               )}

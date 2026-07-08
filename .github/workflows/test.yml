@@ -8,8 +8,12 @@ on:
 
 jobs:
   unit:
-    name: Unit Tests
+    name: Unit Tests + Build
     runs-on: ubuntu-latest
+    env:
+      NODE_OPTIONS: --max-old-space-size=4096
+      VITE_SUPABASE_URL: https://mnasgrobmwcpqmnjbvan.supabase.co
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -24,6 +28,9 @@ jobs:
 
       - name: Run unit tests
         run: npm run test
+
+      - name: Build production bundle
+        run: npm run build
 
       - name: Run tests with coverage
         run: npm run test:coverage
