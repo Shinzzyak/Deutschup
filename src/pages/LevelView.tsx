@@ -85,7 +85,7 @@ export default function LevelView() {
       </Link>
 
       {/* ───────── Level Header — Editorial ───────── */}
-      <div className="bg-primary p-6 md:p-8 mb-8 relative overflow-hidden">
+      <div className="st-card st-card--hero mb-8">
         {/* German flag accent */}
         <div className="absolute top-0 left-0 bottom-0 w-1.5 flex flex-col">
           <div className="flex-1 bg-primary" />

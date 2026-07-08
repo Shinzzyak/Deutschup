@@ -244,7 +244,7 @@ export default function Dashboard() {
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden bg-primary p-6 md:p-8 rounded-lg">
+        <header className="st-card st-card--hero">
           {/* German flag accent */}
           <div className="absolute top-0 left-0 right-0 h-1 flex">
             <div className="flex-1 bg-primary/70" />
@@ -360,7 +360,7 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden  st-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  st-level-card flex flex-col items-center justify-center">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-amber-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11  bg-[#c8956c] flex items-center justify-center mb-2.5  ">
@@ -370,7 +370,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  st-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  st-level-card flex flex-col items-center justify-center">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-blue-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
@@ -380,7 +380,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  st-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  st-level-card flex flex-col items-center justify-center">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-emerald-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
@@ -443,7 +443,7 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden  st-card rounded-lg p-5 md:p-6 card-hover">
+            <div className="relative overflow-hidden  st-level-card flex flex-col h-full">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-orange-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
@@ -477,7 +477,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden  st-card rounded-lg p-5 md:p-6 card-hover">
+            <div className="relative overflow-hidden  st-level-card flex flex-col h-full">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-indigo-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
