@@ -197,6 +197,80 @@ export async function isVerifiedAdmin(req: any): Promise<boolean> {
   return false;
 }
 
+export interface QuotaResult {
+  allowed: boolean;
+  limit: number;
+  used: number;
+  remaining: number;
+  resetAt: number; // epoch ms when the window resets
+}
+
+/**
+ * Server-side quota enforcement for free-tier users.
+ * Pro / admin are always allowed (unlimited).
+ *
+ * - chat: Free = 10 requests per rolling hour (matches Pricing copy).
+ * - generate-mock-test: Free = 1 per rolling 7 days.
+ * Other actions are unlimited for all tiers.
+ *
+ * Counts are derived from the existing ai_usage_log table, so no new
+ * migration is required. Reads are non-fatal: on any DB error we fail
+ * open to "allowed" to avoid blocking paid users, but log the failure.
+ */
+export async function checkQuota(
+  internalId: string,
+  userTier: 'free' | 'pro',
+  action: string
+): Promise<QuotaResult> {
+  const unlimited: QuotaResult = { allowed: true, limit: 0, used: 0, remaining: Infinity, resetAt: 0 };
+  if (userTier === 'pro') return unlimited;
+
+  let windowMs: number;
+  let limit: number;
+  if (action === 'chat') {
+    windowMs = 60 * 60 * 1000; // 1 hour
+    limit = 10;
+  } else if (action === 'generate-mock-test') {
+    windowMs = 7 * 24 * 60 * 60 * 1000; // 7 days
+    limit = 1;
+  } else {
+    return unlimited;
+  }
+
+  const since = new Date(Date.now() - windowMs).toISOString();
+  try {
+    const { count, error } = await getDb()
+      .from('ai_usage_log')
+      .select('*', { count: 'exact', head: true })
+      .eq('user_id', internalId)
+      .eq('endpoint', action)
+      .gte('created_at', since);
+
+    if (error) {
+      console.error('[QUOTA] count error:', error.message);
+      return unlimited; // fail open
+    }
+
+    const used = count || 0;
+    const resetAt = Date.now() + windowMs;
+    return {
+      allowed: used < limit,
+      limit,
+      used,
+      remaining: Math.max(0, limit - used),
+      resetAt,
+    };
+  } catch (e: any) {
+    console.error('[QUOTA] unexpected error:', e.message);
+    return unlimited;
+  }
+}
+
+export const QUOTA_MESSAGES: Record<string, string> = {
+  chat: 'Pengguna Free dapat 10 pesan Herr Deutsch per jam. Silakan tingkatkan ke Pro untuk chat tanpa batas.',
+  'generate-mock-test': 'Pengguna Free hanya dapat satu kali Simulasi Ujian per minggu. Silakan tingkatkan ke Pro atau Master untuk akses tanpa batas.',
+};
+
 export const adminMiddleware = async (req: any, res: any, next: any) => {
   // Use unified verified admin check — verifies Clerk JWT via @clerk/backend,
   // maps sub → user_identities.clerk_id → internal_id, checks ADMIN_EMAIL + profiles.role
