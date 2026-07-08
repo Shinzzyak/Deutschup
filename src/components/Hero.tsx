@@ -2,6 +2,7 @@ import { motion } from 'motion/react';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from './ui/button';
 import { ArrowRight } from 'lucide-react';
+import Reveal from './Reveal';
 
 export default function Hero() {
   const { loginWithGoogle } = useAuthStore();
@@ -33,27 +34,33 @@ export default function Hero() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.8 }}
             >
-              {/* Top label — editorial style */}
-              <div className="flex items-center gap-3 mb-8">
-                <div className="h-px w-12 bg-primary" />
-                <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/60">
-                  Plattform für Deutschlernen
-                </span>
-              </div>
+              <Reveal y={16}>
+                {/* Top label — editorial style */}
+                <div className="flex items-center gap-3 mb-8">
+                  <div className="h-px w-12 bg-primary" />
+                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/60">
+                    Plattform für Deutschlernen
+                  </span>
+                </div>
+              </Reveal>
 
               {/* Giant headline — editorial serif */}
-              <h1 className="font-serif text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95] tracking-tight text-[#0a0a0a] mb-8">
-                Belajar Bahasa<br />
-                Jerman, <span className="italic text-[#8b2500]">Lebih Cepat.</span>
-              </h1>
+              <Reveal delay={0.08} y={30}>
+                <h1 className="font-serif text-[clamp(2.5rem,6vw,5.5rem)] leading-[0.95] tracking-tight text-[#0a0a0a] mb-8">
+                  Belajar Bahasa<br />
+                  Jerman, <span className="italic text-[#8b2500]">Lebih Cepat.</span>
+                </h1>
+              </Reveal>
 
               {/* Body — clean, editorial */}
-              <p className="text-lg sm:text-xl text-[#0a0a0a]/60 leading-relaxed max-w-xl mb-10 font-light">
-                Tutor AI yang membantu grammar, vocabulary, speaking, dan persiapan ujian Goethe — dari A1 sampai B2.
-              </p>
+              <Reveal delay={0.16} y={24}>
+                <p className="text-lg sm:text-xl text-[#0a0a0a]/60 leading-relaxed max-w-xl mb-10 font-light">
+                  Tutor AI yang membantu grammar, vocabulary, speaking, dan persiapan ujian Goethe — dari A1 sampai B2.
+                </p>
+              </Reveal>
 
               {/* CTAs — sharp, minimal */}
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
+              <Reveal delay={0.24} y={20} className="flex flex-col sm:flex-row gap-4 mb-12">
                 <Button
                   onClick={loginWithGoogle}
                   className="bg-primary hover:bg-primary/90 text-primary-foreground text-base px-10 py-6  font-bold tracking-wide transition-all group"
@@ -67,10 +74,10 @@ export default function Hero() {
                 >
                   Lihat Kurikulum
                 </a>
-              </div>
+              </Reveal>
 
               {/* Trust line — editorial style, separated by em dashes */}
-              <div className="flex flex-wrap items-center gap-x-1 text-xs text-[#0a0a0a]/40 uppercase tracking-[0.15em] font-medium">
+              <Reveal delay={0.32} y={12} className="flex flex-wrap items-center gap-x-1 text-xs text-[#0a0a0a]/40 uppercase tracking-[0.15em] font-medium">
                 <span>AI Tutor 24/7</span>
                 <span className="text-[#c8956c]">—</span>
                 <span>Exam Simulation</span>
@@ -78,7 +85,7 @@ export default function Hero() {
                 <span>Progress Tracking</span>
                 <span className="text-[#c8956c]">—</span>
                 <span>A1–B2 Roadmap</span>
-              </div>
+              </Reveal>
             </motion.div>
           </div>
 
