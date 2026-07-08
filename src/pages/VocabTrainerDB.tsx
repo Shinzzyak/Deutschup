@@ -288,8 +288,8 @@ export default function VocabTrainerDB() {
         <div className="st-card st-card--hero min-h-[280px] items-center justify-center text-center">
           <Loader2 className="w-10 h-10 text-white animate-spin" />
           <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/50">DeutschUp Database</p>
-            <p className="text-lg font-bold text-white">Loading vocabulary from Supabase...</p>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-white/50">Latihan Kosakata</p>
+            <p className="text-lg font-bold text-white">Memuat kosakata level...</p>
           </div>
         </div>
       </div>
@@ -298,43 +298,43 @@ export default function VocabTrainerDB() {
 
   return (
     <div className="st-page max-w-6xl mx-auto p-4 md:p-6">
-      {/* Stisla-style page header: constrained tokens, compact actions, database-first context */}
+      {/* Learner-facing vocabulary dashboard */}
       <section className="st-card st-card--hero overflow-hidden">
         <div className="st-flag-accent" aria-hidden="true" />
         <div className="relative z-10 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-white/70">
               <Database className="w-3.5 h-3.5" />
-              Supabase Curriculum Vocabulary
+              Kosakata Kurikulum
             </div>
             <div>
               <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white flex items-center gap-3">
                 <Brain className="w-9 h-9 text-amber-300" />
-                Vocab Command Center
+                Pusat Latihan Kosakata
               </h1>
               <p className="mt-2 max-w-2xl text-sm md:text-base leading-relaxed text-white/62">
-                UI baru ngikutin prinsip Stisla: token konsisten, card dense, status jelas, dan semua angka langsung nyambung ke database curriculum terbaru.
+                Latihan kosakata Jerman yang rapi, cepat, dan mengikuti materi level kamu. Pantau kata baru, review, dan progres hafalan dalam satu tempat.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
               <span className="st-badge st-badge--primary st-badge--soft">
-                <Layers className="w-3.5 h-3.5" /> {formatNumber(levelCountSummary.total)} DB words
+                <Layers className="w-3.5 h-3.5" /> {formatNumber(levelCountSummary.total)} kata tersedia
               </span>
               <span className="st-badge st-badge--success st-badge--soft">
-                <Check className="w-3.5 h-3.5" /> {formatNumber(summary.known)} mastered in {selectedLevel}
+                <Check className="w-3.5 h-3.5" /> {formatNumber(summary.known)} dikuasai di {selectedLevel}
               </span>
               <span className="st-badge st-badge--warning st-badge--soft">
-                <Target className="w-3.5 h-3.5" /> {formatNumber(filteredSummary.due)} due now
+                <Target className="w-3.5 h-3.5" /> {formatNumber(filteredSummary.due)} perlu review
               </span>
             </div>
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             {[
-              { label: 'Selected level', value: selectedLevel, icon: Sparkles },
-              { label: 'Level words', value: countsLoading ? '...' : formatNumber(selectedCount), icon: Database },
-              { label: 'Known', value: formatNumber(summary.known), icon: Trophy },
-              { label: 'Coverage', value: `${progressPercent}%`, icon: BarChart3 },
+              { label: 'Level Dipilih', value: selectedLevel, icon: Sparkles },
+              { label: 'Kata Level Ini', value: countsLoading ? '...' : formatNumber(selectedCount), icon: Database },
+              { label: 'Dikuasai', value: formatNumber(summary.known), icon: Trophy },
+              { label: 'Progres', value: `${progressPercent}%`, icon: BarChart3 },
             ].map((item) => (
               <div key={item.label} className="rounded-2xl border border-white/10 bg-white/[0.08] p-4 backdrop-blur-sm">
                 <item.icon className="w-4 h-4 text-amber-300 mb-3" />
@@ -352,7 +352,7 @@ export default function VocabTrainerDB() {
           const count = levelCountSummary.byLevel[level]?.total || 0;
           const levelProgress = summary.byLevel[level];
           const isActive = selectedLevel === level;
-          const progressLabel = isActive ? `${levelProgress.knownPercent}%` : 'open';
+          const progressLabel = isActive ? `${levelProgress.knownPercent}%` : 'pilih';
           return (
             <button
               key={level}
@@ -367,23 +367,23 @@ export default function VocabTrainerDB() {
                     <span className={cn('h-2.5 w-2.5 rounded-full', levelStyles[level].dot)} />
                     <span className="text-lg font-black">{level}</span>
                   </div>
-                  <p className="mt-1 text-xs text-muted-foreground">{formatNumber(count)} kata di database</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{formatNumber(count)} kata tersedia</p>
                 </div>
                 <span className={cn('st-badge border', levelStyles[level].soft)}>{progressLabel}</span>
               </div>
-              <div className="mt-4 st-progress" aria-label={isActive ? `${level} mastered ${levelProgress.knownPercent}%` : `${level} database level available`}>
+              <div className="mt-4 st-progress" aria-label={isActive ? `${level} dikuasai ${levelProgress.knownPercent}%` : `${level} siap dipelajari`}>
                 <span style={{ width: isActive ? `${levelProgress.knownPercent}%` : '0%' }} className={cn('bg-gradient-to-r', levelStyles[level].accent)} />
               </div>
               <div className="mt-3 flex items-center justify-between text-[11px] font-bold uppercase tracking-wider text-muted-foreground">
                 {isActive ? (
                   <>
-                    <span>{formatNumber(levelProgress.known)} known</span>
-                    <span>{formatNumber(levelProgress.due)} due</span>
+                    <span>{formatNumber(levelProgress.known)} dikuasai</span>
+                    <span>{formatNumber(levelProgress.due)} review</span>
                   </>
                 ) : (
                   <>
-                    <span>select to load</span>
-                    <span>DB ready</span>
+                    <span>pilih level</span>
+                    <span>siap belajar</span>
                   </>
                 )}
               </div>
@@ -396,7 +396,7 @@ export default function VocabTrainerDB() {
       <section className="st-card p-4 md:p-5">
         <div className="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr_0.8fr] gap-3">
           <label className="st-field">
-            <span>Search</span>
+            <span>Cari</span>
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <input
@@ -409,26 +409,26 @@ export default function VocabTrainerDB() {
           </label>
 
           <label className="st-field">
-            <span>Progress filter</span>
+            <span>Filter progres</span>
             <div className="relative">
               <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <select className="st-input pl-9" value={filter} onChange={(e) => setFilter(e.target.value as FilterType)}>
-                <option value="all">All Words</option>
-                <option value="new">New Words</option>
-                <option value="learning">Learning</option>
-                <option value="learned">Learned</option>
+                <option value="all">Semua Kata</option>
+                <option value="new">Kata Baru</option>
+                <option value="learning">Sedang Dipelajari</option>
+                <option value="learned">Sudah Dikuasai</option>
               </select>
             </div>
           </label>
 
           <label className="st-field">
-            <span>Sort</span>
+            <span>Urutkan</span>
             <div className="relative">
               <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <select className="st-input pl-9" value={sort} onChange={(e) => setSort(e.target.value as SortType)}>
-                <option value="default">Database Order</option>
-                <option value="german">German A-Z</option>
-                <option value="indonesian">Indonesian A-Z</option>
+                <option value="default">Urutan Materi</option>
+                <option value="german">Jerman A-Z</option>
+                <option value="indonesian">Indonesia A-Z</option>
               </select>
             </div>
           </label>
@@ -444,7 +444,7 @@ export default function VocabTrainerDB() {
           onClick={() => setActiveTab('flashcard')}
         >
           <LayoutGrid className="w-4 h-4 mr-2" />
-          Flashcards
+          Kartu Latihan
         </Button>
         <Button
           variant={activeTab === 'list' ? 'default' : 'ghost'}
@@ -453,7 +453,7 @@ export default function VocabTrainerDB() {
           onClick={() => setActiveTab('list')}
         >
           <List className="w-4 h-4 mr-2" />
-          Database List
+          Daftar Kata
         </Button>
       </div>
 
@@ -461,7 +461,7 @@ export default function VocabTrainerDB() {
         {!vocabLoaded ? (
           <div className="st-card flex flex-col items-center justify-center py-20">
             <Loader2 className="w-8 h-8 text-primary animate-spin mb-4" />
-            <p className="text-muted-foreground">Loading progress...</p>
+            <p className="text-muted-foreground">Memuat progres...</p>
           </div>
         ) : activeTab === 'flashcard' ? (
           <motion.section
@@ -477,9 +477,9 @@ export default function VocabTrainerDB() {
                   <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-muted-foreground">
                     <span className="flex items-center gap-2 font-semibold">
                       <Target className="w-4 h-4" />
-                      Card {cardsReviewed + 1} of {formatNumber(dueCards.length)} due
+                      Kartu {cardsReviewed + 1} dari {formatNumber(dueCards.length)} perlu review
                     </span>
-                    <span className="font-semibold">{formatNumber(filteredVocab.length)} filtered • {progressPercent}% mastered</span>
+                    <span className="font-semibold">{formatNumber(filteredVocab.length)} kata tampil • {progressPercent}% dikuasai</span>
                   </div>
                   <div className="mt-3 st-progress h-2.5">
                     <motion.span
@@ -511,12 +511,12 @@ export default function VocabTrainerDB() {
                       {currentCard.phonetic && (
                         <p className="mt-4 font-mono text-sm text-muted-foreground">/{currentCard.phonetic}/</p>
                       )}
-                      <p className="mt-6 text-sm font-medium text-muted-foreground animate-pulse">Click to flip</p>
+                      <p className="mt-6 text-sm font-medium text-muted-foreground animate-pulse">Tap untuk lihat arti</p>
                     </div>
 
                     {/* Back */}
                     <div className="st-study-card st-study-card--answer absolute inset-0 backface-hidden rotate-y-180 text-center">
-                      <span className="st-badge st-badge--primary st-badge--soft mb-4">Translation</span>
+                      <span className="st-badge st-badge--primary st-badge--soft mb-4">Arti</span>
                       <h2 className="text-4xl md:text-6xl font-black text-primary">{currentCard.translation}</h2>
                       {currentCard.example_sentence && (
                         <p className="mt-4 max-w-2xl text-sm md:text-base text-muted-foreground italic">“{currentCard.example_sentence}”</p>
@@ -525,11 +525,11 @@ export default function VocabTrainerDB() {
                       <div className="mt-6 flex flex-wrap justify-center gap-3">
                         <Button variant="outline" className="flex items-center gap-2 px-4" onClick={(e) => { e.stopPropagation(); fetchPronunciation(e); }}>
                           {pronunciationLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Volume2 className="w-4 h-4" />}
-                          Pronunciation
+                          Pelafalan
                         </Button>
                         <Button variant="outline" className="flex items-center gap-2 px-4" onClick={(e) => { e.stopPropagation(); fetchExamples(e); }}>
                           {examplesLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
-                          Examples
+                          Contoh
                         </Button>
                       </div>
 
@@ -557,11 +557,11 @@ export default function VocabTrainerDB() {
                 <div className="flex justify-center gap-4 md:gap-6">
                   <Button variant="destructive" size="lg" className="w-36 h-16 text-lg flex flex-col items-center gap-1" onClick={() => handleAnswer(false)}>
                     <X className="w-6 h-6" />
-                    <span>Learning</span>
+                    <span>Belajar</span>
                   </Button>
                   <Button variant="default" size="lg" className="w-36 h-16 text-lg flex flex-col items-center gap-1 bg-emerald-600 text-white hover:bg-emerald-700" onClick={() => handleAnswer(true)}>
                     <Check className="w-6 h-6" />
-                    <span>Known</span>
+                    <span>Bisa</span>
                   </Button>
                 </div>
               </>
@@ -570,11 +570,11 @@ export default function VocabTrainerDB() {
                 <div className="p-4 rounded-2xl bg-primary/10">
                   <Trophy className="w-12 h-12 text-primary" />
                 </div>
-                <h3 className="text-2xl font-black">Level Cleared!</h3>
+                <h3 className="text-2xl font-black">Level selesai!</h3>
                 <p className="text-muted-foreground max-w-sm">Tidak ada card due untuk filter ini. Ganti filter/level atau reset session.</p>
                 <Button onClick={() => setCardsReviewed(0)} variant="outline">
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Reset Session
+                  Ulangi Sesi
                 </Button>
               </div>
             )}
@@ -589,20 +589,20 @@ export default function VocabTrainerDB() {
           >
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 md:px-5">
               <div>
-                <h2 className="font-black">Vocabulary Database</h2>
-                <p className="text-xs text-muted-foreground">{formatNumber(filteredVocab.length)} rows from {selectedLevel} curriculum_vocabulary</p>
+                <h2 className="font-black">Daftar Kosakata</h2>
+                <p className="text-xs text-muted-foreground">{formatNumber(filteredVocab.length)} kata dari level {selectedLevel}</p>
               </div>
-              <span className="st-badge st-badge--primary st-badge--soft">{formatNumber(filteredSummary.due)} due</span>
+              <span className="st-badge st-badge--primary st-badge--soft">{formatNumber(filteredSummary.due)} perlu review</span>
             </div>
             <div className="overflow-x-auto">
               <table className="st-table">
                 <thead>
                   <tr>
-                    <th>Word</th>
-                    <th>Translation</th>
-                    <th>Lesson</th>
+                    <th>Kata</th>
+                    <th>Arti</th>
+                    <th>Materi</th>
                     <th>Status</th>
-                    <th className="text-right">Action</th>
+                    <th className="text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>

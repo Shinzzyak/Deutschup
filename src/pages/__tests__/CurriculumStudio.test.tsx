@@ -37,7 +37,7 @@ describe('CurriculumStudio', () => {
     expect(screen.getByText(/70 lessons/i)).toBeInTheDocument();
     expect(screen.getByText(/16 checkpoints/i)).toBeInTheDocument();
 
-    await waitFor(() => expect(screen.getByText(/2\.472 DB words/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/2\.472 kata tersedia/i)).toBeInTheDocument());
 
     expect(screen.getByRole('link', { name: /Mulai lesson berikutnya/i })).toHaveAttribute('href', '/lesson/a1-2');
     expect(screen.getByRole('link', { name: /Buka vocab trainer/i })).toHaveAttribute('href', '/vocab');

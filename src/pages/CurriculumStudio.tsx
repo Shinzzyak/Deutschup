@@ -107,7 +107,7 @@ export default function CurriculumStudio() {
               Kurikulum Studio
             </h1>
             <p className="mt-5 max-w-2xl text-base sm:text-lg leading-relaxed text-[#0a0a0a]/60">
-              Semua unit, checkpoint, database vocabulary, dan latihan lama disatukan dalam satu map yang lebih rapi — gaya landing page, tapi tetap siap dipakai belajar harian.
+              Semua unit, checkpoint, kosakata, dan latihan lama disatukan dalam satu map yang lebih rapi — siap dipakai belajar harian.
             </p>
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
@@ -153,9 +153,9 @@ export default function CurriculumStudio() {
             </div>
             <div className="border border-[#0a0a0a]/10 bg-white/50 p-4">
               <Database className="mb-3 h-5 w-5 text-[#8b2500]" />
-              <span className="sr-only">{formatId.format(overview.totalVocabulary)} DB words</span>
+              <span className="sr-only">{formatId.format(overview.totalVocabulary)} kata tersedia</span>
               <p className="text-2xl font-serif font-bold text-[#0a0a0a]">{formatId.format(overview.totalVocabulary)}</p>
-              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#0a0a0a]/45">DB words</p>
+              <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#0a0a0a]/45">Kata</p>
             </div>
           </div>
         </div>
@@ -283,7 +283,7 @@ export default function CurriculumStudio() {
           </div>
           <div className="space-y-3">
             <Link to="/vocab" className="flex items-center justify-between gap-3 border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
-              <span className="inline-flex min-w-0 items-center gap-2 break-words"><Database className="h-4 w-4 shrink-0 text-[#c8956c]" />Vocabulary DB</span>
+              <span className="inline-flex min-w-0 items-center gap-2 break-words"><Database className="h-4 w-4 shrink-0 text-[#c8956c]" />Latihan kosakata</span>
               <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
             <Link to="/simulasi" className="flex items-center justify-between gap-3 border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
@@ -296,7 +296,7 @@ export default function CurriculumStudio() {
             </Link>
           </div>
           <p className="mt-5 break-words text-sm leading-relaxed text-[#f5f0eb]/50">
-            Phase 1 sengaja jadi shell penyatu dulu: roadmap dan database masuk, tapi semua latihan existing tetap jalan di engine lama.
+            Map ini menyatukan materi baru dan latihan lama, jadi progres belajar tetap aman sambil kamu lanjut dari level terakhir.
           </p>
         </aside>
       </section>

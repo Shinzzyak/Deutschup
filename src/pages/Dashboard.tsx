@@ -263,7 +263,7 @@ export default function Dashboard() {
                 <p className="text-blue-200 font-medium text-sm md:text-base">
                   {new Date().getHours() < 12 ? '🌅 Selamat Pagi' : new Date().getHours() < 18 ? '☀️ Selamat Siang' : '🌙 Selamat Malam'}, {user?.user_metadata?.full_name?.split(' ')[0] || 'Siswa'}!
                 </p>
-                <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-[#f5f0eb]">Learning Command Center</h1>
+                <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-[#f5f0eb]">Pusat Belajar</h1>
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1  bg-[#f5f0eb]/15 text-sm font-semibold ">
                     <GraduationCap className="w-4 h-4" />
@@ -322,22 +322,22 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* SECTION B0: DATABASE COVERAGE */}
+        {/* SECTION B0: VOCABULARY COVERAGE */}
         {!loading && (
           <section className="st-card p-4 md:p-5">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
                   <Database className="w-4 h-4" />
-                  Curriculum Database
+                  Kosakata Kurikulum
                 </div>
-                <h2 className="text-xl md:text-2xl font-black tracking-tight">{dbCountsLoading ? 'Syncing vocabulary...' : `${dbSummary.total.toLocaleString('id-ID')} vocabulary rows live`}</h2>
-                <p className="text-sm text-muted-foreground">Dashboard sekarang aware ke database baru. Level aktif {currentLevel} punya {currentLevelDbWords.toLocaleString('id-ID')} kata di `curriculum_vocabulary`.</p>
+                <h2 className="text-xl md:text-2xl font-black tracking-tight">{dbCountsLoading ? 'Memuat kosakata...' : `${dbSummary.total.toLocaleString('id-ID')} kata siap dipelajari`}</h2>
+                <p className="text-sm text-muted-foreground">Level aktif {currentLevel} punya {currentLevelDbWords.toLocaleString('id-ID')} kata untuk latihan kosakata.</p>
               </div>
               <Link to="/vocab">
                 <Button variant="outline" className="w-full lg:w-auto">
                   <Layers className="w-4 h-4 mr-2" />
-                  Buka Vocab DB
+                  Buka Latihan Kosakata
                 </Button>
               </Link>
             </div>

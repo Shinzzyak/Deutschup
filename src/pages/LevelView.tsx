@@ -123,7 +123,7 @@ export default function LevelView() {
               <span className="inline-flex items-center gap-1.5 font-semibold rounded-full border border-white/15 bg-white/10 px-3 py-1 text-white/80">
                 <Database className="w-4 h-4 opacity-60" />
                 {dbWordCount === null ? '...' : dbWordCount.toLocaleString('id-ID')}
-                <span className="opacity-50">DB words</span>
+                <span className="opacity-50">kata</span>
               </span>
             </div>
           </div>
@@ -153,9 +153,9 @@ export default function LevelView() {
             <div>
               <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
                 <Database className="w-4 h-4" />
-                Database Context
+                Kosakata Level
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">Level {levelId} sekarang terhubung ke {dbWordCount === null ? '...' : dbWordCount.toLocaleString('id-ID')} vocabulary rows dari `curriculum_vocabulary`.</p>
+              <p className="mt-1 text-sm text-muted-foreground">Level {levelId} punya {dbWordCount === null ? '...' : dbWordCount.toLocaleString('id-ID')} kata untuk latihan kosakata.</p>
             </div>
             <Link to="/vocab" className="shrink-0">
               <Button variant="outline" className="w-full sm:w-auto">Latih vocab {levelId}</Button>
