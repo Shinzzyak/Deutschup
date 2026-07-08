@@ -85,7 +85,7 @@ export default function CurriculumStudio() {
 
   return (
     <div className="space-y-6 pb-28 lg:pb-12">
-      <section className="relative min-h-[calc(100svh-8rem)] overflow-hidden bg-[#f5f0eb] border border-[#0a0a0a]/10 p-5 sm:min-h-0 sm:p-8 lg:p-10">
+      <section className="relative min-h-[calc(100svh-8rem)] overflow-hidden st-card p-6 sm:min-h-0 sm:p-8 lg:p-10">
         <FlagStripe className="absolute left-0 top-0 bottom-0 w-1.5" />
         <div
           className="absolute inset-0 opacity-[0.035] pointer-events-none"
@@ -133,25 +133,25 @@ export default function CurriculumStudio() {
           </div>
 
           <div className="hidden grid-cols-2 gap-3 sm:grid sm:grid-cols-4 lg:grid-cols-2">
-            <div className="border border-[#0a0a0a]/10 bg-white/50 p-4">
+            <div className="st-level-card p-4">
               <Layers className="mb-3 h-5 w-5 text-[#8b2500]" />
               <span className="sr-only">{overview.totalUnits} roadmap units</span>
               <p className="text-2xl font-serif font-bold text-[#0a0a0a]">{overview.totalUnits}</p>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#0a0a0a]/45">roadmap units</p>
             </div>
-            <div className="border border-[#0a0a0a]/10 bg-white/50 p-4">
+            <div className="st-level-card p-4">
               <BookOpen className="mb-3 h-5 w-5 text-[#8b2500]" />
               <span className="sr-only">{overview.totalLessons} lessons</span>
               <p className="text-2xl font-serif font-bold text-[#0a0a0a]">{overview.totalLessons}</p>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#0a0a0a]/45">lessons</p>
             </div>
-            <div className="border border-[#0a0a0a]/10 bg-white/50 p-4">
+            <div className="st-level-card p-4">
               <Trophy className="mb-3 h-5 w-5 text-[#8b2500]" />
               <span className="sr-only">{overview.totalCheckpoints} checkpoints</span>
               <p className="text-2xl font-serif font-bold text-[#0a0a0a]">{overview.totalCheckpoints}</p>
               <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#0a0a0a]/45">checkpoints</p>
             </div>
-            <div className="border border-[#0a0a0a]/10 bg-white/50 p-4">
+            <div className="st-level-card p-4">
               <Database className="mb-3 h-5 w-5 text-[#8b2500]" />
               <span className="sr-only">{formatId.format(overview.totalVocabulary)} kata tersedia</span>
               <p className="text-2xl font-serif font-bold text-[#0a0a0a]">{formatId.format(overview.totalVocabulary)}</p>
@@ -166,7 +166,7 @@ export default function CurriculumStudio() {
           <Link
             key={level.level}
             to={`/level/${level.level}`}
-            className="group border border-[#0a0a0a]/10 bg-[#f5f0eb] p-5 transition-colors hover:border-[#8b2500]/50 hover:bg-[#f5f0eb]/80"
+            className="group st-level-card transition-colors hover:border-[#8b2500]/50 hover:bg-[#f5f0eb]/80"
           >
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
@@ -205,7 +205,7 @@ export default function CurriculumStudio() {
       </section>
 
       <section className="grid gap-5 lg:grid-cols-[1.25fr_0.75fr]">
-        <div className="border border-[#0a0a0a]/10 bg-[#f5f0eb] p-5 sm:p-6">
+        <div className="st-card p-5 sm:p-6">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <p className="text-xs font-black uppercase tracking-[0.2em] text-[#0a0a0a]/45">Current path preview</p>
