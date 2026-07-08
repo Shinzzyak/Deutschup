@@ -21,6 +21,7 @@ const Dashboard = lazy(() => import('./pages/Dashboard'));
 const DashboardWithPaymentRefresh = lazy(() => import("./pages/DashboardWithPaymentRefresh"));
 const LessonView = lazy(() => import('./pages/LessonView'));
 const LevelView = lazy(() => import('./pages/LevelView'));
+const CurriculumStudio = lazy(() => import('./pages/CurriculumStudio'));
 const CheckpointView = lazy(() => import('./pages/CheckpointView'));
 const AdminAI = lazy(() => import('./pages/AdminAI'));
 const VocabTrainer = lazy(() => import('./pages/VocabTrainerDB'));
@@ -118,8 +119,9 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/" element={<PageWrapper><DashboardWithPaymentRefresh /></PageWrapper>} />
         <Route path="/dashboard" element={<PageWrapper><DashboardWithPaymentRefresh /></PageWrapper>} />
+        <Route path="/curriculum" element={<PageWrapper><CurriculumStudio /></PageWrapper>} />
         <Route path="/level/:id" element={<PageWrapper><LevelView /></PageWrapper>} />
-        <Route path="/lessons" element={<Navigate to="/level/A1" replace />} />
+        <Route path="/lessons" element={<Navigate to="/curriculum" replace />} />
         <Route path="/checkpoint/:id" element={<PageWrapper><CheckpointView /></PageWrapper>} />
         <Route path="/lesson/:id" element={<PageWrapper><LessonView /></PageWrapper>} />
         <Route path="/vocab" element={<PageWrapper><VocabTrainer /></PageWrapper>} />

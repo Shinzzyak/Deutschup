@@ -11,7 +11,7 @@ import {
 
 const navigation = [
   { name: 'Beranda', href: '/', icon: Home },
-  { name: 'Level', href: '/level/A1', icon: Trophy },
+  { name: 'Kurikulum', href: '/curriculum', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
   { name: 'Goethe', href: '/goethe', icon: Trophy },
@@ -24,6 +24,9 @@ export default function MobileBottomNav() {
 
   function isActive(href: string) {
     if (href === '/') return location.pathname === '/';
+    if (href === '/curriculum') {
+      return ['/curriculum', '/level', '/lesson', '/checkpoint'].some((prefix) => location.pathname.startsWith(prefix));
+    }
     return location.pathname.startsWith(href.split('?')[0]);
   }
 

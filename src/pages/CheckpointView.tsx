@@ -4,6 +4,7 @@ import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { courseData } from '../data/lessons';
 import { courseIndex } from '../data/lessonIndex';
+import { resolveCheckpointLesson } from '../lib/checkpointAdapter';
 import { Button } from '../components/ui/button';
 import { CheckCircle2, Lock, Trophy, ArrowLeft, Loader2, Star, Target, AlertTriangle } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -14,8 +15,9 @@ export default function CheckpointView() {
   const { user } = useAuthStore();
   const { submitCheckpoint, checkpointProgress, loading, completedLessons } = useProgressStore();
 
-  const checkpoint = courseData.find(l => l.id === id && l.checkpoint);
-  const checkpointData = checkpoint?.checkpoint;
+  const resolvedCheckpoint = resolveCheckpointLesson(courseData, id);
+  const checkpoint = resolvedCheckpoint?.lesson;
+  const checkpointData = resolvedCheckpoint?.checkpoint;
 
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");

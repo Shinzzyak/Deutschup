@@ -10,7 +10,7 @@ import {
 
 const navigation = [
   { name: 'Dashboard', href: '/', icon: BookOpen },
-  { name: 'Level', href: '/level/A1', icon: Trophy },
+  { name: 'Kurikulum', href: '/curriculum', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
   { name: 'Catatan', href: '/catatan', icon: BarChart3 },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
@@ -39,6 +39,9 @@ export default function TopNav() {
 
   function isActive(href: string) {
     if (href === '/') return location.pathname === '/';
+    if (href === '/curriculum') {
+      return ['/curriculum', '/level', '/lesson', '/checkpoint'].some((prefix) => location.pathname.startsWith(prefix));
+    }
     return location.pathname.startsWith(href.split('?')[0]);
   }
 
