@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
 import { Check } from 'lucide-react';
+import Reveal from './Reveal';
 
 const levels = [
   {
@@ -70,7 +71,7 @@ export default function LearningRoadmap() {
         {/* Desktop — editorial table */}
         <div className="hidden md:block">
           {/* Header row */}
-          <div className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
+          <Reveal y={20} delay={0.05} className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
             {levels.map((level) => (
               <div
                 key={level.level}
@@ -82,10 +83,10 @@ export default function LearningRoadmap() {
                 </span>
               </div>
             ))}
-          </div>
+          </Reveal>
 
           {/* Grammar row */}
-          <div className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
+          <Reveal y={20} delay={0.12} className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
             {levels.map((level) => (
               <div
                 key={`g-${level.level}`}
@@ -104,10 +105,10 @@ export default function LearningRoadmap() {
                 </ul>
               </div>
             ))}
-          </div>
+          </Reveal>
 
           {/* Vocab row */}
-          <div className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
+          <Reveal y={20} delay={0.19} className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
             {levels.map((level) => (
               <div
                 key={`v-${level.level}`}
@@ -121,10 +122,10 @@ export default function LearningRoadmap() {
                 </p>
               </div>
             ))}
-          </div>
+          </Reveal>
 
           {/* Skills row */}
-          <div className="grid grid-cols-4 gap-px bg-primary/10">
+          <Reveal y={20} delay={0.26} className="grid grid-cols-4 gap-px bg-primary/10">
             {levels.map((level) => (
               <div
                 key={`s-${level.level}`}
@@ -141,7 +142,7 @@ export default function LearningRoadmap() {
                 </p>
               </div>
             ))}
-          </div>
+          </Reveal>
         </div>
 
         {/* Mobile — editorial list */}

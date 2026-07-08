@@ -55,10 +55,10 @@ export default function ProductShowcase() {
       <div className="relative max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16">
         {/* Section header — editorial style */}
         <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="mb-16 md:mb-24"
         >
           <div className="flex items-center gap-3 mb-6">
@@ -80,10 +80,10 @@ export default function ProductShowcase() {
             return (
               <motion.div
                 key={feature.title}
-                initial={{ opacity: 0 }}
-                whileInView={{ opacity: 1 }}
+                initial={{ opacity: 0, y: 22 }}
+                whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.08 }}
+                transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
                 className="group bg-primary p-8 md:p-10 hover:bg-[#111] transition-colors duration-300"
               >
                 {/* Number + Icon */}
