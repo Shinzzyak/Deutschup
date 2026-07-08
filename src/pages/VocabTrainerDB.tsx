@@ -3,6 +3,7 @@ import { supabase } from '../lib/supabase';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { Button } from '../components/ui/button';
+import { Pagination } from '../components/ui/pagination';
 import {
   RotateCcw,
   Brain,
@@ -112,6 +113,8 @@ export default function VocabTrainerDB() {
   const [vocabLoaded, setVocabLoaded] = useState(false);
   const [isFlipped, setIsFlipped] = useState(false);
   const [cardsReviewed, setCardsReviewed] = useState(0);
+  const [listPage, setListPage] = useState(1);
+  const PAGE_SIZE = 50;
 
   const [examplesLoading, setExamplesLoading] = useState(false);
   const [examples, setExamples] = useState<ExamplePair[] | null>(null);
@@ -175,6 +178,8 @@ export default function VocabTrainerDB() {
     }
   };
 
+  useEffect(() => { setListPage(1); }, [searchQuery, filter, sort, selectedLevel]);
+
   const filteredVocab = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
     let result = [...dbVocab];
@@ -207,6 +212,10 @@ export default function VocabTrainerDB() {
   const summary = useMemo(() => summarizeVocabulary(dbVocab, vocab), [dbVocab, vocab]);
   const filteredSummary = useMemo(() => summarizeVocabulary(filteredVocab, vocab), [filteredVocab, vocab]);
   const levelCountSummary = useMemo(() => summarizeLevelCounts(dbLevelCounts), [dbLevelCounts]);
+  const pagedVocab = useMemo(() => {
+    const start = (listPage - 1) * PAGE_SIZE;
+    return filteredVocab.slice(start, start + PAGE_SIZE);
+  }, [filteredVocab, listPage]);
 
   const dueCards = useMemo(() => {
     return filteredVocab
@@ -606,7 +615,7 @@ export default function VocabTrainerDB() {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredVocab.map((v) => {
+                  {pagedVocab.map((v) => {
                     const progress = vocab[v.id];
                     return (
                       <tr key={v.id} data-state={progress?.status === 'known' ? 'active' : undefined}>
@@ -625,7 +634,7 @@ export default function VocabTrainerDB() {
                         </td>
                         <td>
                           <span className={statusBadge(progress?.status)}>
-                            {progress?.status === 'known' ? 'KNOWN' : progress?.status === 'learning' ? 'LEARNING' : 'NEW'}
+                            {progress?.status === 'known' ? 'Dikuasai' : progress?.status === 'learning' ? 'Sedang Dipelajari' : 'Baru'}
                           </span>
                         </td>
                         <td className="text-right">
@@ -638,8 +647,12 @@ export default function VocabTrainerDB() {
                   })}
                 </tbody>
               </table>
-              {filteredVocab.length === 0 && (
-                <div className="py-20 text-center text-muted-foreground">No vocabulary found for these filters.</div>
+              {filteredVocab.length === 0 ? (
+                <div className="py-20 text-center text-muted-foreground">Tidak ada kosakata untuk filter ini.</div>
+              ) : (
+                <div className="p-4 flex justify-center border-t border-border">
+                  <Pagination page={listPage} pageCount={Math.max(1, Math.ceil(filteredVocab.length / PAGE_SIZE))} onPageChange={setListPage} />
+                </div>
               )}
             </div>
           </motion.section>
