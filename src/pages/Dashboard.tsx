@@ -9,11 +9,12 @@
 import { generateReportPDF } from '../lib/pdf-report';
 import { supabase } from '../lib/supabase';
 import { resolveInternalId } from '../lib/clerk/identity';
- import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock, Flame, Star, Brain, GraduationCap, Sparkles, Medal, TrendingUp, BarChart3, Award } from 'lucide-react';
+ import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock, Flame, Star, Brain, GraduationCap, Sparkles, Medal, TrendingUp, BarChart3, Award, Database, Layers } from 'lucide-react';
  import { cn } from '../lib/utils';
  import { Progress } from '../components/ui/progress';
  import { Button } from '../components/ui/button';
 import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
+import { LEVELS, summarizeLevelCounts, type CefrLevel } from '../lib/vocabStats';
 
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress, streak, lastPracticeDate } = useProgressStore();
@@ -23,12 +24,39 @@ export default function Dashboard() {
   const [exporting, setExporting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
+  const [dbLevelCounts, setDbLevelCounts] = useState<Partial<Record<CefrLevel, number>>>({});
+  const [dbCountsLoading, setDbCountsLoading] = useState(true);
 
   useEffect(() => {
     if (user?.id && !loading) {
       loadProgress(user.id);
     }
   }, [user?.id]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      setDbCountsLoading(true);
+      try {
+        const entries = await Promise.all(
+          LEVELS.map(async (level) => {
+            const { count, error } = await supabase
+              .from('curriculum_vocabulary')
+              .select('id', { count: 'exact', head: true })
+              .eq('level_id', level);
+            if (error) throw error;
+            return [level, count || 0] as const;
+          }),
+        );
+        if (!cancelled) setDbLevelCounts(Object.fromEntries(entries) as Partial<Record<CefrLevel, number>>);
+      } catch (e) {
+        console.error('Error loading curriculum vocabulary counts:', e);
+      } finally {
+        if (!cancelled) setDbCountsLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const currentLesson = useMemo(() => {
     const lastUnlocked = [...unlockedLessons].reverse().find(id => !completedLessons.includes(id));
@@ -127,6 +155,8 @@ export default function Dashboard() {
 
   const levelIndexMap = { 'A1': 0, 'A2': 1, 'B1': 2, 'B2': 3 };
   const userLevelIndex = levelIndexMap[currentLevel];
+  const dbSummary = useMemo(() => summarizeLevelCounts(dbLevelCounts), [dbLevelCounts]);
+  const currentLevelDbWords = dbSummary.byLevel[currentLevel as CefrLevel]?.total || 0;
 
   // SHOW SKELETON AFTER ALL HOOKS (Rules of Hooks compliance)
   if (loading) {
@@ -276,6 +306,40 @@ export default function Dashboard() {
               </Link>
             </div>
           </div>
+        )}
+
+        {/* SECTION B0: DATABASE COVERAGE */}
+        {!loading && (
+          <section className="st-card p-4 md:p-5">
+            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
+                  <Database className="w-4 h-4" />
+                  Curriculum Database
+                </div>
+                <h2 className="text-xl md:text-2xl font-black tracking-tight">{dbCountsLoading ? 'Syncing vocabulary...' : `${dbSummary.total.toLocaleString('id-ID')} vocabulary rows live`}</h2>
+                <p className="text-sm text-muted-foreground">Dashboard sekarang aware ke database baru. Level aktif {currentLevel} punya {currentLevelDbWords.toLocaleString('id-ID')} kata di `curriculum_vocabulary`.</p>
+              </div>
+              <Link to="/vocab">
+                <Button variant="outline" className="w-full lg:w-auto">
+                  <Layers className="w-4 h-4 mr-2" />
+                  Buka Vocab DB
+                </Button>
+              </Link>
+            </div>
+            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+              {LEVELS.map((level) => (
+                <div key={level} className="rounded-xl border border-border bg-muted/35 p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="font-black">{level}</span>
+                    <span className="st-badge st-badge--neutral">{dbSummary.byLevel[level].percentOfTotal}%</span>
+                  </div>
+                  <div className="mt-2 text-2xl font-black">{dbCountsLoading ? '...' : dbSummary.byLevel[level].total.toLocaleString('id-ID')}</div>
+                  <div className="mt-3 st-progress"><span style={{ width: `${dbSummary.byLevel[level].percentOfTotal}%` }} className="bg-gradient-to-r from-amber-500 to-red-500" /></div>
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         {/* SECTION B: STATS GRID */}

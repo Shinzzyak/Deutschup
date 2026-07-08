@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import type { User } from '@supabase/supabase-js';
 import { supabase, dbProxy } from '../lib/supabase';
 import { resolveInternalId } from '../lib/clerk/identity';
+import { isClerkEnabled } from '../lib/clerk/canary';
 import { captureAuth } from './debugStore';
 
 export interface TierData {
@@ -86,6 +87,10 @@ function loadCachedUser(): User | null {
   }
 }
 
+function shouldUseLocalAuthCacheForE2E(): boolean {
+  return !isClerkEnabled() && import.meta.env.VITE_ENABLE_LOCAL_AUTH_CACHE_FOR_E2E === 'true';
+}
+
 function parseProfileData(data: any): { tierData: TierData; profileData: ProfileData } {
   const now = Date.now();
   const isPro = data.subscription === 'pro' && data.pro_expires_at && new Date(data.pro_expires_at).getTime() > now;
@@ -162,7 +167,7 @@ async function fetchProfile(set: any, clerkUserId: string) {
 }
 
 export const useAuthStore = create<AuthState>()((set, get) => ({
-  user: null,
+  user: shouldUseLocalAuthCacheForE2E() ? loadCachedUser() : null,
   session: null,
   tierData: { tier: 'free' },
   profileData: {},
@@ -173,6 +178,10 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     if (user && (!currentUser || currentUser.id !== user.id)) {
       console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
       try { localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${user.id}`); } catch {}
+      set({ user, loading: false });
+      fetchProfile(set, user.id);
+    } else if (user && currentUser?.id === user.id && !get().profileLoaded) {
+      console.log('[AUTH_STATE] setUser same user — fetching missing profile:', { userId: user.id.substring(0, 8) });
       set({ user, loading: false });
       fetchProfile(set, user.id);
     } else if (!user && currentUser) {

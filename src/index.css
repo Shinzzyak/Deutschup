@@ -281,3 +281,260 @@ body {
   height: 1px;
   background: linear-gradient(90deg, transparent, hsl(214.3 31.8% 91.4%), transparent);
 }
+
+/* ============================================
+   Stisla-inspired DeutschUp Database UI
+   - Constraint-first tokens
+   - BEM-ish component classes
+   - Compact dashboard/card/table primitives
+   ============================================ */
+@layer components {
+  .st-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .st-page {
+      gap: 1.25rem;
+    }
+  }
+
+  .st-card {
+    position: relative;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: color-mix(in oklch, var(--card) 92%, transparent);
+    color: var(--foreground);
+    box-shadow:
+      0 1px 2px color-mix(in oklch, black 5%, transparent),
+      0 18px 50px -32px color-mix(in oklch, black 25%, transparent);
+  }
+
+  .st-card--hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    overflow: hidden;
+    border-color: color-mix(in oklch, white 10%, transparent);
+    background:
+      radial-gradient(circle at top right, color-mix(in oklch, var(--warning) 22%, transparent), transparent 34rem),
+      radial-gradient(circle at bottom left, color-mix(in oklch, var(--info) 16%, transparent), transparent 30rem),
+      linear-gradient(135deg, #0a0a0a, color-mix(in oklch, #0a0a0a 88%, var(--primary)));
+  }
+
+  @media (min-width: 768px) {
+    .st-card--hero {
+      padding: 2rem;
+    }
+  }
+
+  .st-flag-accent {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    display: flex;
+    height: 4px;
+    background: linear-gradient(90deg, #0a0a0a 0 33%, #ef4444 33% 66%, #f59e0b 66%);
+  }
+
+  .st-badge {
+    display: inline-flex;
+    min-height: 1.35rem;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 9999px;
+    padding: 0.18rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .st-badge--neutral {
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  .st-badge--primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .st-badge--success {
+    background: var(--success);
+    color: var(--success-foreground);
+  }
+
+  .st-badge--warning {
+    background: var(--warning);
+    color: var(--warning-foreground);
+  }
+
+  .st-badge--soft {
+    background: color-mix(in oklch, currentColor 12%, transparent);
+    border: 1px solid color-mix(in oklch, currentColor 22%, transparent);
+  }
+
+  .st-card--hero .st-badge--soft {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.24);
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .st-card--hero .st-badge--warning.st-badge--soft {
+    background: color-mix(in oklch, var(--warning) 35%, transparent);
+    border-color: color-mix(in oklch, var(--warning) 55%, transparent);
+    color: white;
+  }
+
+  .st-level-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: color-mix(in oklch, var(--card) 94%, transparent);
+    padding: 1rem;
+    color: var(--foreground);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .st-level-card:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklch, var(--primary) 22%, var(--border));
+    background: var(--card);
+  }
+
+  .st-level-card--active {
+    border-color: color-mix(in oklch, var(--primary) 48%, var(--border));
+    background: color-mix(in oklch, var(--primary) 7%, var(--card));
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--primary) 16%, transparent);
+  }
+
+  .st-progress {
+    display: block;
+    height: 0.45rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: color-mix(in oklch, var(--foreground) 8%, transparent);
+  }
+
+  .st-progress > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    transition: width 280ms ease;
+  }
+
+  .st-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .st-field > span {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .st-input {
+    width: 100%;
+    min-height: 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklch, var(--background) 60%, var(--card));
+    padding: 0.65rem 0.85rem;
+    color: var(--foreground);
+    outline: none;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .st-input:focus {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 18%, transparent);
+  }
+
+  .st-segmented {
+    display: inline-flex;
+    gap: 0.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--muted);
+    padding: 0.25rem;
+  }
+
+  .st-study-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in oklch, var(--primary) 18%, var(--border));
+    border-radius: var(--radius-2xl);
+    background:
+      radial-gradient(circle at top, color-mix(in oklch, var(--primary) 8%, transparent), transparent 22rem),
+      var(--card);
+    padding: 2rem;
+    box-shadow:
+      0 1px 2px color-mix(in oklch, black 4%, transparent),
+      0 24px 70px -40px color-mix(in oklch, black 28%, transparent);
+  }
+
+  .st-study-card--answer {
+    border-color: color-mix(in oklch, var(--primary) 48%, var(--border));
+    background:
+      radial-gradient(circle at bottom, color-mix(in oklch, var(--primary) 12%, transparent), transparent 24rem),
+      var(--card);
+  }
+
+  .st-note {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklch, var(--muted) 65%, transparent);
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .st-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--foreground);
+    text-align: left;
+  }
+
+  .st-table > thead > tr > th {
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in oklch, var(--muted) 70%, transparent);
+    padding: 0.85rem 1rem;
+    color: var(--muted-foreground);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .st-table > tbody > tr > td {
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+  }
+
+  .st-table > tbody > tr:hover > td {
+    background: color-mix(in oklch, var(--accent) 80%, transparent);
+  }
+
+  .st-table > tbody > tr[data-state="active"] > td {
+    background: color-mix(in oklch, var(--success) 8%, transparent);
+  }
+}

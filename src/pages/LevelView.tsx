@@ -4,9 +4,11 @@ import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
 import { courseIndex } from '../data/lessonIndex';
 import { Button } from '../components/ui/button';
-import { CheckCircle2, Lock, PlayCircle, ChevronRight, ArrowLeft, Loader2, BookOpen, Timer, Trophy, Star, Sparkles } from 'lucide-react';
+import { CheckCircle2, Lock, PlayCircle, ChevronRight, ArrowLeft, Loader2, BookOpen, Timer, Trophy, Star, Sparkles, Database } from 'lucide-react';
 import { cn } from '../lib/utils';
 import type { Level } from '../data/course';
+import { supabase } from '../lib/supabase';
+import type { CefrLevel } from '../lib/vocabStats';
 
 const levelMeta: Record<Level, { title: string; color: string; description: string; icon: string }> = {
   A1: { title: 'Pemula A1', color: 'bg-emerald-500', description: 'Dasar bahasa Jerman — salam, artikel, angka, kalimat sederhana.', icon: '🌱' },
@@ -40,10 +42,28 @@ export default function LevelView() {
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { unlockedLessons, completedLessons, currentLevel, loading } = useProgressStore();
+  const [dbWordCount, setDbWordCount] = useState<number | null>(null);
 
   const levelId = (id?.toUpperCase() || 'A1') as Level;
   const meta = levelMeta[levelId] || levelMeta.A1;
   const levelLessons = useMemo(() => courseIndex.filter(l => l.level === levelId), [levelId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    setDbWordCount(null);
+    (async () => {
+      const { count, error } = await supabase
+        .from('curriculum_vocabulary')
+        .select('id', { count: 'exact', head: true })
+        .eq('level_id', levelId as CefrLevel);
+      if (error) {
+        console.error('Error loading level vocabulary count:', error);
+        return;
+      }
+      if (!cancelled) setDbWordCount(count || 0);
+    })();
+    return () => { cancelled = true; };
+  }, [levelId]);
 
   const userLevelIndex = { A1: 0, A2: 1, B1: 2, B2: 3 }[currentLevel] ?? 0;
   const thisLevelIndex = { A1: 0, A2: 1, B1: 2, B2: 3 }[levelId] ?? 0;
@@ -88,16 +108,21 @@ export default function LevelView() {
                 <p className="text-white/50 text-sm mt-0.5">{meta.description}</p>
               </div>
             </div>
-            <div className="mt-5 flex items-center gap-5 text-sm">
-              <span className="inline-flex items-center gap-1.5 font-semibold">
-                <BookOpen className="w-4 h-4 opacity-50" />
+            <div className="mt-5 flex flex-wrap items-center gap-3 text-sm">
+              <span className="inline-flex items-center gap-1.5 font-semibold rounded-full border border-white/15 bg-white/10 px-3 py-1 text-white/80">
+                <BookOpen className="w-4 h-4 opacity-60" />
                 {completedCount}/{levelLessons.length}
-                <span className="opacity-40">Pelajaran</span>
+                <span className="opacity-50">Pelajaran</span>
               </span>
-              <span className="inline-flex items-center gap-1.5 font-semibold">
-                <Trophy className="w-4 h-4 opacity-50" />
+              <span className="inline-flex items-center gap-1.5 font-semibold rounded-full border border-white/15 bg-white/10 px-3 py-1 text-white/80">
+                <Trophy className="w-4 h-4 opacity-60" />
                 {completedCount * 50}
-                <span className="opacity-40">XP</span>
+                <span className="opacity-50">XP</span>
+              </span>
+              <span className="inline-flex items-center gap-1.5 font-semibold rounded-full border border-white/15 bg-white/10 px-3 py-1 text-white/80">
+                <Database className="w-4 h-4 opacity-60" />
+                {dbWordCount === null ? '...' : dbWordCount.toLocaleString('id-ID')}
+                <span className="opacity-50">DB words</span>
               </span>
             </div>
           </div>
@@ -118,6 +143,23 @@ export default function LevelView() {
           <p className="text-xs font-medium text-[#0a0a0a]/30">
             Selesaikan {levelMeta[currentLevel]?.title || 'level saat ini'} terlebih dahulu
           </p>
+        </div>
+      )}
+
+      {isLevelUnlocked && (
+        <div className="st-card mb-5 p-4 md:p-5">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+            <div>
+              <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
+                <Database className="w-4 h-4" />
+                Database Context
+              </div>
+              <p className="mt-1 text-sm text-muted-foreground">Level {levelId} sekarang terhubung ke {dbWordCount === null ? '...' : dbWordCount.toLocaleString('id-ID')} vocabulary rows dari `curriculum_vocabulary`.</p>
+            </div>
+            <Link to="/vocab" className="shrink-0">
+              <Button variant="outline" className="w-full sm:w-auto">Latih vocab {levelId}</Button>
+            </Link>
+          </div>
         </div>
       )}
 

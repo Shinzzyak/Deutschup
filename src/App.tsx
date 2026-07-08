@@ -7,6 +7,7 @@ import { captureRoute } from './stores/debugStore';
 import { Loader2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { ClerkProvider } from './lib/clerk';
+import { isClerkEnabled } from './lib/clerk/canary';
 import { useAuthSync } from './hooks/useAuthSync';
 import ClerkSignIn from './pages/ClerkSignIn';
 import ClerkSignUp from './pages/ClerkSignUp';
@@ -186,24 +187,7 @@ function OnboardingWrapper({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
-function AppContent() {
-  const { user, loading } = useAuthStore();
-  const { isLoaded: clerkLoaded, isSignedIn } = useAuth();
-  
-  // Call useAuthSync here so it always runs (sets user when Clerk is ready)
-  useAuthSync();
-  
-  console.log('[ROUTE] App render:', { hasUser: !!user, loading, clerkLoaded, isSignedIn, pathname: window.location.pathname });
-
-  // Show loading while Clerk is initializing OR while signed in but user not set yet
-  if (!clerkLoaded || (isSignedIn && !user)) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
-      </div>
-    );
-  }
-
+function AuthenticatedShell({ user }: { user: unknown }) {
   return (
     <>{user ? (
       <AuthWrapper>
@@ -220,6 +204,39 @@ function AppContent() {
       <PublicRoutes />
     )}</>
   );
+}
+
+function ClerkAppContent() {
+  const { user, loading } = useAuthStore();
+  const { isLoaded: clerkLoaded, isSignedIn } = useAuth();
+
+  // Call useAuthSync here so it always runs (sets user when Clerk is ready)
+  useAuthSync();
+
+  console.log('[ROUTE] App render:', { hasUser: !!user, loading, clerkLoaded, isSignedIn, pathname: window.location.pathname });
+
+  // Show loading while Clerk is initializing OR while signed in but user not set yet
+  if (!clerkLoaded || (isSignedIn && !user)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+      </div>
+    );
+  }
+
+  return <AuthenticatedShell user={isSignedIn ? user : null} />;
+}
+
+function AppContent() {
+  const { user, loading } = useAuthStore();
+
+  if (isClerkEnabled()) {
+    return <ClerkAppContent />;
+  }
+
+  console.log('[ROUTE] App render:', { hasUser: !!user, loading, clerkLoaded: true, isSignedIn: !!user, pathname: window.location.pathname });
+
+  return <AuthenticatedShell user={user} />;
 }
 
 export default function App() {
