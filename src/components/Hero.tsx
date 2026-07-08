@@ -10,7 +10,7 @@ export default function Hero() {
     <section className="relative min-h-[92vh] flex items-center bg-[#f5f0eb] overflow-hidden">
       {/* German flag — bold vertical stripe on the left */}
       <div className="absolute left-0 top-0 bottom-0 w-1.5 flex flex-col">
-        <div className="flex-1 bg-[#0a0a0a]" />
+        <div className="flex-1 bg-primary" />
         <div className="flex-1 bg-[#8b2500]" />
         <div className="flex-1 bg-[#c8956c]" />
       </div>
@@ -35,7 +35,7 @@ export default function Hero() {
             >
               {/* Top label — editorial style */}
               <div className="flex items-center gap-3 mb-8">
-                <div className="h-px w-12 bg-[#0a0a0a]" />
+                <div className="h-px w-12 bg-primary" />
                 <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/60">
                   Plattform für Deutschlernen
                 </span>
@@ -56,7 +56,7 @@ export default function Hero() {
               <div className="flex flex-col sm:flex-row gap-4 mb-12">
                 <Button
                   onClick={loginWithGoogle}
-                  className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb] text-base px-10 py-6  font-bold tracking-wide transition-all group"
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground text-base px-10 py-6  font-bold tracking-wide transition-all group"
                 >
                   Mulai Gratis
                   <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
@@ -91,7 +91,7 @@ export default function Hero() {
               className="relative"
             >
               {/* Chat card — NOT glass, sharp editorial style */}
-              <div className="glass-card p-6 sm:p-8">
+              <div className="st-card p-6 sm:p-8">
                 {/* Header */}
                 <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#0a0a0a]/10">
                   <div>
@@ -106,8 +106,8 @@ export default function Hero() {
                   <div className="bg-[#f5f0eb] border border-[#0a0a0a]/10 px-4 py-3 max-w-[85%]">
                     <p className="text-sm text-[#0a0a0a]">Wie sagt man &quot;terima kasih&quot; dalam bahasa Jerman?</p>
                   </div>
-                  <div className="bg-[#0a0a0a] px-4 py-3 max-w-[85%] ml-auto text-[#f5f0eb]">
-                    <p className="text-sm text-[#f5f0eb]">Man sagt <span className="font-bold text-[#c8956c]">&quot;Danke&quot;</span></p>
+                  <div className="bg-primary px-4 py-3 max-w-[85%] ml-auto text-primary-foreground">
+                    <p className="text-sm text-primary-foreground">Man sagt <span className="font-bold text-[#c8956c]">&quot;Danke&quot;</span></p>
                   </div>
                 </div>
 
@@ -119,12 +119,12 @@ export default function Hero() {
                       <div key={level} className="flex items-center gap-3">
                         <div className={`w-10 h-10 flex items-center justify-center text-xs font-bold border-2 ${
                           i === 0
-                            ? 'bg-[#0a0a0a] text-[#f5f0eb] border-[#0a0a0a]'
+                            ? 'bg-primary text-primary-foreground border-[#0a0a0a]'
                             : 'bg-transparent text-[#0a0a0a]/40 border-[#0a0a0a]/20'
                         }`}>
                           {level}
                         </div>
-                        {i < 3 && <div className={`w-6 h-px ${i === 0 ? 'bg-[#0a0a0a]' : 'bg-[#0a0a0a]/15'}`} />}
+                        {i < 3 && <div className={`w-6 h-px ${i === 0 ? 'bg-primary' : 'bg-primary/15'}`} />}
                       </div>
                     ))}
                   </div>
@@ -136,10 +136,10 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
-                className="absolute -bottom-6 -left-6 bg-[#8b2500] text-[#f5f0eb] px-6 py-4 "
+                className="absolute -bottom-6 -left-6 bg-[#8b2500] text-primary-foreground px-6 py-4 "
               >
                 <p className="text-2xl font-serif font-bold">1,600+</p>
-                <p className="text-xs uppercase tracking-wider text-[#f5f0eb]/70">Kosakata</p>
+                <p className="text-xs uppercase tracking-wider text-primary-foreground/70">Kosakata</p>
               </motion.div>
             </motion.div>
           </div>

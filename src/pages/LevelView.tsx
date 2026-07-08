@@ -85,10 +85,10 @@ export default function LevelView() {
       </Link>
 
       {/* ───────── Level Header — Editorial ───────── */}
-      <div className="bg-[#0a0a0a] p-6 md:p-8 mb-8 relative overflow-hidden">
+      <div className="bg-primary p-6 md:p-8 mb-8 relative overflow-hidden">
         {/* German flag accent */}
         <div className="absolute top-0 left-0 bottom-0 w-1.5 flex flex-col">
-          <div className="flex-1 bg-[#0a0a0a]" />
+          <div className="flex-1 bg-primary" />
           <div className="flex-1 bg-[#8b2500]" />
           <div className="flex-1 bg-[#c8956c]" />
         </div>
@@ -133,7 +133,7 @@ export default function LevelView() {
 
       {/* ───────── Locked overlay ───────── */}
       {!isLevelUnlocked && (
-        <div className="glass-card p-8 text-center">
+        <div className="st-card p-8 text-center">
           <div className="w-14 h-14 border-2 border-[#0a0a0a]/15 flex items-center justify-center mx-auto mb-4">
             <Lock className="w-7 h-7 text-[#0a0a0a]/30" />
           </div>
@@ -199,8 +199,8 @@ export default function LevelView() {
                   "w-11 h-11 flex items-center justify-center font-bold text-sm shrink-0",
                   isCompleted ? "bg-[#2d8a4e]/10 text-[#2d8a4e]"
                   : isUnlocked && isCheckpoint ? "bg-[#c8956c]/10 text-[#c8956c]"
-                  : isUnlocked ? "bg-[#0a0a0a]/5 text-[#0a0a0a]"
-                  : "bg-[#0a0a0a]/5 text-[#0a0a0a]/20"
+                  : isUnlocked ? "bg-primary/5 text-[#0a0a0a]"
+                  : "bg-primary/5 text-[#0a0a0a]/20"
                 )}>
                   {isCompleted ? <CheckCircle2 className="w-5 h-5" />
                   : isCheckpoint ? <Sparkles className="w-5 h-5" />
@@ -244,7 +244,7 @@ export default function LevelView() {
           <p className="text-sm text-[#0a0a0a]/50 mb-4">
             Kamu telah menyelesaikan semua pelajaran di level {levelId}!
           </p>
-          <Button onClick={() => navigate('/')} className="bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 font-bold h-11 px-6">
+          <Button onClick={() => navigate('/')} className="bg-primary hover:bg-primary/90 font-bold h-11 px-6">
             Kembali ke Dashboard
           </Button>
         </div>

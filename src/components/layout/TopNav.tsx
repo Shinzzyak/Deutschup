@@ -68,7 +68,7 @@ export default function TopNav() {
             {/* Logo */}
             <Link to="/" className="flex items-center space-x-2.5 shrink-0 group">
               <div className="flex flex-col w-2 h-4">
-                <div className="flex-1 bg-[#0a0a0a]" />
+                <div className="flex-1 bg-primary" />
                 <div className="flex-1 bg-[#8b2500]" />
                 <div className="flex-1 bg-[#c8956c]" />
               </div>
@@ -85,8 +85,8 @@ export default function TopNav() {
                     to={item.href}
                     className={`relative flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors ${
                       active
-                        ? 'text-[#0a0a0a] bg-[#0a0a0a]/5'
-                        : 'text-[#0a0a0a]/50 hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5'
+                        ? 'text-[#0a0a0a] bg-primary/5'
+                        : 'text-[#0a0a0a]/50 hover:text-[#0a0a0a] hover:bg-primary/5'
                     }`}
                   >
                     <item.icon className="w-4 h-4" />
@@ -112,7 +112,7 @@ export default function TopNav() {
 
             {/* Right section */}
             <div className="flex items-center gap-1.5">
-              <button onClick={() => setSearchOpen(true)} className="p-2 text-[#0a0a0a]/40 hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5 transition-colors" aria-label="Cari materi">
+              <button onClick={() => setSearchOpen(true)} className="p-2 text-[#0a0a0a]/40 hover:text-[#0a0a0a] hover:bg-primary/5 transition-colors" aria-label="Cari materi">
                 <Search className="w-4 h-4" />
               </button>
 
@@ -127,8 +127,8 @@ export default function TopNav() {
               </div>
 
               <div className="relative" ref={userMenuRef}>
-                <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1 hover:bg-[#0a0a0a]/5 transition-colors" aria-label="Menu profil">
-                  <div className="w-8 h-8 bg-[#0a0a0a]/10 flex items-center justify-center overflow-hidden">
+                <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1 hover:bg-primary/5 transition-colors" aria-label="Menu profil">
+                  <div className="w-8 h-8 bg-primary/10 flex items-center justify-center overflow-hidden">
                     {profileData?.avatar_url ? (
                       <img src={profileData.avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
@@ -145,10 +145,10 @@ export default function TopNav() {
                       <p className="text-xs text-[#0a0a0a]/40 truncate mt-0.5">{user?.email}</p>
                     </div>
                     <div className="p-1.5">
-                      <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#0a0a0a]/70 hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5 transition-colors">
+                      <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#0a0a0a]/70 hover:text-[#0a0a0a] hover:bg-primary/5 transition-colors">
                         <User className="w-4 h-4 text-[#0a0a0a]/30" /> Profil
                       </Link>
-                      <Link to="/pricing" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#0a0a0a]/70 hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5 transition-colors">
+                      <Link to="/pricing" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#0a0a0a]/70 hover:text-[#0a0a0a] hover:bg-primary/5 transition-colors">
                         <CreditCard className="w-4 h-4 text-[#0a0a0a]/30" /> Langganan
                       </Link>
                       <button onClick={() => { setShowUserMenu(false); logout(); }} className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-[#8b2500] hover:bg-[#8b2500]/5 transition-colors">

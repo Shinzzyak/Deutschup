@@ -146,7 +146,7 @@ export default function CheckpointView() {
       </Link>
 
       {/* Header */}
-      <div className="bg-[#0a0a0a] p-6 md:p-8 mb-8">
+      <div className="bg-primary p-6 md:p-8 mb-8">
         <div className="flex items-center space-x-3 mb-2">
           <Target className="w-8 h-8" />
           <div>
@@ -224,7 +224,7 @@ export default function CheckpointView() {
                   <Button
                     onClick={checkAnswer}
                     disabled={!selectedAnswer}
-                    className="w-full h-12  bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]"
+                    className="w-full h-12  bg-primary hover:bg-primary/90 text-primary-foreground"
                   >
                     Cek Jawaban
                   </Button>
@@ -279,7 +279,7 @@ export default function CheckpointView() {
             </Link>
             {passed && nextLevel && (
               <Link to={`/level/${nextLevel}`}>
-                <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]">
+                <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground">
                   Lanjut ke Level {nextLevel}
                 </Button>
               </Link>

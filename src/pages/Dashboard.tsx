@@ -244,10 +244,10 @@ export default function Dashboard() {
         )}
 
         {/* SECTION A: WELCOME HEADER */}
-        <header className="relative overflow-hidden bg-[#0a0a0a] p-6 md:p-8 rounded-lg">
+        <header className="relative overflow-hidden bg-primary p-6 md:p-8 rounded-lg">
           {/* German flag accent */}
           <div className="absolute top-0 left-0 right-0 h-1 flex">
-            <div className="flex-1 bg-[#0a0a0a]/70" />
+            <div className="flex-1 bg-primary/70" />
             <div className="flex-1 bg-red-500" />
             <div className="flex-1 bg-amber-400" />
           </div>
@@ -263,7 +263,7 @@ export default function Dashboard() {
                 <p className="text-blue-200 font-medium text-sm md:text-base">
                   {new Date().getHours() < 12 ? '🌅 Selamat Pagi' : new Date().getHours() < 18 ? '☀️ Selamat Siang' : '🌙 Selamat Malam'}, {user?.user_metadata?.full_name?.split(' ')[0] || 'Siswa'}!
                 </p>
-                <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-[#f5f0eb]">Pusat Belajar</h1>
+                <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-primary-foreground">Pusat Belajar</h1>
                 <div className="flex items-center gap-3 flex-wrap">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1  bg-[#f5f0eb]/15 text-sm font-semibold ">
                     <GraduationCap className="w-4 h-4" />
@@ -279,7 +279,7 @@ export default function Dashboard() {
               </div>
               
               <div className="flex flex-col items-start md:items-end w-full md:w-auto">
-                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2  bg-[#f5f0eb]/15 hover:bg-[#f5f0eb]/25 border-0 text-[#f5f0eb]  w-full md:w-auto">
+                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2  bg-[#f5f0eb]/15 hover:bg-[#f5f0eb]/25 border-0 text-primary-foreground  w-full md:w-auto">
                   {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
                   <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan'}</span>
                 </Button>
@@ -289,7 +289,7 @@ export default function Dashboard() {
                   </span>
                 )}
                 {pdfBlobUrl && (
-                  <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`} className="text-[12px] font-bold text-[#f5f0eb] mt-2 text-left md:text-right underline underline-offset-2 hover:text-blue-100 transition-colors" aria-label="Unduh laporan PDF secara manual">
+                  <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`} className="text-[12px] font-bold text-primary-foreground mt-2 text-left md:text-right underline underline-offset-2 hover:text-blue-100 transition-colors" aria-label="Unduh laporan PDF secara manual">
                     Klik di sini untuk mengunduh manual ➔
                   </a>
                 )}
@@ -308,13 +308,13 @@ export default function Dashboard() {
 
         {/* EMPTY STATE */}
         {!loading && completedLessons.length === 0 && (
-          <div className="glass-card rounded-lg p-8 text-center">
+          <div className="st-card rounded-lg p-8 text-center">
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
             <div className="flex justify-center">
               <Link to="/lesson/a1-1">
-                <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb] px-8 py-3 font-bold text-lg">
+                <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground px-8 py-3 font-bold text-lg">
                   <PlayCircle className="w-5 h-5 mr-2" /> Mulai Pelajaran Pertama
                 </Button>
               </Link>
@@ -360,31 +360,31 @@ export default function Dashboard() {
         {!loading && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
 
-            <div className="relative overflow-hidden  glass-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  st-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-amber-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11  bg-[#c8956c] flex items-center justify-center mb-2.5  ">
-                  <Zap className="w-5 h-5 text-[#f5f0eb]" />
+                  <Zap className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-[#0a0a0a]">{xp}</span>
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  glass-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  st-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-blue-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
-                  <BookOpen className="w-5 h-5 text-[#f5f0eb]" />
+                <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
+                  <BookOpen className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-[#0a0a0a]">{learningStats.totalVocab}</span>
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  glass-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
+            <div className="relative overflow-hidden  st-card rounded-lg p-4 md:p-5 flex flex-col card-hover">
               <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-emerald-400/10 blur-xl" />
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11 bg-[#0a0a0a] flex items-center justify-center mb-2.5">
-                  <CheckCircle2 className="w-5 h-5 text-[#f5f0eb]" />
+                <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
+                  <CheckCircle2 className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <span className="text-2xl md:text-3xl font-black text-green-500">{completedLessons.length}</span>
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
@@ -406,10 +406,10 @@ export default function Dashboard() {
 
         {/* SECTION C: CONTINUE LEARNING */}
         {!loading && currentLesson && currentLessonRoute && (
-          <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 rounded-lg">
+          <div className="relative overflow-hidden  bg-primary p-6 md:p-8 rounded-lg">
             {/* German flag accent */}
             <div className="absolute top-0 left-0 right-0 h-1 flex">
-              <div className="flex-1 bg-[#0a0a0a]/70" />
+              <div className="flex-1 bg-primary/70" />
               <div className="flex-1 bg-red-500" />
               <div className="flex-1 bg-amber-400" />
             </div>
@@ -426,8 +426,8 @@ export default function Dashboard() {
               </div>
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#f5f0eb]">{currentLesson.title}</h3>
-                  <p className="text-[#f5f0eb]/60 text-sm">{currentLessonContext}</p>
+                  <h3 className="text-xl md:text-2xl font-bold text-primary-foreground">{currentLesson.title}</h3>
+                  <p className="text-primary-foreground/60 text-sm">{currentLessonContext}</p>
                 </div>
                 <Link to={currentLessonRoute}>
                   <Button className="bg-[#c8956c] hover:bg-[#b8854c] text-[#0a0a0a] px-6 py-3 font-bold transition-all hover:scale-105">
@@ -443,12 +443,12 @@ export default function Dashboard() {
         {/* SECTION D: GAMIFICATION */}
         {!loading && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden  glass-card rounded-lg p-5 md:p-6 card-hover">
+            <div className="relative overflow-hidden  st-card rounded-lg p-5 md:p-6 card-hover">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-orange-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
                   <div className="w-9 h-9  bg-[#8b2500] flex items-center justify-center  ">
-                    <Flame className="w-5 h-5 text-[#f5f0eb]" />
+                    <Flame className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <h3 className="text-lg font-bold text-[#0a0a0a]">Streak Belajar</h3>
                 </div>
@@ -467,7 +467,7 @@ export default function Dashboard() {
                     </div>
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                        <div key={day} className={cn("w-6 h-6  flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-[#8b2500] text-[#f5f0eb] " : "bg-[#0a0a0a]/5 text-[#0a0a0a]/40")}>
+                        <div key={day} className={cn("w-6 h-6  flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-[#8b2500] text-primary-foreground " : "bg-primary/5 text-[#0a0a0a]/40")}>
                           {day}
                         </div>
                       ))}
@@ -477,12 +477,12 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="relative overflow-hidden  glass-card rounded-lg p-5 md:p-6 card-hover">
+            <div className="relative overflow-hidden  st-card rounded-lg p-5 md:p-6 card-hover">
               <div className="absolute -right-8 -top-8 w-32 h-32  bg-indigo-400/8 blur-2xl" />
               <div className="relative z-10">
                 <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-9 h-9  bg-[#0a0a0a] flex items-center justify-center  ">
-                    <BarChart3 className="w-5 h-5 text-[#f5f0eb]" />
+                  <div className="w-9 h-9  bg-primary flex items-center justify-center  ">
+                    <BarChart3 className="w-5 h-5 text-primary-foreground" />
                   </div>
                   <h3 className="text-lg font-bold text-[#0a0a0a]">Statistik Belajar</h3>
                 </div>
@@ -512,12 +512,12 @@ export default function Dashboard() {
 
         {/* SECTION E: ACHIEVEMENTS */}
         {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden  glass-card rounded-lg p-5 md:p-6">
+          <div className="relative overflow-hidden  st-card rounded-lg p-5 md:p-6">
             <div className="absolute -right-8 -top-8 w-32 h-32  bg-amber-400/8 blur-2xl" />
             <div className="relative z-10">
               <div className="flex items-center space-x-2 mb-5">
                 <div className="w-9 h-9  bg-[#c8956c] flex items-center justify-center  ">
-                  <Award className="w-5 h-5 text-[#f5f0eb]" />
+                  <Award className="w-5 h-5 text-primary-foreground" />
                 </div>
                 <h3 className="text-lg font-bold text-[#0a0a0a]">Pencapaian</h3>
               </div>
@@ -526,8 +526,8 @@ export default function Dashboard() {
                   const Icon = achievement.icon;
                   return (
                     <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 border transition-all card-hover rounded-md", achievement.unlocked ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-amber-200/40" : "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50")}>
-                      <div className={cn("w-12 h-12  flex items-center justify-center mb-2", achievement.unlocked ? "bg-[#c8956c]  " : "bg-[#0a0a0a]/5")}>
-                        <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-[#f5f0eb]" : "text-[#0a0a0a]/40")} />
+                      <div className={cn("w-12 h-12  flex items-center justify-center mb-2", achievement.unlocked ? "bg-[#c8956c]  " : "bg-primary/5")}>
+                        <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-primary-foreground" : "text-[#0a0a0a]/40")} />
                       </div>
                       <p className="text-sm font-bold text-[#0a0a0a]">{achievement.title}</p>
                       <p className="text-[10px] text-[#0a0a0a]/50 mt-1">{achievement.description}</p>
@@ -561,7 +561,7 @@ export default function Dashboard() {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-4">
                       <Link to={isLevelUnlocked ? `/level/${lvl.id}` : '#'}>
-                        <div className={cn("w-14 h-14  flex items-center justify-center bg-[#0a0a0a] text-[#f5f0eb] font-bold text-2xl  transition-transform hover:scale-105", lvl.color)}>
+                        <div className={cn("w-14 h-14  flex items-center justify-center bg-primary text-primary-foreground font-bold text-2xl  transition-transform hover:scale-105", lvl.color)}>
                           {lvl.id}
                         </div>
                       </Link>
@@ -601,7 +601,7 @@ export default function Dashboard() {
                           className={cn(
                             "flex flex-col p-5 border transition-all duration-200 relative overflow-hidden card-hover rounded-lg",
                             isCompleted ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-emerald-200/40" :
-                            isUnlocked ? "glass-card border-blue-200/40  " :
+                            isUnlocked ? "st-card border-blue-200/40  " :
                             "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50 cursor-not-allowed"
                           )}
                           aria-label={`${isCheckpoint ? 'Checkpoint' : 'Pelajaran'}: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}

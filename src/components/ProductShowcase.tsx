@@ -42,7 +42,7 @@ const features = [
 
 export default function ProductShowcase() {
   return (
-    <section className="py-20 md:py-32 bg-[#0a0a0a] relative" id="fitur">
+    <section className="py-20 md:py-32 bg-primary relative" id="fitur">
       {/* Grid texture */}
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
@@ -84,14 +84,14 @@ export default function ProductShowcase() {
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                className="group bg-[#0a0a0a] p-8 md:p-10 hover:bg-[#111] transition-colors duration-300"
+                className="group bg-primary p-8 md:p-10 hover:bg-[#111] transition-colors duration-300"
               >
                 {/* Number + Icon */}
                 <div className="flex items-center justify-between mb-6">
-                  <span className="font-serif text-3xl font-bold text-[#f5f0eb]/10 group-hover:text-[#c8956c]/30 transition-colors">
+                  <span className="font-serif text-3xl font-bold text-primary-foreground/10 group-hover:text-[#c8956c]/30 transition-colors">
                     {feature.number}
                   </span>
-                  <Icon className="w-5 h-5 text-[#f5f0eb]/30 group-hover:text-[#c8956c] transition-colors" />
+                  <Icon className="w-5 h-5 text-primary-foreground/30 group-hover:text-[#c8956c] transition-colors" />
                 </div>
 
                 {/* Title */}
@@ -100,7 +100,7 @@ export default function ProductShowcase() {
                 </h3>
 
                 {/* Description */}
-                <p className="text-sm text-[#f5f0eb]/40 leading-relaxed group-hover:text-[#f5f0eb]/60 transition-colors">
+                <p className="text-sm text-primary-foreground/40 leading-relaxed group-hover:text-primary-foreground/60 transition-colors">
                   {feature.description}
                 </p>
 

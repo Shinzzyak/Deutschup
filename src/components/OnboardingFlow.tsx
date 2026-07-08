@@ -15,9 +15,9 @@ type Step = 'welcome' | 'level' | 'goal';
 
 const levels = [
   { id: 'A1', label: 'A1 — Pemula', desc: 'Baru mulai belajar Jerman', color: 'bg-[#2d8a4e]/10 text-green-700 border-[#2d8a4e]/20' },
-  { id: 'A2', label: 'A2 — Dasar', desc: 'Bisa percakapan sederhana', color: 'bg-[#0a0a0a]/5 text-blue-700 border-[#0a0a0a]/20' },
+  { id: 'A2', label: 'A2 — Dasar', desc: 'Bisa percakapan sederhana', color: 'bg-primary/5 text-blue-700 border-[#0a0a0a]/20' },
   { id: 'B1', label: 'B1 — Menengah', desc: 'Bisa percakapan sehari-hari', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  { id: 'B2', label: 'B2 — Lanjut', desc: 'Bisa diskusi kompleks', color: 'bg-[#0a0a0a]/5 text-purple-700 border-[#0a0a0a]/20' },
+  { id: 'B2', label: 'B2 — Lanjut', desc: 'Bisa diskusi kompleks', color: 'bg-primary/5 text-purple-700 border-[#0a0a0a]/20' },
 ];
 
 const goals = [
@@ -56,7 +56,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               className="text-center"
             >
               <div className="w-20 h-20 bg-[#c8956c] flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-10 h-10 text-[#f5f0eb]" />
+                <Sparkles className="w-10 h-10 text-primary-foreground" />
               </div>
               <h1 className="text-3xl font-serif font-bold text-[#0a0a0a] mb-3">
                 Selamat Datang di Deutschup! 🇩🇪
@@ -67,7 +67,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               </p>
               <button
                 onClick={() => setStep('level')}
-                className="bg-[#0a0a0a] px-8 py-3.5 font-semibold text-lg hover:bg-[#0a0a0a]/90 transition-all flex items-center gap-2 mx-auto text-[#f5f0eb]"
+                className="bg-primary px-8 py-3.5 font-semibold text-lg hover:bg-primary/90 transition-all flex items-center gap-2 mx-auto text-primary-foreground"
               >
                 Mulai <ChevronRight className="w-5 h-5" />
               </button>
@@ -117,8 +117,8 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 disabled={!selectedLevel}
                 className={`w-full py-3.5 font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
                   selectedLevel
-                    ? 'bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]'
-                    : 'bg-[#0a0a0a]/5 text-[#0a0a0a]/40 cursor-not-allowed'
+                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                    : 'bg-primary/5 text-[#0a0a0a]/40 cursor-not-allowed'
                 }`}
               >
                 Lanjut <ChevronRight className="w-5 h-5" />
@@ -169,8 +169,8 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 disabled={!selectedGoal}
                 className={`w-full py-3.5 font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
                   selectedGoal
-                    ? 'bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]'
-                    : 'bg-[#0a0a0a]/5 text-[#0a0a0a]/40 cursor-not-allowed'
+                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
+                    : 'bg-primary/5 text-[#0a0a0a]/40 cursor-not-allowed'
                 }`}
               >
                 Selesai <ChevronRight className="w-5 h-5" />
@@ -185,8 +185,8 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
             <div
               key={s}
               className={`w-2 h-2 transition-all ${
-                s === step ? 'bg-[#0a0a0a] w-6' : 
-                ['welcome', 'level', 'goal'].indexOf(step) > i ? 'bg-[#c8956c]/80' : 'bg-[#0a0a0a]/20'
+                s === step ? 'bg-primary w-6' : 
+                ['welcome', 'level', 'goal'].indexOf(step) > i ? 'bg-[#c8956c]/80' : 'bg-primary/20'
               }`}
             />
           ))}

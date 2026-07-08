@@ -7,7 +7,7 @@ export default function CTASection() {
   const { loginWithGoogle } = useAuthStore();
 
   return (
-    <section className="py-20 md:py-32 bg-[#0a0a0a] relative overflow-hidden">
+    <section className="py-20 md:py-32 bg-primary relative overflow-hidden">
       {/* Grid texture */}
       <div
         className="absolute inset-0 opacity-[0.04] pointer-events-none"
@@ -39,7 +39,7 @@ export default function CTASection() {
             <span className="italic text-[#c8956c]">Bahasa Jerman?</span>
           </h2>
 
-          <p className="text-lg text-[#f5f0eb]/40 leading-relaxed mb-10 max-w-xl font-light">
+          <p className="text-lg text-primary-foreground/40 leading-relaxed mb-10 max-w-xl font-light">
             Mulai perjalanan dari A1 hingga B2 dengan bantuan AI Tutor DeutschUp. Gratis selamanya.
           </p>
 
@@ -54,7 +54,7 @@ export default function CTASection() {
             </Button>
             <a
               href="#fitur"
-              className="inline-flex items-center justify-center bg-[#0a0a0a]/60 hover:bg-[#0a0a0a] font-semibold text-base px-10 py-6 border border-white/20 hover:border-white/40  transition-all"
+              className="inline-flex items-center justify-center bg-primary/60 hover:bg-primary font-semibold text-base px-10 py-6 border border-white/20 hover:border-white/40  transition-all"
             >
               Pelajari Lebih Lanjut
             </a>

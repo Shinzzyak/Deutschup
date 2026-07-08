@@ -92,7 +92,7 @@ export default function Profile() {
   if (!user) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center p-6">
-        <div className="w-20 h-20 glass-card/10 flex items-center justify-center mb-2">
+        <div className="w-20 h-20 st-card/10 flex items-center justify-center mb-2">
           <User className="w-10 h-10 text-muted-foreground" />
         </div>
         <h2 className="text-xl font-bold">Sesi Berakhir</h2>
@@ -122,7 +122,7 @@ export default function Profile() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Column: Identity Card */}
         <div className="lg:col-span-1">
-          <div className="glass-card p-8 sticky top-24 overflow-hidden">
+          <div className="st-card p-8 sticky top-24 overflow-hidden">
             <div className="flex flex-col items-center text-center">
               {/* Avatar with upload overlay */}
               <div className="relative mb-6 group">
@@ -167,7 +167,7 @@ export default function Profile() {
               <div className="w-full space-y-3">
                 <div className="flex items-center justify-between p-3 bg-[#f5f0eb] border border-[#0a0a0a]/10">
                   <span className="text-xs font-medium text-[#0a0a0a]/50">Status Akun</span>
-                  <span className={`text-xs font-bold px-2 py-1 ${activePro ? 'bg-[#c8956c]/20 text-[#c8956c]' : 'bg-[#0a0a0a]/5 text-[#0a0a0a]/50'}`}>
+                  <span className={`text-xs font-bold px-2 py-1 ${activePro ? 'bg-[#c8956c]/20 text-[#c8956c]' : 'bg-primary/5 text-[#0a0a0a]/50'}`}>
                     {activePro ? 'Pro' : 'Free'}
                   </span>
                 </div>
@@ -183,7 +183,7 @@ export default function Profile() {
         {/* Right Column: Forms & Details */}
         <div className="lg:col-span-2 space-y-8">
           {/* Account Settings Card */}
-          <div className="glass-card p-8 relative overflow-hidden">
+          <div className="st-card p-8 relative overflow-hidden">
             <div className="flex items-center gap-3 mb-8">
               <div className="p-2 bg-[#c8956c]/10">
                 <User className="w-5 h-5 text-[#c8956c]" />
@@ -238,7 +238,7 @@ export default function Profile() {
           </div>
 
           {/* Subscription Perks Card */}
-          <div className="glass-card p-8 relative overflow-hidden">
+          <div className="st-card p-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-5">
               <Zap className="w-32 h-32 text-[#0a0a0a]" />
             </div>
@@ -279,7 +279,7 @@ export default function Profile() {
                   <p className="text-sm text-[#0a0a0a]/60">Ingin membuka semua fitur?</p>
                   <Button 
                     variant="outline" 
-                    className="border-2 border-[#0a0a0a]/20 hover:bg-[#0a0a0a]/5 bg-transparent px-6 text-[#0a0a0a]"
+                    className="border-2 border-[#0a0a0a]/20 hover:bg-primary/5 bg-transparent px-6 text-[#0a0a0a]"
                     onClick={() => window.location.href = '/pricing'}
                   >
                     Upgrade Pro <ArrowRight className="w-4 h-4 ml-2" />
@@ -290,7 +290,7 @@ export default function Profile() {
           </div>
 
           {/* Support Card */}
-          <div className="glass-card p-8">
+          <div className="st-card p-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="p-2 bg-[#8b2500]/10">
                 <LifeBuoy className="w-5 h-5 text-[#8b2500]" />
@@ -316,7 +316,7 @@ export default function Profile() {
 
 function PerkItem({ icon: Icon, text, active }: { icon: any; text: string; active: boolean }) {
   return (
-    <div className={`flex items-center gap-3 p-4 transition-all ${active ? 'bg-[#8b2500]/5 border border-[#8b2500]/10' : 'bg-[#0a0a0a]/5 opacity-50 grayscale'}`}>
+    <div className={`flex items-center gap-3 p-4 transition-all ${active ? 'bg-[#8b2500]/5 border border-[#8b2500]/10' : 'bg-primary/5 opacity-50 grayscale'}`}>
       <Icon className={`w-5 h-5 ${active ? 'text-[#8b2500]' : 'text-[#0a0a0a]/40'}`} />
       <span className="text-sm font-medium text-[#0a0a0a]">{text}</span>
     </div>

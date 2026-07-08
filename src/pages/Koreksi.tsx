@@ -40,7 +40,7 @@ export default function Koreksi() {
         <p className="text-muted-foreground text-lg md:text-xl">Tuliskan kalimat bahasa Jermanmu, AI kami akan memeriksa tata bahasa dan strukturnya.</p>
       </div>
 
-      <div className="glass-panel p-6 md:p-8 mb-8">
+      <div className="st-card p-6 md:p-8 mb-8">
         <label className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
         <textarea
           value={input}
@@ -52,7 +52,7 @@ export default function Koreksi() {
           onClick={handleKoreksi} 
           disabled={loading || !input.trim()}
           size="lg" 
-          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb]"
+          className="w-full sm:w-auto h-14 px-8  text-lg font-bold bg-primary hover:bg-primary/90 text-primary-foreground"
         >
           {loading ? (
              <><Loader2 className="w-5 h-5 mr-3 animate-spin"/> Menganalisis...</>

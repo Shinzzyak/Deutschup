@@ -12,9 +12,9 @@ const typeLabels = {
 };
 
 const typeColors = {
-  vocabulary: 'bg-[#0a0a0a]/5 text-blue-700',
+  vocabulary: 'bg-primary/5 text-blue-700',
   lesson: 'bg-[#2d8a4e]/10 text-green-700',
-  verb: 'bg-[#0a0a0a]/5 text-purple-700',
+  verb: 'bg-primary/5 text-purple-700',
 };
 
 export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -125,7 +125,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                   <button
                     key={i}
                     onClick={() => setQuery(r)}
-                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-[#0a0a0a]/5 text-left text-sm text-[#0a0a0a]/70"
+                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-primary/5 text-left text-sm text-[#0a0a0a]/70"
                   >
                     <Clock className="w-4 h-4 text-[#0a0a0a]/40" />
                     {r}
@@ -152,13 +152,13 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                             onClick={() => handleSelect(item)}
                             className={cn(
                               "w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors",
-                              idx === selectedIndex ? "bg-[#c8956c]/10" : "hover:bg-[#0a0a0a]/5"
+                              idx === selectedIndex ? "bg-[#c8956c]/10" : "hover:bg-primary/5"
                             )}
                           >
                             {item.article && (
                               <span className={cn(
-                                "text-xs font-bold px-1.5 py-0.5 rounded bg-[#0a0a0a] text-[#f5f0eb]",
-                                item.article === 'der' ? 'bg-[#0a0a0a]/70' :
+                                "text-xs font-bold px-1.5 py-0.5 rounded bg-primary text-primary-foreground",
+                                item.article === 'der' ? 'bg-primary/70' :
                                 item.article === 'die' ? 'bg-[#8b2500]' : 'bg-[#2d8a4e]'
                               )}>
                                 {item.article}

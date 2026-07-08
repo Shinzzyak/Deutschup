@@ -166,12 +166,12 @@ export default function VerbTrainer() {
             
             <div className="space-y-4">
               {filteredVocab.map(v => (
-                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-[#f5f0eb] border border-[#0a0a0a]/10 hover:bg-[#0a0a0a]/3 transition-colors">
+                <div key={v.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 bg-[#f5f0eb] border border-[#0a0a0a]/10 hover:bg-primary/3 transition-colors">
                   <div>
                     <div className="flex items-center space-x-3 mb-1">
                       {v.article && (
                         <span className={cn(
-                          "text-xs font-bold px-2 py-1 text-[#f5f0eb]",
+                          "text-xs font-bold px-2 py-1 text-primary-foreground",
                           articleColors[v.article] || 'bg-gray-500'
                         )}>{v.article}</span>
                       )}
@@ -202,7 +202,7 @@ export default function VerbTrainer() {
           </div>
         )}
         {(searchTerm && filteredVerbs.map(verb => (
-            <div key={verb.infinitive} className="glass-card overflow-hidden">
+            <div key={verb.infinitive} className="st-card overflow-hidden">
               <div className="p-6 md:p-8 border-b border-[#0a0a0a]/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center space-x-3 mb-1">

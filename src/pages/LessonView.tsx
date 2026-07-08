@@ -50,7 +50,7 @@ function processTextNodeWithGlossary(text: string): React.ReactNode[] {
               {part}
             </span>
           </TooltipTrigger>
-          <TooltipContent className="max-w-xs text-sm bg-[#0a0a0a] z-50 text-[#f5f0eb]">
+          <TooltipContent className="max-w-xs text-sm bg-primary z-50 text-primary-foreground">
             <p className="font-bold mb-1">{term}</p>
             <p>{grammarGlossary[term]}</p>
           </TooltipContent>
@@ -263,7 +263,7 @@ export default function LessonView() {
         </TabsList>
 
         <TabsContent value="materi" className="space-y-8 animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
-          <div className="glass-card p-6 md:p-8 ">
+          <div className="st-card p-6 md:p-8 ">
             <h2 className="text-xl font-bold mb-4 flex items-center space-x-2">
               <Brain className="w-6 h-6 text-indigo-500" />
               <span>Tata Bahasa (Grammar)</span>
@@ -366,7 +366,7 @@ export default function LessonView() {
           )}
 
           {lesson.vocabulary && lesson.vocabulary.length > 0 && (
-            <div className="glass-card p-6 md:p-8 ">
+            <div className="st-card p-6 md:p-8 ">
               <h2 className="text-xl font-bold mb-6 flex items-center space-x-2">
                 <Star className="w-6 h-6 text-yellow-500" />
                 <span>Kosakata Utama</span>
@@ -445,7 +445,7 @@ export default function LessonView() {
 
           <Button 
             onClick={startQuiz} 
-            className="w-full h-14 text-lg font-bold bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]"
+            className="w-full h-14 text-lg font-bold bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground"
           >
             Mulai Latihan <ChevronRight className="w-5 h-5 ml-2" />
           </Button>
@@ -453,7 +453,7 @@ export default function LessonView() {
 
         <TabsContent value="latihan" className="animate-in fade-in-50 slide-in-from-bottom-2 duration-300">
           {quizFinished ? (
-            <div className="glass-card p-10  text-center space-y-6">
+            <div className="st-card p-10  text-center space-y-6">
               <div className="w-24 h-24 bg-green-100  flex items-center justify-center mx-auto mb-4">
                 <Trophy className="w-12 h-12 text-green-500" />
               </div>
@@ -465,14 +465,14 @@ export default function LessonView() {
                   Kembali ke Level
                 </Button>
                 {nextLessonId && (
-                  <Button size="lg" className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]" onClick={() => navigate(`/lesson/${nextLessonId}`)}>
+                  <Button size="lg" className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground" onClick={() => navigate(`/lesson/${nextLessonId}`)}>
                     Pelajaran Berikutnya <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
                 )}
               </div>
             </div>
           ) : exercisesLoading ? (
-            <div className="glass-card p-12  flex flex-col items-center justify-center text-center space-y-4 min-h-[400px]">
+            <div className="st-card p-12  flex flex-col items-center justify-center text-center space-y-4 min-h-[400px]">
                <Loader2 className="w-12 h-12 text-blue-500 animate-spin" />
                <h2 className="text-2xl font-bold text-foreground">Meracik Soal Latihan...</h2>
                <p className="text-muted-foreground max-w-sm">Herr Deutsch sedang membuat soal spesial untuk materi ini.</p>
@@ -555,7 +555,7 @@ export default function LessonView() {
                 {!isAnswerChecked ? (
                   <Button 
                     size="lg" 
-                    className="w-full h-14 text-lg font-bold bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]"
+                    className="w-full h-14 text-lg font-bold bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground"
                     disabled={!selectedAnswer.trim() || checkingAnswer}
                     onClick={handleCheckAnswer}
                   >
@@ -565,8 +565,8 @@ export default function LessonView() {
                   <Button 
                     size="lg" 
                     className={cn(
-                      "w-full h-14 text-lg font-bold bg-[#8b2500] text-[#f5f0eb]",
-                      checkResult?.isCorrect ? "bg-green-700 hover:bg-green-800 text-white" : "bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]"
+                      "w-full h-14 text-lg font-bold bg-[#8b2500] text-primary-foreground",
+                      checkResult?.isCorrect ? "bg-green-700 hover:bg-green-800 text-white" : "bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground"
                     )}
                     onClick={handleNextQuestion}
                   >

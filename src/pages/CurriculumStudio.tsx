@@ -34,7 +34,7 @@ const statusCopy: Record<CurriculumUnit['status'], string> = {
 function FlagStripe({ className }: { className?: string }) {
   return (
     <div className={cn('flex flex-col', className)} aria-hidden="true">
-      <div className="flex-1 bg-[#0a0a0a]" />
+      <div className="flex-1 bg-primary" />
       <div className="flex-1 bg-[#8b2500]" />
       <div className="flex-1 bg-[#c8956c]" />
     </div>
@@ -98,7 +98,7 @@ export default function CurriculumStudio() {
         <div className="relative grid gap-8 lg:grid-cols-[1.4fr_0.9fr] lg:items-end">
           <div>
             <div className="mb-6 flex items-center gap-3">
-              <div className="h-px w-10 bg-[#0a0a0a]" />
+              <div className="h-px w-10 bg-primary" />
               <span className="text-xs font-black uppercase tracking-[0.22em] text-[#0a0a0a]/55">
                 A1–B2 unified roadmap
               </span>
@@ -112,7 +112,7 @@ export default function CurriculumStudio() {
             <div className="mt-7 flex flex-col gap-3 sm:flex-row">
               <Link
                 to={nextHref}
-                className="inline-flex items-center justify-center gap-2 bg-[#0a0a0a] px-5 py-3 text-sm font-black text-[#f5f0eb] transition-colors hover:bg-[#0a0a0a]/90"
+                className="inline-flex items-center justify-center gap-2 bg-primary px-5 py-3 text-sm font-black text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Mulai lesson berikutnya
                 <ArrowRight className="h-4 w-4" />
@@ -192,7 +192,7 @@ export default function CurriculumStudio() {
                 <p className="text-[10px] uppercase tracking-[0.12em] text-[#0a0a0a]/40">Words</p>
               </div>
             </div>
-            <div className="mt-5 h-1.5 bg-[#0a0a0a]/10">
+            <div className="mt-5 h-1.5 bg-primary/10">
               <div className="h-full transition-all" style={{ width: `${level.progressPercent}%`, backgroundColor: level.accent }} />
             </div>
             <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#0a0a0a]/45">
@@ -273,11 +273,11 @@ export default function CurriculumStudio() {
           </div>
         </div>
 
-        <aside className="border border-[#0a0a0a]/10 bg-[#0a0a0a] p-5 sm:p-6 text-[#f5f0eb]">
+        <aside className="border border-[#0a0a0a]/10 bg-primary p-5 sm:p-6 text-primary-foreground">
           <div className="mb-5 flex items-center gap-3">
             <Sparkles className="h-5 w-5 text-[#c8956c]" />
             <div>
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-[#f5f0eb]/40">Practice rail</p>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-primary-foreground/40">Practice rail</p>
               <h2 className="font-serif text-2xl font-bold">Latihan tetap dipakai</h2>
             </div>
           </div>
@@ -295,7 +295,7 @@ export default function CurriculumStudio() {
               <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
           </div>
-          <p className="mt-5 break-words text-sm leading-relaxed text-[#f5f0eb]/50">
+          <p className="mt-5 break-words text-sm leading-relaxed text-primary-foreground/50">
             Map ini menyatukan materi baru dan latihan lama, jadi progres belajar tetap aman sambil kamu lanjut dari level terakhir.
           </p>
         </aside>
