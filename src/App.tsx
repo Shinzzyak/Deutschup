@@ -193,12 +193,14 @@ function AuthenticatedShell({ user }: { user: unknown }) {
   return (
     <>{user ? (
       <AuthWrapper>
-        <Layout>
+        <OnboardingWrapper>
+          <Layout>
             <AnimatedRoutes />
             <ChatWidget />
             <DebugOverlay />
             <QuickNoteWidget />
           </Layout>
+        </OnboardingWrapper>
       </AuthWrapper>
     ) : (
       <PublicRoutes />
