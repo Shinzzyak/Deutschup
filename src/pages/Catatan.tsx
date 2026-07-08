@@ -76,7 +76,7 @@ export default function Catatan() {
         
         {/* Kolom 1: Rencana Belajar */}
         <div className="space-y-6">
-          <div className="glass-panel p-6 md:p-8">
+          <div className="st-card p-6 md:p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center">
                  <CalendarCheck2 className="w-6 h-6 mr-2 text-[#c8956c]" />
@@ -94,7 +94,7 @@ export default function Catatan() {
                 <Button 
                    onClick={handleGeneratePlan} 
                    disabled={generatingPlan}
-                   className="w-full bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb] font-bold h-12"
+                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold h-12"
                 >
                   {generatingPlan ? <Loader2 className="w-5 h-5 mr-2 animate-spin" /> : <Sparkles className="w-5 h-5 mr-2" />}
                   Buat Rencana Belajar
@@ -128,7 +128,7 @@ export default function Catatan() {
 
         {/* Kolom 2: Catatan Pribadi */}
         <div className="space-y-6">
-          <div className="glass-panel p-6 md:p-8 flex flex-col h-full">
+          <div className="st-card p-6 md:p-8 flex flex-col h-full">
             <h2 className="text-2xl font-bold mb-6">Catatan Pribadi</h2>
             
             <div className="mb-8">
@@ -146,7 +146,7 @@ export default function Catatan() {
                           onClick={() => setNewNoteTag(tag)}
                           className={cn(
                             "px-3 py-1.5  text-xs font-bold transition-colors",
-                            newNoteTag === tag ? "bg-[#0a0a0a] text-[#f5f0eb]" : "bg-muted text-muted-foreground hover:bg-accent"
+                            newNoteTag === tag ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent"
                           )}
                           aria-pressed={newNoteTag === tag}
                           aria-label={`Tag: ${tag}`}

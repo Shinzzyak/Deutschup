@@ -39,7 +39,7 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
 
   return (
     <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="glass-card w-full max-w-md mx-4">
+      <div className="st-card w-full max-w-md mx-4">
         <div className="px-6 py-4 border-b border-border">
           <h3 className="text-lg font-semibold text-foreground">
             {success ? 'Success' : `Add API Key for ${providerName}`}

@@ -151,7 +151,7 @@ export default function Pricing() {
           <div key={plan.id} className={`relative bg-[#f5f0eb] p-8 border-2 ${plan.popular ? 'border-[#8b2500] z-10' : 'border-[#0a0a0a]'} flex flex-col`}>
             {plan.popular && (
               <div className="absolute -top-4 inset-x-0 flex justify-center">
-                 <span className="bg-[#8b2500] flex items-center text-[#f5f0eb] text-xs font-bold px-3 py-1 uppercase tracking-wider">
+                 <span className="bg-[#8b2500] flex items-center text-primary-foreground text-xs font-bold px-3 py-1 uppercase tracking-wider">
                    <Sparkles className="w-3 h-3 mr-1" /> Paling Laris
                  </span>
               </div>
@@ -178,7 +178,7 @@ export default function Pricing() {
               onClick={() => handleUpgrade(plan.id)}
               disabled={loading !== null || plan.id === 'free' || activePro}
               variant={plan.buttonVariant}
-              className={`w-full py-6 text-lg font-bold ${plan.popular && !activePro ? 'bg-[#8b2500] hover:bg-[#8b2500]/90 text-[#f5f0eb]' : ''}`}
+              className={`w-full py-6 text-lg font-bold ${plan.popular && !activePro ? 'bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground' : ''}`}
             >
               {loading === plan.id ? <Loader2 className="w-6 h-6 animate-spin" /> : plan.buttonText}
             </Button>
@@ -205,8 +205,8 @@ export default function Pricing() {
               <p className="text-muted-foreground">Belum ada riwayat pembayaran.</p>
             </div>
           ) : (
-            <div className="glass-card  overflow-hidden">
-              <table className="w-full">
+            <div className="st-card  overflow-hidden">
+              <table className="st-table">
                 <thead>
                   <tr className="border-b border-border bg-muted">
                     <th className="text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider px-6 py-3">Invoice</th>

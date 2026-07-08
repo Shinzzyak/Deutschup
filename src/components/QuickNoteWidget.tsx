@@ -81,7 +81,7 @@ export default function QuickNoteWidget() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="fixed z-[99999] glass-card flex flex-col overflow-hidden"
+                className="fixed z-[99999] st-card flex flex-col overflow-hidden"
                 style={{
                   bottom: 'calc(env(safe-area-inset-bottom, 0px) + 220px)',
                   right: '16px',
@@ -97,7 +97,7 @@ export default function QuickNoteWidget() {
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1.5 text-[#0a0a0a]/50 hover:text-[#0a0a0a] transition-colors hover:bg-[#0a0a0a]/5"
+                    className="p-1.5 text-[#0a0a0a]/50 hover:text-[#0a0a0a] transition-colors hover:bg-primary/5"
                     aria-label="Tutup quick note"
                   >
                     <X className="w-4 h-4" />
@@ -117,7 +117,7 @@ export default function QuickNoteWidget() {
                   <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="w-full px-4 py-2.5 bg-[#0a0a0a] hover:bg-[#0a0a0a]/90 text-[#f5f0eb] text-sm font-bold flex items-center justify-center transition-all duration-200"
+                    className="w-full px-4 py-2.5 bg-primary hover:bg-primary/90 text-primary-foreground text-sm font-bold flex items-center justify-center transition-all duration-200"
                     aria-label="Simpan catatan"
                   >
                     {saving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Check className="w-4 h-4 mr-2" />}

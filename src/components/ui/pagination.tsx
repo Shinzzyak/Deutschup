@@ -71,7 +71,7 @@ export function Pagination({
             className={cn(
               baseBtn,
               p === page
-                ? 'border-[#8b2500] bg-[#8b2500] text-[#f5f0eb] hover:bg-[#8b2500]/90'
+                ? 'border-[#8b2500] bg-[#8b2500] text-primary-foreground hover:bg-[#8b2500]/90'
                 : 'border-border bg-card text-foreground hover:bg-muted',
             )}
             onClick={() => go(p)}

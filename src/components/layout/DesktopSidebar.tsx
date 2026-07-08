@@ -63,7 +63,7 @@ export default function DesktopSidebar() {
       {!collapsed && (
         <div className="p-4 border-b-2 border-[#0a0a0a]/10">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-[#0a0a0a]/10 flex items-center justify-center overflow-hidden border border-[#0a0a0a]/20">
+            <div className="w-10 h-10 bg-primary/10 flex items-center justify-center overflow-hidden border border-[#0a0a0a]/20">
               {profileData?.avatar_url ? (
                 <img src={profileData.avatar_url} alt="" className="w-full h-full object-cover" />
               ) : (
@@ -75,7 +75,7 @@ export default function DesktopSidebar() {
                 {profileData?.full_name || 'Learner'}
               </p>
               <div className="flex items-center gap-1 mt-0.5">
-                <span className="text-[10px] font-bold text-[#0a0a0a] bg-[#0a0a0a]/5 border border-[#0a0a0a]/10 px-1.5 py-0.5">
+                <span className="text-[10px] font-bold text-[#0a0a0a] bg-primary/5 border border-[#0a0a0a]/10 px-1.5 py-0.5">
                   {currentLevel}
                 </span>
                 <span className="text-[10px] text-[#0a0a0a]/40">
@@ -97,8 +97,8 @@ export default function DesktopSidebar() {
               to={item.href}
               className={`group flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-all duration-150 ${
                 active
-                  ? 'bg-[#0a0a0a]/5 text-[#0a0a0a]'
-                  : 'text-[#0a0a0a]/50 hover:text-[#0a0a0a] hover:bg-[#0a0a0a]/5'
+                  ? 'bg-primary/5 text-[#0a0a0a]'
+                  : 'text-[#0a0a0a]/50 hover:text-[#0a0a0a] hover:bg-primary/5'
               } ${collapsed ? 'justify-center px-0' : ''}`}
               title={collapsed ? item.name : undefined}
             >
@@ -148,7 +148,7 @@ export default function DesktopSidebar() {
                 </span>
                 <span className="font-medium">3/5 lesson</span>
               </div>
-              <div className="h-1.5 bg-[#0a0a0a]/10">
+              <div className="h-1.5 bg-primary/10">
                 <div className="h-full bg-[#8b2500] transition-all duration-500" style={{ width: '60%' }} />
               </div>
             </div>

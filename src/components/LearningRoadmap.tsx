@@ -53,7 +53,7 @@ export default function LearningRoadmap() {
           className="mb-16 md:mb-24"
         >
           <div className="flex items-center gap-3 mb-6">
-            <div className="h-px w-12 bg-[#0a0a0a]" />
+            <div className="h-px w-12 bg-primary" />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/60">
               Kurikulum
             </span>
@@ -70,14 +70,14 @@ export default function LearningRoadmap() {
         {/* Desktop — editorial table */}
         <div className="hidden md:block">
           {/* Header row */}
-          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10 mb-px">
+          <div className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
             {levels.map((level) => (
               <div
                 key={level.level}
-                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb] text-[#0a0a0a]'}`}
+                className={`px-6 py-4 ${level.active ? 'bg-primary' : 'bg-[#f5f0eb] text-[#0a0a0a]'}`}
               >
                 <span className="font-serif text-2xl font-bold">{level.level}</span>
-                <span className={`block text-xs uppercase tracking-wider mt-1 ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/40'}`}>
+                <span className={`block text-xs uppercase tracking-wider mt-1 ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/40'}`}>
                   {level.title}
                 </span>
               </div>
@@ -85,11 +85,11 @@ export default function LearningRoadmap() {
           </div>
 
           {/* Grammar row */}
-          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10 mb-px">
+          <div className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
             {levels.map((level) => (
               <div
                 key={`g-${level.level}`}
-                className={`px-6 py-5 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
+                className={`px-6 py-5 ${level.active ? 'bg-primary' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-3 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
                   Grammar
@@ -98,7 +98,7 @@ export default function LearningRoadmap() {
                   {level.grammar.map((g) => (
                     <li key={g} className="flex items-start gap-2 text-sm">
                       <Check className={`w-3.5 h-3.5 mt-0.5 shrink-0 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/20'}`} />
-                      <span className={level.active ? 'text-[#f5f0eb]/80' : 'text-[#0a0a0a]/60'}>{g}</span>
+                      <span className={level.active ? 'text-primary-foreground/80' : 'text-[#0a0a0a]/60'}>{g}</span>
                     </li>
                   ))}
                 </ul>
@@ -107,36 +107,36 @@ export default function LearningRoadmap() {
           </div>
 
           {/* Vocab row */}
-          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10 mb-px">
+          <div className="grid grid-cols-4 gap-px bg-primary/10 mb-px">
             {levels.map((level) => (
               <div
                 key={`v-${level.level}`}
-                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
+                className={`px-6 py-4 ${level.active ? 'bg-primary' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-1 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
                   Kosakata
                 </p>
-                <p className={`font-serif text-xl font-bold ${level.active ? 'text-[#f5f0eb]' : 'text-[#0a0a0a]'}`}>
-                  {level.vocab} <span className={`text-sm font-normal ${level.active ? 'text-[#f5f0eb]/50' : 'text-[#0a0a0a]/40'}`}>kata</span>
+                <p className={`font-serif text-xl font-bold ${level.active ? 'text-primary-foreground' : 'text-[#0a0a0a]'}`}>
+                  {level.vocab} <span className={`text-sm font-normal ${level.active ? 'text-primary-foreground/50' : 'text-[#0a0a0a]/40'}`}>kata</span>
                 </p>
               </div>
             ))}
           </div>
 
           {/* Skills row */}
-          <div className="grid grid-cols-4 gap-px bg-[#0a0a0a]/10">
+          <div className="grid grid-cols-4 gap-px bg-primary/10">
             {levels.map((level) => (
               <div
                 key={`s-${level.level}`}
-                className={`px-6 py-4 ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'}`}
+                className={`px-6 py-4 ${level.active ? 'bg-primary' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
                   Skills
                 </p>
-                <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
+                <p className={`text-sm ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/50'}`}>
                   {level.listening}
                 </p>
-                <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
+                <p className={`text-sm ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/50'}`}>
                   {level.speaking}
                 </p>
               </div>
@@ -153,13 +153,13 @@ export default function LearningRoadmap() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.4, delay: i * 0.1 }}
-              className={`border-t-2 border-[#0a0a0a] ${level.active ? 'bg-[#0a0a0a]' : 'bg-[#f5f0eb]'} ${i === levels.length - 1 ? 'border-b-2' : ''}`}
+              className={`border-t-2 border-[#0a0a0a] ${level.active ? 'bg-primary' : 'bg-[#f5f0eb]'} ${i === levels.length - 1 ? 'border-b-2' : ''}`}
             >
               <div className="px-6 py-6">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <span className="font-serif text-3xl font-bold">{level.level}</span>
-                    <span className={`ml-3 text-xs uppercase tracking-wider ${level.active ? 'text-[#f5f0eb]/50' : 'text-[#0a0a0a]/40'}`}>
+                    <span className={`ml-3 text-xs uppercase tracking-wider ${level.active ? 'text-primary-foreground/50' : 'text-[#0a0a0a]/40'}`}>
                       {level.title}
                     </span>
                   </div>
@@ -168,10 +168,10 @@ export default function LearningRoadmap() {
                   </span>
                 </div>
                 <div className="space-y-1">
-                  <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
+                  <p className={`text-sm ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/50'}`}>
                     <span className="font-semibold">Grammar:</span> {level.grammar.join(', ')}
                   </p>
-                  <p className={`text-sm ${level.active ? 'text-[#f5f0eb]/60' : 'text-[#0a0a0a]/50'}`}>
+                  <p className={`text-sm ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/50'}`}>
                     {level.listening} · {level.speaking}
                   </p>
                 </div>

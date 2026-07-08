@@ -22,7 +22,7 @@ export default function SocialProof() {
             transition={{ duration: 0.6 }}
           >
             <div className="flex items-center gap-3 mb-6">
-              <div className="h-px w-12 bg-[#0a0a0a]" />
+              <div className="h-px w-12 bg-primary" />
               <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/60">
                 Mengapa DeutschUp
               </span>
@@ -37,9 +37,9 @@ export default function SocialProof() {
 
             {/* Editorial separator */}
             <div className="flex items-center gap-4 mb-8">
-              <div className="h-px flex-1 bg-[#0a0a0a]/10" />
+              <div className="h-px flex-1 bg-primary/10" />
               <span className="text-xs text-[#0a0a0a]/30 uppercase tracking-wider font-medium">Fitur</span>
-              <div className="h-px flex-1 bg-[#0a0a0a]/10" />
+              <div className="h-px flex-1 bg-primary/10" />
             </div>
 
             {/* Feature list — editorial checklist */}
@@ -55,8 +55,8 @@ export default function SocialProof() {
                     transition={{ duration: 0.4, delay: i * 0.08 }}
                     className="flex items-center gap-4 group"
                   >
-                    <div className="w-8 h-8 border border-[#0a0a0a]/15 flex items-center justify-center shrink-0 group-hover:bg-[#0a0a0a] group-hover:border-[#0a0a0a] transition-all">
-                      <Icon className="w-4 h-4 text-[#0a0a0a]/40 group-hover:text-[#f5f0eb] transition-colors" />
+                    <div className="w-8 h-8 border border-[#0a0a0a]/15 flex items-center justify-center shrink-0 group-hover:bg-primary group-hover:border-[#0a0a0a] transition-all">
+                      <Icon className="w-4 h-4 text-[#0a0a0a]/40 group-hover:text-primary-foreground transition-colors" />
                     </div>
                     <span className="text-sm font-medium text-[#0a0a0a]/70 group-hover:text-[#0a0a0a] transition-colors">
                       {feature.label}

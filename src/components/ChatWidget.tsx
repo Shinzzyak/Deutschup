@@ -95,7 +95,7 @@ export default function ChatWidget() {
           aria-expanded={isOpen}
           aria-controls="chat-panel"
         >
-          <Bot className="w-6 h-6 text-[#f5f0eb]" />
+          <Bot className="w-6 h-6 text-primary-foreground" />
         </button>
       </div>
 
@@ -124,7 +124,7 @@ export default function ChatWidget() {
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="fixed z-[99999] glass-card flex flex-col overflow-hidden"
+                className="fixed z-[99999] st-card flex flex-col overflow-hidden"
                 style={{
                   bottom: 'calc(env(safe-area-inset-bottom, 0px) + 140px)',
                   right: '16px',
@@ -133,18 +133,18 @@ export default function ChatWidget() {
                 }}
               >
                 {/* Header — German Gold accent */}
-                <div className="bg-[#0a0a0a] text-[#f5f0eb] p-3 flex items-center gap-3 shrink-0">
+                <div className="bg-primary text-primary-foreground p-3 flex items-center gap-3 shrink-0">
                   {/* Bot avatar — circular, German flag inspired */}
                   <div className="w-9 h-9 bg-[#c8956c] flex items-center justify-center">
                     <Bot className="w-5 h-5 text-[#0a0a0a]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-sm">Herr Deutsch</h3>
-                    <p className="text-[11px] text-[#f5f0eb]/60">Tutor Bahasa Jerman AI</p>
+                    <p className="text-[11px] text-primary-foreground/60">Tutor Bahasa Jerman AI</p>
                   </div>
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1.5 text-[#f5f0eb]/60 hover:text-[#f5f0eb] transition-colors hover:bg-[#f5f0eb]/10"
+                    className="p-1.5 text-primary-foreground/60 hover:text-primary-foreground transition-colors hover:bg-[#f5f0eb]/10"
                     aria-label="Tutup chat"
                   >
                     <X className="w-4 h-4" />
@@ -171,7 +171,7 @@ export default function ChatWidget() {
                       )}
                       <div className={`max-w-[80%] px-3 py-2 text-sm ${
                         msg.role === 'user'
-                          ? 'bg-[#0a0a0a] text-[#f5f0eb]'
+                          ? 'bg-primary text-primary-foreground'
                           : 'bg-[#f5f0eb] text-[#0a0a0a] border border-[#0a0a0a]/10'
                       }`}>
                         <p className="whitespace-pre-wrap leading-relaxed">{msg.text}</p>
@@ -208,7 +208,7 @@ export default function ChatWidget() {
                     <button
                       type="submit"
                       disabled={isLoading || !input.trim()}
-                      className="px-3 py-2 bg-[#8b2500] hover:bg-[#8b2500]/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-[#f5f0eb]"
+                      className="px-3 py-2 bg-[#8b2500] hover:bg-[#8b2500]/80 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-primary-foreground"
                       aria-label="Kirim pesan"
                     >
                       <Send className="w-4 h-4" />
