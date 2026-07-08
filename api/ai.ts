@@ -1,6 +1,6 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { executeWithRouting, getRoutingConfig } from '../lib/ai-router.js';
-import { getVerifiedIdentity, getUserTierById, isVerifiedAdmin } from '../lib/api-utils.js';
+import { getVerifiedIdentity, getUserTierById, isVerifiedAdmin, checkQuota, QUOTA_MESSAGES } from '../lib/api-utils.js';
 
 // Rate limiter per IP
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -297,6 +297,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
   try {
     const userTier = await getUserTierById(uid);
+
+    // Quota enforcement for free tier (chat/hr, simulasi/week)
+    if (userTier !== 'pro' && (action === 'chat' || action === 'generate-mock-test')) {
+      const quota = await checkQuota(uid, userTier, action);
+      if (!quota.allowed) {
+        res.setHeader('X-Quota-Limit', String(quota.limit));
+        res.setHeader('X-Quota-Remaining', '0');
+        res.setHeader('X-Quota-Reset', String(Math.ceil(quota.resetAt / 1000)));
+        return res.status(402).json({
+          error: QUOTA_MESSAGES[action] || 'Kuota Free telah habis. Upgrade ke Pro untuk akses tanpa batas.',
+          code: 'QUOTA_EXCEEDED',
+          limit: quota.limit,
+          resetAt: quota.resetAt,
+        });
+      }
+    }
 
     // Rate limit — Pro gets higher limit
     const clientIp = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || 'unknown';
