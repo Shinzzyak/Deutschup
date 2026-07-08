@@ -9,6 +9,7 @@ import { cn } from '../lib/utils';
 import type { Level } from '../data/course';
 import { supabase } from '../lib/supabase';
 import type { CefrLevel } from '../lib/vocabStats';
+import { getCourseUnitRoute } from '../lib/courseUnitRoutes';
 
 const levelMeta: Record<Level, { title: string; color: string; description: string; icon: string }> = {
   A1: { title: 'Pemula A1', color: 'bg-emerald-500', description: 'Dasar bahasa Jerman — salam, artikel, angka, kalimat sederhana.', icon: '🌱' },
@@ -167,7 +168,9 @@ export default function LevelView() {
       {isLevelUnlocked && (
         <div className="space-y-px">
           {levelLessons.map((lesson, idx) => {
-            const isUnlocked = unlockedLessons.includes(lesson.id);
+            const route = getCourseUnitRoute(lesson);
+            const routeAvailable = Boolean(route);
+            const isUnlocked = unlockedLessons.includes(lesson.id) && routeAvailable;
             const isCompleted = completedLessons.includes(lesson.id);
             const isCheckpoint = lesson.id.includes('checkpoint');
             const estimatedTime = getEstimatedTime(lesson.id, isCheckpoint);
@@ -176,7 +179,7 @@ export default function LevelView() {
             return (
               <Link
                 key={lesson.id}
-                to={isUnlocked ? (isCheckpoint ? `/checkpoint/${lesson.id}` : `/lesson/${lesson.id}`) : ''}
+                to={isUnlocked && route ? route : ''}
                 onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
                 className={cn(
                   "group relative flex items-center gap-4 p-4 border transition-colors",
@@ -214,7 +217,9 @@ export default function LevelView() {
                     {isCheckpoint && isUnlocked && <span className="px-1.5 py-0.5 bg-[#c8956c]/10 text-[#c8956c] text-[10px] font-bold uppercase tracking-wider">Test</span>}
                     {isCompleted && <span className="px-1.5 py-0.5 bg-[#2d8a4e]/10 text-[#2d8a4e] text-[10px] font-bold uppercase tracking-wider">Selesai</span>}
                   </div>
-                  <p className="text-sm text-[#0a0a0a]/50 truncate mt-0.5">{lesson.title}</p>
+                  <p className="text-sm text-[#0a0a0a]/50 truncate mt-0.5">
+                    {lesson.title}{!routeAvailable ? ' • data belum siap' : ''}
+                  </p>
                   <div className="flex items-center gap-3 mt-1.5 text-xs text-[#0a0a0a]/30">
                     <span className="inline-flex items-center gap-1"><Timer className="w-3 h-3" />{estimatedTime}</span>
                     <span className="inline-flex items-center gap-1"><Star className="w-3 h-3" />{xpReward} XP</span>

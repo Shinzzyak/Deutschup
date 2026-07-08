@@ -15,6 +15,7 @@ import { resolveInternalId } from '../lib/clerk/identity';
  import { Button } from '../components/ui/button';
 import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
 import { LEVELS, summarizeLevelCounts, type CefrLevel } from '../lib/vocabStats';
+import { getCourseUnitRoute, isCourseUnitRouteAvailable } from '../lib/courseUnitRoutes';
 
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress, streak, lastPracticeDate } = useProgressStore();
@@ -59,7 +60,9 @@ export default function Dashboard() {
   }, []);
 
   const currentLesson = useMemo(() => {
-    const lastUnlocked = [...unlockedLessons].reverse().find(id => !completedLessons.includes(id));
+    const lastUnlocked = [...unlockedLessons]
+      .reverse()
+      .find(id => !completedLessons.includes(id) && isCourseUnitRouteAvailable({ id }));
     return lastUnlocked ? courseIndex.find(l => l.id === lastUnlocked) : null;
   }, [unlockedLessons, completedLessons]);
 
@@ -69,15 +72,20 @@ export default function Dashboard() {
     return idx >= 0 && idx < courseIndex.length - 1 ? courseIndex[idx + 1] : null;
   }, [currentLesson]);
 
+  const currentLessonRoute = useMemo(
+    () => currentLesson ? getCourseUnitRoute(currentLesson) : null,
+    [currentLesson],
+  );
+
   const checkpointStats = useMemo(() => {
     const total = checkpointProgress.length;
     const passed = checkpointProgress.filter(c => c.passed).length;
-    const available = courseIndex.filter(l => l.id.includes('checkpoint')).length - total;
+    const available = courseIndex.filter(l => l.id.includes('checkpoint') && isCourseUnitRouteAvailable(l)).length - total;
     return { total, passed, available: Math.max(0, available) };
   }, [checkpointProgress]);
 
   const todayTask = useMemo(() => {
-    const incomplete = courseIndex.filter(l => !completedLessons.includes(l.id) && unlockedLessons.includes(l.id));
+    const incomplete = courseIndex.filter(l => !completedLessons.includes(l.id) && unlockedLessons.includes(l.id) && isCourseUnitRouteAvailable(l));
     return incomplete.length > 0 ? incomplete[0] : null;
   }, [completedLessons, unlockedLessons]);
 
@@ -391,7 +399,7 @@ export default function Dashboard() {
 
 
         {/* SECTION C: CONTINUE LEARNING */}
-        {!loading && currentLesson && (
+        {!loading && currentLesson && currentLessonRoute && (
           <div className="relative overflow-hidden  bg-[#0a0a0a] p-6 md:p-8 rounded-lg">
             {/* German flag accent */}
             <div className="absolute top-0 left-0 right-0 h-1 flex">
@@ -415,7 +423,7 @@ export default function Dashboard() {
                   <h3 className="text-xl md:text-2xl font-bold text-[#f5f0eb]">{currentLesson.title}</h3>
                   <p className="text-[#f5f0eb]/60 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
                 </div>
-                <Link to={`/lesson/${currentLesson.id}`}>
+                <Link to={currentLessonRoute}>
                   <Button className="bg-[#c8956c] hover:bg-[#b8854c] text-[#0a0a0a] px-6 py-3 font-bold transition-all hover:scale-105">
                     <PlayCircle className="w-5 h-5 mr-2" /> Lanjutkan Sekarang
                   </Button>
@@ -573,13 +581,16 @@ export default function Dashboard() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {levelLessons.map((lesson, idx) => {
-                      const isUnlocked = unlockedLessons.includes(lesson.id) && !tierLocked;
+                      const route = getCourseUnitRoute(lesson);
+                      const routeAvailable = Boolean(route);
+                      const isUnlocked = unlockedLessons.includes(lesson.id) && !tierLocked && routeAvailable;
                       const isCompleted = completedLessons.includes(lesson.id);
+                      const isCheckpoint = lesson.id.includes('checkpoint');
                       
                       return (
                         <Link 
                           key={lesson.id} 
-                          to={isUnlocked ? `/lesson/${lesson.id}` : ''}
+                          to={isUnlocked && route ? route : ''}
                           onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
                           className={cn(
                             "flex flex-col p-5 border transition-all duration-200 relative overflow-hidden card-hover rounded-lg",
@@ -587,17 +598,17 @@ export default function Dashboard() {
                             isUnlocked ? "glass-card border-blue-200/40  " :
                             "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50 cursor-not-allowed"
                           )}
-                          aria-label={`Pelajaran: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
+                          aria-label={`${isCheckpoint ? 'Checkpoint' : 'Pelajaran'}: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
                           aria-disabled={!isUnlocked}
                         >
                           <div className="absolute top-0 left-0 w-full h-1.5 bg-muted">
                              <div className={cn("h-full transition-all duration-500", isCompleted ? "bg-green-500" : isUnlocked ? "bg-blue-500" : "")} style={{ width: isCompleted ? '100%' : '0%' }} />
                           </div>
                           <div className="flex justify-between items-start mb-4 mt-2">
-                            <span className="text-xs font-bold px-2 py-1 bg-muted  text-muted-foreground uppercase tracking-widest">Pelajaran {idx + 1}</span>
+                            <span className="text-xs font-bold px-2 py-1 bg-muted  text-muted-foreground uppercase tracking-widest">{isCheckpoint ? 'Checkpoint' : 'Pelajaran'} {idx + 1}</span>
                             {isCompleted ? <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 ml-2" /> : isUnlocked ? <PlayCircle className="w-6 h-6 text-blue-500 flex-shrink-0 ml-2" /> : <Lock className="w-5 h-5 text-[#0a0a0a]/30 flex-shrink-0 ml-2" />}
                           </div>
-                          <h3 className={cn("text-lg font-bold mb-4", !isUnlocked && "text-muted-foreground")}>{lesson.title}</h3>
+                          <h3 className={cn("text-lg font-bold mb-4", !isUnlocked && "text-muted-foreground")}>{lesson.title}{!routeAvailable ? ' • data belum siap' : ''}</h3>
                           
                           {lesson.canDoGoals && lesson.canDoGoals.length > 0 && (
                             <div className="mb-4">
@@ -623,7 +634,7 @@ export default function Dashboard() {
                               </div>
                             ) : isUnlocked ? (
                               <div className="flex items-center text-sm font-bold text-blue-600">
-                                <ArrowRight className="w-4 h-4 mr-2" /> Mulai Pelajaran
+                                <ArrowRight className="w-4 h-4 mr-2" /> {isCheckpoint ? 'Mulai Checkpoint' : 'Mulai Pelajaran'}
                               </div>
                             ) : (
                               <div className="flex items-center text-sm font-bold text-[#0a0a0a]/40">
