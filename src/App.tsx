@@ -89,7 +89,7 @@ function Layout({ children }: { children: React.ReactNode }) {
       <div className="lg:hidden flex flex-col min-h-screen">
         <TopNav />
         <main
-          className="flex-1 px-4 py-6 pb-24"
+          className="flex-1 px-4 py-6 pb-32"
           id="main-content"
         >
           <div className="max-w-5xl mx-auto">

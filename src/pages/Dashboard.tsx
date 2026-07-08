@@ -15,7 +15,7 @@ import { resolveInternalId } from '../lib/clerk/identity';
  import { Button } from '../components/ui/button';
 import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
 import { LEVELS, summarizeLevelCounts, type CefrLevel } from '../lib/vocabStats';
-import { getCourseUnitRoute, isCourseUnitRouteAvailable } from '../lib/courseUnitRoutes';
+import { getCourseUnitContextCopy, getCourseUnitRoute, isCourseUnitRouteAvailable } from '../lib/courseUnitRoutes';
 
 export default function Dashboard() {
   const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress, streak, lastPracticeDate } = useProgressStore();
@@ -76,6 +76,12 @@ export default function Dashboard() {
     () => currentLesson ? getCourseUnitRoute(currentLesson) : null,
     [currentLesson],
   );
+
+  const currentLessonContext = useMemo(() => {
+    if (!currentLesson) return '';
+    const position = courseIndex.findIndex(l => l.id === currentLesson.id) + 1;
+    return getCourseUnitContextCopy(currentLesson, position, courseIndex.length);
+  }, [currentLesson]);
 
   const checkpointStats = useMemo(() => {
     const total = checkpointProgress.length;
@@ -421,7 +427,7 @@ export default function Dashboard() {
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
                 <div className="space-y-1">
                   <h3 className="text-xl md:text-2xl font-bold text-[#f5f0eb]">{currentLesson.title}</h3>
-                  <p className="text-[#f5f0eb]/60 text-sm">Level {currentLesson.level} • Pelajaran {courseIndex.findIndex(l => l.id === currentLesson.id) + 1} dari {courseIndex.length}</p>
+                  <p className="text-[#f5f0eb]/60 text-sm">{currentLessonContext}</p>
                 </div>
                 <Link to={currentLessonRoute}>
                   <Button className="bg-[#c8956c] hover:bg-[#b8854c] text-[#0a0a0a] px-6 py-3 font-bold transition-all hover:scale-105">

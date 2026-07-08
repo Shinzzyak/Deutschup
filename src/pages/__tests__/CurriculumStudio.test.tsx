@@ -43,5 +43,8 @@ describe('CurriculumStudio', () => {
     expect(screen.getByRole('link', { name: /Buka vocab trainer/i })).toHaveAttribute('href', '/vocab');
     expect(screen.getByRole('link', { name: /Perkenalan & Salam/i })).toHaveAttribute('href', '/lesson/a1-1');
     expect(screen.getAllByRole('link', { name: /Review Konten Sebelumnya/i })[0]).toHaveAttribute('href', '/checkpoint/a1-checkpoint-1');
+    expect(screen.getByText(/12 checkpoint siap/i)).toBeInTheDocument();
+    expect(screen.getByText(/4 data belum siap/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/29 route siap/i)).toHaveLength(2);
   });
 });

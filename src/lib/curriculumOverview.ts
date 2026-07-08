@@ -32,6 +32,8 @@ export interface CurriculumLevelOverview {
   accent: string;
   lessonCount: number;
   checkpointCount: number;
+  routeReadyCount: number;
+  pendingDataCount: number;
   completedCount: number;
   progressPercent: number;
   vocabularyCount: number;
@@ -44,6 +46,8 @@ export interface CurriculumOverview {
   totalUnits: number;
   totalLessons: number;
   totalCheckpoints: number;
+  availableCheckpointCount: number;
+  unavailableCheckpointCount: number;
   totalVocabulary: number;
   completedUnits: number;
   progressPercent: number;
@@ -103,6 +107,8 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
         accent: LEVEL_COPY[level].accent,
         lessonCount: 0,
         checkpointCount: 0,
+        routeReadyCount: 0,
+        pendingDataCount: 0,
         completedCount: 0,
         progressPercent: 0,
         vocabularyCount: Number(input.dbLevelCounts?.[level] || 0),
@@ -115,7 +121,7 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
     const level = inferUnitLevel(unit);
     const type = getUnitType(unit.id);
     const isCompleted = completed.has(unit.id);
-    const routeAvailable = type === 'lesson' || !availableCheckpointIds || availableCheckpointIds.has(unit.id);
+    const routeAvailable = type === 'lesson' || Boolean(availableCheckpointIds?.has(unit.id));
     const progressUnlocked = unlocked.has(unit.id) || isCompleted;
     const isUnlocked = progressUnlocked && routeAvailable;
     const status: CurriculumUnitStatus = isCompleted
@@ -140,6 +146,8 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
     levels[level].units.push(mapped);
     if (type === 'checkpoint') levels[level].checkpointCount += 1;
     else levels[level].lessonCount += 1;
+    if (routeAvailable) levels[level].routeReadyCount += 1;
+    else levels[level].pendingDataCount += 1;
     if (isCompleted) levels[level].completedCount += 1;
   }
 
@@ -153,6 +161,8 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
   const totalUnits = flatUnits.length;
   const totalLessons = flatUnits.filter((unit) => unit.type === 'lesson').length;
   const totalCheckpoints = flatUnits.filter((unit) => unit.type === 'checkpoint').length;
+  const availableCheckpointCount = flatUnits.filter((unit) => unit.type === 'checkpoint' && unit.routeAvailable).length;
+  const unavailableCheckpointCount = totalCheckpoints - availableCheckpointCount;
   const completedUnits = flatUnits.filter((unit) => unit.completed).length;
   const totalVocabulary = orderedLevels.reduce((sum, level) => sum + level.vocabularyCount, 0);
   const nextUnit = flatUnits.find((unit) => !unit.completed && unit.unlocked && unit.href) || null;
@@ -163,6 +173,8 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
     totalUnits,
     totalLessons,
     totalCheckpoints,
+    availableCheckpointCount,
+    unavailableCheckpointCount,
     totalVocabulary,
     completedUnits,
     progressPercent: percent(completedUnits, totalUnits),

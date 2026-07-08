@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { courseIndex } from '../../data/lessonIndex';
-import { getCourseUnitRoute, isCourseUnitRouteAvailable } from '../courseUnitRoutes';
+import { getCourseUnitContextCopy, getCourseUnitRoute, isCourseUnitRouteAvailable } from '../courseUnitRoutes';
 
 describe('courseUnitRoutes', () => {
   it('routes lessons and renderable checkpoints to their correct legacy engines', () => {
@@ -24,5 +24,10 @@ describe('courseUnitRoutes', () => {
 
     expect(brokenLinks).toEqual([]);
     expect(checkpoints.some((unit) => !isCourseUnitRouteAvailable(unit))).toBe(true);
+  });
+
+  it('formats dashboard copy without undefined levels for checkpoint entries', () => {
+    expect(getCourseUnitContextCopy({ id: 'a1-checkpoint-1' }, 4, 86)).toBe('A1 • Checkpoint 4 dari 86');
+    expect(getCourseUnitContextCopy({ id: 'a1-1', level: 'A1' }, 1, 86)).toBe('A1 • Pelajaran 1 dari 86');
   });
 });

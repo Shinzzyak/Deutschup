@@ -62,4 +62,35 @@ describe('curriculumOverview', () => {
     expect(missingRuntimeCheckpoint?.href).toBeNull();
     expect(overview.nextUnit?.id).toBe('a1-2');
   });
+
+  it('fails closed for checkpoint route availability when no runtime availability list is provided', () => {
+    const overview = buildCurriculumOverview(courseIndex, {
+      currentLevel: 'A1',
+      dbLevelCounts: dbCounts,
+      completedLessons: [],
+      unlockedLessons: ['a1-checkpoint-1'],
+    });
+
+    const checkpoint = overview.levels.A1.units.find((u) => u.id === 'a1-checkpoint-1');
+
+    expect(checkpoint?.routeAvailable).toBe(false);
+    expect(checkpoint?.href).toBeNull();
+    expect(overview.availableCheckpointCount).toBe(0);
+    expect(overview.unavailableCheckpointCount).toBe(16);
+  });
+
+  it('summarizes checkpoint and data readiness for the studio UI', () => {
+    const overview = buildCurriculumOverview(courseIndex, {
+      currentLevel: 'A1',
+      dbLevelCounts: dbCounts,
+      completedLessons: ['a1-1'],
+      unlockedLessons: ['a1-1', 'a1-2', 'a1-checkpoint-1'],
+      availableCheckpointIds,
+    });
+
+    expect(overview.availableCheckpointCount).toBe(12);
+    expect(overview.unavailableCheckpointCount).toBe(4);
+    expect(overview.levels.A1.routeReadyCount).toBe(29);
+    expect(overview.levels.A1.pendingDataCount).toBe(1);
+  });
 });

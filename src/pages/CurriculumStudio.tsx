@@ -84,8 +84,8 @@ export default function CurriculumStudio() {
   const nextHref = overview.nextUnit?.href || '/level/A1';
 
   return (
-    <div className="space-y-6 pb-12">
-      <section className="relative overflow-hidden bg-[#f5f0eb] border border-[#0a0a0a]/10 p-5 sm:p-8 lg:p-10">
+    <div className="space-y-6 pb-28 lg:pb-12">
+      <section className="relative min-h-[calc(100svh-8rem)] overflow-hidden bg-[#f5f0eb] border border-[#0a0a0a]/10 p-5 sm:min-h-0 sm:p-8 lg:p-10">
         <FlagStripe className="absolute left-0 top-0 bottom-0 w-1.5" />
         <div
           className="absolute inset-0 opacity-[0.035] pointer-events-none"
@@ -125,9 +125,14 @@ export default function CurriculumStudio() {
                 <Database className="h-4 w-4" />
               </Link>
             </div>
+            <div className="mt-5 flex flex-wrap gap-2 text-xs font-black uppercase tracking-[0.12em] text-[#0a0a0a]/55">
+              <span className="border border-[#0a0a0a]/10 bg-white/45 px-3 py-2">{overview.availableCheckpointCount} checkpoint siap</span>
+              <span className="border border-[#0a0a0a]/10 bg-white/45 px-3 py-2">{overview.unavailableCheckpointCount} data belum siap</span>
+              <span className="border border-[#0a0a0a]/10 bg-white/45 px-3 py-2">{currentLevelOverview.routeReadyCount} route siap</span>
+            </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-2">
+          <div className="hidden grid-cols-2 gap-3 sm:grid sm:grid-cols-4 lg:grid-cols-2">
             <div className="border border-[#0a0a0a]/10 bg-white/50 p-4">
               <Layers className="mb-3 h-5 w-5 text-[#8b2500]" />
               <span className="sr-only">{overview.totalUnits} roadmap units</span>
@@ -190,6 +195,10 @@ export default function CurriculumStudio() {
             <div className="mt-5 h-1.5 bg-[#0a0a0a]/10">
               <div className="h-full transition-all" style={{ width: `${level.progressPercent}%`, backgroundColor: level.accent }} />
             </div>
+            <div className="mt-3 flex flex-wrap gap-2 text-[10px] font-black uppercase tracking-[0.12em] text-[#0a0a0a]/45">
+              <span>{level.routeReadyCount} route siap</span>
+              {level.pendingDataCount > 0 && <span>{level.pendingDataCount} data pending</span>}
+            </div>
             <p className="mt-2 text-xs font-bold text-[#0a0a0a]/45">{level.progressPercent}% selesai • buka level map</p>
           </Link>
         ))}
@@ -220,21 +229,21 @@ export default function CurriculumStudio() {
                     {unit.completed ? <CheckCircle2 className="h-5 w-5" /> : unit.status === 'locked' ? <Lock className="h-4 w-4" /> : index + 1}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <Icon className={cn('h-4 w-4', unit.href ? 'text-[#8b2500]' : 'text-[#0a0a0a]/25')} />
-                      <span className={cn('truncate text-sm font-black', unit.href ? 'text-[#0a0a0a]' : 'text-[#0a0a0a]/40')}>
+                    <div className="flex items-start gap-2">
+                      <Icon className={cn('mt-0.5 h-4 w-4 shrink-0', unit.href ? 'text-[#8b2500]' : 'text-[#0a0a0a]/25')} />
+                      <span className={cn('min-w-0 break-words text-sm font-black leading-snug', unit.href ? 'text-[#0a0a0a]' : 'text-[#0a0a0a]/40')}>
                         {unit.title}
                       </span>
                     </div>
-                    <p className="mt-0.5 truncate text-xs text-[#0a0a0a]/45">
+                    <p className="mt-1 break-words text-xs leading-snug text-[#0a0a0a]/45">
                       {unit.type === 'checkpoint' ? 'Checkpoint latihan soal' : 'Lesson + exercises'} • {statusCopy[unit.status]}
                       {!unit.routeAvailable ? ' • data belum siap' : ''}
                     </p>
                   </div>
                   {unit.href ? (
-                    <ArrowRight className="h-4 w-4 text-[#0a0a0a]/25 transition-transform group-hover:translate-x-0.5 group-hover:text-[#8b2500]" />
+                    <ArrowRight className="mt-1 h-4 w-4 shrink-0 text-[#0a0a0a]/25 transition-transform group-hover:translate-x-0.5 group-hover:text-[#8b2500]" />
                   ) : (
-                    <Lock className="h-4 w-4 text-[#0a0a0a]/20" />
+                    <Lock className="mt-1 h-4 w-4 shrink-0 text-[#0a0a0a]/20" />
                   )}
                 </>
               );
@@ -244,7 +253,7 @@ export default function CurriculumStudio() {
                   <div
                     key={unit.id}
                     aria-disabled="true"
-                    className="flex cursor-not-allowed items-center gap-3 border border-[#0a0a0a]/10 bg-white/30 p-3 opacity-80"
+                    className="flex cursor-not-allowed items-start gap-3 border border-[#0a0a0a]/10 bg-white/30 p-3 opacity-80"
                   >
                     {content}
                   </div>
@@ -255,7 +264,7 @@ export default function CurriculumStudio() {
                 <Link
                   key={unit.id}
                   to={unit.href}
-                  className="group flex items-center gap-3 border border-[#0a0a0a]/10 bg-white/45 p-3 transition-colors hover:border-[#8b2500]/40 hover:bg-white/70"
+                  className="group flex items-start gap-3 border border-[#0a0a0a]/10 bg-white/45 p-3 transition-colors hover:border-[#8b2500]/40 hover:bg-white/70"
                 >
                   {content}
                 </Link>
@@ -273,20 +282,20 @@ export default function CurriculumStudio() {
             </div>
           </div>
           <div className="space-y-3">
-            <Link to="/vocab" className="flex items-center justify-between border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
-              <span className="inline-flex items-center gap-2"><Database className="h-4 w-4 text-[#c8956c]" />Vocabulary DB</span>
-              <ArrowRight className="h-4 w-4" />
+            <Link to="/vocab" className="flex items-center justify-between gap-3 border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
+              <span className="inline-flex min-w-0 items-center gap-2 break-words"><Database className="h-4 w-4 shrink-0 text-[#c8956c]" />Vocabulary DB</span>
+              <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
-            <Link to="/simulasi" className="flex items-center justify-between border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
-              <span className="inline-flex items-center gap-2"><Target className="h-4 w-4 text-[#c8956c]" />Simulasi soal</span>
-              <ArrowRight className="h-4 w-4" />
+            <Link to="/simulasi" className="flex items-center justify-between gap-3 border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
+              <span className="inline-flex min-w-0 items-center gap-2 break-words"><Target className="h-4 w-4 shrink-0 text-[#c8956c]" />Simulasi soal</span>
+              <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
-            <Link to="/goethe" className="flex items-center justify-between border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
-              <span className="inline-flex items-center gap-2"><Trophy className="h-4 w-4 text-[#c8956c]" />Goethe prep</span>
-              <ArrowRight className="h-4 w-4" />
+            <Link to="/goethe" className="flex items-center justify-between gap-3 border border-white/10 bg-white/5 p-3 text-sm font-bold hover:bg-white/10">
+              <span className="inline-flex min-w-0 items-center gap-2 break-words"><Trophy className="h-4 w-4 shrink-0 text-[#c8956c]" />Goethe prep</span>
+              <ArrowRight className="h-4 w-4 shrink-0" />
             </Link>
           </div>
-          <p className="mt-5 text-sm leading-relaxed text-[#f5f0eb]/50">
+          <p className="mt-5 break-words text-sm leading-relaxed text-[#f5f0eb]/50">
             Phase 1 sengaja jadi shell penyatu dulu: roadmap dan database masuk, tapi semua latihan existing tetap jalan di engine lama.
           </p>
         </aside>
