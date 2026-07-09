@@ -13,6 +13,7 @@ import { resolveInternalId } from '../lib/clerk/identity';
  import { cn } from '../lib/utils';
  import { Progress } from '../components/ui/progress';
  import { Button } from '../components/ui/button';
+import { FeatureGate, ProBadge } from '../components/FeatureGate';
 import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
 import { LEVELS, summarizeLevelCounts, type CefrLevel } from '../lib/vocabStats';
 import { getCourseUnitContextCopy, getCourseUnitRoute, isCourseUnitRouteAvailable } from '../lib/courseUnitRoutes';
@@ -279,10 +280,17 @@ export default function Dashboard() {
               </div>
               
               <div className="flex flex-col items-start md:items-end w-full md:w-auto">
-                <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2  bg-[#f5f0eb]/15 hover:bg-[#f5f0eb]/25 border-0 text-primary-foreground  w-full md:w-auto">
-                  {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                  <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan'}</span>
-                </Button>
+                <FeatureGate
+                  feature="pdf_reports"
+                  sub={{ subscription: tierData?.subscription, pro_expires_at: tierData?.pro_expires_at }}
+                  role={role}
+                  showUpgrade={true}
+                >
+                  <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2  bg-[#f5f0eb]/15 hover:bg-[#f5f0eb]/25 border-0 text-primary-foreground  w-full md:w-auto">
+                    {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+                    <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan'}</span>
+                  </Button>
+                </FeatureGate>
                 {!pdfBlobUrl && (
                   <span className="text-[11px] text-blue-200 mt-2 max-w-[200px] text-left md:text-right">
                     *Buka di tab baru jika unduhan tidak muncul

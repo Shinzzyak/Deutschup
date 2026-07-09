@@ -68,7 +68,7 @@ export default function Pricing() {
       name: 'Free',
       price: 'Rp 0',
       description: 'Mulai belajar bahasa Jerman',
-      features: ['Akses materi A1', '10 Pesan Herr Deutsch / hari', '1 Simulasi Ujian / minggu'],
+      features: ['Akses materi A1', '10 Pesan Herr Deutsch / jam', '1 Simulasi Ujian / minggu'],
       buttonText: !activePro ? 'Sedang Aktif' : 'Gratis',
       buttonVariant: 'outline',
     },
