@@ -13,7 +13,7 @@ import { resolveInternalId } from '../lib/clerk/identity';
  import { cn } from '../lib/utils';
  import { Progress } from '../components/ui/progress';
  import { Button } from '../components/ui/button';
-import { FeatureGate, ProBadge } from '../components/FeatureGate';
+import FeatureGate, { ProBadge } from '../components/FeatureGate';
 import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
 import { LEVELS, summarizeLevelCounts, type CefrLevel } from '../lib/vocabStats';
 import { getCourseUnitContextCopy, getCourseUnitRoute, isCourseUnitRouteAvailable } from '../lib/courseUnitRoutes';
