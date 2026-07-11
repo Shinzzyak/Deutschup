@@ -143,7 +143,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.7 }}
-                className="absolute -bottom-6 -left-6 bg-[#8b2500] text-primary-foreground px-6 py-4 "
+                className="absolute -bottom-16 left-6 bg-[#8b2500] text-primary-foreground px-6 py-4 "
               >
                 <p className="text-2xl font-serif font-bold">1,600+</p>
                 <p className="text-xs uppercase tracking-wider text-primary-foreground/70">Kosakata</p>
