@@ -39,7 +39,7 @@ export default function Hero() {
                 <div className="flex items-center gap-3 mb-8">
                   <div className="h-px w-12 bg-primary" />
                   <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0a0a0a]/60">
-                    Plattform für Deutschlernen
+                    Belajar bahasa Jerman
                   </span>
                 </div>
               </Reveal>
@@ -55,7 +55,7 @@ export default function Hero() {
               {/* Body — clean, editorial */}
               <Reveal delay={0.16} y={24}>
                 <p className="text-lg sm:text-xl text-[#0a0a0a]/60 leading-relaxed max-w-xl mb-10 font-light">
-                  Tutor AI yang membantu grammar, vocabulary, speaking, dan persiapan ujian Goethe — dari A1 sampai B2.
+                  Latihan tata bahasa, kosakata, dan persiapan ujian Goethe untuk level A1 sampai B2.
                 </p>
               </Reveal>
 
@@ -78,13 +78,13 @@ export default function Hero() {
 
               {/* Trust line — editorial style, separated by em dashes */}
               <Reveal delay={0.32} y={12} className="flex flex-wrap items-center gap-x-1 text-xs text-[#0a0a0a]/40 uppercase tracking-[0.15em] font-medium">
-                <span>AI Tutor 24/7</span>
+                <span>Tutor AI</span>
                 <span className="text-[#c8956c]">—</span>
-                <span>Exam Simulation</span>
+                <span>Simulasi ujian</span>
                 <span className="text-[#c8956c]">—</span>
-                <span>Progress Tracking</span>
+                <span>Progres belajar</span>
                 <span className="text-[#c8956c]">—</span>
-                <span>A1–B2 Roadmap</span>
+                <span>Kurikulum A1–B2</span>
               </Reveal>
             </motion.div>
           </div>
@@ -103,7 +103,7 @@ export default function Hero() {
                 <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#0a0a0a]/10">
                   <div>
                     <p className="font-serif text-lg font-bold text-[#0a0a0a]">Herr Deutsch</p>
-                    <p className="text-xs text-[#0a0a0a]/40 uppercase tracking-wider">AI Tutor — Online</p>
+                    <p className="text-xs text-[#0a0a0a]/40 uppercase tracking-wider">Tutor AI — Online</p>
                   </div>
                   <div className="w-3 h-3 bg-[#2d8a4e] " />
                 </div>
@@ -120,7 +120,7 @@ export default function Hero() {
 
                 {/* Level indicator — simple, editorial */}
                 <div className="pt-4 border-t border-[#0a0a0a]/10">
-                  <p className="text-xs text-[#0a0a0a]/40 uppercase tracking-wider mb-3 font-medium">Level Progress</p>
+                  <p className="text-xs text-[#0a0a0a]/40 uppercase tracking-wider mb-3 font-medium">Progres level</p>
                   <div className="flex items-center gap-3">
                     {(['A1', 'A2', 'B1', 'B2'] as const).map((level, i) => (
                       <div key={level} className="flex items-center gap-3">

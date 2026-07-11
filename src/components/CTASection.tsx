@@ -40,7 +40,7 @@ export default function CTASection() {
           </h2>
 
           <p className="text-lg text-primary-foreground/40 leading-relaxed mb-10 max-w-xl font-light">
-            Mulai perjalanan dari A1 hingga B2 dengan bantuan AI Tutor DeutschUp. Gratis selamanya.
+            Mulai dari A1, lanjutkan sesuai progresmu, dan gunakan latihan yang tersedia tanpa biaya.
           </p>
 
           {/* CTAs — sharp */}

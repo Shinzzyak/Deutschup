@@ -2,11 +2,11 @@ import { motion } from 'motion/react';
 import { MessageSquare, BookOpen, GraduationCap, BarChart3, PenLine, Check } from 'lucide-react';
 
 const features = [
-  { icon: MessageSquare, label: 'AI Tutor' },
-  { icon: BookOpen, label: 'Structured Curriculum' },
-  { icon: GraduationCap, label: 'Goethe-style Learning' },
-  { icon: BarChart3, label: 'Progress Tracking' },
-  { icon: PenLine, label: 'Smart Corrections' },
+  { icon: MessageSquare, label: 'Tutor AI' },
+  { icon: BookOpen, label: 'Kurikulum terstruktur' },
+  { icon: GraduationCap, label: 'Latihan model Goethe' },
+  { icon: BarChart3, label: 'Progres belajar' },
+  { icon: PenLine, label: 'Koreksi tata bahasa' },
 ];
 
 export default function SocialProof() {
@@ -28,11 +28,11 @@ export default function SocialProof() {
               </span>
             </div>
             <h2 className="font-serif text-4xl sm:text-5xl leading-[1.05] tracking-tight text-[#0a0a0a] mb-6">
-              Dirancang untuk{' '}
-              <span className="italic text-[#8b2500]">Hasil Nyata</span>
+              Materi dan latihan untuk{' '}
+              <span className="italic text-[#8b2500]">belajar terarah</span>
             </h2>
             <p className="text-lg text-[#0a0a0a]/50 leading-relaxed font-light mb-8">
-              Fitur yang benar-benar membantu kamu belajar — bukan janji kosong.
+              Pilih materi, kerjakan latihan, lalu pantau progres belajarmu.
             </p>
 
             {/* Editorial separator */}
@@ -83,9 +83,9 @@ export default function SocialProof() {
 
               <div className="space-y-6">
                 {[
-                  { num: '01', title: 'Grammar in Context', desc: 'Belajar tata bahasa melalui konteks nyata, bukan hafalan kaku.' },
-                  { num: '02', title: 'Spaced Repetition', desc: 'Kosakata diulang pada interval optimal untuk memori jangka panjang.' },
-                  { num: '03', title: 'AI-Powered Feedback', desc: 'Koreksi instan dengan penjelasan yang dipersonalisasi untuk siswa Indonesia.' },
+                  { num: '01', title: 'Tata bahasa dalam konteks', desc: 'Pelajari tata bahasa lewat contoh kalimat dan penggunaan.' },
+                  { num: '02', title: 'Pengulangan kosakata', desc: 'Ulangi kosakata secara berkala untuk memperkuat ingatan.' },
+                  { num: '03', title: 'Umpan balik AI', desc: 'Dapatkan koreksi dan penjelasan untuk jawabanmu.' },
                 ].map((item, i) => (
                   <div key={item.num} className="flex gap-4">
                     <span className="font-serif text-2xl font-bold text-[#0a0a0a]/10">{item.num}</span>
