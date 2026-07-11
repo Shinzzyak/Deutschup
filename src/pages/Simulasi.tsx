@@ -63,7 +63,7 @@ export default function MockTest() {
       const oneWeek = 7 * 24 * 60 * 60 * 1000;
       const recentTests = mockTests?.filter(t => (now - t.createdAt) < oneWeek) || [];
       if (recentTests.length >= 1) {
-        alert("Pengguna Free hanya dapat satu kali Simulasi Ujian per minggu. Silakan tingkatkan langganan Anda ke Pro atau Master.");
+        alert("Pengguna Gratis hanya dapat satu kali Simulasi Ujian per minggu. Silakan tingkatkan langganan Anda ke Pro.");
         return;
       }
     }

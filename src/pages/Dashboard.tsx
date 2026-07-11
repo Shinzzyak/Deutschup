@@ -319,7 +319,7 @@ export default function Dashboard() {
           <div className="st-card rounded-lg p-8 text-center">
             <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
             <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai perjalanan belajar bahasa Jermamu dari A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai dari pelajaran A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
             <div className="flex justify-center">
               <Link to="/lesson/a1-1">
                 <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground px-8 py-3 font-bold text-lg">
@@ -339,7 +339,7 @@ export default function Dashboard() {
                   <Database className="w-4 h-4" />
                   Kosakata Kurikulum
                 </div>
-                <h2 className="text-xl md:text-2xl font-black tracking-tight">{dbCountsLoading ? 'Memuat kosakata...' : `${dbSummary.total.toLocaleString('id-ID')} kata siap dipelajari`}</h2>
+                <h2 className="text-xl md:text-2xl font-black tracking-tight">{dbCountsLoading ? 'Memuat kosakata...' : `${dbSummary.total.toLocaleString('id-ID')} kata tersedia`}</h2>
                 <p className="text-sm text-muted-foreground">Level aktif {currentLevel} punya {currentLevelDbWords.toLocaleString('id-ID')} kata untuk latihan kosakata.</p>
               </div>
               <Link to="/vocab">

@@ -33,18 +33,18 @@ describe('CurriculumStudio', () => {
     );
 
     expect(screen.getByRole('heading', { name: /Kurikulum Studio/i })).toBeInTheDocument();
-    expect(screen.getByText(/86 roadmap units/i)).toBeInTheDocument();
-    expect(screen.getByText(/70 lessons/i)).toBeInTheDocument();
-    expect(screen.getByText(/16 checkpoints/i)).toBeInTheDocument();
+    expect(screen.getByText(/86 unit kurikulum/i)).toBeInTheDocument();
+    expect(screen.getByText(/70 pelajaran/i)).toBeInTheDocument();
+    expect(screen.getByText(/16 evaluasi/i)).toBeInTheDocument();
 
     await waitFor(() => expect(screen.getByText(/2\.472 kata tersedia/i)).toBeInTheDocument());
 
-    expect(screen.getByRole('link', { name: /Mulai lesson berikutnya/i })).toHaveAttribute('href', '/lesson/a1-2');
-    expect(screen.getByRole('link', { name: /Buka vocab trainer/i })).toHaveAttribute('href', '/vocab');
+    expect(screen.getByRole('link', { name: /Mulai pelajaran berikutnya/i })).toHaveAttribute('href', '/lesson/a1-2');
+    expect(screen.getByRole('link', { name: /Buka latihan kosakata/i })).toHaveAttribute('href', '/vocab');
     expect(screen.getByRole('link', { name: /Perkenalan & Salam/i })).toHaveAttribute('href', '/lesson/a1-1');
     expect(screen.getAllByRole('link', { name: /Review Konten Sebelumnya/i })[0]).toHaveAttribute('href', '/checkpoint/a1-checkpoint-1');
     expect(screen.getByText(/12 checkpoint siap/i)).toBeInTheDocument();
     expect(screen.getByText(/4 data belum siap/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/29 route siap/i)).toHaveLength(2);
+    expect(screen.getAllByText(/29 unit siap/i)).toHaveLength(2);
   });
 });

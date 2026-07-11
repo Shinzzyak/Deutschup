@@ -9,9 +9,9 @@ import {
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: BookOpen },
+  { name: 'Beranda', href: '/', icon: BookOpen },
   { name: 'Kurikulum', href: '/curriculum', icon: Trophy },
-  { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
+  { name: 'Kosakata', href: '/vocab', icon: BrainCircuit },
   { name: 'Catatan', href: '/catatan', icon: BarChart3 },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
   { name: 'Langganan', href: '/pricing', icon: CreditCard },
@@ -141,7 +141,7 @@ export default function TopNav() {
                 {showUserMenu && (
                   <div id="user-menu" className="glass absolute right-0 mt-2 w-56 z-50">
                     <div className="px-4 py-3 border-b border-[#0a0a0a]/10">
-                      <p className="text-sm font-bold text-[#0a0a0a] truncate">{profileData?.full_name || 'Learner'}</p>
+                      <p className="text-sm font-bold text-[#0a0a0a] truncate">{profileData?.full_name || 'Pelajar'}</p>
                       <p className="text-xs text-[#0a0a0a]/40 truncate mt-0.5">{user?.email}</p>
                     </div>
                     <div className="p-1.5">
