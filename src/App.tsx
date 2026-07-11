@@ -68,7 +68,10 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background relative">
-      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:text-foreground">
+      <a href="#main-content-desktop" className="hidden lg:block sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:text-foreground">
+        Langsung ke konten utama
+      </a>
+      <a href="#main-content-mobile" className="lg:hidden sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:text-foreground">
         Langsung ke konten utama
       </a>
       <div className="glass-bg-ambient" aria-hidden="true" />
@@ -79,7 +82,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           <DesktopSidebar />
           <main
             className="flex-1 overflow-y-auto px-6 py-6"
-            id="main-content"
+            id="main-content-desktop"
           >
             <div className="max-w-5xl mx-auto">
               {children}
@@ -93,7 +96,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         <TopNav />
         <main
           className="flex-1 px-4 py-6 pb-32"
-          id="main-content"
+          id="main-content-mobile"
         >
           <div className="max-w-5xl mx-auto">
             {children}
