@@ -36,7 +36,7 @@ export default function MobileBottomNav() {
 
       aria-label="Navigasi mobile"
     >
-      <div className="flex justify-around items-end py-1.5 px-1">
+      <div className="flex justify-around items-end px-1 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
         {navigation.map((item) => {
           const active = isActive(item.href);
           return (
