@@ -349,9 +349,9 @@ export default function Dashboard() {
                 </Button>
               </Link>
             </div>
-            <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="mt-5 grid grid-cols-2 divide-x divide-y border border-border md:grid-cols-4 md:divide-y-0">
               {LEVELS.map((level) => (
-                <div key={level} className="rounded-xl border border-border bg-muted/35 p-3">
+                <div key={level} className="bg-muted/20 p-4">
                   <div className="flex items-center justify-between gap-2">
                     <span className="font-black">{level}</span>
                     <span className="st-badge st-badge--neutral">{dbSummary.byLevel[level].percentOfTotal}%</span>
@@ -366,10 +366,9 @@ export default function Dashboard() {
 
         {/* SECTION B: STATS GRID */}
         {!loading && (
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+          <div className="grid grid-cols-2 border border-border divide-x divide-y lg:grid-cols-4 lg:divide-y-0">
 
-            <div className="relative overflow-hidden  st-level-card flex flex-col items-center justify-center">
-              <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-amber-400/10 blur-xl" />
+            <div className="relative overflow-hidden bg-card p-5 flex flex-col items-center justify-center">
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11  bg-[#c8956c] flex items-center justify-center mb-2.5  ">
                   <Zap className="w-5 h-5 text-primary-foreground" />
@@ -378,8 +377,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Total XP</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  st-level-card flex flex-col items-center justify-center">
-              <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-blue-400/10 blur-xl" />
+            <div className="relative overflow-hidden bg-card p-5 flex flex-col items-center justify-center">
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
                   <BookOpen className="w-5 h-5 text-primary-foreground" />
@@ -388,8 +386,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Kosakata</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  st-level-card flex flex-col items-center justify-center">
-              <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-emerald-400/10 blur-xl" />
+            <div className="relative overflow-hidden bg-card p-5 flex flex-col items-center justify-center">
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
                   <CheckCircle2 className="w-5 h-5 text-primary-foreground" />
@@ -398,8 +395,7 @@ export default function Dashboard() {
                 <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
               </div>
             </div>
-            <div className="relative overflow-hidden  bg-[#f5f0eb] border border-purple-500/20 rounded-lg p-4 md:p-5 flex flex-col">
-              <div className="absolute -right-4 -bottom-4 w-20 h-20  bg-purple-500/10 blur-xl" />
+            <div className="relative overflow-hidden bg-card p-5 flex flex-col">
               <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
                 <div className="w-12 h-12  bg-purple-500/15 flex items-center justify-center mb-2">
                   <TrendingUp className="w-6 h-6 text-purple-500" />

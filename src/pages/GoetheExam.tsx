@@ -24,9 +24,9 @@ const levelColorMap: Record<string, { accent: string; badge: string }> = {
 
 // Question type styling
 const typeStyleMap: Record<string, { label: string; badge: string }> = {
-  reading: { label: '📖 Reading', badge: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
-  grammar: { label: '📝 Grammar', badge: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
-  vocab: { label: '💬 Vocab', badge: 'bg-green-500/15 text-green-700 dark:text-green-400' },
+  reading: { label: '📖 Membaca', badge: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
+  grammar: { label: '📝 Tata bahasa', badge: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
+  vocab: { label: '💬 Kosakata', badge: 'bg-green-500/15 text-green-700 dark:text-green-400' },
 };
 
 export default function GoetheExam() {
@@ -109,12 +109,13 @@ export default function GoetheExam() {
   if (!selectedLevel) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-heading font-bold mb-3 text-foreground">
-            Goethe Prüfung Simulator
+        <div className="mb-10 border-l-4 border-[#8b2500] pl-5 md:pl-6">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8b2500] mb-2">Latihan mandiri</p>
+          <h1 className="text-3xl md:text-4xl font-serif font-bold mb-3 text-foreground">
+            Simulasi ujian Goethe
           </h1>
-          <p className="text-muted-foreground text-base">
-            Pilih level untuk memulai simulasi ujian
+          <p className="text-muted-foreground text-base max-w-xl">
+            Pilih level. Soal dan hasil latihan disusun berdasarkan level yang kamu pilih.
           </p>
         </div>
 
@@ -123,37 +124,29 @@ export default function GoetheExam() {
             const levelQuestions = allQuestions.filter(q => q.level === level.id);
             const colors = levelColorMap[level.color] || levelColorMap.green;
             return (
-              <motion.div
+              <motion.button
+                type="button"
                 key={level.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-              <Card
+                whileHover={{ y: -2 }}
+                whileTap={{ y: 0 }}
+                onClick={() => setSelectedLevel(level.id as Level)}
                 className={cn(
-                  "p-6 cursor-pointer border-2 border-border hover:border-primary/40 transition-all hover:shadow-md rounded-lg",
-                  "text-left border-l-4",
+                  "group w-full border-l-4 bg-card p-6 text-left transition-[border-color,box-shadow,transform] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
                   colors.accent
                 )}
-                role="button"
-                tabIndex={0}
                 aria-label={`Pilih level ${level.name}`}
-                onClick={() => setSelectedLevel(level.id as Level)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedLevel(level.id as Level);
-                  }
-                }}
               >
-                <div className="text-3xl mb-3" aria-hidden="true">{level.icon}</div>
-                <h3 className="text-xl font-heading font-bold text-foreground">{level.name}</h3>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="text-3xl" aria-hidden="true">{level.icon}</div>
+                  <span className={cn("px-2 py-1 text-xs font-bold", colors.badge)}>{level.id.toUpperCase()}</span>
+                </div>
+                <h3 className="mt-7 text-xl font-serif font-bold text-foreground">{level.name}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{level.description}</p>
-                <p className="text-xs text-muted-foreground/70 mt-3 flex items-center gap-1.5">
+                <p className="text-xs text-muted-foreground/70 mt-6 flex items-center gap-1.5">
                   <Target className="w-3.5 h-3.5" aria-hidden="true" />
                   {levelQuestions.length} soal tersedia
                 </p>
-              </Card>
-              </motion.div>
+              </motion.button>
             );
           })}
         </div>

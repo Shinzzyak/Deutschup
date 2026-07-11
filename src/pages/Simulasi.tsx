@@ -4,7 +4,7 @@ import { useLearningStore } from '../stores/learningStore';
 import { isUserPro } from '../lib/subscription';
 import { useProgressStore } from '../stores/progressStore';
 import { Button } from '../components/ui/button';
-import { FileText, Loader2, PlayCircle, Timer, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import { Loader2, PlayCircle, Timer, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 import { authedFetch } from '../lib/auth-headers';
@@ -152,16 +152,16 @@ export default function MockTest() {
 
   if (testState === 'SETUP') {
     return (
-      <div className="max-w-3xl mx-auto pb-20 text-center space-y-8">
-        <div className="st-card p-12  border border-border ">
-           <FileText className="w-16 h-16 mx-auto mb-6 text-blue-600" />
-           <h1 className="text-4xl font-serif font-extrabold mb-4">Simulasi Ujian (Mock Test)</h1>
-           <p className="text-muted-foreground text-lg mb-8 max-w-lg mx-auto">
-             Ikuti simulasi ujian berstandar TELC/Goethe. Terdiri dari sesi Reading, Grammar, dan Vocabulary. 
-             Waktu pengerjaan: 30 menit.
+      <div className="max-w-3xl mx-auto pb-20 space-y-8">
+        <div className="border-l-4 border-[#8b2500] pl-5 md:pl-6">
+           <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8b2500] mb-2">Latihan mandiri</p>
+           <h1 className="text-4xl font-serif font-extrabold mb-4">Simulasi ujian</h1>
+           <p className="text-muted-foreground text-lg max-w-lg">
+             Kerjakan soal membaca, tata bahasa, dan kosakata dalam 30 menit.
            </p>
+        </div>
 
-           <div className="grid grid-cols-2 gap-3 md:gap-4 mb-8">
+           <div className="grid grid-cols-2 border border-border bg-border gap-px">
               {(['A1', 'A2', 'B1', 'B2'] as const).map(l => {
                  const levelColors: Record<string, { border: string; bg: string; text: string; activeBorder: string }> = {
                    A1: { border: 'border-emerald-300', bg: 'bg-emerald-50', text: 'text-emerald-700', activeBorder: 'border-emerald-500' },
@@ -175,8 +175,8 @@ export default function MockTest() {
                      key={l}
                      onClick={() => setLevel(l)}
                      className={cn(
-                        "w-full py-4  text-2xl font-bold border-2 transition-all hover:scale-[1.02]",
-                        level === l ? [c.activeBorder, c.bg, c.text, ""] : ["border-border", "text-muted-foreground", "hover:border-gray-300", "hover:bg-muted"]
+                        "w-full bg-card py-5 text-2xl font-bold transition-[background-color,color,box-shadow,transform] hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset",
+                        level === l ? [c.bg, c.text, "shadow-[inset_0_-3px_0_0_currentColor]"] : ["text-muted-foreground"]
                      )}
                    >
                      {l}
@@ -185,10 +185,9 @@ export default function MockTest() {
               })}
            </div>
            
-           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold  w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
+           <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
              <PlayCircle className="w-6 h-6 mr-2" /> Mulai Simulasi
            </Button>
-        </div>
       </div>
     );
   }
