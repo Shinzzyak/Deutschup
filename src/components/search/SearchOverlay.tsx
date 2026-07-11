@@ -80,7 +80,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm flex items-start justify-center pt-[10vh] px-4"
+        className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm flex items-start justify-center overscroll-contain pt-[10vh] px-4"
         onClick={onClose}
       >
         <motion.div
@@ -89,11 +89,16 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           className="glass-heavy w-full max-w-xl overflow-hidden"
           onClick={e => e.stopPropagation()}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Cari materi"
         >
           {/* Input */}
           <div className="flex items-center gap-3 px-4 py-3 border-b border-[#0a0a0a]/10">
             <Search className="w-5 h-5 text-[#0a0a0a]/40 shrink-0" />
+            <label htmlFor="site-search" className="sr-only">Cari materi</label>
             <input
+              id="site-search"
               ref={inputRef}
               type="text"
               placeholder="Cari kosakata, pelajaran, atau verba..."
@@ -105,7 +110,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
             <kbd className="glass-subtle hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-[#0a0a0a]/40">
               ESC
             </kbd>
-            <button onClick={onClose} className="md:hidden p-1">
+            <button onClick={onClose} className="md:hidden p-1" aria-label="Tutup pencarian">
               <X className="w-5 h-5 text-[#0a0a0a]/40" />
             </button>
           </div>

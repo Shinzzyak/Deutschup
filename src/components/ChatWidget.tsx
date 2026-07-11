@@ -118,13 +118,14 @@ export default function ChatWidget() {
                 ref={panelRef}
                 id="chat-panel"
                 role="dialog"
+                aria-modal="true"
                 aria-label="Chat dengan Herr Deutsch"
                 aria-live="polite"
                 initial={{ opacity: 0, scale: 0.9, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
-                className="fixed z-[99999] st-card flex flex-col overflow-hidden"
+                className="fixed z-[99999] st-card flex flex-col overflow-hidden overscroll-contain"
                 style={{
                   bottom: 'calc(env(safe-area-inset-bottom, 0px) + 140px)',
                   right: '16px',
