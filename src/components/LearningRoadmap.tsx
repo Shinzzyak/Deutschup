@@ -14,7 +14,7 @@ const levels = [
   },
   {
     level: 'A2',
-    title: 'Elementary',
+    title: 'Dasar',
     active: false,
     grammar: ['Perfekt Tense', 'Dativ/Akkusativ', 'Nebensätze'],
     vocab: '1,000+',
@@ -23,7 +23,7 @@ const levels = [
   },
   {
     level: 'B1',
-    title: 'Intermediate',
+    title: 'Menengah',
     active: false,
     grammar: ['Konjunktiv II', 'Passiv', 'Relativsätze'],
     vocab: '2,500+',
@@ -32,7 +32,7 @@ const levels = [
   },
   {
     level: 'B2',
-    title: 'Upper-Intermediate',
+    title: 'Menengah Atas',
     active: false,
     grammar: ['Erweiterte Satzstrukturen', 'Nominalisierung', 'Stilmittel'],
     vocab: '4,000+',
@@ -60,11 +60,11 @@ export default function LearningRoadmap() {
             </span>
           </div>
           <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight text-[#0a0a0a] max-w-3xl">
-            Roadmap Belajar{' '}
+            Kurikulum{' '}
             <span className="italic text-[#8b2500]">Bahasa Jerman</span>
           </h2>
           <p className="text-lg text-[#0a0a0a]/50 mt-4 max-w-xl font-light">
-            Kurikulum terstruktur dari A1 hingga B2 — persiapan ujian Goethe.
+            Materi A1–B2 untuk persiapan ujian Goethe.
           </p>
         </motion.div>
 
@@ -93,7 +93,7 @@ export default function LearningRoadmap() {
                 className={`px-6 py-5 ${level.active ? 'bg-primary' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-3 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
-                  Grammar
+                  Tata Bahasa
                 </p>
                 <ul className="space-y-1.5">
                   {level.grammar.map((g) => (
@@ -132,7 +132,7 @@ export default function LearningRoadmap() {
                 className={`px-6 py-4 ${level.active ? 'bg-primary' : 'bg-[#f5f0eb]'}`}
               >
                 <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${level.active ? 'text-[#c8956c]' : 'text-[#0a0a0a]/40'}`}>
-                  Skills
+                  Keterampilan
                 </p>
                 <p className={`text-sm ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/50'}`}>
                   {level.listening}
@@ -170,7 +170,7 @@ export default function LearningRoadmap() {
                 </div>
                 <div className="space-y-1">
                   <p className={`text-sm ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/50'}`}>
-                    <span className="font-semibold">Grammar:</span> {level.grammar.join(', ')}
+                    <span className="font-semibold">Tata bahasa:</span> {level.grammar.join(', ')}
                   </p>
                   <p className={`text-sm ${level.active ? 'text-primary-foreground/60' : 'text-[#0a0a0a]/50'}`}>
                     {level.listening} · {level.speaking}

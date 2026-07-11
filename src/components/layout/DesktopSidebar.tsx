@@ -20,9 +20,9 @@ import {
 } from 'lucide-react';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: BookOpen },
+  { name: 'Beranda', href: '/', icon: BookOpen },
   { name: 'Kurikulum', href: '/curriculum', icon: Trophy },
-  { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
+  { name: 'Kosakata', href: '/vocab', icon: BrainCircuit },
   { name: 'Catatan', href: '/catatan', icon: BarChart3 },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
   { name: 'Goethe', href: '/goethe', icon: Trophy },
@@ -72,7 +72,7 @@ export default function DesktopSidebar() {
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-sm font-semibold text-[#0a0a0a] truncate">
-                {profileData?.full_name || 'Learner'}
+                {profileData?.full_name || 'Pelajar'}
               </p>
               <div className="flex items-center gap-1 mt-0.5">
                 <span className="text-[10px] font-bold text-[#0a0a0a] bg-primary/5 border border-[#0a0a0a]/10 px-1.5 py-0.5">

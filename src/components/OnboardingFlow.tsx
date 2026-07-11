@@ -26,7 +26,7 @@ const goals = [
   { id: 'exam', label: 'Persiapan Ujian', desc: 'Goethe, TestDaF, atau sertifikasi lainnya', icon: GraduationCap },
   { id: 'conversation', label: 'Percakapan', desc: 'Bisa ngobrol dengan orang Jerman', icon: MessageCircle },
   { id: 'career', label: 'Karir', desc: 'Untuk pekerjaan atau bisnis', icon: Briefcase },
-  { id: 'travel', label: 'Perjalanan', desc: 'Traveling ke Jerman atau Austria', icon: Plane },
+  { id: 'travel', label: 'Perjalanan', desc: 'Bepergian ke Jerman atau Austria', icon: Plane },
 ];
 
 export default function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
@@ -76,8 +76,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 Selamat Datang di Deutschup! 🇩🇪
               </h1>
               <p className="text-lg text-[#0a0a0a]/60 mb-8">
-                Mari personalisasi pengalaman belajar kamu. 
-                Hanya butuh 30 detik.
+                Pilih level dan tujuan belajarmu.
               </p>
               <button
                 onClick={() => setStep('level')}
@@ -105,7 +104,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 Level bahasa Jerman kamu? 🎯
               </h2>
               <p className="text-[#0a0a0a]/60 mb-6">
-                Ini membantu kami menyesuaikan konten yang tepat.
+                Pilih levelmu saat ini.
               </p>
               <div className="grid grid-cols-2 gap-3 mb-8">
                 {levels.map((level) => (
@@ -157,7 +156,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 Tujuan belajar kamu? 🚀
               </h2>
               <p className="text-[#0a0a0a]/60 mb-6">
-                Kami akan rekomendasikan jalur belajar yang sesuai.
+                Pilih tujuan belajarmu.
               </p>
               <div className="grid grid-cols-2 gap-3 mb-8">
                 {goals.map((goal) => (

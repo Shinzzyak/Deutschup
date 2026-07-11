@@ -80,7 +80,7 @@ export default function Catatan() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold flex items-center">
                  <CalendarCheck2 className="w-6 h-6 mr-2 text-[#c8956c]" />
-                 Rencana Belajar AI
+                 Rencana Belajar
               </h2>
             </div>
             
@@ -90,7 +90,7 @@ export default function Catatan() {
                   <Sparkles className="w-8 h-8 text-[#c8956c]" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">Belum ada rencana!</h3>
-                <p className="text-muted-foreground mb-6">Minta Herr Deutsch membuatkan daftar fokus belajar berdasarkan level pencapaianmu.</p>
+                <p className="text-muted-foreground mb-6">Buat daftar belajar untuk levelmu.</p>
                 <Button 
                    onClick={handleGeneratePlan} 
                    disabled={generatingPlan}
@@ -105,7 +105,7 @@ export default function Catatan() {
                 <div className="flex justify-between items-center text-sm font-semibold text-muted-foreground bg-muted p-4 ">
                    <span>Progres: {studyPlan.tasks.filter(t => t.completed).length}/{studyPlan.tasks.length} Selesai</span>
                    <Button onClick={handleGeneratePlan} disabled={generatingPlan} variant="ghost" size="sm" className="text-[#c8956c] hover:text-[#c8956c]/80 h-8">
-                     {generatingPlan ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />} Update
+                     {generatingPlan ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Sparkles className="w-4 h-4 mr-1" />} Perbarui
                    </Button>
                 </div>
                 
@@ -149,9 +149,9 @@ export default function Catatan() {
                             newNoteTag === tag ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground hover:bg-accent"
                           )}
                           aria-pressed={newNoteTag === tag}
-                          aria-label={`Tag: ${tag}`}
+                          aria-label={`Tag: ${tag === 'Grammar' ? 'Tata Bahasa' : tag}`}
                         >
-                          {tag}
+                          {tag === 'Grammar' ? 'Tata Bahasa' : tag}
                         </button>
                      ))}
                   </div>
@@ -169,7 +169,7 @@ export default function Catatan() {
                      <BookOpen className="w-8 h-8 text-muted-foreground" />
                    </div>
                    <h3 className="text-lg font-bold text-muted-foreground mb-1">Catatan Kosong</h3>
-                   <p className="text-muted-foreground text-sm">Tuliskan pengingat, rule grammar, atau kosa kata baru di sini.</p>
+                   <p className="text-muted-foreground text-sm">Tulis pengingat, aturan tata bahasa, atau kosakata baru di sini.</p>
                  </div>
                )}
                
