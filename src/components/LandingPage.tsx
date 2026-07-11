@@ -95,8 +95,11 @@ function Footer() {
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#f5f0eb]">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:text-foreground">
+        Langsung ke konten utama
+      </a>
       <Header />
-      <main>
+      <main id="main-content">
         <Hero />
         <ProductShowcase />
         <LearningRoadmap />

@@ -65,7 +65,7 @@ export default function DesktopSidebar() {
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-primary/10 flex items-center justify-center overflow-hidden border border-[#0a0a0a]/20">
               {profileData?.avatar_url ? (
-                <img src={profileData.avatar_url} alt="" className="w-full h-full object-cover" />
+                <img src={profileData.avatar_url} alt="" width="40" height="40" className="w-full h-full object-cover" />
               ) : (
                 <User className="w-5 h-5 text-[#0a0a0a]/50" />
               )}

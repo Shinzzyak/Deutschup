@@ -128,7 +128,7 @@ export default function Profile() {
               <div className="relative mb-6 group">
                 <div className="w-32 h-32 bg-[#c8956c] flex items-center justify-center text-5xl font-black text-[#0a0a0a] border-2 border-[#0a0a0a] overflow-hidden rounded-none">
                   {avatarUrl ? (
-                    <img src={avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                    <img src={avatarUrl} alt="Avatar" width="128" height="128" className="w-full h-full object-cover" />
                   ) : (
                     fullName?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || '?'
                   )}

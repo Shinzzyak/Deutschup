@@ -130,7 +130,7 @@ export default function TopNav() {
                 <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1 hover:bg-primary/5 transition-colors" aria-label="Menu profil">
                   <div className="w-8 h-8 bg-primary/10 flex items-center justify-center overflow-hidden">
                     {profileData?.avatar_url ? (
-                      <img src={profileData.avatar_url} alt="" className="w-full h-full object-cover" />
+                      <img src={profileData.avatar_url} alt="" width="32" height="32" className="w-full h-full object-cover" />
                     ) : (
                       <User className="w-4 h-4 text-[#0a0a0a]/40" />
                     )}
