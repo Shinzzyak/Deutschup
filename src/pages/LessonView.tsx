@@ -521,13 +521,18 @@ export default function LessonView() {
                     );
                   })
                 ) : (
+                  <>
+                  <label htmlFor="lesson-answer" className="sr-only">Jawaban dalam bahasa Jerman</label>
                   <textarea
+                    id="lesson-answer"
+                    name="lesson-answer"
                     disabled={isAnswerChecked || checkingAnswer}
                     value={selectedAnswer}
                     onChange={(e) => setSelectedAnswer(e.target.value)}
                     placeholder="Tuliskan jawaban bahasa Jermanmu disini..."
                     className="w-full min-h-[120px] bg-muted border-2 border-border  p-4 text-lg focus:outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all font-medium resize-none"
                   />
+                  </>
                 )}
                 
                 {currentQuestion.hint && !isAnswerChecked && (

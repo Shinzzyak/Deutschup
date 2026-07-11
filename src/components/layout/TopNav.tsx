@@ -127,7 +127,7 @@ export default function TopNav() {
               </div>
 
               <div className="relative" ref={userMenuRef}>
-                <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1 hover:bg-primary/5 transition-colors" aria-label="Menu profil">
+                <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1 hover:bg-primary/5 transition-colors" aria-label="Menu profil" aria-expanded={showUserMenu} aria-controls="user-menu">
                   <div className="w-8 h-8 bg-primary/10 flex items-center justify-center overflow-hidden">
                     {profileData?.avatar_url ? (
                       <img src={profileData.avatar_url} alt="" width="32" height="32" className="w-full h-full object-cover" />
@@ -139,7 +139,7 @@ export default function TopNav() {
                 </button>
 
                 {showUserMenu && (
-                  <div className="glass absolute right-0 mt-2 w-56 z-50">
+                  <div id="user-menu" className="glass absolute right-0 mt-2 w-56 z-50">
                     <div className="px-4 py-3 border-b border-[#0a0a0a]/10">
                       <p className="text-sm font-bold text-[#0a0a0a] truncate">{profileData?.full_name || 'Learner'}</p>
                       <p className="text-xs text-[#0a0a0a]/40 truncate mt-0.5">{user?.email}</p>

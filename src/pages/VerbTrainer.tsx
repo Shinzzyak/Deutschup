@@ -148,10 +148,13 @@ export default function VerbTrainer() {
       </div>
 
       <div className="relative mb-12">
+        <label htmlFor="verb-search" className="sr-only">Cari kata</label>
         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
           <Search className="h-6 w-6 text-muted-foreground" />
         </div>
         <input 
+          id="verb-search"
+          name="search"
           type="text" 
           placeholder="Cari kata (misal: rumah, gehen, schön)..."
           className="w-full bg-white/80 backdrop-blur-sm border border-[#0a0a0a]/10 rounded-xl py-4 pl-12 pr-4 text-lg focus:outline-none focus:border-[#8b2500] focus:ring-2 focus:ring-[#8b2500]/20 transition-all font-medium"

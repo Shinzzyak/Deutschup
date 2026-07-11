@@ -41,8 +41,10 @@ export default function Koreksi() {
       </div>
 
       <div className="st-card p-6 md:p-8 mb-8">
-        <label className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
+        <label htmlFor="sentence" className="block text-foreground font-bold mb-4 text-lg">Kalimat Kamu:</label>
         <textarea
+          id="sentence"
+          name="sentence"
           value={input}
           onChange={e => setInput(e.target.value)}
           placeholder="Misal: Ich habe einen auto gekauft..."

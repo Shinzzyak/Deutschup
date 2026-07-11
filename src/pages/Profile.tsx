@@ -193,11 +193,14 @@ export default function Profile() {
 
             <div className="grid gap-6">
               <div className="group">
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1 group-focus-within:text-[#F2C94C] transition-colors">
+                <label htmlFor="full-name" className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1 group-focus-within:text-[#F2C94C] transition-colors">
                   Nama Lengkap
                 </label>
                 <div className="relative">
                   <input
+                    id="full-name"
+                    name="name"
+                    autoComplete="name"
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
@@ -208,11 +211,13 @@ export default function Profile() {
               </div>
 
               <div>
-                <label className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1">
+                <label htmlFor="email" className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 block ml-1">
                   Alamat Email
                 </label>
                 <div className="relative">
                   <input
+                    id="email"
+                    name="email"
                     type="email"
                     value={user.email || ''}
                     disabled
