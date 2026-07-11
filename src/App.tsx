@@ -68,6 +68,9 @@ function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background relative">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:bg-background focus:px-4 focus:py-2 focus:text-foreground">
+        Langsung ke konten utama
+      </a>
       <div className="glass-bg-ambient" aria-hidden="true" />
       {/* Desktop: top nav + sidebar layout */}
       <div className="hidden lg:flex flex-col h-screen">
