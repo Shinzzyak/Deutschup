@@ -183,12 +183,12 @@ export default function GoetheExam() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8">
-            <div className="bg-muted/50 rounded-md p-4 border border-border">
+          <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-border bg-muted/40 divide-x divide-border mb-8">
+            <div className="p-4">
               <p className="text-2xl md:text-3xl font-bold text-amber-500 font-heading">{score}</p>
               <p className="text-xs text-muted-foreground mt-1">Poin</p>
             </div>
-            <div className="bg-muted/50 rounded-md p-4 border border-border">
+            <div className="p-4">
               <p className={cn(
                 "text-2xl md:text-3xl font-bold font-heading",
                 passed ? "text-green-500" : "text-red-500"
@@ -197,7 +197,7 @@ export default function GoetheExam() {
               </p>
               <p className="text-xs text-muted-foreground mt-1">Benar</p>
             </div>
-            <div className="bg-muted/50 rounded-md p-4 border border-border">
+            <div className="p-4">
               <p className="text-2xl md:text-3xl font-bold text-blue-500 font-heading">
                 {Object.keys(answered).length}
               </p>

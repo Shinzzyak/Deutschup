@@ -196,8 +196,8 @@ export default function MockTest() {
     return (
        <div className="max-w-2xl mx-auto text-center py-20 px-6">
          <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />
-         <h2 className="text-3xl font-bold mb-4">Merakit Ujian...</h2>
-         <p className="text-muted-foreground">Herr Deutsch sedang menyiapkan pertanyaan berstandar untuk tingkat {level}.</p>
+         <h2 className="text-3xl font-bold mb-4">Menyiapkan soal</h2>
+         <p className="text-muted-foreground">Memuat soal untuk level {level}.</p>
        </div>
     );
   }
@@ -238,7 +238,7 @@ export default function MockTest() {
                        key={i}
                        onClick={() => setAnswers({...answers, [q.id]: opt})}
                        className={cn(
-                          "w-full text-left p-4  border-2 font-medium transition-all hover:scale-[1.01]",
+                          "w-full rounded-lg border-2 p-4 text-left font-medium transition-colors",
                           isSelected ? "border-blue-600 bg-blue-50 text-blue-800 " : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 text-foreground bg-card"
                        )}
                      >

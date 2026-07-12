@@ -529,8 +529,8 @@ export default function Dashboard() {
                 {achievements.map(achievement => {
                   const Icon = achievement.icon;
                   return (
-                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 border transition-all card-hover rounded-md", achievement.unlocked ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-amber-200/40" : "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50")}>
-                      <div className={cn("w-12 h-12  flex items-center justify-center mb-2", achievement.unlocked ? "bg-[#c8956c]  " : "bg-primary/5")}>
+                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 transition-colors", achievement.unlocked ? "bg-[#f5f0eb]/70" : "opacity-50")}>
+                      <div className={cn("mb-2 flex h-12 w-12 items-center justify-center rounded-full", achievement.unlocked ? "bg-[#c8956c]" : "bg-primary/5")}>
                         <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-primary-foreground" : "text-[#0a0a0a]/40")} />
                       </div>
                       <p className="text-sm font-bold text-[#0a0a0a]">{achievement.title}</p>
