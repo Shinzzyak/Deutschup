@@ -24,9 +24,9 @@ const levelColorMap: Record<string, { accent: string; badge: string }> = {
 
 // Question type styling
 const typeStyleMap: Record<string, { label: string; badge: string }> = {
-  reading: { label: '📖 Reading', badge: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
-  grammar: { label: '📝 Grammar', badge: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
-  vocab: { label: '💬 Vocab', badge: 'bg-green-500/15 text-green-700 dark:text-green-400' },
+  reading: { label: '📖 Membaca', badge: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
+  grammar: { label: '📝 Tata bahasa', badge: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
+  vocab: { label: '💬 Kosakata', badge: 'bg-green-500/15 text-green-700 dark:text-green-400' },
 };
 
 export default function GoetheExam() {
@@ -109,51 +109,53 @@ export default function GoetheExam() {
   if (!selectedLevel) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-heading font-bold mb-3 text-foreground">
-            Goethe Prüfung Simulator
+        <div className="mb-10 border-l-4 border-[#8b2500] pl-5 md:pl-6">
+          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8b2500] mb-2">Latihan mandiri</p>
+          <h1 className="text-3xl md:text-4xl font-serif font-bold mb-3 text-foreground">
+            Simulasi ujian Goethe
           </h1>
-          <p className="text-muted-foreground text-base">
-            Pilih level untuk memulai simulasi ujian
+          <p className="text-muted-foreground text-base max-w-xl">
+            Pilih level. Soal dan hasil latihan disusun berdasarkan level yang kamu pilih.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-          {examLevels.map((level) => {
+        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+          {examLevels.map((level, index) => {
             const levelQuestions = allQuestions.filter(q => q.level === level.id);
+            const levelPoints = levelQuestions.reduce((sum, question) => sum + question.points, 0);
             const colors = levelColorMap[level.color] || levelColorMap.green;
             return (
-              <motion.div
+              <motion.button
+                type="button"
                 key={level.id}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-              >
-              <Card
+                whileHover={{ x: 3 }}
+                whileTap={{ x: 0 }}
+                onClick={() => setSelectedLevel(level.id as Level)}
                 className={cn(
-                  "p-6 cursor-pointer border-2 border-border hover:border-primary/40 transition-all hover:shadow-md rounded-lg",
-                  "text-left border-l-4",
+                  "group grid w-full grid-cols-[2.5rem_1fr_auto] items-center gap-4 border-l-4 bg-card px-5 py-5 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset sm:grid-cols-[3rem_1fr_auto_auto] sm:px-7",
+                  index > 0 && "border-t border-t-border",
                   colors.accent
                 )}
-                role="button"
-                tabIndex={0}
                 aria-label={`Pilih level ${level.name}`}
-                onClick={() => setSelectedLevel(level.id as Level)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    setSelectedLevel(level.id as Level);
-                  }
-                }}
               >
-                <div className="text-3xl mb-3" aria-hidden="true">{level.icon}</div>
-                <h3 className="text-xl font-heading font-bold text-foreground">{level.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{level.description}</p>
-                <p className="text-xs text-muted-foreground/70 mt-3 flex items-center gap-1.5">
-                  <Target className="w-3.5 h-3.5" aria-hidden="true" />
-                  {levelQuestions.length} soal tersedia
-                </p>
-              </Card>
-              </motion.div>
+                <span className="font-serif text-2xl font-bold text-muted-foreground/45 tabular-nums">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <span>
+                  <span className="flex items-center gap-2">
+                    <span className="text-xl" aria-hidden="true">{level.icon}</span>
+                    <span className="font-serif text-xl font-bold text-foreground">{level.name}</span>
+                  </span>
+                  <span className="mt-1 block text-sm text-muted-foreground">{level.description}</span>
+                  <span className="mt-3 flex gap-3 text-xs text-muted-foreground">
+                    <span>{levelQuestions.length} soal</span>
+                    <span aria-hidden="true">·</span>
+                    <span>{levelPoints} poin</span>
+                  </span>
+                </span>
+                <span className={cn("hidden px-2 py-1 text-xs font-bold sm:inline-block", colors.badge)}>{level.id.toUpperCase()}</span>
+                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" aria-hidden="true" />
+              </motion.button>
             );
           })}
         </div>
@@ -190,12 +192,12 @@ export default function GoetheExam() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-3 gap-3 md:gap-4 mb-8">
-            <div className="bg-muted/50 rounded-md p-4 border border-border">
+          <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-border bg-muted/40 divide-x divide-border mb-8">
+            <div className="p-4">
               <p className="text-2xl md:text-3xl font-bold text-amber-500 font-heading">{score}</p>
               <p className="text-xs text-muted-foreground mt-1">Poin</p>
             </div>
-            <div className="bg-muted/50 rounded-md p-4 border border-border">
+            <div className="p-4">
               <p className={cn(
                 "text-2xl md:text-3xl font-bold font-heading",
                 passed ? "text-green-500" : "text-red-500"
@@ -204,7 +206,7 @@ export default function GoetheExam() {
               </p>
               <p className="text-xs text-muted-foreground mt-1">Benar</p>
             </div>
-            <div className="bg-muted/50 rounded-md p-4 border border-border">
+            <div className="p-4">
               <p className="text-2xl md:text-3xl font-bold text-blue-500 font-heading">
                 {Object.keys(answered).length}
               </p>
