@@ -108,4 +108,17 @@ describe('authStore session guard', () => {
     expect(useAuthStore.getState().profileLoaded).toBe(true);
     expect(useAuthStore.getState().tierData.tier).toBe('pro');
   });
+
+  it('retains server onboarding completion after local storage is cleared', async () => {
+    vi.stubEnv('VITE_CLERK_PUBLISHABLE_KEY', 'pk_test_1234567890');
+    const clerkUser = { id: 'user_onboarded', email: 'onboarded@example.test', user_metadata: {} } as any;
+    mocks.resolveInternalId.mockResolvedValue('550e8400-e29b-41d4-a716-446655440000');
+    mocks.dbProxy.mockResolvedValue({ data: { onboarding_completed: true, subscription: 'free', role: 'user' } });
+
+    const { useAuthStore } = await importFreshStore();
+    useAuthStore.getState().setUser(clerkUser);
+    await flushAsync();
+
+    expect(useAuthStore.getState().profileData.onboarding_completed).toBe(true);
+  });
 });

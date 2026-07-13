@@ -104,7 +104,10 @@ function parseProfileData(data: any): { tierData: TierData; profileData: Profile
       pro_expires_at: data.pro_expires_at, role: data.role || 'user',
     },
     profileData: {
-      full_name: data.full_name, avatar_url: data.avatar_url, role: data.role,
+      full_name: data.full_name,
+      avatar_url: data.avatar_url,
+      role: data.role,
+      onboarding_completed: data.onboarding_completed === true,
     },
   };
 }
