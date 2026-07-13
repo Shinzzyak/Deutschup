@@ -90,7 +90,9 @@ function loadCachedUser(): User | null {
 }
 
 function shouldUseLocalAuthCacheForE2E(): boolean {
-  return !isClerkEnabled() && import.meta.env.VITE_ENABLE_LOCAL_AUTH_CACHE_FOR_E2E === 'true';
+  return import.meta.env.DEV
+    && !isClerkEnabled()
+    && import.meta.env.VITE_ENABLE_LOCAL_AUTH_CACHE_FOR_E2E === 'true';
 }
 
 function parseProfileData(data: any): { tierData: TierData; profileData: ProfileData } {

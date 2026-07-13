@@ -59,6 +59,7 @@ describe('authStore session guard', () => {
   });
 
   it('allows cached local auth only for explicit development/e2e smoke tests when Clerk is disabled', async () => {
+    vi.stubEnv('DEV', true);
     vi.stubEnv('VITE_CLERK_PUBLISHABLE_KEY', '');
     vi.stubEnv('VITE_ENABLE_LOCAL_AUTH_CACHE_FOR_E2E', 'true');
     localStorage.setItem('deutschup_session', JSON.stringify(cachedSession('e2e_cached')));
@@ -66,6 +67,17 @@ describe('authStore session guard', () => {
     const { useAuthStore } = await importFreshStore();
 
     expect(useAuthStore.getState().user?.id).toBe('e2e_cached');
+  });
+
+  it('never trusts the E2E cache in a production build', async () => {
+    vi.stubEnv('DEV', false);
+    vi.stubEnv('VITE_CLERK_PUBLISHABLE_KEY', '');
+    vi.stubEnv('VITE_ENABLE_LOCAL_AUTH_CACHE_FOR_E2E', 'true');
+    localStorage.setItem('deutschup_session', JSON.stringify(cachedSession('attacker')));
+
+    const { useAuthStore } = await importFreshStore();
+
+    expect(useAuthStore.getState().user).toBeNull();
   });
 
   it('ignores cached local auth when Clerk is enabled, even if the e2e flag is present', async () => {
