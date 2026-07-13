@@ -43,57 +43,6 @@ export async function getAiClient() {
   });
 }
 
-export const runMiddleware = (req: any, res: any, fn: any) => {
-  return new Promise((resolve, reject) => {
-    fn(req, res, (result: any) => {
-      if (result instanceof Error) return reject(result);
-      if (res.headersSent) return reject(new Error('Headers sent'));
-      return resolve(result);
-    });
-  });
-};
-
-export const authMiddleware = async (req: any, res: any, next: any) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader?.startsWith('Bearer ')) {
-    // For Clerk users, token might be missing — allow through with userId validation
-    console.log('[authMiddleware] No Bearer token — Clerk user flow');
-    return next();
-  }
-  const token = authHeader.split('Bearer ')[1];
-  
-  // Try Clerk token first (check if it looks like a Clerk token)
-  if (token.startsWith('eyJ') || token.length > 100) {
-    // Likely a Clerk token — validate userId from body instead
-    console.log('[authMiddleware] Clerk token detected — validating via userId');
-    return next();
-  }
-  
-  // Try Supabase token
-  try {
-    const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
-    if (error || !user) {
-      // Supabase auth failed — try Clerk flow
-      console.log('[authMiddleware] Supabase auth failed — allowing Clerk flow');
-      return next();
-    }
-    req.user = user;
-    next();
-  } catch (e: any) {
-    console.error('Auth error:', e.message);
-    // Don't reject — allow Clerk flow
-    return next();
-  }
-};
-
-export function decodeJwtPayload(token: string): Record<string, any> | null {
-  try {
-    const parts = token.split('.');
-    if (parts.length !== 3) return null;
-    return JSON.parse(Buffer.from(parts[1], 'base64url').toString());
-  } catch { return null; }
-}
-
 export interface VerifiedIdentity {
   internalId: string;
   email?: string;

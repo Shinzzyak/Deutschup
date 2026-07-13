@@ -37,7 +37,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!userId) return res.status(401).json({ error: 'Unauthorized' });
         const { data, error } = await db
           .from('profiles')
-          .select('tier, tier_expiry, full_name, avatar_url, role, subscription, pro_expires_at')
+          .select('tier, tier_expiry, full_name, avatar_url, role, subscription, pro_expires_at, onboarding_completed')
           .eq('id', userId)
           .maybeSingle();
         if (error) {
