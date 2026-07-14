@@ -2,6 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import { invalidateCache } from '../lib/ai-router.js';
 import { isVerifiedAdmin } from '../lib/api-utils.js';
+import { validateCustomProviderUrl, validateProviderPath } from '../lib/custom-provider-security.js';
 
 function getSupabaseAdmin() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -228,6 +229,16 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         if (!id || !name || !base_url) {
           return res.status(400).json({ error: 'id, name, base_url required' });
         }
+        if (!/^[a-z0-9][a-z0-9_-]{0,63}$/i.test(id)) {
+          return res.status(400).json({ error: 'id must contain only letters, numbers, _ or -' });
+        }
+        if (api_format !== undefined && api_format !== 'openai') {
+          return res.status(400).json({ error: 'Only OpenAI-compatible custom providers are supported' });
+        }
+        const urlPolicy = validateCustomProviderUrl(base_url);
+        if ('error' in urlPolicy) return res.status(400).json({ error: urlPolicy.error });
+        const pathPolicy = validateProviderPath(chat_endpoint || '/chat/completions');
+        if ('error' in pathPolicy) return res.status(400).json({ error: pathPolicy.error });
         const { data, error } = await supabase
           .from('custom_providers')
           .upsert({
@@ -250,11 +261,20 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       case 'update-provider': {
-        const { id, ...updates } = req.body;
+        const { id, name, base_url, auth_type, auth_header, chat_endpoint, priority, enabled, config } = req.body;
         if (!id) return res.status(400).json({ error: 'id required' });
+        if (base_url !== undefined) {
+          const urlPolicy = validateCustomProviderUrl(base_url);
+          if ('error' in urlPolicy) return res.status(400).json({ error: urlPolicy.error });
+        }
+        if (chat_endpoint !== undefined) {
+          const pathPolicy = validateProviderPath(chat_endpoint);
+          if ('error' in pathPolicy) return res.status(400).json({ error: pathPolicy.error });
+        }
+        const updates = { name, base_url, auth_type, auth_header, chat_endpoint, priority, enabled, config };
         const { data, error } = await supabase
           .from('custom_providers')
-          .update({ ...updates, updated_at: new Date().toISOString() })
+          .update({ ...Object.fromEntries(Object.entries(updates).filter(([, value]) => value !== undefined)), updated_at: new Date().toISOString() })
           .eq('id', id)
           .select()
           .single();

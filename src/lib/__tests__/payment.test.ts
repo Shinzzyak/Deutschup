@@ -46,6 +46,14 @@ describe('Payment Logic', () => {
   });
 
   describe('Webhook Validation', () => {
+    it('treats missing, malformed, and non-object callback bodies as ignored', async () => {
+      const { getWebhookPayload } = await import('../../../api/payment');
+      expect(getWebhookPayload(undefined)).toBeNull();
+      expect(getWebhookPayload('not-json')).toBeNull();
+      expect(getWebhookPayload([])).toBeNull();
+      expect(getWebhookPayload({ status: 'paid' })).toEqual({ status: 'paid' });
+    });
+
     it('should require invoice_id in callback', () => {
       const body = { status: 'paid' };
       const isValid = 'invoice_id' in body && body.invoice_id;

@@ -2,6 +2,10 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getDb, getVerifiedIdentity } from '../lib/api-utils.js';
 import { notifyDiscord } from './webhook-notify.js';
 
+// Bayar.gg callbacks may carry malformed JSON or a wrong content-type. Parse only this
+// endpoint ourselves so Vercel's parser cannot reject it before the callback guard runs.
+export const config = { api: { bodyParser: false } };
+
 // Simple in-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 function checkRateLimit(ip: string, maxRequests = 20, windowMs = 60000): boolean {
@@ -15,6 +19,26 @@ function checkRateLimit(ip: string, maxRequests = 20, windowMs = 60000): boolean
   return entry.count <= maxRequests;
 }
 
+export function getWebhookPayload(body: unknown): Record<string, unknown> | null {
+  return body && typeof body === 'object' && !Array.isArray(body)
+    ? body as Record<string, unknown>
+    : null;
+}
+
+async function readJsonBody(req: VercelRequest): Promise<unknown> {
+  if (req.body !== undefined) return req.body;
+  const chunks: Buffer[] = [];
+  let size = 0;
+  for await (const chunk of req) {
+    size += chunk.length;
+    if (size > 64 * 1024) throw new Error('Request body too large');
+    chunks.push(Buffer.from(chunk));
+  }
+  const text = Buffer.concat(chunks).toString('utf8').trim();
+  if (!text) return null;
+  try { return JSON.parse(text); } catch { return null; }
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   if (req.method === 'OPTIONS') {
@@ -26,6 +50,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const action = req.query.action;
 
   try {
+    const body = req.method === 'POST' ? await readJsonBody(req) : undefined;
     // === action=create (POST, auth required) ===
     if (action === 'create') {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -46,7 +71,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const APP_URL = process.env.APP_URL || 'http://localhost:3000';
       const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
-      const { planType, name } = req.body;
+      const { planType, name } = getWebhookPayload(body) || {};
 
       const isTestMode = process.env.TEST_PAYMENT_MODE === 'true';
       const DEBUG = process.env.DEBUG_PAYMENTS === 'true';
@@ -152,14 +177,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       // Pattern: receive callback → extract invoice_id → call check-payment.php
       // → only trust API response, never body status.
 
-      const webhookPayload = req.body;
-      const DEBUG_CB = process.env.DEBUG_PAYMENTS === 'true';
-      if (DEBUG_CB) console.log('[payment/callback] received invoice_id:', webhookPayload?.invoice_id);
+      const webhookPayload = getWebhookPayload(body);
+      if (!webhookPayload) {
+        return res.status(400).json({ error: 'Invalid webhook payload' });
+      }
 
-      const { invoice_id, paid_at, payment_method, paid_reff_num } = webhookPayload;
+      const { invoice_id, paid_at, payment_method, paid_reff_num } = webhookPayload as {
+        invoice_id?: unknown;
+        paid_at?: string;
+        payment_method?: string;
+        paid_reff_num?: string;
+      };
+      const DEBUG_CB = process.env.DEBUG_PAYMENTS === 'true';
+      if (DEBUG_CB) console.log('[payment/callback] received invoice_id:', invoice_id);
 
       if (!invoice_id) {
-        console.log('[payment/callback] No invoice_id, ignoring');
         return res.status(200).json({ success: true, message: 'Ignored' });
       }
 
