@@ -1,16 +1,8 @@
 import { isIP } from 'node:net';
 
-const BLOCKED_HOSTS = new Set(['localhost', 'metadata.google.internal', 'metadata.google.internal.']);
+const BLOCKED_HOSTS = new Set(['localhost', 'localhost.', 'metadata.google.internal', 'metadata.google.internal.']);
 
-function isPrivateIp(host: string) {
-  const normalized = host.replace(/^\[|\]$/g, '').toLowerCase();
-  const version = isIP(normalized);
-  if (version === 6) {
-    return normalized.startsWith('::') || normalized.startsWith('fc') || normalized.startsWith('fd') ||
-      normalized.startsWith('fe8') || normalized.startsWith('fe9') || normalized.startsWith('fea') || normalized.startsWith('feb');
-  }
-  if (version !== 4) return false;
-  const parts = normalized.split('.').map(Number);
+function isPrivateIpv4(parts: number[]) {
   return parts[0] === 0 || parts[0] === 10 || parts[0] === 127 || parts[0] >= 224 ||
     (parts[0] === 100 && parts[1] >= 64 && parts[1] <= 127) ||
     (parts[0] === 169 && parts[1] === 254) ||
@@ -19,11 +11,31 @@ function isPrivateIp(host: string) {
     (parts[0] === 198 && (parts[1] === 18 || parts[1] === 19));
 }
 
+function isPrivateIp(host: string) {
+  const normalized = host.replace(/^\[|\]$/g, '').toLowerCase();
+  const version = isIP(normalized);
+  if (version === 4) return isPrivateIpv4(normalized.split('.').map(Number));
+  if (version !== 6) return false;
+
+  const [left, right = ''] = normalized.split('::');
+  const leftParts = left ? left.split(':') : [];
+  const rightParts = right ? right.split(':') : [];
+  const parts = [...leftParts, ...Array(8 - leftParts.length - rightParts.length).fill('0'), ...rightParts].map(part => parseInt(part, 16));
+  const first = parts[0];
+  if (normalized === '::' || normalized === '::1' ||
+      (first >= 0xfc00 && first <= 0xfdff) || (first >= 0xfe80 && first <= 0xfeff) || first >= 0xff00) return true;
+
+  const v4Mapped = parts.slice(0, 5).every(part => part === 0) && parts[5] === 0xffff;
+  const v4Compatible = parts.slice(0, 6).every(part => part === 0);
+  return (v4Mapped || v4Compatible) && isPrivateIpv4([parts[6] >> 8, parts[6] & 255, parts[7] >> 8, parts[7] & 255]);
+}
+
 export function validateCustomProviderUrl(value: unknown): { ok: true } | { ok: false; error: string } {
   if (typeof value !== 'string') return { ok: false, error: 'base_url must be a URL' };
   try {
     const url = new URL(value);
-    if (url.protocol !== 'https:' || url.username || url.password || BLOCKED_HOSTS.has(url.hostname.toLowerCase()) || isPrivateIp(url.hostname)) {
+    const host = url.hostname.toLowerCase().replace(/\.$/, '');
+    if (url.protocol !== 'https:' || url.username || url.password || BLOCKED_HOSTS.has(host) || host.endsWith('.localhost') || isPrivateIp(host)) {
       return { ok: false, error: 'base_url must be a public HTTPS endpoint' };
     }
     return { ok: true };

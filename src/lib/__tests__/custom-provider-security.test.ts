@@ -23,6 +23,7 @@ describe('custom provider endpoint policy', () => {
     'https://[fec0::1]/v1',
     'https://[ff02::1]/v1',
     'https://foo.localhost/v1',
+    'https://foo.localhost./v1',
     'https://metadata.google.internal/v1',
     'https://user:pass@api.example.com/v1',
   ])('rejects unsafe provider endpoint %s', (url) => {
