@@ -2,7 +2,7 @@ import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
 import { invalidateCache } from '../lib/ai-router.js';
 import { isVerifiedAdmin } from '../lib/api-utils.js';
-import { validateCustomProviderUrl, validateProviderPath } from '../lib/custom-provider-security.js';
+import { joinCustomProviderUrl, validateCustomProviderUrl, validateProviderPath } from '../lib/custom-provider-security.js';
 
 function getSupabaseAdmin() {
   return createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
@@ -16,11 +16,6 @@ type DetectedModel = {
   description?: string;
   context_window?: number;
 };
-
-function joinUrl(baseUrl: string, endpoint: string) {
-  if (/^https?:\/\//i.test(endpoint)) return endpoint;
-  return `${baseUrl.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
-}
 
 function buildProviderHeaders(provider: any, apiKey: string): Record<string, string> {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
@@ -138,7 +133,7 @@ function normalizeDetectedModels(providerId: string, payload: any): DetectedMode
 
 async function detectProviderModels(provider: any, apiKey: string): Promise<DetectedModel[]> {
   const endpoint = provider.models_endpoint || '/models';
-  const url = joinUrl(provider.base_url, endpoint);
+  const url = joinCustomProviderUrl(provider.base_url, endpoint);
   const response = await fetch(url, {
     headers: buildProviderHeaders(provider, apiKey),
     signal: AbortSignal.timeout(20000),
@@ -483,7 +478,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Test with a minimal chat request
         const headers = buildProviderHeaders(provider, key);
-        const testUrl = joinUrl(provider.base_url, provider.chat_endpoint || '/chat/completions');
+        const testUrl = joinCustomProviderUrl(provider.base_url, provider.chat_endpoint || '/chat/completions');
         const testBody = provider.api_format === 'gemini'
           ? { contents: [{ parts: [{ text: 'Say hi' }] }] }
           : { model: 'gpt-3.5-turbo', messages: [{ role: 'user', content: 'Say hi' }], max_tokens: 5 };

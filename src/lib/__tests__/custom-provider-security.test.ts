@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { validateCustomProviderUrl } from '../../../lib/custom-provider-security';
+import { joinCustomProviderUrl, validateCustomProviderUrl } from '../../../lib/custom-provider-security';
 
 describe('custom provider endpoint policy', () => {
-  it('allows a public HTTPS OpenAI-compatible endpoint', () => {
-    expect(validateCustomProviderUrl('https://openrouter.ai/api/v1')).toEqual({ ok: true });
+  it.each(['https://openrouter.ai/api/v1', 'https://[2606:4700::6810:85e5]/v1'])('allows public HTTPS endpoint %s', (url) => {
+    expect(validateCustomProviderUrl(url)).toEqual({ ok: true });
   });
 
   it.each([
@@ -12,6 +12,8 @@ describe('custom provider endpoint policy', () => {
     'https://127.0.0.1/v1',
     'https://10.0.0.1/v1',
     'https://169.254.169.254/latest/meta-data',
+    'https://[::1]/v1',
+    'https://[fd00:ec2::254]/latest/meta-data',
     'https://metadata.google.internal/v1',
     'https://user:pass@api.example.com/v1',
   ])('rejects unsafe provider endpoint %s', (url) => {
@@ -22,5 +24,10 @@ describe('custom provider endpoint policy', () => {
     const { validateProviderPath } = await import('../../../lib/custom-provider-security');
     expect(validateProviderPath('/chat/completions')).toEqual({ ok: true });
     expect(validateProviderPath('https://metadata.google.internal/v1')).toMatchObject({ ok: false });
+  });
+
+  it('rejects unsafe stored provider URLs and absolute endpoint overrides before fetch', () => {
+    expect(() => joinCustomProviderUrl('https://[::1]', '/v1/models')).toThrow('public HTTPS');
+    expect(() => joinCustomProviderUrl('https://openrouter.ai/v1', 'https://169.254.169.254/latest')).toThrow('relative path');
   });
 });

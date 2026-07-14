@@ -1,6 +1,7 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getSupabaseAdminClient, isVerifiedAdmin } from '../lib/api-utils.js';
 import { invalidateCache } from '../lib/ai-router.js';
+import { joinCustomProviderUrl } from '../lib/custom-provider-security.js';
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === 'OPTIONS') {
@@ -590,7 +591,7 @@ async function detectOpenAICompatibleModels(
   providerId: string
 ): Promise<DetectedModel[]> {
   try {
-    const url = baseUrl.replace(/\/+$/, '') + '/v1/models';
+    const url = joinCustomProviderUrl(baseUrl, '/v1/models');
     const response = await fetch(url, {
       headers: { 'Authorization': `Bearer ${apiKey}` },
       signal: AbortSignal.timeout(15000),

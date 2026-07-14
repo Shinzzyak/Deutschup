@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
 import "dotenv/config";
+import { joinCustomProviderUrl } from './custom-provider-security.js';
 
 // ============================================================
 // Types
@@ -438,11 +439,6 @@ async function createMimoClient(model: ModelConfig): Promise<AIProviderClient> {
 // ============================================================
 // Dynamic Custom Provider Client (OpenAI-compatible)
 // ============================================================
-
-function joinCustomProviderUrl(baseUrl: string, endpoint: string) {
-  if (/^https?:\/\//i.test(endpoint)) return endpoint;
-  return `${baseUrl.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
-}
 
 async function createCustomProviderClient(model: ModelConfig): Promise<AIProviderClient> {
   const supabase = getSupabaseAdmin();
