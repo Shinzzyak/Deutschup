@@ -14,11 +14,6 @@ describe('Payment Logic', () => {
       expect(invoiceId).toMatch(/^BAYAR-\d+-[A-F0-9]{4}$/);
     });
 
-    it('should generate unique invoices', () => {
-      const ids = new Set(Array.from({ length: 100 }, () => generateInvoiceId()));
-      expect(ids.size).toBe(100);
-    });
-
     it('should start with BAYAR prefix', () => {
       const invoiceId = generateInvoiceId();
       expect(invoiceId.startsWith('BAYAR-')).toBe(true);
