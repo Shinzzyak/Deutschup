@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 import { joinCustomProviderUrl, validateCustomProviderUrl } from '../../../lib/custom-provider-security';
 
 describe('custom provider endpoint policy', () => {
-  it.each(['https://openrouter.ai/api/v1', 'https://[2606:4700::6810:85e5]/v1'])('allows public HTTPS endpoint %s', (url) => {
+  it.each([
+    'https://openrouter.ai/api/v1',
+    'https://[2001:4860:4860::8888]/v1',
+    'https://[::ffff:8.8.8.8]/v1',
+  ])('allows public HTTPS endpoint %s', (url) => {
     expect(validateCustomProviderUrl(url)).toEqual({ ok: true });
   });
 
@@ -13,7 +17,12 @@ describe('custom provider endpoint policy', () => {
     'https://10.0.0.1/v1',
     'https://169.254.169.254/latest/meta-data',
     'https://[::1]/v1',
+    'https://[::ffff:127.0.0.1]/v1',
     'https://[fd00:ec2::254]/latest/meta-data',
+    'https://[fe80::1]/v1',
+    'https://[fec0::1]/v1',
+    'https://[ff02::1]/v1',
+    'https://foo.localhost/v1',
     'https://metadata.google.internal/v1',
     'https://user:pass@api.example.com/v1',
   ])('rejects unsafe provider endpoint %s', (url) => {
