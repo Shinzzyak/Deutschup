@@ -1,8 +1,10 @@
 import { existsSync, readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const identitySource = new URL('../clerk/identity.ts', import.meta.url);
-const migration = new URL('../../../supabase/migrations/20260714160000_lock_identity_rpc_and_config.sql', import.meta.url);
+const repoRoot = resolve(import.meta.dirname, '../../..');
+const identitySource = resolve(repoRoot, 'src/lib/clerk/identity.ts');
+const migration = resolve(repoRoot, 'supabase/migrations/20260714160000_lock_identity_rpc_and_config.sql');
 
 describe('identity RPC least privilege', () => {
   it('resolves the current identity through the verified server session', () => {
