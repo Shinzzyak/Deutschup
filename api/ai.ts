@@ -272,6 +272,18 @@ const HANDLERS: Record<string, AIHandler> = {
   'list-models': handleListModels,
 };
 
+/** AI temporarily empty/disabled until smart-fallback (Vans-style) is wired. */
+function isAiRuntimeEnabled(): boolean {
+  const v = (process.env.AI_ENABLED || '').trim().toLowerCase();
+  if (v === '0' || v === 'false' || v === 'off' || v === 'no') return false;
+  if ((process.env.AI_DISABLED || '').trim().toLowerCase() === 'true') return false;
+  // default: enabled only when explicitly true OR unset with no empty-mode
+  if (v === 'true' || v === '1' || v === 'on' || v === 'yes') return true;
+  // empty/unset → treat as disabled during soft-launch (ponytail: flip AI_ENABLED=true later)
+  if (v === '' || v === undefined) return false;
+  return false;
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -287,6 +299,17 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   const identity = await getVerifiedIdentity(req);
   if (!identity) {
     return res.status(401).json({ error: 'Unauthorized — token required' });
+  }
+
+  // Soft-launch: AI empty until smart-fallback (VansRouter-style) is ready.
+  // Auth still required so clients get a stable product response, not 500 from bad keys.
+  if (!isAiRuntimeEnabled()) {
+    return res.status(503).json({
+      error: 'Fitur AI sementara nonaktif. Curriculum & belajar tetap jalan — AI smart-fallback segera hadir.',
+      code: 'AI_DISABLED',
+      aiEnabled: false,
+      // ponytail: empty mode; set AI_ENABLED=true when Vans-style fallback is live
+    });
   }
 
   if (action === 'list-models' && !(await isVerifiedAdmin(req))) {
