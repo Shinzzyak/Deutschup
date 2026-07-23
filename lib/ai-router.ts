@@ -240,13 +240,14 @@ interface AIProviderClient {
 async function createGeminiClient(model: ModelConfig): Promise<AIProviderClient> {
   const apiKey = await getApiKey('gemini');
   if (!apiKey) throw new Error('Gemini API key not configured');
+  const key: string = apiKey;
 
   // REST only — @google/genai SDK is Node-oriented and flakes on CF Pages Functions.
   const modelName = model.model_id || model.name;
   const base = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}`;
 
   async function generate(body: Record<string, unknown>): Promise<any> {
-    const response = await fetch(`${base}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+    const response = await fetch(`${base}:generateContent?key=${encodeURIComponent(key)}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body),
