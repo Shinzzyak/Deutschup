@@ -8,6 +8,7 @@ coverage/
 !.env.example
 .vercel
 .env
+.wrangler/
 
 # Supabase CLI artifacts
 supabase/.temp/

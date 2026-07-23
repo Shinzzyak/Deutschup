@@ -1,67 +1,54 @@
-// IMPLEMENTATION-048B: Clerk JWT Validation Helper (POC)
-// Validates Clerk JWTs and extracts claims for Supabase RLS compatibility
+// Clerk JWT helpers — config from env (src/lib/clerk/config.ts), not Dashboard.
 
-import { verify } from "https://esm.sh/@clerk/backend/jwt";
-
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "";
-const CLERK_JWKS_URL = `https://clerk.${CLERK_PUBLISHABLE_KEY.split("_")[1] || "placeholder"}/.well-known/jwks.json`;
+import {
+  CLERK_JWKS_URL,
+  CLERK_PUBLISHABLE_KEY,
+  isClerkEnabled,
+} from './config';
 
 export interface ClerkJWTClaims {
-  sub: string;           // Clerk user ID
+  sub: string;
   email?: string;
   is_admin?: boolean;
   role?: string;
-  user_metadata?: {
-    role?: string;
-  };
-  app_metadata?: {
-    role?: string;
-  };
+  user_metadata?: { role?: string };
+  app_metadata?: { role?: string };
+  azp?: string;
+  iss?: string;
 }
 
+export { CLERK_JWKS_URL, CLERK_PUBLISHABLE_KEY, isClerkEnabled };
+
 /**
- * Validate a Clerk JWT and extract claims.
- * For POC: returns claims without full verification.
- * Production: use @clerk/backend verify token.
+ * Decode Clerk JWT payload (client-side identity mapping only).
+ * Cryptographic verification is server-side via CLERK_SECRET_KEY / jwtKey.
  */
 export async function validateClerkJWT(token: string): Promise<ClerkJWTClaims | null> {
   try {
-    // In production, verify with Clerk's JWKS
-    // For POC, decode without verification (trust the token comes from Clerk)
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return payload as ClerkJWTClaims;
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    const json = atob(parts[1].replace(/-/g, '+').replace(/_/g, '/'));
+    return JSON.parse(json) as ClerkJWTClaims;
   } catch {
     return null;
   }
 }
 
-/**
- * Extract user identity from Clerk JWT claims.
- * Maps Clerk sub → internal UUID via user_identities table.
- */
 export async function extractUserIdentity(
   claims: ClerkJWTClaims,
   supabaseClient: any
 ): Promise<{ internalId: string; clerkId: string } | null> {
-  const { data, error } = await supabaseClient.rpc("resolve_user_id", {
+  const { data, error } = await supabaseClient.rpc('resolve_user_id', {
     p_clerk_id: claims.sub,
   });
-
   if (error || !data) return null;
-
-  return {
-    internalId: data,
-    clerkId: claims.sub,
-  };
+  return { internalId: data, clerkId: claims.sub };
 }
 
-/**
- * Check if Clerk JWT claims indicate admin role.
- */
 export function isAdmin(claims: ClerkJWTClaims): boolean {
   return (
     claims.is_admin === true ||
-    claims.user_metadata?.role === "admin" ||
-    claims.app_metadata?.role === "admin"
+    claims.user_metadata?.role === 'admin' ||
+    claims.app_metadata?.role === 'admin'
   );
 }
