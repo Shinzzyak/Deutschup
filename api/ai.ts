@@ -272,15 +272,16 @@ const HANDLERS: Record<string, AIHandler> = {
   'list-models': handleListModels,
 };
 
-/** AI off only when explicitly disabled. On when AI_ENABLED=true OR Vans gateway key present. */
+/** AI on when AI_ENABLED=true (secret) OR a model provider key exists. Off only if explicitly false. */
 function isAiRuntimeEnabled(): boolean {
   const v = (process.env.AI_ENABLED || '').trim().toLowerCase();
   if (v === '0' || v === 'false' || v === 'off' || v === 'no') return false;
   if ((process.env.AI_DISABLED || '').trim().toLowerCase() === 'true') return false;
   if (v === 'true' || v === '1' || v === 'on' || v === 'yes') return true;
-  // CF Pages: secret_text is on the deployment; plain AI_ENABLED often is not.
-  // Enable when Vans gateway is configured (smart-fallback path).
-  if ((process.env.VANS_API_KEY || process.env.VANSROUTER_API_KEY || '').trim()) return true;
+  // CF Pages inherits secret_text; plain may be missing — enable if we can call a model.
+  if ((process.env.GEMINI_API_KEY || process.env.DEEPSEEK_API_KEY || process.env.OPENAI_API_KEY || '').trim()) {
+    return true;
+  }
   return false;
 }
 
@@ -301,14 +302,11 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Unauthorized — token required' });
   }
 
-  // Soft-launch: AI empty until smart-fallback (VansRouter-style) is ready.
-  // Auth still required so clients get a stable product response, not 500 from bad keys.
   if (!isAiRuntimeEnabled()) {
     return res.status(503).json({
-      error: 'Fitur AI sementara nonaktif. Curriculum & belajar tetap jalan — AI smart-fallback segera hadir.',
+      error: 'Fitur AI sementara nonaktif. Curriculum & belajar tetap jalan.',
       code: 'AI_DISABLED',
       aiEnabled: false,
-      // ponytail: empty mode; set AI_ENABLED=true when Vans-style fallback is live
     });
   }
 

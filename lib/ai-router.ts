@@ -66,125 +66,119 @@ let cachedConfig: RoutingConfig | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
-/** VansRouter gateway (OpenAI-compatible). Smart-fallback = multi-model chain server-side. */
-function vansEnvConfig(): { baseUrl: string; apiKey: string; model: string } | null {
-  const apiKey = (process.env.VANS_API_KEY || process.env.VANSROUTER_API_KEY || '').trim();
-  if (!apiKey) return null;
-  const baseUrl = (process.env.VANS_BASE_URL || process.env.VANSROUTER_BASE_URL || 'http://150.109.12.245:20127/v1')
-    .trim()
-    .replace(/\/$/, '');
-  const model = (process.env.VANS_MODEL || 'smart-fallback').trim() || 'smart-fallback';
-  return { baseUrl, apiKey, model };
+/**
+ * App-level smart-fallback (VansRouter-style behavior, NOT the Vans gateway):
+ * ordered list primary → is_fallback → rest; try each on failure.
+ */
+function orderFallbackChain(models: ModelConfig[]): ModelConfig[] {
+  if (!models.length) return [];
+  const primary = models.find((m) => m.is_primary) || models[0];
+  const fallback =
+    models.find((m) => m.is_fallback && m.id !== primary.id) ||
+    models.find((m) => m.id !== primary.id);
+  const rest = models.filter((m) => m.id !== primary.id && m.id !== fallback?.id);
+  return [primary, ...(fallback ? [fallback] : []), ...rest];
 }
 
-function syntheticVansRouting(modelName: string): RoutingConfig {
-  const model: ModelConfig = {
-    id: 'vans-smart-fallback',
-    provider_id: 'vans',
-    name: modelName,
-    model_id: modelName,
-    display_name: 'Vans smart-fallback',
+/** Env-only chain when Supabase routing tables are empty/unreachable. */
+function envGeminiFallbackChain(): RoutingConfig | null {
+  const apiKey = (process.env.GEMINI_API_KEY || '').trim();
+  if (!apiKey) return null;
+  const names = (process.env.AI_FALLBACK_MODELS ||
+    'gemini-2.5-flash,gemini-2.0-flash,gemini-2.0-flash-lite-001,gemma-3-1b-it')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const models: ModelConfig[] = names.map((name, i) => ({
+    id: `env-${name}`,
+    provider_id: 'gemini',
+    name,
+    model_id: name,
+    display_name: name,
     enabled: true,
-    is_primary: true,
-    is_fallback: true,
+    is_primary: i === 0,
+    is_fallback: i === 1,
     config: { temperature: 0.7 },
-  };
+  }));
   const provider: ProviderConfig = {
-    id: 'vans',
-    name: 'VansRouter',
+    id: 'gemini',
+    name: 'Google Gemini',
     enabled: true,
     priority: 0,
     status: 'active',
     config: {},
   };
-  return { primary: model, fallback: model, providers: [provider], models: [model] };
+  const ordered = orderFallbackChain(models);
+  return {
+    primary: ordered[0],
+    fallback: ordered[1] || ordered[0],
+    providers: [provider],
+    models: ordered,
+  };
 }
 
 export async function getRoutingConfig(): Promise<RoutingConfig> {
   const now = Date.now();
-  if (cachedConfig && (now - cacheTimestamp) < CACHE_TTL) {
+  if (cachedConfig && now - cacheTimestamp < CACHE_TTL) {
     return cachedConfig;
   }
 
-  // Prefer Vans gateway when configured — chain lives inside smart-fallback (no per-model DB).
-  const vans = vansEnvConfig();
-  if (vans) {
-    cachedConfig = syntheticVansRouting(vans.model);
+  try {
+    const supabase = getSupabaseAdmin();
+
+    const { data: allProviders, error: pError } = await supabase
+      .from('ai_providers')
+      .select('*')
+      .eq('enabled', true)
+      .order('priority', { ascending: true });
+    if (pError) throw pError;
+
+    const providers: ProviderConfig[] = [];
+    for (const provider of allProviders || []) {
+      const apiKey = await getApiKey(provider.id);
+      if (apiKey) providers.push(provider);
+      else console.warn(`[AI-ROUTING] Skipping ${provider.id}: no API key`);
+    }
+
+    const { data: allModels, error: mError } = await supabase
+      .from('ai_models')
+      .select('*')
+      .eq('enabled', true);
+    if (mError) throw mError;
+
+    const availableProviderIds = new Set(providers.map((p) => p.id));
+    const providerPriority = new Map(providers.map((p, i) => [p.id, p.priority ?? i]));
+    const models = (allModels || [])
+      .filter((m) => availableProviderIds.has(m.provider_id))
+      .sort((a, b) => {
+        const pa = providerPriority.get(a.provider_id) ?? 999;
+        const pb = providerPriority.get(b.provider_id) ?? 999;
+        if (pa !== pb) return pa - pb;
+        // Prefer marked primary/fallback before display-name sort within same provider
+        if (a.is_primary !== b.is_primary) return a.is_primary ? -1 : 1;
+        if (a.is_fallback !== b.is_fallback) return a.is_fallback ? -1 : 1;
+        return (a.display_name || a.name || a.id).localeCompare(b.display_name || b.name || b.id);
+      });
+
+    if (models.length === 0) throw new Error('No available AI models (no providers with API keys)');
+
+    const orderedModels = orderFallbackChain(models);
+    cachedConfig = {
+      primary: orderedModels[0],
+      fallback: orderedModels[1] || orderedModels[0],
+      providers,
+      models: orderedModels,
+    };
+    cacheTimestamp = now;
+    return cachedConfig;
+  } catch (e: any) {
+    console.warn('[AI-ROUTING] DB config failed, env chain:', e?.message || e);
+    const envChain = envGeminiFallbackChain();
+    if (!envChain) throw e;
+    cachedConfig = envChain;
     cacheTimestamp = now;
     return cachedConfig;
   }
-
-  const supabase = getSupabaseAdmin();
-
-  // Get enabled providers ordered by priority
-  const { data: allProviders, error: pError } = await supabase
-    .from('ai_providers')
-    .select('*')
-    .eq('enabled', true)
-    .order('priority', { ascending: true });
-
-  if (pError) throw pError;
-
-  // Filter providers by API key availability
-  const providers: ProviderConfig[] = [];
-  for (const provider of allProviders || []) {
-    const apiKey = await getApiKey(provider.id);
-    if (apiKey) {
-      providers.push(provider);
-    } else {
-      console.warn(`[AI-ROUTING] Skipping ${provider.id}: no API key`);
-    }
-  }
-
-  // Get enabled models
-  const { data: allModels, error: mError } = await supabase
-    .from('ai_models')
-    .select('*')
-    .eq('enabled', true);
-
-  if (mError) throw mError;
-
-  // Filter models to only include those from available providers
-  const availableProviderIds = new Set(providers.map(p => p.id));
-  const providerPriority = new Map(providers.map((p, i) => [p.id, p.priority ?? i]));
-  const models = (allModels || [])
-    .filter(m => availableProviderIds.has(m.provider_id))
-    .sort((a, b) => {
-      const pa = providerPriority.get(a.provider_id) ?? 999;
-      const pb = providerPriority.get(b.provider_id) ?? 999;
-      if (pa !== pb) return pa - pb;
-      return (a.display_name || a.name || a.id).localeCompare(b.display_name || b.name || b.id);
-    });
-
-  if (models.length === 0) {
-    throw new Error('No available AI models (no providers with API keys)');
-  }
-
-  // Respect admin-selected routing. Fallback to provider priority if nothing is selected.
-  const primary = models.find(m => m.is_primary) || models[0];
-  if (!primary) throw new Error('No primary model configured');
-
-  // Prefer explicit fallback; otherwise use the next available model, or primary if only one exists.
-  const fallback =
-    models.find(m => m.is_fallback && m.id !== primary.id) ||
-    models.find(m => m.id !== primary.id) ||
-    primary;
-
-  // Routing order matters: free users get index 0 only; pro users walk the chain.
-  const orderedModels = [
-    primary,
-    ...(fallback.id !== primary.id ? [fallback] : []),
-    ...models.filter(m => m.id !== primary.id && m.id !== fallback.id),
-  ];
-
-  cachedConfig = {
-    primary,
-    fallback,
-    providers,
-    models: orderedModels,
-  };
-  cacheTimestamp = now;
-  return cachedConfig;
 }
 
 export function invalidateCache() {
@@ -197,10 +191,11 @@ export function invalidateCache() {
 // ============================================================
 
 async function getApiKey(providerId: string): Promise<string | null> {
-  // Env first for gateway providers (Vans) — no DB dependency on cold path.
-  if (providerId === 'vans') {
-    const k = (process.env.VANS_API_KEY || process.env.VANSROUTER_API_KEY || '').trim();
-    if (k) return k;
+  // Env first (CF Pages secrets) — skip DB roundtrip when present.
+  const envKey = `${providerId.toUpperCase()}_API_KEY`;
+  if (process.env[envKey]?.trim()) return process.env[envKey]!.trim();
+  if (providerId === 'gemini' && process.env.GEMINI_API_KEY?.trim()) {
+    return process.env.GEMINI_API_KEY.trim();
   }
 
   const supabase = getSupabaseAdmin();
@@ -226,11 +221,6 @@ async function getApiKey(providerId: string): Promise<string | null> {
     .maybeSingle();
 
   if (customKey?.api_key) return customKey.api_key;
-
-  // Check env vars (fallback). Gemini also accepts GEMINI_API_KEY.
-  const envKey = `${providerId.toUpperCase()}_API_KEY`;
-  if (process.env[envKey]) return process.env[envKey] || null;
-  if (providerId === 'gemini' && process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
   return null;
 }
 
@@ -567,63 +557,8 @@ async function createCustomProviderClient(model: ModelConfig): Promise<AIProvide
   };
 }
 
-async function createVansClient(model: ModelConfig): Promise<AIProviderClient> {
-  const cfg = vansEnvConfig();
-  if (!cfg) throw new Error('Vans API key not configured (VANS_API_KEY)');
-  const baseUrl = cfg.baseUrl;
-  const apiKey = cfg.apiKey;
-  const modelName = model.model_id || model.name || cfg.model;
-
-  async function chatCompletions(messages: Array<{ role: string; content: string }>, temperature = 0.7): Promise<string> {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: modelName,
-        messages,
-        temperature,
-        max_tokens: 2048,
-      }),
-    });
-    if (!response.ok) {
-      const err = await response.json().catch(() => ({}));
-      const msg = (err as any)?.error?.message || (err as any)?.error || `Vans API error: ${response.status}`;
-      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
-    }
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content || '';
-  }
-
-  return {
-    providerId: 'vans',
-    modelId: model.id,
-    modelName,
-    chat: async (message, systemPrompt, history = []) => {
-      const messages = [
-        { role: 'system', content: systemPrompt },
-        ...history.map(h => ({ role: h.role === 'model' ? 'assistant' : 'user', content: h.text })),
-        { role: 'user', content: message },
-      ];
-      return chatCompletions(messages, model.config?.temperature ?? 0.7);
-    },
-    generateJson: async (prompt, schema) => {
-      const messages = [
-        { role: 'system', content: `Respond in valid JSON matching this schema: ${JSON.stringify(schema)}. No markdown.` },
-        { role: 'user', content: prompt },
-      ];
-      const content = await chatCompletions(messages, model.config?.temperature ?? 0.3);
-      const cleaned = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
-      return JSON.parse(cleaned || '{}');
-    },
-  };
-}
-
 // Client factory by provider ID
 const CLIENT_FACTORIES: Record<string, (model: ModelConfig) => Promise<AIProviderClient>> = {
-  vans: createVansClient,
   gemini: createGeminiClient,
   deepseek: createDeepSeekClient,
   openai: createOpenAIClient,
@@ -700,12 +635,14 @@ export async function executeWithRouting<T>(
   const config = await getRoutingConfig();
   const errors: string[] = [];
 
-  // Free users: only try primary model (index 0), no multi-model app-level fallback.
-  // Exception: vans/smart-fallback already chains models server-side — allow it for free too.
-  const isVansGateway = config.models[0]?.provider_id === 'vans';
-  const maxModels = userTier === 'free' && !isVansGateway ? 1 : config.models.length;
+  // Smart-fallback: walk the ordered model chain. Free users still get primary→fallback only
+  // (cost control); pro walks the full list. Same behavior pattern as Vans smart-fallback,
+  // implemented in-app against our own provider list.
+  const maxModels =
+    userTier === 'free'
+      ? Math.min(2, config.models.length) // primary + one fallback
+      : config.models.length;
 
-  // Try available models in priority order
   for (let i = 0; i < maxModels; i++) {
     const model = config.models[i];
     const fn = i === 0 ? primaryFn : fallbackFn;
@@ -715,7 +652,6 @@ export async function executeWithRouting<T>(
       const result = await withRetry(() => fn(client), i === 0 ? 2 : 1, 1000);
       const latencyMs = Date.now() - startTime;
 
-      // Log success
       logUsage({
         userId,
         providerId: model.provider_id,
@@ -728,7 +664,7 @@ export async function executeWithRouting<T>(
       return { result, providerId: model.provider_id, modelId: model.id, latencyMs };
     } catch (error: any) {
       errors.push(`${model.provider_id}/${model.name}: ${error.message}`);
-      console.warn(`[AI-ROUTING] ${model.provider_id}/${model.name} failed:`, error.message);
+      console.warn(`[AI-ROUTING] ${model.provider_id}/${model.name} failed → next:`, error.message);
     }
   }
 
