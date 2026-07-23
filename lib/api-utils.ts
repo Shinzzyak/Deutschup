@@ -1,7 +1,8 @@
 import { GoogleGenAI } from "@google/genai";
 import { verifyToken } from "@clerk/backend";
 import { createClient } from "@supabase/supabase-js";
-import "dotenv/config";
+import { clerkVerifyOptions } from "./clerk-config";
+// CF Pages injects env — no dotenv in edge runtime.
 
 export const getSupabaseAdminClient = () => {
   return createClient(
@@ -62,11 +63,12 @@ export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | 
     }
   } catch {}
 
-  // Clerk token: verify signature first, then map Clerk subject to internal UUID.
+  // Clerk: verify via env (CLERK_JWT_KEY networkless and/or CLERK_SECRET_KEY).
   let payload: Record<string, any> | null = null;
   try {
-    if (!process.env.CLERK_SECRET_KEY) return null;
-    payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY }) as Record<string, any>;
+    const opts = clerkVerifyOptions();
+    if (!opts.secretKey && !opts.jwtKey) return null;
+    payload = await verifyToken(token, opts as any) as Record<string, any>;
   } catch (e: any) {
     console.warn('[AUTH] Clerk token verification failed:', e.message);
     return null;

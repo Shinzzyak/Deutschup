@@ -1,6 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { createClient } from '@supabase/supabase-js';
-import "dotenv/config";
 import { getVerifiedIdentity, getSupabaseAdminClient } from '../lib/api-utils.js';
 
 const getAdminClient = () => getSupabaseAdminClient();

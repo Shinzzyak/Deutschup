@@ -1,24 +1,32 @@
-// IMPLEMENTATION-048B: Clerk Provider Component (POC)
-// Wraps app with ClerkProvider while keeping Supabase Auth intact
+// ClerkProvider — keys + redirects from env (Vite official names).
+// Docs: pure React uses props on components; meta-frameworks prefer env.
+// https://clerk.com/docs/guides/development/clerk-environment-variables
 
-import { ClerkProvider as BaseClerkProvider } from "@clerk/clerk-react";
-
-const CLERK_PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY || "";
+import { ClerkProvider as BaseClerkProvider } from '@clerk/clerk-react';
+import {
+  CLERK_PUBLISHABLE_KEY,
+  isClerkEnabled,
+  SIGN_IN_FALLBACK_REDIRECT_URL,
+  SIGN_UP_FALLBACK_REDIRECT_URL,
+} from './config';
 
 interface ClerkProviderProps {
   children: React.ReactNode;
 }
 
 export function ClerkProvider({ children }: ClerkProviderProps) {
-  // POC: Only render ClerkProvider if key is configured
-  // This allows the app to work without Clerk during development
-  if (!CLERK_PUBLISHABLE_KEY) {
-    console.warn("[CLERK-POC] VITE_CLERK_PUBLISHABLE_KEY not set, Clerk disabled");
+  if (!isClerkEnabled()) {
+    console.warn('[CLERK] VITE_CLERK_PUBLISHABLE_KEY not set, Clerk disabled');
     return <>{children}</>;
   }
 
   return (
-    <BaseClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY}>
+    <BaseClerkProvider
+      publishableKey={CLERK_PUBLISHABLE_KEY}
+      signInFallbackRedirectUrl={SIGN_IN_FALLBACK_REDIRECT_URL}
+      signUpFallbackRedirectUrl={SIGN_UP_FALLBACK_REDIRECT_URL}
+      afterSignOutUrl={SIGN_IN_FALLBACK_REDIRECT_URL}
+    >
       {children}
     </BaseClerkProvider>
   );

@@ -1,0 +1,10 @@
+# Cloudflare Pages — DeutschUp full stack (SPA dist/ + functions/api)
+name = "deutschup"
+compatibility_date = "2026-07-01"
+compatibility_flags = ["nodejs_compat"]
+pages_build_output_dir = "dist"
+
+# Deploy:
+#   export CLOUDFLARE_API_TOKEN=$(tr -d '\n\r ' <~/.openclaw/workspace/.secrets/cloudflare-token)
+#   export CLOUDFLARE_ACCOUNT_ID=abbbf213ba5b4fb9d613480b5f464002
+#   bash scripts/cf-pages-deploy.sh

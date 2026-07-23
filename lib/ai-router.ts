@@ -1,6 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
-import "dotenv/config";
 import { joinCustomProviderUrl } from './custom-provider-security.js';
 
 // ============================================================
