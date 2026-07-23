@@ -68,7 +68,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       }
 
       const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY || process.env.BAYAR_GG_API_KEY_FALLBACK;
-      const APP_URL = process.env.APP_URL || 'http://localhost:3000';
+      const APP_URL = process.env.APP_URL || process.env.VITE_APP_URL || 'https://deutschup.sintec.my.id';
       const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
       const { planType, name } = getWebhookPayload(body) || {};

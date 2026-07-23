@@ -272,15 +272,15 @@ const HANDLERS: Record<string, AIHandler> = {
   'list-models': handleListModels,
 };
 
-/** AI temporarily empty/disabled until smart-fallback (Vans-style) is wired. */
+/** AI off only when explicitly disabled. On when AI_ENABLED=true OR Vans gateway key present. */
 function isAiRuntimeEnabled(): boolean {
   const v = (process.env.AI_ENABLED || '').trim().toLowerCase();
   if (v === '0' || v === 'false' || v === 'off' || v === 'no') return false;
   if ((process.env.AI_DISABLED || '').trim().toLowerCase() === 'true') return false;
-  // default: enabled only when explicitly true OR unset with no empty-mode
   if (v === 'true' || v === '1' || v === 'on' || v === 'yes') return true;
-  // empty/unset → treat as disabled during soft-launch (ponytail: flip AI_ENABLED=true later)
-  if (v === '' || v === undefined) return false;
+  // CF Pages: secret_text is on the deployment; plain AI_ENABLED often is not.
+  // Enable when Vans gateway is configured (smart-fallback path).
+  if ((process.env.VANS_API_KEY || process.env.VANSROUTER_API_KEY || '').trim()) return true;
   return false;
 }
 

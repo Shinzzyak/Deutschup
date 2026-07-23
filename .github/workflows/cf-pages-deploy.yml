@@ -74,16 +74,36 @@ jobs:
           if [ -z "$BRANCH" ]; then
             if [ "${GITHUB_REF_NAME}" = "main" ]; then BRANCH=main; else BRANCH="${GITHUB_REF_NAME}"; fi
           fi
+          # Plain vars must be on the *deployment* (project-level plain often not inherited).
+          # Secrets (VANS_API_KEY, CLERK_*, SUPABASE_*, BAYAR_*) come from Pages project secrets.
+          APP="${VITE_APP_URL:-https://deutschup.sintec.my.id}"
+          FAPI="${VITE_CLERK_FAPI:-https://concrete-sparrow-45.clerk.accounts.dev}"
+          APIU="${VITE_CLERK_API_URL:-https://api.clerk.com}"
+          AI="${AI_ENABLED:-true}"
+          TESTP="${TEST_PAYMENT_MODE:-true}"
           npx --yes wrangler@4.113.0 pages deploy dist \
             --project-name deutschup \
             --branch "$BRANCH" \
-            --commit-dirty=true
+            --commit-dirty=true \
+            --var "AI_ENABLED:${AI}" \
+            --var "TEST_PAYMENT_MODE:${TESTP}" \
+            --var "APP_URL:${APP}" \
+            --var "VITE_APP_URL:${APP}" \
+            --var "VANS_BASE_URL:http://150.109.12.245:20127/v1" \
+            --var "VANS_MODEL:smart-fallback" \
+            --var "CLERK_FAPI:${FAPI}" \
+            --var "CLERK_FRONTEND_API:${FAPI}" \
+            --var "CLERK_API_URL:${APIU}" \
+            --var "CLERK_BACKEND_API:${APIU}" \
+            --var "CLERK_ISSUER:${FAPI}" \
+            --var "CLERK_JWKS_URL:${FAPI}/.well-known/jwks.json" \
+            --var "ADMIN_EMAIL:${VITE_ADMIN_EMAIL:-abdullahalmughiroh@gmail.com}"
 
       - name: Restore production plain env (wrangler deploy can wipe them)
         if: success()
         env:
           # Defaults when GH secrets unset (soft-launch)
-          AI_ENABLED_DEFAULT: 'false'
+          AI_ENABLED_DEFAULT: 'true'
           TEST_PAYMENT_MODE_DEFAULT: 'true'
         run: |
           python3 <<'PY'
