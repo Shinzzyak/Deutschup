@@ -1,4 +1,5 @@
 # Build SPA + deploy dist/ + functions/ to Cloudflare Pages (no VPS OOM).
+# NOTE: `wrangler pages deploy` can drop production plain_text env vars; we re-apply them after deploy.
 name: CF Pages Deploy
 
 on:
@@ -34,6 +35,14 @@ jobs:
       VITE_ADMIN_EMAIL: ${{ secrets.VITE_ADMIN_EMAIL }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # Soft-launch server plain env (re-applied post-deploy; secrets left alone)
+      APP_URL: ${{ secrets.VITE_APP_URL }}
+      AI_ENABLED: ${{ secrets.AI_ENABLED }}
+      TEST_PAYMENT_MODE: ${{ secrets.TEST_PAYMENT_MODE }}
+      CLERK_FAPI: ${{ secrets.VITE_CLERK_FAPI }}
+      CLERK_API_URL: ${{ secrets.VITE_CLERK_API_URL }}
+      CLERK_JWT_KEY: ${{ secrets.CLERK_JWT_KEY }}
+      ADMIN_EMAIL: ${{ secrets.VITE_ADMIN_EMAIL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -55,7 +64,6 @@ jobs:
           cp -f public/_headers dist/_headers 2>/dev/null || true
           cp -f public/_routes.json dist/_routes.json 2>/dev/null || true
           cp -f public/_redirects dist/_redirects 2>/dev/null || true
-          # functions/ must sit beside dist for wrangler pages deploy
           test -f functions/api/[[path]].ts
           test -f functions/lib/vercel-adapter.ts
 
@@ -70,6 +78,96 @@ jobs:
             --project-name deutschup \
             --branch "$BRANCH" \
             --commit-dirty=true
+
+      - name: Restore production plain env (wrangler deploy can wipe them)
+        if: success()
+        env:
+          # Defaults when GH secrets unset (soft-launch)
+          AI_ENABLED_DEFAULT: 'false'
+          TEST_PAYMENT_MODE_DEFAULT: 'true'
+        run: |
+          python3 <<'PY'
+          import json, os, urllib.request, urllib.error
+          tok = os.environ['CLOUDFLARE_API_TOKEN']
+          acc = os.environ['CLOUDFLARE_ACCOUNT_ID']
+          proj = 'deutschup'
+          app = (os.environ.get('APP_URL') or os.environ.get('VITE_APP_URL') or 'https://deutschup.sintec.my.id').strip()
+          fapi = (os.environ.get('CLERK_FAPI') or os.environ.get('VITE_CLERK_FAPI') or '').strip()
+          api_url = (os.environ.get('CLERK_API_URL') or os.environ.get('VITE_CLERK_API_URL') or 'https://api.clerk.com').strip()
+          jwt_key = (os.environ.get('CLERK_JWT_KEY') or '').strip()
+          admin = (os.environ.get('ADMIN_EMAIL') or os.environ.get('VITE_ADMIN_EMAIL') or '').strip()
+          ai = (os.environ.get('AI_ENABLED') or os.environ.get('AI_ENABLED_DEFAULT') or 'false').strip() or 'false'
+          test_pay = (os.environ.get('TEST_PAYMENT_MODE') or os.environ.get('TEST_PAYMENT_MODE_DEFAULT') or 'true').strip() or 'true'
+          pk = (os.environ.get('VITE_CLERK_PUBLISHABLE_KEY') or '').strip()
+          sb_url = (os.environ.get('VITE_SUPABASE_URL') or '').strip()
+          sb_anon = (os.environ.get('VITE_SUPABASE_ANON_KEY') or '').strip()
+          issuer = fapi
+          jwks = f'{fapi}/.well-known/jwks.json' if fapi else ''
+
+          plain = {
+            'APP_URL': app,
+            'VITE_APP_URL': app,
+            'AI_ENABLED': ai,
+            'TEST_PAYMENT_MODE': test_pay,
+          }
+          if admin:
+            plain['ADMIN_EMAIL'] = admin
+            plain['VITE_ADMIN_EMAIL'] = admin
+          if fapi:
+            plain.update({
+              'CLERK_FAPI': fapi,
+              'CLERK_FRONTEND_API': fapi,
+              'CLERK_ISSUER': issuer,
+              'CLERK_JWKS_URL': jwks,
+              'VITE_CLERK_FAPI': fapi,
+              'VITE_CLERK_FRONTEND_API': fapi,
+              'VITE_CLERK_ISSUER': issuer,
+              'VITE_CLERK_JWKS_URL': jwks,
+            })
+          if api_url:
+            plain['CLERK_API_URL'] = api_url
+            plain['CLERK_BACKEND_API'] = api_url
+            plain['VITE_CLERK_API_URL'] = api_url
+          if jwt_key:
+            plain['CLERK_JWT_KEY'] = jwt_key
+            plain['CLERK_JWKS_PUBLIC_KEY'] = jwt_key
+          if pk:
+            plain['VITE_CLERK_PUBLISHABLE_KEY'] = pk
+          if app:
+            plain['VITE_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL'] = app
+            plain['VITE_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL'] = app
+          if sb_url:
+            plain['VITE_SUPABASE_URL'] = sb_url
+          if sb_anon:
+            plain['VITE_SUPABASE_ANON_KEY'] = sb_anon
+
+          # Only plain_text — omit secrets so CF keeps existing secret_text entries.
+          env_vars = {k: {'type': 'plain_text', 'value': v} for k, v in plain.items() if v}
+          body = {'deployment_configs': {'production': {'env_vars': env_vars}}}
+          req = urllib.request.Request(
+            f'https://api.cloudflare.com/client/v4/accounts/{acc}/pages/projects/{proj}',
+            data=json.dumps(body).encode(),
+            headers={'Authorization': f'Bearer {tok}', 'Content-Type': 'application/json'},
+            method='PATCH',
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+            out = json.load(r)
+          if not out.get('success'):
+            raise SystemExit(f'env restore failed: {out}')
+          # verify
+          req2 = urllib.request.Request(
+            f'https://api.cloudflare.com/client/v4/accounts/{acc}/pages/projects/{proj}',
+            headers={'Authorization': f'Bearer {tok}'},
+          )
+          with urllib.request.urlopen(req2, timeout=20) as r:
+            prod = (((json.load(r)['result'].get('deployment_configs') or {}).get('production') or {}).get('env_vars') or {})
+          need = ['APP_URL', 'AI_ENABLED', 'TEST_PAYMENT_MODE', 'CLERK_SECRET_KEY', 'SUPABASE_URL', 'BAYAR_GG_API_KEY']
+          missing = [k for k in need if k not in prod]
+          print('env_n', len(prod), 'AI_ENABLED', (prod.get('AI_ENABLED') or {}).get('value'), 'TEST_PAYMENT_MODE', (prod.get('TEST_PAYMENT_MODE') or {}).get('value'))
+          if missing:
+            raise SystemExit(f'missing after restore: {missing}')
+          print('env_restore_ok')
+          PY
 
       - name: Smoke production host
         if: success()
