@@ -1,8 +1,7 @@
-import { GoogleGenAI } from "@google/genai";
 import { verifyToken } from "@clerk/backend";
 import { createClient } from "@supabase/supabase-js";
 import { clerkVerifyOptions } from "./clerk-config";
-// CF Pages injects env — no dotenv in edge runtime.
+// CF Pages injects env — no dotenv / no @google/genai in edge runtime.
 
 export const getSupabaseAdminClient = () => {
   return createClient(
@@ -17,6 +16,7 @@ export const getDb = () => {
 };
 
 export async function getGeminiApiKey() {
+  if (process.env.GEMINI_API_KEY?.trim()) return process.env.GEMINI_API_KEY.trim();
   try {
     const { data, error } = await getDb()
       .from('config')
@@ -33,15 +33,26 @@ export async function getGeminiApiKey() {
   return process.env.GEMINI_API_KEY;
 }
 
+/** Legacy helper — REST, not @google/genai SDK. */
 export async function getAiClient() {
   const apiKey = await getGeminiApiKey();
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY tidak ditemukan. Silakan tambahkan di menu Admin atau Secrets.");
   }
-  return new GoogleGenAI({ 
+  return {
     apiKey,
-    httpOptions: { headers: { 'User-Agent': 'deutschup-api' } }
-  });
+    generate: async (model: string, prompt: string) => {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }] }),
+      });
+      if (!response.ok) throw new Error(`Gemini API error: ${response.status}`);
+      const data = await response.json();
+      return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    },
+  };
 }
 
 export interface VerifiedIdentity {

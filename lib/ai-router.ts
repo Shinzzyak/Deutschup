@@ -1,4 +1,3 @@
-import { GoogleGenAI } from "@google/genai";
 import { createClient } from "@supabase/supabase-js";
 import { joinCustomProviderUrl } from './custom-provider-security.js';
 
@@ -191,12 +190,14 @@ export function invalidateCache() {
 // ============================================================
 
 async function getApiKey(providerId: string): Promise<string | null> {
-  // Env first (CF Pages secrets) — skip DB roundtrip when present.
+  // Env first (CF Pages secrets) — skip DB when a real key is present.
   const envKey = `${providerId.toUpperCase()}_API_KEY`;
-  if (process.env[envKey]?.trim()) return process.env[envKey]!.trim();
-  if (providerId === 'gemini' && process.env.GEMINI_API_KEY?.trim()) {
-    return process.env.GEMINI_API_KEY.trim();
-  }
+  const fromEnv =
+    process.env[envKey]?.trim() ||
+    (providerId === 'gemini' ? process.env.GEMINI_API_KEY?.trim() : '') ||
+    '';
+  // Guard against truncated/placeholder keys (e.g. vercel pull stub length 13).
+  if (fromEnv && fromEnv.length >= 20) return fromEnv;
 
   const supabase = getSupabaseAdmin();
 
@@ -240,35 +241,64 @@ async function createGeminiClient(model: ModelConfig): Promise<AIProviderClient>
   const apiKey = await getApiKey('gemini');
   if (!apiKey) throw new Error('Gemini API key not configured');
 
-  const ai = new GoogleGenAI({ apiKey });
+  // REST only — @google/genai SDK is Node-oriented and flakes on CF Pages Functions.
+  const modelName = model.model_id || model.name;
+  const base = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(modelName)}`;
+
+  async function generate(body: Record<string, unknown>): Promise<any> {
+    const response = await fetch(`${base}:generateContent?key=${encodeURIComponent(apiKey)}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      const msg =
+        (err as any)?.error?.message ||
+        (err as any)?.error ||
+        `Gemini API error: ${response.status}`;
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+    return response.json();
+  }
+
+  function textFrom(data: any): string {
+    const parts = data?.candidates?.[0]?.content?.parts;
+    if (!Array.isArray(parts)) return '';
+    return parts.map((p: any) => p?.text || '').join('');
+  }
 
   return {
     providerId: 'gemini',
     modelId: model.id,
-    modelName: model.name,
+    modelName,
     chat: async (message, systemPrompt, history = []) => {
-      const formattedHistory = history.map(h => ({
-        role: h.role === 'model' ? 'model' : 'user',
-        parts: [{ text: h.text }]
-      }));
-
-      const chat = ai.chats.create({
-        model: model.name,
-        history: formattedHistory,
-        config: { systemInstruction: systemPrompt }
+      const contents = [
+        ...history.map((h) => ({
+          role: h.role === 'model' ? 'model' : 'user',
+          parts: [{ text: h.text }],
+        })),
+        { role: 'user', parts: [{ text: message }] },
+      ];
+      const data = await generate({
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        contents,
       });
-
-      const response = await chat.sendMessage({ message });
-      return response.text || '';
+      return textFrom(data);
     },
     generateJson: async (prompt, schema) => {
-      const response = await ai.models.generateContent({
-        model: model.name,
-        contents: prompt,
-        config: { responseMimeType: "application/json", responseSchema: schema }
+      const data = await generate({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: {
+          responseMimeType: 'application/json',
+          // ponytail: schema optional; many gemini models accept responseSchema in gen config
+          ...(schema ? { responseSchema: schema } : {}),
+        },
       });
-      return JSON.parse(response.text?.trim() || "{}");
-    }
+      const raw = textFrom(data).trim() || '{}';
+      const cleaned = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      return JSON.parse(cleaned || '{}');
+    },
   };
 }
 
@@ -713,14 +743,24 @@ export async function getGeminiApiKey(): Promise<string | null> {
   return getApiKey('gemini');
 }
 
-// Keep getAiClient for backward compatibility (returns Gemini client)
+// Keep getAiClient for backward compatibility — REST client, not SDK.
 export async function getAiClient() {
   const apiKey = await getGeminiApiKey();
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY tidak ditemukan. Silakan tambahkan di menu Admin atau Secrets.");
   }
-  return new GoogleGenAI({
+  return {
     apiKey,
-    httpOptions: { headers: { 'User-Agent': 'deutschup-api' } }
-  });
+    generate: async (model: string, prompt: string) => {
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }] }),
+      });
+      if (!response.ok) throw new Error(`Gemini API error: ${response.status}`);
+      const data = await response.json();
+      return data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    },
+  };
 }
