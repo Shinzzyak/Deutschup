@@ -66,9 +66,51 @@ let cachedConfig: RoutingConfig | null = null;
 let cacheTimestamp = 0;
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
+/** VansRouter gateway (OpenAI-compatible). Smart-fallback = multi-model chain server-side. */
+function vansEnvConfig(): { baseUrl: string; apiKey: string; model: string } | null {
+  const apiKey = (process.env.VANS_API_KEY || process.env.VANSROUTER_API_KEY || '').trim();
+  if (!apiKey) return null;
+  const baseUrl = (process.env.VANS_BASE_URL || process.env.VANSROUTER_BASE_URL || 'http://150.109.12.245:20127/v1')
+    .trim()
+    .replace(/\/$/, '');
+  const model = (process.env.VANS_MODEL || 'smart-fallback').trim() || 'smart-fallback';
+  return { baseUrl, apiKey, model };
+}
+
+function syntheticVansRouting(modelName: string): RoutingConfig {
+  const model: ModelConfig = {
+    id: 'vans-smart-fallback',
+    provider_id: 'vans',
+    name: modelName,
+    model_id: modelName,
+    display_name: 'Vans smart-fallback',
+    enabled: true,
+    is_primary: true,
+    is_fallback: true,
+    config: { temperature: 0.7 },
+  };
+  const provider: ProviderConfig = {
+    id: 'vans',
+    name: 'VansRouter',
+    enabled: true,
+    priority: 0,
+    status: 'active',
+    config: {},
+  };
+  return { primary: model, fallback: model, providers: [provider], models: [model] };
+}
+
 export async function getRoutingConfig(): Promise<RoutingConfig> {
   const now = Date.now();
   if (cachedConfig && (now - cacheTimestamp) < CACHE_TTL) {
+    return cachedConfig;
+  }
+
+  // Prefer Vans gateway when configured — chain lives inside smart-fallback (no per-model DB).
+  const vans = vansEnvConfig();
+  if (vans) {
+    cachedConfig = syntheticVansRouting(vans.model);
+    cacheTimestamp = now;
     return cachedConfig;
   }
 
@@ -155,6 +197,12 @@ export function invalidateCache() {
 // ============================================================
 
 async function getApiKey(providerId: string): Promise<string | null> {
+  // Env first for gateway providers (Vans) — no DB dependency on cold path.
+  if (providerId === 'vans') {
+    const k = (process.env.VANS_API_KEY || process.env.VANSROUTER_API_KEY || '').trim();
+    if (k) return k;
+  }
+
   const supabase = getSupabaseAdmin();
 
   // Check provider_secrets table first (database)
@@ -179,9 +227,11 @@ async function getApiKey(providerId: string): Promise<string | null> {
 
   if (customKey?.api_key) return customKey.api_key;
 
-  // Check env vars (fallback)
+  // Check env vars (fallback). Gemini also accepts GEMINI_API_KEY.
   const envKey = `${providerId.toUpperCase()}_API_KEY`;
-  return process.env[envKey] || null;
+  if (process.env[envKey]) return process.env[envKey] || null;
+  if (providerId === 'gemini' && process.env.GEMINI_API_KEY) return process.env.GEMINI_API_KEY;
+  return null;
 }
 
 // ============================================================
@@ -517,8 +567,63 @@ async function createCustomProviderClient(model: ModelConfig): Promise<AIProvide
   };
 }
 
+async function createVansClient(model: ModelConfig): Promise<AIProviderClient> {
+  const cfg = vansEnvConfig();
+  if (!cfg) throw new Error('Vans API key not configured (VANS_API_KEY)');
+  const baseUrl = cfg.baseUrl;
+  const apiKey = cfg.apiKey;
+  const modelName = model.model_id || model.name || cfg.model;
+
+  async function chatCompletions(messages: Array<{ role: string; content: string }>, temperature = 0.7): Promise<string> {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: modelName,
+        messages,
+        temperature,
+        max_tokens: 2048,
+      }),
+    });
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      const msg = (err as any)?.error?.message || (err as any)?.error || `Vans API error: ${response.status}`;
+      throw new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    }
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content || '';
+  }
+
+  return {
+    providerId: 'vans',
+    modelId: model.id,
+    modelName,
+    chat: async (message, systemPrompt, history = []) => {
+      const messages = [
+        { role: 'system', content: systemPrompt },
+        ...history.map(h => ({ role: h.role === 'model' ? 'assistant' : 'user', content: h.text })),
+        { role: 'user', content: message },
+      ];
+      return chatCompletions(messages, model.config?.temperature ?? 0.7);
+    },
+    generateJson: async (prompt, schema) => {
+      const messages = [
+        { role: 'system', content: `Respond in valid JSON matching this schema: ${JSON.stringify(schema)}. No markdown.` },
+        { role: 'user', content: prompt },
+      ];
+      const content = await chatCompletions(messages, model.config?.temperature ?? 0.3);
+      const cleaned = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '').trim();
+      return JSON.parse(cleaned || '{}');
+    },
+  };
+}
+
 // Client factory by provider ID
 const CLIENT_FACTORIES: Record<string, (model: ModelConfig) => Promise<AIProviderClient>> = {
+  vans: createVansClient,
   gemini: createGeminiClient,
   deepseek: createDeepSeekClient,
   openai: createOpenAIClient,
@@ -595,9 +700,10 @@ export async function executeWithRouting<T>(
   const config = await getRoutingConfig();
   const errors: string[] = [];
 
-  // Free users: only try primary model (index 0), no fallback
-  // Pro users: try all models with fallback chain
-  const maxModels = userTier === 'free' ? 1 : config.models.length;
+  // Free users: only try primary model (index 0), no multi-model app-level fallback.
+  // Exception: vans/smart-fallback already chains models server-side — allow it for free too.
+  const isVansGateway = config.models[0]?.provider_id === 'vans';
+  const maxModels = userTier === 'free' && !isVansGateway ? 1 : config.models.length;
 
   // Try available models in priority order
   for (let i = 0; i < maxModels; i++) {

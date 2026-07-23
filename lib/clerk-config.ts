@@ -90,8 +90,12 @@ export function clerkVerifyOptions(): {
     if (CLERK_API_URL) opts.apiUrl = CLERK_API_URL;
   }
 
-  if (APP_URL) {
-    opts.authorizedParties = [APP_URL.replace(/\/$/, '')];
-  }
+  opts.authorizedParties = [
+    APP_URL.replace(/\/$/, ''),
+    'https://deutschup.sintec.my.id',
+    'https://deutschup.pages.dev',
+  ];
+  // Session tokens minted via Backend API often omit azp — allow empty party check soft path.
+  // verifyToken still validates signature/exp; azp only enforced when present.
   return opts;
 }

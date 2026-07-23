@@ -98,6 +98,8 @@ jobs:
           admin = (os.environ.get('ADMIN_EMAIL') or os.environ.get('VITE_ADMIN_EMAIL') or '').strip()
           ai = (os.environ.get('AI_ENABLED') or os.environ.get('AI_ENABLED_DEFAULT') or 'false').strip() or 'false'
           test_pay = (os.environ.get('TEST_PAYMENT_MODE') or os.environ.get('TEST_PAYMENT_MODE_DEFAULT') or 'true').strip() or 'true'
+          vans_base = (os.environ.get('VANS_BASE_URL') or 'http://150.109.12.245:20127/v1').strip()
+          vans_model = (os.environ.get('VANS_MODEL') or 'smart-fallback').strip()
           pk = (os.environ.get('VITE_CLERK_PUBLISHABLE_KEY') or '').strip()
           sb_url = (os.environ.get('VITE_SUPABASE_URL') or '').strip()
           sb_anon = (os.environ.get('VITE_SUPABASE_ANON_KEY') or '').strip()
@@ -109,6 +111,8 @@ jobs:
             'VITE_APP_URL': app,
             'AI_ENABLED': ai,
             'TEST_PAYMENT_MODE': test_pay,
+            'VANS_BASE_URL': vans_base,
+            'VANS_MODEL': vans_model,
           }
           if admin:
             plain['ADMIN_EMAIL'] = admin
@@ -161,11 +165,13 @@ jobs:
           )
           with urllib.request.urlopen(req2, timeout=20) as r:
             prod = (((json.load(r)['result'].get('deployment_configs') or {}).get('production') or {}).get('env_vars') or {})
-          need = ['APP_URL', 'AI_ENABLED', 'TEST_PAYMENT_MODE', 'CLERK_SECRET_KEY', 'SUPABASE_URL', 'BAYAR_GG_API_KEY']
+          need = ['APP_URL', 'AI_ENABLED', 'TEST_PAYMENT_MODE', 'VANS_BASE_URL', 'CLERK_SECRET_KEY', 'SUPABASE_URL', 'BAYAR_GG_API_KEY']
           missing = [k for k in need if k not in prod]
-          print('env_n', len(prod), 'AI_ENABLED', (prod.get('AI_ENABLED') or {}).get('value'), 'TEST_PAYMENT_MODE', (prod.get('TEST_PAYMENT_MODE') or {}).get('value'))
+          print('env_n', len(prod), 'AI_ENABLED', (prod.get('AI_ENABLED') or {}).get('value'), 'VANS_MODEL', (prod.get('VANS_MODEL') or {}).get('value'), 'TEST_PAYMENT_MODE', (prod.get('TEST_PAYMENT_MODE') or {}).get('value'))
           if missing:
             raise SystemExit(f'missing after restore: {missing}')
+          if 'VANS_API_KEY' not in prod:
+            print('WARN: VANS_API_KEY secret missing (set once via CF API)')
           print('env_restore_ok')
           PY
 
