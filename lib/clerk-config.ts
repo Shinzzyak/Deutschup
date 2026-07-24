@@ -16,7 +16,7 @@ function pick(...keys: string[]): string {
 /** Official Vite: VITE_CLERK_FAPI — Frontend API URL */
 export const CLERK_FAPI =
   pick('CLERK_FAPI', 'VITE_CLERK_FAPI', 'CLERK_FRONTEND_API', 'VITE_CLERK_FRONTEND_API') ||
-  'https://concrete-sparrow-45.clerk.accounts.dev';
+  'https://clerk.sintec.my.id';
 
 /** @deprecated alias */
 export const CLERK_FRONTEND_API = CLERK_FAPI;

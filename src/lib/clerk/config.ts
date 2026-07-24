@@ -15,7 +15,7 @@ export const CLERK_PUBLISHABLE_KEY: string =
 export const CLERK_FAPI: string =
   (e.VITE_CLERK_FAPI as string) ||
   (e.VITE_CLERK_FRONTEND_API as string) ||
-  'https://concrete-sparrow-45.clerk.accounts.dev';
+  'https://clerk.sintec.my.id';
 
 /** @deprecated alias */
 export const CLERK_FRONTEND_API = CLERK_FAPI;
