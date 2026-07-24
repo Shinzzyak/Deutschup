@@ -86,7 +86,14 @@ export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | 
   }
 
   const clerkId = typeof payload?.sub === 'string' ? payload.sub.trim() : '';
-  const email = payload?.email?.toLowerCase?.().trim?.();
+  // Session tokens often omit email; accept common claim aliases.
+  const emailRaw =
+    payload?.email ||
+    payload?.primary_email_address ||
+    payload?.email_address ||
+    (Array.isArray(payload?.email_addresses) ? payload.email_addresses[0] : undefined);
+  const email =
+    typeof emailRaw === 'string' ? emailRaw.toLowerCase().trim() : undefined;
 
   try {
     if (clerkId) {
@@ -109,6 +116,19 @@ export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | 
       if (identity?.internal_id) {
         return { internalId: identity.internal_id, email: identity.email || email, provider: 'clerk' };
       }
+    }
+
+    // Auto-provision on first valid Clerk JWT (webhook may lag / never fire).
+    // ponytail: RPC only; profiles/tier rows still owned by webhook or first profile write.
+    if (clerkId) {
+      const { data: iid, error: upErr } = await getDb().rpc('upsert_user_identity', {
+        p_clerk_id: clerkId,
+        p_email: email || null,
+      });
+      if (!upErr && iid) {
+        return { internalId: iid as string, email, provider: 'clerk' };
+      }
+      if (upErr) console.warn('[AUTH] upsert_user_identity failed:', upErr.message);
     }
   } catch (e: any) {
     console.error('[AUTH] getVerifiedIdentity clerk lookup error:', e.message);
