@@ -20,7 +20,10 @@ export default function ClerkSignIn() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <Loader2 className="w-8 h-8 animate-spin text-[#0a0a0a]/40" />
+        {/* text-[#0a0a0a]/40 composites to #9d9d9d on the white bg-background:
+            2.71:1, under the 3:1 floor for a graphic that carries meaning.
+            brand-rust is 8.89:1 on the same surface. */}
+        <Loader2 className="w-8 h-8 animate-spin text-brand-rust" aria-hidden="true" />
       </div>
     );
   }

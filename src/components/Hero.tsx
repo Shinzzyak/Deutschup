@@ -124,17 +124,20 @@ export default function Hero() {
               </Magnetic>
             </motion.div>
 
-            {/* Trust line */}
+            {/* Trust line. The separators were text-brand-tan, but brand-tan is
+                the accent for DARK surfaces (7.52:1 on ink) — on this cream
+                section it measured 2.33:1. brand-rust is the light-surface
+                accent: 7.85:1 on cream, and it matches the rule above. */}
             <motion.div
               className="flex flex-wrap items-center gap-x-1 text-xs font-medium tracking-[0.15em] text-ink-subtle uppercase"
               {...childProps}
             >
               <span>Tutor AI</span>
-              <span className="text-brand-tan">—</span>
+              <span className="text-brand-rust">—</span>
               <span>Simulasi ujian</span>
-              <span className="text-brand-tan">—</span>
+              <span className="text-brand-rust">—</span>
               <span>Progres belajar</span>
-              <span className="text-brand-tan">—</span>
+              <span className="text-brand-rust">—</span>
               <span>Kurikulum A1–B2</span>
             </motion.div>
           </motion.div>

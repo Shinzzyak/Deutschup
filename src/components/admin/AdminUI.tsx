@@ -90,6 +90,29 @@ export const PANEL = 'bg-white border border-brand-ink/12';
 export const BTN_QUIET =
   'border border-brand-ink/15 bg-white text-brand-ink hover:bg-brand-cream';
 
+/* ----------------------------------------------------------------------------
+   Phone-sized controls.
+   ---------------------------------------------------------------------------
+   The owner drives this panel from an Android phone, so every control clears
+   the 44px minimum tap target. `h-11` is exactly 44px at the default root size;
+   the Button variants ship 28–36px, which is why these are applied explicitly
+   rather than relying on `size`.
+
+   `focus-visible:rounded-none!` is not decoration: index.css declares an
+   UNLAYERED `*:focus-visible { border-radius: 4px }`, which outranks any
+   `@layer utilities` rule regardless of specificity. Without the `!` every
+   control re-rounds the moment it takes focus — the corners would change shape
+   as the owner tabs through the page.
+   ------------------------------------------------------------------------- */
+export const TAP = 'h-11 focus-visible:rounded-none!';
+export const TAP_ICON = 'h-11 w-11 p-0 focus-visible:rounded-none!';
+export const INPUT =
+  'w-full h-11 px-3 border border-brand-ink/15 bg-white text-sm text-brand-ink ' +
+  'placeholder:text-ink-subtle focus:outline-none focus:border-brand-rust ' +
+  'focus:ring-1 focus:ring-brand-rust focus-visible:rounded-none!';
+export const FIELD_LABEL =
+  'block text-[11px] font-semibold uppercase tracking-[0.14em] text-ink-muted mb-1.5';
+
 /* ============================================================================
    Section heading — serif, with a rust rule above it.
    ========================================================================= */

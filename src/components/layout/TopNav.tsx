@@ -130,8 +130,11 @@ export default function TopNav() {
                 <Search className="h-4 w-4" />
               </button>
 
+              {/* brand-tan is the accent for dark surfaces; on .glass-nav
+                  (#f8f4f1 composite) it measured 2.42:1, under the 3:1 floor
+                  for graphics. brand-rust is 8.15:1 on the same surface. */}
               <div className="hidden items-center gap-1.5 border border-brand-ink/15 px-2.5 py-1 sm:flex" title="Streak harian">
-                <Flame className="h-3.5 w-3.5 text-brand-tan" aria-hidden="true" />
+                <Flame className="h-3.5 w-3.5 text-brand-rust" aria-hidden="true" />
                 <span className="text-xs font-bold text-ink-muted">
                   <span className="sr-only">Streak: </span>{streak}
                 </span>

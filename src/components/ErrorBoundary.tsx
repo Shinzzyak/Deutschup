@@ -62,12 +62,23 @@ export default class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
+      /* LIGHT-NATIVE. This boundary wraps the whole app and never got the
+         dark-theme sweep the pages did: useTheme() is called nowhere, so
+         `.dark` never lands on <html> and these colours rendered on a WHITE
+         card. Measured with WCAG 2.1 relative luminance:
+           text-red-400    #ff6467 on white   2.89:1 -> brand-rust #8b2500 8.89:1
+           text-red-400    on bg-muted/50     2.77:1 -> brand-rust          8.52:1
+           text-yellow-400 #fdc700 on #fafafa 1.51:1 -> #7a5200             6.63:1
+           bg-red-950/30 plate vs white       1.96:1 -> #f6e8e3 tint, #e0bfb2 edge,
+                                                        rust icon on it     7.44:1
+         Every label already carries its meaning in words, so no state here
+         ever rested on colour alone. */
       return (
         <div className="min-h-screen bg-background flex items-center justify-center p-4 text-foreground">
-          <div className="max-w-lg w-full bg-card border border-red-500/30 p-6 text-card-foreground shadow-2xl">
+          <div className="max-w-lg w-full bg-card border border-brand-rust/40 p-6 text-card-foreground shadow-2xl">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-10 h-10 bg-red-950/30 flex items-center justify-center">
-                <AlertTriangle className="w-5 h-5 text-red-400" />
+              <div className="w-10 h-10 bg-[#f6e8e3] border border-[#e0bfb2] flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-brand-rust" aria-hidden="true" />
               </div>
               <div>
                 <h1 className="text-lg font-bold text-foreground">Terjadi Kesalahan</h1>
@@ -78,7 +89,7 @@ export default class ErrorBoundary extends Component<Props, State> {
             </div>
 
             <div className="bg-muted/50 p-4 mb-4 border border-border">
-              <div className="text-xs font-mono text-red-400 mb-1">Error Message</div>
+              <div className="text-xs font-mono text-brand-rust mb-1">Error Message</div>
               <div className="text-sm text-foreground font-mono break-all">
                 {this.state.error.message}
               </div>
@@ -86,7 +97,7 @@ export default class ErrorBoundary extends Component<Props, State> {
 
             {this.state.errorInfo?.componentStack && (
               <div className="bg-muted/50 p-4 mb-4 border border-border max-h-48 overflow-y-auto">
-                <div className="text-xs font-mono text-yellow-400 mb-1">Component Stack</div>
+                <div className="text-xs font-mono text-[#7a5200] mb-1">Component Stack</div>
                 <pre className="text-xs text-muted-foreground font-mono whitespace-pre-wrap">
                   {this.state.errorInfo.componentStack}
                 </pre>

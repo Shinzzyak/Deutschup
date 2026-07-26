@@ -8,9 +8,11 @@ import {
   AdminNotice,
   BTN_QUIET,
   ConfirmDialog,
+  INPUT,
   PANEL,
   SectionHeading,
   StatusChip,
+  TAP,
   TONE,
   networkMessage,
   readError,
@@ -28,7 +30,6 @@ import {
   Loader2,
   AlertTriangle,
   CheckCircle2,
-  XCircle,
   Zap,
   Database,
   Globe,
@@ -161,7 +162,7 @@ export default function Admin() {
             size="sm"
             onClick={handleRefresh}
             disabled={refreshing}
-            className={`${BTN_QUIET} gap-2 shrink-0`}
+            className={`${BTN_QUIET} ${TAP} gap-2 px-4 shrink-0`}
           >
             <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} aria-hidden="true" />
             {refreshing ? 'Memuat…' : 'Muat ulang'}
@@ -249,7 +250,7 @@ export default function Admin() {
           Konfigurasi Sistem
         </SectionHeading>
         <div className={`${PANEL} p-5`}>
-          <Button onClick={() => navigate('/admin/ai')} className="gap-2 h-10 px-5">
+          <Button onClick={() => navigate('/admin/ai')} className={`${TAP} gap-2 px-5`}>
             <Zap className="w-4 h-4" aria-hidden="true" />
             Kelola Provider &amp; Model AI
             <ExternalLink className="w-3.5 h-3.5 opacity-70" aria-hidden="true" />
@@ -501,7 +502,7 @@ function UsersSection({
               value={search}
               onChange={e => setSearch(e.target.value)}
               aria-label="Cari pengguna"
-              className="w-full pl-9 pr-3 py-2.5 border border-brand-ink/15 bg-white text-sm text-brand-ink placeholder:text-ink-subtle focus:outline-none focus:border-brand-rust focus:ring-1 focus:ring-brand-rust"
+              className={`${INPUT} pl-9 pr-3`}
             />
           </div>
 
@@ -561,7 +562,7 @@ function UsersSection({
                           size="sm"
                           disabled={busy}
                           onClick={() => requestProChange(u)}
-                          className={BTN_QUIET}
+                          className={`${BTN_QUIET} ${TAP} px-4`}
                         >
                           {busy ? (
                             <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
@@ -573,7 +574,7 @@ function UsersSection({
                           size="sm"
                           disabled={busy}
                           onClick={() => requestRoleChange(u, isAdmin ? 'user' : 'admin')}
-                          className={BTN_QUIET}
+                          className={`${BTN_QUIET} ${TAP} px-4`}
                         >
                           {isAdmin ? 'Cabut akses admin' : 'Jadikan admin'}
                         </Button>

@@ -1,100 +1,96 @@
-import React, { useState } from 'react';
-import { useAISecretsStore, ProviderStatus } from '../../stores/aiSecretsStore';
+import { useState } from 'react';
+import { KeyRound } from 'lucide-react';
+import { type ProviderStatus } from '../../stores/aiSecretsStore';
 import AddSecretModal from './AddSecretModal';
 import ValidateSecretModal from './ValidateSecretModal';
+import { BTN_QUIET, StatusChip, TAP, type Tone } from './AdminUI';
+import { Button } from '../ui/button';
 
 interface SecretCardProps {
   provider: ProviderStatus;
 }
 
+/* Every status pairs a tone with an Indonesian word, so the state never rests
+   on colour alone. The old map used dark-theme values on a white card:
+   text-green-300 (#7bf1a8) measured 1.40:1, text-yellow-300 (#ffdf20) 1.33:1
+   and text-red-300 (#ffa2a2) 1.92:1 — all far under the 4.5:1 floor. */
+const STATUS: Record<ProviderStatus['status'], { tone: Tone; label: string }> = {
+  active: { tone: 'ok', label: 'Aktif' },
+  missing_key: { tone: 'warn', label: 'Kunci kosong' },
+  invalid: { tone: 'bad', label: 'Kunci ditolak' },
+  disabled: { tone: 'idle', label: 'Dimatikan' },
+};
+
+const SOURCE_LABEL: Record<ProviderStatus['source'], string> = {
+  database: 'Basis data',
+  environment: 'Variabel server',
+  none: 'Belum ada',
+};
+
 export default function SecretCard({ provider }: SecretCardProps) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [showValidateModal, setShowValidateModal] = useState(false);
 
-  const statusColors = {
-    active: 'bg-green-500/15 text-green-300 border border-green-500/25',
-    missing_key: 'bg-yellow-500/15 text-yellow-300 border border-yellow-500/25',
-    invalid: 'bg-red-500/15 text-red-300 border border-red-500/25',
-    disabled: 'bg-muted text-muted-foreground border border-border',
-  };
-
-  const statusLabels = {
-    active: 'Active',
-    missing_key: 'Missing Key',
-    invalid: 'Invalid Key',
-    disabled: 'Disabled',
-  };
-
-  const sourceLabels = {
-    database: 'Database',
-    environment: 'Environment Variable',
-    none: 'None',
-  };
+  const status = STATUS[provider.status] ?? STATUS.disabled;
 
   return (
     <>
-      <div className="st-card p-4 mb-4">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <h3 className="text-lg font-serif font-semibold text-foreground">{provider.name}</h3>
-            <p className="text-sm text-muted-foreground">Priority: {provider.priority}</p>
+      <article className="p-4 h-full flex flex-col">
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="min-w-0">
+            <h4 className="font-heading text-xl text-brand-ink leading-tight truncate">
+              {provider.name}
+            </h4>
+            <p className="text-xs text-ink-muted mt-0.5">Urutan pakai: {provider.priority}</p>
           </div>
-          <span className={`px-2 py-1 text-xs font-medium  ${statusColors[provider.status]}`}>
-            {statusLabels[provider.status]}
-          </span>
+          <StatusChip tone={status.tone} className="shrink-0">
+            {status.label}
+          </StatusChip>
         </div>
 
-        <div className="space-y-2 mb-4">
-          <div className="flex items-center text-sm">
-            <span className="text-muted-foreground w-20">Source:</span>
-            <span className="text-foreground">{sourceLabels[provider.source]}</span>
+        <dl className="text-sm space-y-1.5 mb-4">
+          <div className="flex gap-2">
+            <dt className="text-ink-muted w-24 shrink-0">Sumber</dt>
+            <dd className="text-brand-ink min-w-0 break-words">{SOURCE_LABEL[provider.source]}</dd>
           </div>
-          
           {provider.maskedKey && (
-            <div className="flex items-center text-sm">
-              <span className="text-muted-foreground w-20">Key:</span>
-              <code className="bg-muted px-2 py-1 rounded text-sm font-mono text-foreground">
-                {provider.maskedKey}
-              </code>
+            <div className="flex gap-2">
+              <dt className="text-ink-muted w-24 shrink-0">Kunci</dt>
+              <dd className="min-w-0">
+                <code className="bg-brand-cream px-2 py-0.5 text-xs font-mono text-brand-ink break-all">
+                  {provider.maskedKey}
+                </code>
+              </dd>
             </div>
           )}
-
           {provider.lastValidated && (
-            <div className="flex items-center text-sm">
-              <span className="text-muted-foreground w-20">Validated:</span>
-              <span className="text-foreground">
-                {new Date(provider.lastValidated).toLocaleDateString()}
-              </span>
+            <div className="flex gap-2">
+              <dt className="text-ink-muted w-24 shrink-0">Diperiksa</dt>
+              <dd className="text-brand-ink min-w-0">
+                {new Date(provider.lastValidated).toLocaleDateString('id-ID', {
+                  dateStyle: 'medium',
+                })}
+              </dd>
             </div>
           )}
-        </div>
+        </dl>
 
-        <div className="flex gap-2">
-          {provider.status === 'missing_key' ? (
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="px-3 py-1.5 bg-primary text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring text-primary-foreground"
+        <div className="flex flex-wrap gap-2 mt-auto">
+          <Button onClick={() => setShowAddModal(true)} className={`${TAP} gap-2 px-4`}>
+            <KeyRound className="w-4 h-4" aria-hidden="true" />
+            {provider.status === 'missing_key' ? 'Pasang kunci' : 'Ganti kunci'}
+          </Button>
+          {provider.status !== 'missing_key' && (
+            <Button
+              variant="ghost"
+              onClick={() => setShowValidateModal(true)}
+              className={`${BTN_QUIET} ${TAP} px-4`}
             >
-              Add Key
-            </button>
-          ) : (
-            <>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-3 py-1.5 bg-primary text-sm font-medium hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring text-primary-foreground"
-              >
-                Update Key
-              </button>
-              <button
-                onClick={() => setShowValidateModal(true)}
-                className="px-3 py-1.5 bg-green-700 text-sm font-medium hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500/30 text-white"
-              >
-                Validate
-              </button>
-            </>
+              Periksa kunci
+            </Button>
           )}
         </div>
-      </div>
+      </article>
 
       {showAddModal && (
         <AddSecretModal

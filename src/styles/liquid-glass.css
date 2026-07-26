@@ -143,9 +143,15 @@
   border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
-/* Nav dark — footer */
+/* Nav dark — footer.
+   Alpha is a contrast value, not a taste value. At 0.8 this composites over the
+   landing page's #f5f0eb backdrop to #393837, where --cream-subtle (#8a8a8a)
+   measures 3.39:1 — the four footer labels in LandingPage.tsx were failing AA
+   because the ramp is specified against #0a0a0a, not against this glass. At
+   0.94 the composite is #181818: cream-subtle 5.15:1, cream-muted 7.39:1,
+   brand-cream 15.71:1. The blur and saturation are untouched. */
 .glass-nav-dark {
-  background: rgba(10, 10, 10, 0.8);
+  background: rgba(10, 10, 10, 0.94);
   backdrop-filter: blur(20px) saturate(1.4);
   -webkit-backdrop-filter: blur(20px) saturate(1.4);
   border-top: 1px solid rgba(255, 255, 255, 0.08);

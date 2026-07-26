@@ -58,12 +58,12 @@ export default function DebugAuth() {
             onClick={copyAll}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-medium transition-colors"
           >
-            {copied ? <Check className="w-3.5 h-3.5 text-green-300" /> : <Copy className="w-3.5 h-3.5" />}
+            {copied ? <Check className="w-3.5 h-3.5 text-brand-cream" /> : <Copy className="w-3.5 h-3.5" />}
             {copied ? 'Copied!' : 'Copy All'}
           </button>
           <button
             onClick={() => { clearDebugLogs(); setLogs([]); }}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-red-950/40 hover:bg-red-950/60 text-red-300 border border-red-500/25 text-xs font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#f6e8e3] hover:bg-[#f0dcd4] text-brand-rust border border-[#e0bfb2] text-xs font-medium transition-colors"
           >
             <Trash2 className="w-3.5 h-3.5" />
             Clear
@@ -114,11 +114,11 @@ export default function DebugAuth() {
           errorEvents.map((e, i) => (
             <div key={i} className="text-[11px] font-mono border-b border-border py-2 last:border-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-red-400 font-bold">{e.type}</span>
+                <span className="text-brand-rust font-bold">{e.type}</span>
                 <span className="text-muted-foreground">{timeAgo(e.timestamp)}</span>
                 <span className="text-muted-foreground">{e.route}</span>
               </div>
-              <div className="text-foreground/80 mt-0.5 break-all">{e.message}</div>
+              <div className="text-ink-muted mt-0.5 break-all">{e.message}</div>
               {e.detail && (
                 <div className="text-muted-foreground mt-0.5 break-all text-[10px] max-h-16 overflow-y-auto">{e.detail}</div>
               )}
@@ -134,8 +134,8 @@ export default function DebugAuth() {
         ) : (
           authEvents.slice(0, 20).map((e, i) => (
             <div key={i} className="text-[11px] font-mono border-b border-border py-1.5 last:border-0">
-              <span className="text-blue-400">{timeAgo(e.timestamp)}</span>
-              <span className="text-foreground/80 ml-2">{e.message}</span>
+              <span className="text-[#1e40af]">{timeAgo(e.timestamp)}</span>
+              <span className="text-ink-muted ml-2">{e.message}</span>
               {e.detail && <span className="text-muted-foreground ml-2">{e.detail}</span>}
             </div>
           ))
@@ -147,7 +147,7 @@ export default function DebugAuth() {
         {logs.slice(0, 50).map((e, i) => (
           <div key={i} className="text-[10px] font-mono border-b border-border py-1 last:border-0">
             <span className="text-muted-foreground">{timeAgo(e.timestamp)}</span>
-            <span className="ml-1 font-bold" style={{ color: TYPE_COLORS[e.type] || '#9ca3af' }}>{e.type}</span>
+            <span className="ml-1 font-bold" style={{ color: TYPE_COLORS[e.type] || '#5c5956' }}>{e.type}</span>
             <span className="text-foreground/70 ml-1 break-all">{e.message?.substring(0, 100)}</span>
           </div>
         ))}
@@ -192,10 +192,16 @@ function timeAgo(ts: string) {
 }
 
 const TYPE_COLORS: Record<string, string> = {
-  'window.error': '#ef4444',
-  'unhandledrejection': '#ef4444',
-  'render_error': '#ef4444',
-  'auth': '#3b82f6',
-  'route': '#22c55e',
-  'app_start': '#a855f7',
+  /* Light-native. These are printed as text on a white card, so they are
+     measured against #ffffff, not against the dark panel this map was written
+     for: #ef4444 3.76:1, #3b82f6 3.68:1, #22c55e 2.28:1, #a855f7 3.96:1 — all
+     under AA. The replacements are 6.5–8.9:1 and reuse the same tone ramp as
+     the admin surfaces. The type name is printed next to the dot, so colour
+     never carries the category on its own. */
+  'window.error': '#8b2500',
+  'unhandledrejection': '#8b2500',
+  'render_error': '#8b2500',
+  'auth': '#1e40af',
+  'route': '#1a6b3d',
+  'app_start': '#6d28d9',
 };

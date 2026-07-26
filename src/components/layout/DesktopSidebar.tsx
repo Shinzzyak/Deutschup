@@ -165,7 +165,9 @@ export default function DesktopSidebar() {
           <div className="glass-subtle space-y-2.5 p-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-1.5">
-                <Flame className="h-3.5 w-3.5 text-brand-tan" />
+                {/* brand-tan reads 2.49:1 on .glass-subtle over .glass-nav
+                    (#faf8f6). brand-rust is 8.41:1 on the same surface. */}
+                <Flame className="h-3.5 w-3.5 text-brand-rust" aria-hidden="true" />
                 <span className="text-xs font-bold text-ink-muted">{streak} hari</span>
               </div>
               <div className="flex items-center gap-1.5">

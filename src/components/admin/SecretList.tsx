@@ -1,6 +1,14 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
+import { Loader2, RefreshCw, ShieldCheck } from 'lucide-react';
 import { useAISecretsStore } from '../../stores/aiSecretsStore';
 import SecretCard from './SecretCard';
+import { AdminNotice, BTN_QUIET, TAP } from './AdminUI';
+import { Button } from '../ui/button';
+
+/* Light-native. The old copy leaned on dark-theme colours that never got a
+   dark backdrop: text-red-400 (#ff6467) measured 2.89:1 on the white card and
+   text-blue-300 (#8ec5ff) measured 1.81:1. Both are replaced by the shared
+   admin tone ramp, which is measured against the surface it sits on. */
 
 export default function SecretList() {
   const { providers, loading, error, fetchProviders } = useAISecretsStore();
@@ -11,57 +19,59 @@ export default function SecretList() {
 
   if (loading && providers.length === 0) {
     return (
-      <div className="text-center py-8">
-        <div className="animate-spin  h-8 w-8 border-b-2 border-blue-600 mx-auto mb-4"></div>
-        <p className="text-muted-foreground">Loading providers...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="bg-card border border-red-500/25 p-4 text-card-foreground">
-        <p className="text-red-400">Error: {error}</p>
-        <button
-          onClick={fetchProviders}
-          className="mt-2 text-sm text-red-400 underline hover:text-red-300"
-        >
-          Retry
-        </button>
+      <div className="flex flex-col items-center justify-center gap-3 py-10">
+        <Loader2 className="w-6 h-6 animate-spin text-brand-rust" aria-hidden="true" />
+        <p className="text-sm text-ink-muted">Memuat daftar provider…</p>
       </div>
     );
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-serif font-semibold text-foreground">AI Provider Secrets</h2>
-        <button
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h3 className="font-heading text-xl text-brand-ink">Kredensial Provider</h3>
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={fetchProviders}
           disabled={loading}
-          className="px-3 py-1.5 text-sm font-medium text-foreground/70 bg-muted hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50"
+          className={`${BTN_QUIET} ${TAP} gap-2 px-4`}
         >
-          {loading ? 'Refreshing...' : 'Refresh'}
-        </button>
+          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} aria-hidden="true" />
+          {loading ? 'Memuat…' : 'Muat ulang'}
+        </Button>
       </div>
 
-      <div className="glass-subtle p-4 mb-4">
-        <p className="text-sm text-blue-300">
-          <strong>Security Note:</strong> API keys are stored securely in the database with RLS protection. 
-          Only service role can access them. Keys are never displayed in full after storage.
-        </p>
-      </div>
+      {error && (
+        <AdminNotice tone="bad" title="Daftar provider belum tampil">
+          {error}{' '}
+          <button onClick={fetchProviders} className="underline font-medium text-[#8b2500]">
+            Coba lagi
+          </button>
+        </AdminNotice>
+      )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {providers.map((provider) => (
-          <SecretCard key={provider.id} provider={provider} />
-        ))}
-      </div>
+      <AdminNotice tone="info" title="Kunci disimpan di server">
+        Kunci API tersimpan di basis data dengan proteksi RLS dan tidak pernah ditampilkan
+        utuh lagi setelah disimpan.
+      </AdminNotice>
 
-      {providers.length === 0 && !loading && (
-        <div className="text-center py-8 text-muted-foreground">
-          No providers found
-        </div>
+      {providers.length > 0 ? (
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-px bg-brand-ink/12 border border-brand-ink/12">
+          {providers.map((provider) => (
+            <li key={provider.id} className="bg-white">
+              <SecretCard provider={provider} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        !loading && (
+          <div className="bg-white border border-brand-ink/12 px-4 py-10 text-center">
+            <ShieldCheck className="w-8 h-8 text-ink-subtle mx-auto mb-3" aria-hidden="true" />
+            <p className="text-sm font-medium text-brand-ink">Belum ada provider terdaftar</p>
+            <p className="text-sm text-ink-muted mt-1">Tambahkan provider lewat tab Tambahan.</p>
+          </div>
+        )
       )}
     </div>
   );
