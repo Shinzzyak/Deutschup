@@ -33,6 +33,35 @@
 -- ============================================================================
 
 
+-- ============================================================================
+-- HASIL PENGUJIAN LANGSUNG KE DATABASE PRODUKSI (2026-07-26)
+-- ============================================================================
+-- Diuji dengan INSERT nyata memakai UUID acak (bukan dari auth.users), lalu
+-- baris ujinya dihapus. Ternyata FK sudah dicabut SEBAGIAN — hanya pada tabel
+-- progres kurikulum. Tabel konten belajar MASIH diblokir:
+--
+--   user_curriculum_progress   FK SUDAH DICABUT   -> insert 201
+--   study_sessions             tidak punya FK     -> insert 201
+--                              (user_id-nya TEXT, bukan UUID)
+--   notes                      FK MASIH HIDUP     -> 409 foreign_key_violation
+--   study_plans                FK MASIH HIDUP     -> 409
+--   quick_notes                FK MASIH HIDUP     -> 409
+--   mock_tests                 FK MASIH HIDUP     -> 409
+--
+-- BELUM diuji (tidak diprobe lebih jauh ke sistem produksi):
+--   profiles, orders, user_lesson_progress, user_checkpoint_progress,
+--   ai_requests, provider_secrets
+--
+-- Konsekuensi nyata: notes, study_plans, quick_notes, dan mock_tests SEMUANYA
+-- KOSONG (0 baris) di produksi. Bukan karena RLS saja — FK menolak lebih dulu.
+-- Catatan, rencana belajar, catatan cepat, dan riwayat simulasi pengguna tidak
+-- pernah tersimpan sekali pun sejak migrasi ke Clerk.
+--
+-- Skrip di bawah mencabut SEMUA sisa FK ke auth.users secara dinamis, jadi ia
+-- menangani yang sudah diuji maupun yang belum.
+-- ============================================================================
+
+
 -- ============================================================
 -- LANGKAH 0 — DISKOVERI (jalankan sendiri dulu, baca hasilnya)
 -- ============================================================

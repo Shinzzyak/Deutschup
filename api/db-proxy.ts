@@ -14,6 +14,12 @@ const ALLOWED_ACTIONS = new Set([
   'get-session',
   'can-access', 'get-study-time', 'complete-lesson', 'submit-checkpoint', 'update-streak',
   'get-progress', 'add-xp', 'unlock-lesson',
+  // Learning content. Column names below were read off the live PostgREST schema,
+  // not off the .sql files in this repo — those had drifted (notes.text vs
+  // notes.content, a study_plans.tasks column that does not exist, and
+  // study_sessions.user_id typed TEXT while every other table uses UUID).
+  'get-learning', 'save-note', 'delete-note', 'save-study-plan', 'save-quick-note',
+  'save-mock-test', 'start-session', 'end-session',
 ]);
 
 // XP amounts are asserted by the client, so cap a single grant.
@@ -351,6 +357,212 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
             : nextUnlocked,
           currentLevel: unlockData?.current_level_id || progRow?.current_level_id || 'A1',
         });
+      }
+
+      /* ---------------------------------------------------------------
+         Learning content: notes, study plans, quick notes, mock tests,
+         study sessions.
+
+         These lived in src/stores/learningStore.ts and src/hooks/useLessonTimer.ts
+         as direct table calls from the anon client, which is why every one of
+         these tables is empty in production — auth.uid() is NULL under Clerk, so
+         RLS rejected every write, and the store only console.error'd.
+         --------------------------------------------------------------- */
+
+      case 'get-learning': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+
+        const [notes, plans, quick, tests] = await Promise.all([
+          db.from('notes').select('id, lesson_id, title, content, category, created_at, updated_at')
+            .eq('user_id', userId).order('created_at', { ascending: false }),
+          db.from('study_plans').select('id, title, content, duration_days, status, created_at, updated_at')
+            .eq('user_id', userId).order('created_at', { ascending: false }),
+          db.from('quick_notes').select('id, content, created_at, updated_at')
+            .eq('user_id', userId).order('updated_at', { ascending: false }).limit(1),
+          db.from('mock_tests').select('id, level, score, total_questions, answers, completed_at, created_at')
+            .eq('user_id', userId).order('created_at', { ascending: false }).limit(50),
+        ]);
+
+        const firstError = notes.error || plans.error || quick.error || tests.error;
+        if (firstError) {
+          console.error('[DB-PROXY] get-learning error:', firstError.message);
+          return res.status(500).json({ error: firstError.message });
+        }
+
+        return res.json({
+          notes: notes.data || [],
+          studyPlans: plans.data || [],
+          quickNote: (quick.data && quick.data[0]) || null,
+          mockTests: tests.data || [],
+        });
+      }
+
+      case 'save-note': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { lessonId, title, content, category } = req.body || {};
+        if (typeof content !== 'string' || !content.trim()) {
+          return res.status(400).json({ error: 'content required' });
+        }
+        const { data, error } = await db
+          .from('notes')
+          .insert({
+            user_id: userId,
+            lesson_id: typeof lessonId === 'string' ? lessonId : null,
+            title: typeof title === 'string' ? title : null,
+            content: content.slice(0, 20000),
+            category: typeof category === 'string' ? category : null,
+          })
+          .select()
+          .single();
+        if (error) {
+          console.error('[DB-PROXY] save-note error:', error.message);
+          return res.status(500).json({ error: error.message });
+        }
+        return res.json(data);
+      }
+
+      case 'delete-note': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { noteId } = req.body || {};
+        if (typeof noteId !== 'string' || !noteId) {
+          return res.status(400).json({ error: 'noteId required' });
+        }
+        // Scoped by the verified user, so one user can never delete another's note.
+        const { error } = await db.from('notes').delete().eq('id', noteId).eq('user_id', userId);
+        if (error) {
+          console.error('[DB-PROXY] delete-note error:', error.message);
+          return res.status(500).json({ error: error.message });
+        }
+        return res.json({ success: true });
+      }
+
+      case 'save-study-plan': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { title, content, durationDays, status } = req.body || {};
+        if (typeof content !== 'string' || !content.trim()) {
+          return res.status(400).json({ error: 'content required' });
+        }
+        const { data, error } = await db
+          .from('study_plans')
+          .insert({
+            user_id: userId,
+            title: typeof title === 'string' ? title : null,
+            content: content.slice(0, 40000),
+            duration_days: Number.isFinite(Number(durationDays)) ? Number(durationDays) : null,
+            status: typeof status === 'string' ? status : 'active',
+          })
+          .select()
+          .single();
+        if (error) {
+          console.error('[DB-PROXY] save-study-plan error:', error.message);
+          return res.status(500).json({ error: error.message });
+        }
+        return res.json(data);
+      }
+
+      case 'save-quick-note': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { content } = req.body || {};
+        if (typeof content !== 'string') {
+          return res.status(400).json({ error: 'content required' });
+        }
+        // One quick note per user: update the existing row rather than piling up.
+        const { data: existing } = await db
+          .from('quick_notes').select('id').eq('user_id', userId).limit(1).maybeSingle();
+
+        const payload = { content: content.slice(0, 10000), updated_at: new Date().toISOString() };
+        const result = existing?.id
+          ? await db.from('quick_notes').update(payload).eq('id', existing.id).eq('user_id', userId).select().single()
+          : await db.from('quick_notes').insert({ user_id: userId, ...payload }).select().single();
+
+        if (result.error) {
+          console.error('[DB-PROXY] save-quick-note error:', result.error.message);
+          return res.status(500).json({ error: result.error.message });
+        }
+        return res.json(result.data);
+      }
+
+      case 'save-mock-test': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { level, score, totalQuestions, answers } = req.body || {};
+        const numScore = Number(score);
+        const numTotal = Number(totalQuestions);
+        if (!Number.isFinite(numScore) || !Number.isFinite(numTotal)) {
+          return res.status(400).json({ error: 'score and totalQuestions required' });
+        }
+        const { data, error } = await db
+          .from('mock_tests')
+          .insert({
+            user_id: userId,
+            level: typeof level === 'string' ? level : 'A1',
+            score: Math.max(0, Math.round(numScore)),
+            total_questions: Math.max(1, Math.round(numTotal)),
+            answers: answers ?? null,
+            completed_at: new Date().toISOString(),
+          })
+          .select()
+          .single();
+        if (error) {
+          console.error('[DB-PROXY] save-mock-test error:', error.message);
+          return res.status(500).json({ error: error.message });
+        }
+        return res.json(data);
+      }
+
+      case 'start-session': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { lessonId } = req.body || {};
+        // study_sessions.user_id is TEXT in the live schema, unlike every other
+        // table, so the UUID is passed as a string deliberately.
+        const { data, error } = await db
+          .from('study_sessions')
+          .insert({
+            user_id: String(userId),
+            lesson_id: typeof lessonId === 'string' ? lessonId : null,
+            started_at: new Date().toISOString(),
+          })
+          .select('id')
+          .single();
+        if (error) {
+          console.error('[DB-PROXY] start-session error:', error.message);
+          return res.status(500).json({ error: error.message });
+        }
+        return res.json({ sessionId: data?.id });
+      }
+
+      case 'end-session': {
+        const userId = await getVerifiedUserId(req);
+        if (!userId) return res.status(401).json({ error: 'Unauthorized' });
+        const { sessionId, durationSeconds } = req.body || {};
+        if (typeof sessionId !== 'string' || !sessionId) {
+          return res.status(400).json({ error: 'sessionId required' });
+        }
+        const secs = Number(durationSeconds);
+        // Sessions shorter than 5s are noise (a mis-tap, an immediate back).
+        if (Number.isFinite(secs) && secs < 5) {
+          await db.from('study_sessions').delete().eq('id', sessionId).eq('user_id', String(userId));
+          return res.json({ success: true, discarded: true });
+        }
+        const { error } = await db
+          .from('study_sessions')
+          .update({
+            ended_at: new Date().toISOString(),
+            duration_seconds: Number.isFinite(secs) ? Math.max(0, Math.round(secs)) : null,
+          })
+          .eq('id', sessionId)
+          .eq('user_id', String(userId));
+        if (error) {
+          console.error('[DB-PROXY] end-session error:', error.message);
+          return res.status(500).json({ error: error.message });
+        }
+        return res.json({ success: true });
       }
 
       default:

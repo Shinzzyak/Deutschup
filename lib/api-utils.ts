@@ -218,9 +218,15 @@ export async function getUserTierById(internalId: string): Promise<'free' | 'pro
   try {
     const { data } = await getDb()
       .from('profiles')
-      .select('subscription, pro_expires_at, tier, tier_expiry')
+      .select('subscription, pro_expires_at, tier, tier_expiry, role')
       .eq('id', internalId)
       .maybeSingle();
+
+    // Admins are Pro. The client already assumes this — src/lib/subscription.ts
+    // isUserPro() returns true for role 'admin' before looking at anything else —
+    // but the server did not, so an admin whose profile had no pro_expires_at was
+    // shown unlimited access while being metered as free tier by checkQuota().
+    if (data?.role === 'admin') return 'pro';
 
     const now = Date.now();
     const proExpires = data?.pro_expires_at || data?.tier_expiry;
