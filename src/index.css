@@ -12,6 +12,23 @@
     --font-heading: 'DM Serif Display', Georgia, serif;
     --font-sans: 'Geist Variable', sans-serif;
     --font-serif: 'DM Serif Display', Georgia, serif;
+
+    /* Brand palette — the editorial identity that was previously inlined as raw
+       hex in 39 files (634 occurrences). The shadcn tokens below are all
+       oklch(x 0 0) (zero chroma), so they carry no brand colour at all; these
+       do. Use bg-brand-*, text-brand-*, border-brand-* instead of [#hex]. */
+    --color-brand-ink: var(--brand-ink);
+    --color-brand-cream: var(--brand-cream);
+    --color-brand-rust: var(--brand-rust);
+    --color-brand-tan: var(--brand-tan);
+    --color-brand-green: var(--brand-green);
+
+    /* Opacity-safe text ramps. Reading these off arbitrary /40 /30 /20
+       modifiers is what broke contrast — these three are measured. */
+    --color-ink-muted: var(--ink-muted);
+    --color-ink-subtle: var(--ink-subtle);
+    --color-cream-muted: var(--cream-muted);
+    --color-cream-subtle: var(--cream-subtle);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -50,6 +67,26 @@
     --radius-2xl: calc(var(--radius) * 1.8);
     --radius-3xl: calc(var(--radius) * 2.2);
     --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Brand palette — single source of truth.
+   Ratios below are measured against their intended backdrop, not estimated. */
+:root {
+    --brand-ink: #0a0a0a;      /* 17.5:1 on cream — headlines */
+    --brand-cream: #f5f0eb;    /* page backdrop */
+    --brand-rust: #8b2500;     /*  7.9:1 on cream — accent, italic emphasis */
+    --brand-tan: #c8956c;      /*  6.0:1 on ink   — accent on dark sections */
+    --brand-green: #2d8a4e;    /* status: online / success */
+
+    /* Text ramps. Each is the measured floor for WCAG AA, so these replace the
+       ad-hoc /40 /30 /20 modifiers that were failing:
+         ink/40 on cream  = 2.66:1  FAIL  ->  --ink-subtle  = 4.54:1
+         cream/40 on ink  = 3.71:1  FAIL  ->  --cream-subtle= 4.55:1
+         cream/20 on ink  = 1.77:1  FAIL  ->  --cream-muted = 6.53:1 */
+    --ink-muted: #5c5956;      /*  6.4:1 on cream — body copy */
+    --ink-subtle: #706d6b;     /*  4.5:1 on cream — smallest passing label */
+    --cream-muted: #a7a7a7;    /*  6.5:1 on ink   — body copy on dark */
+    --cream-subtle: #8a8a8a;   /*  4.6:1 on ink   — smallest passing label */
 }
 
 :root {

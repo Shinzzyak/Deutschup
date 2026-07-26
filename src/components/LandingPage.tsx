@@ -1,5 +1,6 @@
-import { useAuthStore } from '../stores/authStore';
+import { Link } from 'react-router';
 import { Button } from './ui/button';
+import Magnetic from './ui/magnetic';
 import Hero from './Hero';
 import ProductShowcase from './ProductShowcase';
 import LearningRoadmap from './LearningRoadmap';
@@ -8,8 +9,6 @@ import CTASection from './CTASection';
 import { motion } from 'motion/react';
 
 function Header() {
-  const { loginWithGoogle } = useAuthStore();
-
   return (
     <motion.header
       initial={{ opacity: 0 }}
@@ -18,22 +17,27 @@ function Header() {
       className="w-full glass-nav sticky top-0 z-50"
     >
       <nav className="max-w-[1400px] mx-auto px-6 sm:px-10 lg:px-16 py-4 flex items-center justify-between" aria-label="Navigasi utama">
-        <a href="/" className="flex items-center space-x-3">
+        <Link to="/" className="flex items-center space-x-3">
           {/* German flag — small, precise */}
-          <div className="flex flex-col w-2.5 h-5">
-            <div className="flex-1 bg-primary" />
-            <div className="flex-1 bg-[#8b2500]" />
-            <div className="flex-1 bg-[#c8956c]" />
+          <div className="flex flex-col w-2.5 h-5" aria-hidden="true">
+            <div className="flex-1 bg-brand-ink" />
+            <div className="flex-1 bg-brand-rust" />
+            <div className="flex-1 bg-brand-tan" />
           </div>
-          <span className="font-serif text-xl font-bold text-[#0a0a0a] tracking-tight">DeutschUp</span>
-        </a>
+          <span className="font-serif text-xl font-bold text-brand-ink tracking-tight">DeutschUp</span>
+        </Link>
         <div className="flex items-center space-x-4">
-          <a href="/sign-in" className="text-[#0a0a0a]/60 hover:text-[#0a0a0a] font-medium transition-colors text-sm hidden sm:inline-flex" aria-label="Masuk ke akun Anda">
+          <Link to="/sign-in" className="text-ink-muted hover:text-brand-ink font-medium transition-colors text-sm hidden sm:inline-flex">
             Masuk
-          </a>
-          <Button onClick={loginWithGoogle} className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold  text-sm px-5 py-2.5 transition-all">
-            Daftar Gratis
-          </Button>
+          </Link>
+          <Magnetic strength={6} glow>
+            <Button
+              render={<Link to="/sign-up" />}
+              className="h-auto bg-brand-ink hover:bg-brand-rust text-brand-cream font-bold text-sm px-5 py-2.5 transition-colors"
+            >
+              Daftar Gratis
+            </Button>
+          </Magnetic>
         </div>
       </nav>
     </motion.header>
@@ -48,14 +52,14 @@ function Footer() {
           {/* Logo + flag */}
           <div>
             <div className="flex items-center space-x-3 mb-4">
-              <div className="flex flex-col w-2.5 h-5">
-                <div className="flex-1 bg-[#f5f0eb]/60" />
-                <div className="flex-1 bg-[#8b2500]" />
-                <div className="flex-1 bg-[#c8956c]" />
+              <div className="flex flex-col w-2.5 h-5" aria-hidden="true">
+                <div className="flex-1 bg-brand-cream/60" />
+                <div className="flex-1 bg-brand-rust" />
+                <div className="flex-1 bg-brand-tan" />
               </div>
               <span className="font-serif text-xl font-bold text-primary-foreground tracking-tight">DeutschUp</span>
             </div>
-            <p className="text-sm text-primary-foreground/30 max-w-xs leading-relaxed">
+            <p className="text-sm text-cream-muted max-w-xs leading-relaxed">
               Platform belajar bahasa Jerman berbasis AI untuk siswa Indonesia.
             </p>
           </div>
@@ -63,17 +67,17 @@ function Footer() {
           {/* Links */}
           <div className="flex gap-12">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground/30 mb-3">Platform</p>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-cream-subtle mb-3">Platform</p>
               <div className="space-y-2">
-                <a href="#fitur" className="block text-sm text-primary-foreground/50 hover:text-primary-foreground transition-colors">Fitur</a>
-                <a href="#roadmap" className="block text-sm text-primary-foreground/50 hover:text-primary-foreground transition-colors">Kurikulum</a>
+                <a href="#fitur" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Fitur</a>
+                <a href="#roadmap" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Kurikulum</a>
               </div>
             </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-primary-foreground/30 mb-3">Akun</p>
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-cream-subtle mb-3">Akun</p>
               <div className="space-y-2">
-                <a href="/sign-in" className="block text-sm text-primary-foreground/50 hover:text-primary-foreground transition-colors">Masuk</a>
-                <a href="/sign-in" className="block text-sm text-primary-foreground/50 hover:text-primary-foreground transition-colors">Daftar</a>
+                <Link to="/sign-in" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Masuk</Link>
+                <Link to="/sign-up" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Daftar</Link>
               </div>
             </div>
           </div>
@@ -81,8 +85,8 @@ function Footer() {
 
         {/* Bottom bar — editorial divider */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-xs text-primary-foreground/20">© 2026 DeutschUp. All rights reserved.</p>
-          <div className="flex items-center gap-1 text-xs text-primary-foreground/20">
+          <p className="text-xs text-cream-subtle">© 2026 DeutschUp. Seluruh hak cipta dilindungi.</p>
+          <div className="flex items-center gap-1 text-xs text-cream-subtle">
             <span>🇩🇪</span>
             <span>Deutsch lernen macht Spaß</span>
           </div>
