@@ -2,31 +2,28 @@ import { useState, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import {
   CheckCircle2, XCircle, ArrowRight, RotateCcw,
-  Trophy, Target, Brain, AlertCircle, Loader2
+  Trophy, Target, Brain
 } from 'lucide-react';
-import { goetheExamQuestions, examLevels, type ExamQuestion } from '../data/goethe-exam-questions';
+import { goetheExamQuestions, examLevels } from '../data/goethe-exam-questions';
 import { extendedExamQuestions } from '../data/goethe-exam-extended';
 import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
 import { Progress } from '../components/ui/progress';
 import { ErrorState } from '../components/ui/error-state';
 import { cn } from '../lib/utils';
 
 type Level = 'a1' | 'a2' | 'b1' | 'b2';
 
-// Level color mapping using design tokens
-const levelColorMap: Record<string, { accent: string; badge: string }> = {
-  green: { accent: 'border-l-green-500', badge: 'bg-green-500/15 text-green-700 dark:text-green-400' },
-  blue: { accent: 'border-l-blue-500', badge: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
-  purple: { accent: 'border-l-purple-500', badge: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
-  red: { accent: 'border-l-red-500', badge: 'bg-red-500/15 text-red-700 dark:text-red-400' },
-};
+// One accent, four numbered rows. The app is permanently light — every `dark:`
+// class that used to live here was dead weight, and the pastel-on-white text it
+// replaced (green-500 at 2.3:1, amber-500 at 2.2:1) was unreadable anyway.
+const LEVEL_BADGE = 'border border-brand-ink/12 bg-brand-cream text-ink-muted';
 
-// Question type styling
-const typeStyleMap: Record<string, { label: string; badge: string }> = {
-  reading: { label: '📖 Membaca', badge: 'bg-blue-500/15 text-blue-700 dark:text-blue-400' },
-  grammar: { label: '📝 Tata bahasa', badge: 'bg-purple-500/15 text-purple-700 dark:text-purple-400' },
-  vocab: { label: '💬 Kosakata', badge: 'bg-green-500/15 text-green-700 dark:text-green-400' },
+// Question type styling — the label already names the section, so the badge
+// stays neutral instead of adding a fourth and fifth hue.
+const typeStyleMap: Record<string, { label: string }> = {
+  reading: { label: '📖 Membaca' },
+  grammar: { label: '📝 Tata bahasa' },
+  vocab: { label: '💬 Kosakata' },
 };
 
 export default function GoetheExam() {
@@ -109,21 +106,20 @@ export default function GoetheExam() {
   if (!selectedLevel) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-10 border-l-4 border-[#8b2500] pl-5 md:pl-6">
-          <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#8b2500] mb-2">Latihan mandiri</p>
-          <h1 className="text-3xl md:text-4xl font-serif font-bold mb-3 text-foreground">
+        <div className="mb-10 border-l-4 border-brand-rust pl-5 md:pl-6">
+          <p className="mb-2 text-xs font-bold tracking-[0.18em] text-brand-rust uppercase">Latihan mandiri</p>
+          <h1 className="mb-3 font-serif text-3xl font-bold text-brand-ink md:text-4xl">
             Simulasi ujian Goethe
           </h1>
-          <p className="text-muted-foreground text-base max-w-xl">
+          <p className="max-w-xl text-base text-ink-muted">
             Pilih level. Soal dan hasil latihan disusun berdasarkan level yang kamu pilih.
           </p>
         </div>
 
-        <div className="overflow-hidden rounded-2xl border border-border bg-card">
+        <div className="border border-brand-ink/12 bg-white">
           {examLevels.map((level, index) => {
             const levelQuestions = allQuestions.filter(q => q.level === level.id);
             const levelPoints = levelQuestions.reduce((sum, question) => sum + question.points, 0);
-            const colors = levelColorMap[level.color] || levelColorMap.green;
             return (
               <motion.button
                 type="button"
@@ -132,29 +128,28 @@ export default function GoetheExam() {
                 whileTap={{ x: 0 }}
                 onClick={() => setSelectedLevel(level.id as Level)}
                 className={cn(
-                  "group grid w-full grid-cols-[2.5rem_1fr_auto] items-center gap-4 border-l-4 bg-card px-5 py-5 text-left transition-colors hover:bg-muted/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset sm:grid-cols-[3rem_1fr_auto_auto] sm:px-7",
-                  index > 0 && "border-t border-t-border",
-                  colors.accent
+                  "group grid w-full grid-cols-[2.5rem_1fr_auto] items-center gap-4 border-l-4 border-l-brand-rust bg-white px-5 py-5 text-left transition-colors hover:bg-brand-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-rust focus-visible:ring-inset sm:grid-cols-[3rem_1fr_auto_auto] sm:px-7",
+                  index > 0 && "border-t border-t-brand-ink/10"
                 )}
                 aria-label={`Pilih level ${level.name}`}
               >
-                <span className="font-serif text-2xl font-bold text-muted-foreground/45 tabular-nums">
+                <span className="font-serif text-2xl font-bold text-ink-subtle tabular-nums">
                   {String(index + 1).padStart(2, '0')}
                 </span>
                 <span>
                   <span className="flex items-center gap-2">
                     <span className="text-xl" aria-hidden="true">{level.icon}</span>
-                    <span className="font-serif text-xl font-bold text-foreground">{level.name}</span>
+                    <span className="font-serif text-xl font-bold text-brand-ink">{level.name}</span>
                   </span>
-                  <span className="mt-1 block text-sm text-muted-foreground">{level.description}</span>
-                  <span className="mt-3 flex gap-3 text-xs text-muted-foreground">
+                  <span className="mt-1 block text-sm text-ink-muted">{level.description}</span>
+                  <span className="mt-3 flex gap-3 text-xs text-ink-subtle">
                     <span>{levelQuestions.length} soal</span>
                     <span aria-hidden="true">·</span>
                     <span>{levelPoints} poin</span>
                   </span>
                 </span>
-                <span className={cn("hidden px-2 py-1 text-xs font-bold sm:inline-block", colors.badge)}>{level.id.toUpperCase()}</span>
-                <ArrowRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                <span className={cn("hidden px-2 py-1 text-xs font-bold sm:inline-block", LEVEL_BADGE)}>{level.id.toUpperCase()}</span>
+                <ArrowRight className="h-5 w-5 text-ink-muted transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </motion.button>
             );
           })}
@@ -170,7 +165,7 @@ export default function GoetheExam() {
     const passed = percentage >= 60;
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <Card className="p-8 border-2 border-border rounded-lg text-center">
+        <div className="border border-brand-ink/12 bg-white p-8 text-center">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -180,66 +175,72 @@ export default function GoetheExam() {
             <Trophy
               className={cn(
                 "w-16 h-16 mx-auto mb-4",
-                passed ? "text-amber-500" : "text-muted-foreground"
+                passed ? "text-brand-green" : "text-ink-subtle"
               )}
               aria-hidden="true"
             />
-            <h2 className="text-2xl md:text-3xl font-heading font-bold text-foreground mb-2">
+            <h2 className="mb-2 font-serif text-2xl font-bold text-brand-ink md:text-3xl">
               Selesai!
             </h2>
-            <p className="text-muted-foreground">
+            <p className="text-ink-muted">
               Level {selectedLevel.toUpperCase()}
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-3 overflow-hidden rounded-xl border border-border bg-muted/40 divide-x divide-border mb-8">
-            <div className="p-4">
-              <p className="text-2xl md:text-3xl font-bold text-amber-500 font-heading">{score}</p>
-              <p className="text-xs text-muted-foreground mt-1">Poin</p>
+          <div className="mb-8 grid grid-cols-3 gap-px border border-brand-ink/12 bg-brand-ink/12">
+            <div className="bg-white p-4">
+              <p className="font-serif text-2xl font-bold text-brand-ink md:text-3xl">{score}</p>
+              <p className="mt-1 text-xs text-ink-subtle">Poin</p>
             </div>
-            <div className="p-4">
+            <div className="bg-white p-4">
               <p className={cn(
-                "text-2xl md:text-3xl font-bold font-heading",
-                passed ? "text-green-500" : "text-red-500"
+                "font-serif text-2xl font-bold md:text-3xl",
+                // #1a6b3d, not brand-green: as *text* brand-green is only 4.32:1
+                // on white, which needs the reader to qualify as large text.
+                // #1a6b3d is 6.53:1 and passes at any size — the same substitution
+                // LessonView / LevelView / CheckpointView already make.
+                passed ? "text-[#1a6b3d]" : "text-brand-rust"
               )}>
                 {percentage}%
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Benar</p>
+              <p className="mt-1 text-xs text-ink-subtle">Benar</p>
             </div>
-            <div className="p-4">
-              <p className="text-2xl md:text-3xl font-bold text-blue-500 font-heading">
+            <div className="bg-white p-4">
+              <p className="font-serif text-2xl font-bold text-brand-ink md:text-3xl">
                 {Object.keys(answered).length}
               </p>
-              <p className="text-xs text-muted-foreground mt-1">Dijawab</p>
+              <p className="mt-1 text-xs text-ink-subtle">Dijawab</p>
             </div>
           </div>
 
           {passed && (
-            <div className="mb-6 p-3 bg-green-500/10 border border-green-500/20 rounded-md">
-              <p className="text-sm text-green-700 dark:text-green-400">
+            <div className="mb-6 border border-brand-green/25 border-l-4 border-l-brand-green bg-brand-green/10 p-3 text-left">
+              <p className="text-sm text-brand-ink">
                 Herzlichen Glückwunsch! Du hast bestanden! 🎉
               </p>
+              <p className="mt-1 text-sm text-ink-muted">Selamat, kamu lolos ambang 60%.</p>
             </div>
           )}
           {!passed && (
-            <div className="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded-md">
-              <p className="text-sm text-amber-700 dark:text-amber-400">
+            <div className="mb-6 border border-brand-rust/25 border-l-4 border-l-brand-rust bg-brand-tan/15 p-3 text-left">
+              <p className="text-sm text-brand-ink">
                 Übung macht den Meister. Versuche es noch einmal!
               </p>
+              <p className="mt-1 text-sm text-ink-muted">Ambang lulus ada di 60% — ulangi levelnya, ya.</p>
             </div>
           )}
 
-          <div className="flex gap-3 justify-center">
-            <Button onClick={resetExam} variant="outline" className="gap-2">
-              <RotateCcw className="w-4 h-4" />
+          <div className="flex justify-center gap-3">
+            <Button onClick={resetExam} variant="outline" className="h-11 gap-2 px-5">
+              <RotateCcw className="w-4 h-4" aria-hidden="true" />
               Ulangi
             </Button>
-            <Button onClick={changeLevel} className="gap-2">
-              <Target className="w-4 h-4" />
-              Ganti Level
+            <Button onClick={changeLevel} className="h-11 gap-2 bg-brand-ink px-5 font-bold text-brand-cream hover:bg-brand-rust">
+              <Target className="w-4 h-4" aria-hidden="true" />
+              Ganti level
             </Button>
           </div>
-        </Card>
+        </div>
       </div>
     );
   }
@@ -265,19 +266,19 @@ export default function GoetheExam() {
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <button
           onClick={changeLevel}
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-sm px-2 py-1"
+          className="px-2 py-1 text-sm text-ink-muted transition-colors hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-rust"
           aria-label="Kembali ke pilihan level"
         >
           ← Kembali
         </button>
-        <div className="flex items-center gap-2 text-foreground">
-          <Brain className="w-5 h-5 text-primary" aria-hidden="true" />
+        <div className="flex items-center gap-2 text-brand-ink">
+          <Brain className="h-5 w-5 text-brand-rust" aria-hidden="true" />
           <span className="font-bold">{selectedLevel.toUpperCase()}</span>
         </div>
-        <div className="text-sm text-muted-foreground tabular-nums">
+        <div className="text-sm text-ink-muted tabular-nums">
           {currentQuestion + 1}/{filteredQuestions.length}
         </div>
       </div>
@@ -296,22 +297,19 @@ export default function GoetheExam() {
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
         >
-          <Card className="p-6 border-2 border-border rounded-lg mb-6">
+          <div className="mb-6 border border-brand-ink/12 bg-white p-6">
             {/* Question type badge + points */}
-            <div className="flex items-center gap-2 mb-4">
-              <span className={cn(
-                "px-2.5 py-1 rounded text-xs font-medium",
-                typeStyle.badge
-              )}>
+            <div className="mb-4 flex items-center gap-2">
+              <span className="border border-brand-ink/12 bg-brand-cream px-2.5 py-1 text-xs font-bold text-ink-muted">
                 {typeStyle.label}
               </span>
-              <span className="text-xs text-muted-foreground">
+              <span className="text-xs text-ink-subtle">
                 {currentQ.points} poin
               </span>
             </div>
 
             {/* Question text */}
-            <p className="text-lg text-foreground whitespace-pre-line mb-6 leading-relaxed">
+            <p className="mb-6 text-lg leading-relaxed whitespace-pre-line text-brand-ink">
               {currentQ.question}
             </p>
 
@@ -335,28 +333,32 @@ export default function GoetheExam() {
                     aria-checked={isSelected || false}
                     aria-label={`Jawaban ${optionLetter}: ${option}`}
                     className={cn(
-                      "w-full text-left p-4 rounded-md border-2 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
-                      showCorrect && "border-green-500 bg-green-500/10",
-                      showWrong && "border-red-500 bg-red-500/10",
-                      !showResult && isSelected && "border-primary bg-primary/5",
-                      !showResult && !isSelected && "border-border hover:border-primary/40 bg-card",
-                      showResult && !showCorrect && !showWrong && "border-border opacity-50"
+                      "w-full border-2 p-4 text-left transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-rust focus-visible:ring-offset-2",
+                      showCorrect && "border-brand-green bg-brand-green/10",
+                      showWrong && "border-brand-rust bg-brand-rust/5",
+                      !showResult && isSelected && "border-brand-ink bg-brand-cream",
+                      !showResult && !isSelected && "border-brand-ink/15 bg-white hover:border-brand-rust/40",
+                      // 60% keeps the dimmed text at 5.25:1; 50% dropped it to 3.74:1.
+                      showResult && !showCorrect && !showWrong && "border-brand-ink/15 opacity-60"
                     )}
                   >
                     <div className="flex items-center gap-3">
                       <span className={cn(
-                        "w-8 h-8 flex items-center justify-center text-sm font-bold flex-shrink-0 rounded",
-                        showCorrect && "bg-green-500 text-white",
-                        showWrong && "bg-red-500 text-white",
-                        !showResult && isSelected && "bg-primary text-primary-foreground",
-                        !showResult && !isSelected && "bg-muted text-foreground",
-                        showResult && !showCorrect && !showWrong && "bg-muted text-muted-foreground"
+                        "flex h-8 w-8 flex-shrink-0 items-center justify-center text-sm font-bold",
+                        // text-brand-ink, not text-white: 4.58:1 vs 4.32:1 on
+                        // brand-green, and it is the pairing toast.tsx and
+                        // VocabTrainerDB already use for this surface.
+                        showCorrect && "bg-brand-green text-brand-ink",
+                        showWrong && "bg-brand-rust text-brand-cream",
+                        !showResult && isSelected && "bg-brand-ink text-brand-cream",
+                        !showResult && !isSelected && "border border-brand-ink/20 bg-brand-cream text-brand-ink",
+                        showResult && !showCorrect && !showWrong && "bg-brand-cream text-ink-muted"
                       )}>
-                        {showCorrect ? <CheckCircle2 className="w-5 h-5" /> :
-                         showWrong ? <XCircle className="w-5 h-5" /> :
+                        {showCorrect ? <CheckCircle2 className="h-5 w-5" aria-hidden="true" /> :
+                         showWrong ? <XCircle className="h-5 w-5" aria-hidden="true" /> :
                          optionLetter}
                       </span>
-                      <span className="text-foreground">{option}</span>
+                      <span className="text-brand-ink">{option}</span>
                     </div>
                   </motion.button>
                 );
@@ -369,15 +371,15 @@ export default function GoetheExam() {
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="mt-4 p-4 bg-muted/50 border border-border rounded-md"
+                  className="mt-4 border border-brand-ink/12 border-l-4 border-l-brand-tan bg-brand-cream p-4"
                 >
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-medium text-foreground">💡 {currentQ.explanation}</span>
+                  <p className="text-sm leading-relaxed text-brand-ink">
+                    💡 {currentQ.explanation}
                   </p>
                 </motion.div>
               )}
             </AnimatePresence>
-          </Card>
+          </div>
         </motion.div>
       </AnimatePresence>
 
@@ -390,13 +392,13 @@ export default function GoetheExam() {
           >
             <Button
               onClick={nextQuestion}
-              className="w-full py-6 text-base font-bold gap-2"
+              className="w-full gap-2 bg-brand-ink py-6 text-base font-bold text-brand-cream hover:bg-brand-rust"
               size="lg"
             >
               {currentQuestion < filteredQuestions.length - 1 ? (
-                <>Soal Berikutnya <ArrowRight className="w-5 h-5" /></>
+                <>Soal berikutnya <ArrowRight className="h-5 w-5" aria-hidden="true" /></>
               ) : (
-                <>Lihat Hasil <Trophy className="w-5 h-5" /></>
+                <>Lihat hasil <Trophy className="h-5 w-5" aria-hidden="true" /></>
               )}
             </Button>
           </motion.div>
