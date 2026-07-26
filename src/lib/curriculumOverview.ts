@@ -34,6 +34,8 @@ export interface CurriculumLevelOverview {
   checkpointCount: number;
   routeReadyCount: number;
   pendingDataCount: number;
+  /** Units that can actually be finished — the denominator of progressPercent. */
+  countableCount: number;
   completedCount: number;
   progressPercent: number;
   vocabularyCount: number;
@@ -48,6 +50,8 @@ export interface CurriculumOverview {
   totalCheckpoints: number;
   availableCheckpointCount: number;
   unavailableCheckpointCount: number;
+  /** Units that can actually be finished — the denominator of progressPercent. */
+  countableUnits: number;
   totalVocabulary: number;
   completedUnits: number;
   progressPercent: number;
@@ -109,6 +113,7 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
         checkpointCount: 0,
         routeReadyCount: 0,
         pendingDataCount: 0,
+        countableCount: 0,
         completedCount: 0,
         progressPercent: 0,
         vocabularyCount: Number(input.dbLevelCounts?.[level] || 0),
@@ -148,12 +153,17 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
     else levels[level].lessonCount += 1;
     if (routeAvailable) levels[level].routeReadyCount += 1;
     else levels[level].pendingDataCount += 1;
+    // A unit with no route can never be finished, so it stays out of the
+    // denominator — otherwise the ring sticks below 100% for a reason the
+    // learner can do nothing about. Already-completed units stay countable even
+    // if their route later disappears, so progress never silently drops.
+    if (routeAvailable || isCompleted) levels[level].countableCount += 1;
     if (isCompleted) levels[level].completedCount += 1;
   }
 
   for (const level of LEVELS) {
     const item = levels[level];
-    item.progressPercent = percent(item.completedCount, item.units.length);
+    item.progressPercent = percent(item.completedCount, item.countableCount);
   }
 
   const orderedLevels = LEVELS.map((level) => levels[level]);
@@ -163,6 +173,7 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
   const totalCheckpoints = flatUnits.filter((unit) => unit.type === 'checkpoint').length;
   const availableCheckpointCount = flatUnits.filter((unit) => unit.type === 'checkpoint' && unit.routeAvailable).length;
   const unavailableCheckpointCount = totalCheckpoints - availableCheckpointCount;
+  const countableUnits = orderedLevels.reduce((sum, level) => sum + level.countableCount, 0);
   const completedUnits = flatUnits.filter((unit) => unit.completed).length;
   const totalVocabulary = orderedLevels.reduce((sum, level) => sum + level.vocabularyCount, 0);
   const nextUnit = flatUnits.find((unit) => !unit.completed && unit.unlocked && unit.href) || null;
@@ -175,9 +186,10 @@ export function buildCurriculumOverview(units: LessonIndex[], input: CurriculumO
     totalCheckpoints,
     availableCheckpointCount,
     unavailableCheckpointCount,
+    countableUnits,
     totalVocabulary,
     completedUnits,
-    progressPercent: percent(completedUnits, totalUnits),
+    progressPercent: percent(completedUnits, countableUnits),
     nextUnit,
   };
 }

@@ -1,8 +1,33 @@
 import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getDb, getVerifiedIdentity } from '../lib/api-utils.js';
 import { notifyDiscord } from './webhook-notify.js';
+import {
+  getPaymentProvider,
+  isPaymentProviderError,
+  readWebhookMetadata,
+  readWebhookRef,
+} from '../lib/payments/index.js';
+import type {
+  CreateChargeResult,
+  PaymentProvider,
+  VerifyChargeResult,
+  WebhookRequest,
+} from '../lib/payments/index.js';
 
-// Bayar.gg callbacks may carry malformed JSON or a wrong content-type, so this endpoint
+// This handler is gateway-agnostic. Every vendor detail — endpoint, payload
+// shape, response field names, credentials — lives behind the PaymentProvider
+// interface in lib/payments/. Switching gateways touches that folder and the
+// PAYMENT_PROVIDER env var, never this file. See docs/PAYMENT.md.
+//
+// The security model, unchanged and non-negotiable:
+//   1. Identity comes from a verified Bearer token, never from the body.
+//   2. The price comes from constants below, never from the body.
+//   3. A callback body may only supply an id. The status is fetched from the
+//      gateway by provider.verifyCharge(), server to server.
+//   4. Fulfilment is idempotent: an order already 'paid' is never processed
+//      twice, and the verified amount must match the stored amount.
+//
+// Callbacks may carry malformed JSON or a wrong content-type, so this endpoint
 // parses the body itself (readJsonBody) instead of trusting the runtime parser.
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
@@ -24,8 +49,26 @@ export function getWebhookPayload(body: unknown): Record<string, unknown> | null
     : null;
 }
 
-async function readJsonBody(req: ApiRequest): Promise<unknown> {
-  if (req.body !== undefined) return req.body;
+interface ReadBodyResult {
+  /** Parsed JSON, or null when absent/unparseable. */
+  parsed: unknown;
+  /**
+   * Byte-exact body when the runtime exposed it. Needed by any future provider
+   * that verifies an HMAC signature — see WebhookRequest.rawBody.
+   */
+  raw?: string;
+}
+
+async function readJsonBody(req: ApiRequest): Promise<ReadBodyResult> {
+  // A runtime that pre-parsed the body may also hand us the original text.
+  const maybeRaw = (req as any).rawBody;
+  const preRaw = typeof maybeRaw === 'string' ? maybeRaw : undefined;
+  if (req.body !== undefined) {
+    return {
+      parsed: req.body,
+      raw: preRaw ?? (typeof req.body === 'string' ? req.body : undefined),
+    };
+  }
   const chunks: Buffer[] = [];
   let size = 0;
   for await (const chunk of req) {
@@ -34,8 +77,23 @@ async function readJsonBody(req: ApiRequest): Promise<unknown> {
     chunks.push(Buffer.from(chunk));
   }
   const text = Buffer.concat(chunks).toString('utf8').trim();
-  if (!text) return null;
-  try { return JSON.parse(text); } catch { return null; }
+  if (!text) return { parsed: null, raw: text };
+  try { return { parsed: JSON.parse(text), raw: text }; } catch { return { parsed: null, raw: text }; }
+}
+
+/**
+ * Plans the server is willing to sell. The browser sends planType, so it is
+ * input: anything unrecognised falls back to 'pro' rather than being written
+ * verbatim into orders.plan_type and later into profiles.tier.
+ */
+const SELLABLE_PLANS = new Set(['pro']);
+
+function normalizePlanType(value: unknown): string {
+  return typeof value === 'string' && SELLABLE_PLANS.has(value) ? value : 'pro';
+}
+
+function normalizeText(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim() ? value : undefined;
 }
 
 export default async function handler(req: ApiRequest, res: ApiResponse) {
@@ -49,7 +107,9 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   const action = req.query.action;
 
   try {
-    const body = req.method === 'POST' ? await readJsonBody(req) : undefined;
+    const bodyResult: ReadBodyResult = req.method === 'POST'
+      ? await readJsonBody(req)
+      : { parsed: undefined };
     // === action=create (POST, auth required) ===
     if (action === 'create') {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
@@ -66,12 +126,16 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         return res.status(429).json({ error: 'Too many requests' });
       }
 
-      const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY || process.env.BAYAR_GG_API_KEY_FALLBACK;
       const APP_URL = process.env.APP_URL || process.env.VITE_APP_URL || 'https://deutschup.sintec.my.id';
-      const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
-      const { planType, name } = getWebhookPayload(body) || {};
+      const createBody: Record<string, unknown> = getWebhookPayload(bodyResult.parsed) || {};
+      const planType = normalizePlanType(createBody.planType);
+      const name = normalizeText(createBody.name);
 
+      // WARNING: TEST_PAYMENT_MODE is wired into the PRODUCTION deploy workflow
+      // (.github/workflows/cf-pages-deploy.yml re-applies it as a secret, and
+      // defaults it to 'true' when the GitHub secret is unset). While it is
+      // 'true' the Pro plan sells for Rp1.000 instead of Rp49.000 in production.
       const isTestMode = process.env.TEST_PAYMENT_MODE === 'true';
       const DEBUG = process.env.DEBUG_PAYMENTS === 'true';
       if (DEBUG) console.log('[payment/create] started, test mode:', isTestMode);
@@ -81,81 +145,74 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       const price = isTestMode ? TEST_PRICE : PROD_PRICE;
       if (DEBUG) console.log('[payment/create] price:', price);
 
-      const payload = {
-        amount: price,
-        description: `DeutschUp ${(planType || 'pro').toUpperCase()} Subscription`,
-        customer_name: name || 'Student',
-        customer_email: email || 'student@example.com',
-        callback_url: `${APP_URL}/api/payment?action=callback`,
-        redirect_url: `${APP_URL}/dashboard?payment=success`,
-        payment_method: 'qris',
-        payment_url: 'https://www.bayar.gg/pay',
-      };
+      const callbackUrl = `${APP_URL}/api/payment?action=callback`;
+      const redirectUrl = `${APP_URL}/dashboard?payment=success`;
 
-      if (DEBUG) console.log('[payment/create] callback_url:', payload.callback_url);
+      if (DEBUG) console.log('[payment/create] callback_url:', callbackUrl);
 
-      const bayarRes = await fetch(`${BAYAR_GG_BASE_URL}/create-payment.php`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-API-Key': BAYAR_GG_API_KEY!,
-        },
-        body: JSON.stringify(payload),
-      });
-
-      if (DEBUG) console.log('[payment/create] gateway status:', bayarRes.status);
-
-      const raw = await bayarRes.text();
-
-      let bayarData: any;
+      let charge: CreateChargeResult;
       try {
-        bayarData = JSON.parse(raw);
-      } catch (parseErr) {
-        console.error('[payment/create] Non-JSON gateway response:', {
-          status: bayarRes.status,
-          contentType: bayarRes.headers.get('content-type'),
-          preview: raw.slice(0, 200),
-        });
-        return res.status(502).json({
-          error: 'Payment gateway unavailable',
-        });
-      }
-
-      if (DEBUG) console.log('[payment/create] gateway response keys:', Object.keys(bayarData));
-
-      if (bayarData.success && bayarData.data?.invoice_id) {
-        const { error } = await getDb()
-          .from('orders')
-          .insert({
-            id: bayarData.data.invoice_id,
-            user_id: userId,
-            plan_type: planType || 'pro',
-            status: 'pending',
-            amount: price,
-            payment_method: bayarData.data.payment_method || 'qris',
-            created_at: new Date().toISOString(),
-          });
-
-        if (error) {
-          console.error('[payment/create] DB insert error:', error);
-          return res.status(500).json({ error: 'Failed to save order', details: error.message });
-        }
-
-        return res.json({
-          url: bayarData.data.payment_url,
-          invoice_id: bayarData.data.invoice_id,
+        const provider = getPaymentProvider();
+        charge = await provider.createCharge({
           amount: price,
-          expires_at: bayarData.data.expires_at,
+          planType,
+          description: `DeutschUp ${planType.toUpperCase()} Subscription`,
+          customerName: name || 'Student',
+          customerEmail: email || 'student@example.com',
+          callbackUrl,
+          redirectUrl,
         });
-      } else {
-        console.error('[BAYARGG ERROR]', JSON.stringify(bayarData, null, 2));
-        return res.status(400).json({
-          error: 'Payment gateway error',
-        });
+      } catch (err) {
+        // Same HTTP contract the Bayar.gg-specific code always returned.
+        if (isPaymentProviderError(err)) {
+          if (err.kind === 'rejected') {
+            return res.status(400).json({ error: 'Payment gateway error' });
+          }
+          if (err.kind === 'unavailable') {
+            return res.status(502).json({ error: 'Payment gateway unavailable' });
+          }
+          if (err.kind === 'misconfigured') {
+            return res.status(500).json({ error: 'Payment gateway misconfigured' });
+          }
+        }
+        throw err; // network failures keep falling through to the outer catch
       }
+
+      const { error } = await getDb()
+        .from('orders')
+        .insert({
+          id: charge.providerRef,
+          user_id: userId,
+          plan_type: planType,
+          status: 'pending',
+          amount: charge.amount,
+          payment_method: charge.paymentMethod || 'qris',
+          created_at: new Date().toISOString(),
+        });
+
+      if (error) {
+        // The charge now exists at the gateway but not locally. The reconciliation
+        // routine in docs/PAYMENT.md §4 is what catches this case.
+        console.error('[payment/create] DB insert error:', error);
+        return res.status(500).json({ error: 'Failed to save order', details: error.message });
+      }
+
+      return res.json({
+        url: charge.payUrl,
+        // `invoice_id` is the public response field the client already reads.
+        // Kept under that name regardless of provider — renaming it would break
+        // src/pages/Pricing.tsx for no benefit.
+        invoice_id: charge.providerRef,
+        amount: charge.amount,
+        expires_at: charge.expiresAt,
+        // Only present for providers without a hosted checkout page (static
+        // QRIS + manual confirmation). Absent for redirect flows, so the
+        // response shape is unchanged for Bayar.gg.
+        ...(charge.display ? { payment: { ...charge.display, qr_string: charge.qrString } } : {}),
+      });
     }
 
-    // === action=callback (POST — called by Bayar.gg webhook) ===
+    // === action=callback (POST — called by the payment gateway) ===
     if (action === 'callback') {
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -166,45 +223,45 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         return res.status(429).json({ error: 'Too many requests' });
       }
 
-      // Bayar.gg webhook verification: body is NOT signed.
-      // Per official docs (github.com/bayar-global-gateway/bayargg-api-integrations):
-      // "Jangan pernah memenuhi order hanya berdasarkan status di body.
-      //  Setelah membaca invoice_id, panggil check-payment di sisi server
-      //  memakai API Key Anda, dan lanjutkan fulfilment HANYA jika API
-      //  sendiri menyatakan paid."
+      // The callback body is a claim, not proof. Bayar.gg does not even sign it
+      // ("Body callback tidak ditandatangani" per their docs), and a signature
+      // would not change the rule anyway:
       //
-      // Pattern: receive callback → extract invoice_id → call check-payment.php
-      // → only trust API response, never body status.
+      //   read the id from the body  ->  ask the gateway what really happened
+      //
+      // Nothing below branches on a status that came from the request.
 
-      const webhookPayload = getWebhookPayload(body);
+      const webhookPayload = getWebhookPayload(bodyResult.parsed);
       if (!webhookPayload) {
         return res.status(400).json({ error: 'Invalid webhook payload' });
       }
 
-      const { invoice_id, paid_at, payment_method, paid_reff_num } = webhookPayload as {
-        invoice_id?: unknown;
-        paid_at?: string;
-        payment_method?: string;
-        paid_reff_num?: string;
-      };
-      const DEBUG_CB = process.env.DEBUG_PAYMENTS === 'true';
-      if (DEBUG_CB) console.log('[payment/callback] received invoice_id:', invoice_id);
-
-      if (!invoice_id) {
-        return res.status(200).json({ success: true, message: 'Ignored' });
+      let provider: PaymentProvider;
+      try {
+        provider = getPaymentProvider();
+      } catch {
+        return res.status(500).json({ error: 'Payment gateway misconfigured' });
       }
 
-      if (typeof invoice_id !== 'string' || invoice_id.length > 128) {
-        console.warn('[payment/callback] Invalid invoice_id shape, ignoring');
+      const webhookReq: WebhookRequest = {
+        headers: req.headers,
+        body: webhookPayload,
+        rawBody: bodyResult.raw,
+      };
+
+      // readWebhookRef returns the reference id and nothing else — by
+      // construction, not by convention. See lib/payments/index.ts.
+      const providerRef = readWebhookRef(provider, webhookReq);
+      if (!providerRef) {
         return res.status(200).json({ success: true, message: 'Ignored' });
       }
 
       // Local guard first: only verify invoices we created. This prevents fake
-      // callbacks from turning this endpoint into an outbound Bayar.gg probe.
+      // callbacks from turning this endpoint into an outbound gateway probe.
       const { data: localOrder, error: orderLookupError } = await getDb()
         .from('orders')
         .select('*')
-        .eq('id', invoice_id)
+        .eq('id', providerRef)
         .maybeSingle();
 
       if (orderLookupError) {
@@ -213,52 +270,33 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       }
 
       if (!localOrder) {
-        console.warn('[payment/callback] Unknown invoice_id, ignoring:', invoice_id.slice(0, 24));
+        console.warn('[payment/callback] Unknown order reference, ignoring:', providerRef.slice(0, 24));
         return res.status(202).json({ success: true, message: 'Not paid yet' });
       }
 
       if (localOrder.status === 'paid') {
-        console.log('[payment/callback] Already paid, idempotent skip:', invoice_id);
+        console.log('[payment/callback] Already paid, idempotent skip:', providerRef);
         return res.json({ success: true, message: 'Already processed' });
       }
 
-      // Verify payment status via Bayar.gg API (never trust body status)
-      const BAYAR_GG_API_KEY = process.env.BAYAR_GG_API_KEY;
-      if (!BAYAR_GG_API_KEY) {
-        console.error('[payment/callback] CRITICAL: BAYAR_GG_API_KEY not set — cannot verify webhook');
-        return res.status(500).json({ error: 'Payment gateway misconfigured' });
-      }
-
-      let verifyData: any;
-      let verifyStatus: string | undefined;
+      // Verify payment status via the gateway's own API (never trust body status)
+      let verification: VerifyChargeResult;
       try {
-        const checkRes = await fetch(
-          `https://www.bayar.gg/api/check-payment.php?invoice=${encodeURIComponent(invoice_id)}`,
-          { headers: { 'X-API-Key': BAYAR_GG_API_KEY, 'Accept': 'application/json' } }
-        );
-        const checkText = await checkRes.text();
-        try {
-          verifyData = JSON.parse(checkText);
-        } catch {
-          // Non-JSON response from gateway — treat as "not paid"
-          console.error('[payment/callback] Non-JSON gateway response:', checkText.slice(0, 200));
-          return res.status(202).json({ success: true, message: 'Not paid yet' });
+        verification = await provider.verifyCharge(providerRef);
+      } catch (err) {
+        if (isPaymentProviderError(err)) {
+          if (err.kind === 'misconfigured') {
+            return res.status(500).json({ error: 'Payment gateway misconfigured' });
+          }
+          if (err.kind === 'unreachable' || err.kind === 'unavailable') {
+            return res.status(502).json({ error: 'Failed to verify payment with gateway' });
+          }
         }
-        // HTTP 404 or success=false from gateway → invoice not found → not paid
-        if (!checkRes.ok || verifyData?.success === false) {
-          console.log('[payment/callback] Invoice not found or not paid:', invoice_id);
-          return res.status(202).json({ success: true, message: 'Not paid yet' });
-        }
-        if (DEBUG_CB) console.log('[payment/callback] check-payment status:', verifyData?.status);
-        verifyStatus = verifyData?.status;
-      } catch (verifyErr) {
-        // Network error (timeout, DNS, connection refused) — genuinely unreachable
-        console.error('[payment/callback] Network error verifying payment:', verifyErr);
-        return res.status(502).json({ error: 'Failed to verify payment with gateway' });
+        throw err;
       }
 
-      if (verifyStatus !== 'paid') {
-        console.log('[payment/callback] Payment not confirmed by API, status:', verifyStatus);
+      if (verification.status !== 'paid') {
+        console.log('[payment/callback] Payment not confirmed by API, status:', verification.rawStatus);
         return res.status(202).json({ success: true, message: 'Not paid yet' });
       }
 
@@ -266,10 +304,16 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       {
         const order = localOrder;
 
-        // Verify final_amount matches order amount (defense-in-depth per official docs)
-        const finalAmount = verifyData?.final_amount;
-        if (finalAmount && Number(finalAmount) !== Number(order.amount)) {
-          console.error('[payment/callback] Amount mismatch: order=', order.amount, 'gateway=', finalAmount);
+        // Cosmetic bookkeeping only (settlement time, channel, acquirer ref).
+        // Never an input to any decision below.
+        const metadata = readWebhookMetadata(provider, webhookReq);
+
+        // Verify the amount the gateway says was paid against the amount we
+        // stored when the order was created — never against anything in the
+        // request. undefined means the gateway did not report it.
+        const verifiedAmount = verification.amount;
+        if (verifiedAmount !== undefined && Number(verifiedAmount) !== Number(order.amount)) {
+          console.error('[payment/callback] Amount mismatch: order=', order.amount, 'gateway=', verifiedAmount);
           return res.status(400).json({ error: 'Amount verification failed' });
         }
 
@@ -296,11 +340,11 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
           .from('orders')
           .update({
             status: 'paid',
-            paid_at: paid_at || new Date().toISOString(),
-            payment_method: payment_method || order.payment_method,
-            paid_reff_num: paid_reff_num || null,
+            paid_at: metadata.paidAt || verification.paidAt || new Date().toISOString(),
+            payment_method: metadata.paymentMethod || order.payment_method,
+            paid_reff_num: metadata.reference || verification.reference || null,
           })
-          .eq('id', invoice_id);
+          .eq('id', providerRef);
 
         if (updateOrderError) {
           console.error('[payment/callback] Order update error:', updateOrderError);
@@ -314,8 +358,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
           description: `Plan: ${order.plan_type} | User: ${order.user_id.slice(0, 8)}...`,
           color: 'success',
           fields: [
-            { name: 'Invoice', value: invoice_id, inline: true },
-            { name: 'Method', value: payment_method || 'QRIS', inline: true },
+            { name: 'Invoice', value: providerRef, inline: true },
+            { name: 'Method', value: metadata.paymentMethod || 'QRIS', inline: true },
             { name: 'Plan', value: order.plan_type, inline: true },
           ],
           event: 'payment.success',

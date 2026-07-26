@@ -1,13 +1,22 @@
 import { Page } from '@playwright/test';
-
-const BASE = 'https://deutschup.sintec.my.id';
+import { BASE, E2E_EMAIL, E2E_PASSWORD, NO_CREDENTIALS_REASON, requireCredentials } from './env';
 
 /**
- * Login helper — handles Clerk sign-in + onboarding skip
+ * Login helper — handles Clerk sign-in + onboarding skip.
+ *
+ * Credentials come from the environment (E2E_EMAIL / E2E_PASSWORD) and are
+ * never defaulted to a real account. Any suite that calls loginAs() must guard
+ * itself with requireCredentials(), so a missing account skips loudly instead
+ * of failing on an empty sign-in form.
  */
 export async function loginAs(page: Page, email?: string, password?: string) {
-  const testEmail = email || 'yhudazzz0@gmail.com';
-  const testPassword = password || 'DeutschTest2026!';
+  const testEmail = email ?? E2E_EMAIL;
+  const testPassword = password ?? E2E_PASSWORD;
+
+  if (!testEmail || !testPassword) {
+    // Getting here means a spec forgot its requireCredentials() guard.
+    throw new Error(`loginAs() dipanggil tanpa kredensial. ${NO_CREDENTIALS_REASON}`);
+  }
 
   await page.goto(`${BASE}/sign-in`, { waitUntil: 'domcontentloaded', timeout: 30000 });
 
@@ -52,4 +61,5 @@ export async function skipOnboarding(page: Page) {
   await page.waitForTimeout(3000);
 }
 
-export { BASE };
+// Re-exported so existing suites keep importing everything they need from one place.
+export { BASE, E2E_EMAIL, requireCredentials };
