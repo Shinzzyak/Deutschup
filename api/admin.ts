@@ -1,7 +1,7 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getSupabaseAdminClient, isVerifiedAdmin } from '../lib/api-utils.js';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -39,7 +39,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-function handleEnvCheck(_req: VercelRequest, res: VercelResponse) {
+function handleEnvCheck(_req: ApiRequest, res: ApiResponse) {
   return res.json({
     bayarConfigured: !!(process.env.BAYAR_GG_API_KEY && process.env.BAYAR_GG_API_KEY.length > 10),
     appUrlConfigured: !!(process.env.APP_URL && process.env.APP_URL.length > 0),
@@ -51,7 +51,7 @@ function handleEnvCheck(_req: VercelRequest, res: VercelResponse) {
   });
 }
 
-async function handleSystemHealth(_req: VercelRequest, res: VercelResponse) {
+async function handleSystemHealth(_req: ApiRequest, res: ApiResponse) {
   try {
     const supabase = getSupabaseAdminClient();
     
@@ -104,14 +104,14 @@ async function handleSystemHealth(_req: VercelRequest, res: VercelResponse) {
         enabledProviders,
         hasPrimary: !!primaryModel,
       },
-      version: process.env.VERCEL_GIT_COMMIT_SHA || 'unknown',
+      version: process.env.CF_PAGES_COMMIT_SHA || process.env.COMMIT_SHA || 'unknown',
     });
   } catch (e: any) {
     return res.status(500).json({ error: e.message });
   }
 }
 
-async function handleStats(_req: VercelRequest, res: VercelResponse) {
+async function handleStats(_req: ApiRequest, res: ApiResponse) {
   try {
     const supabase = getSupabaseAdminClient();
     const today = new Date().toISOString().split('T')[0];
@@ -147,7 +147,7 @@ async function handleStats(_req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleUpdateRole(req: VercelRequest, res: VercelResponse) {
+async function handleUpdateRole(req: ApiRequest, res: ApiResponse) {
   const { userId, role } = req.body;
   if (!userId || !role) {
     return res.status(400).json({ error: 'userId and role required' });
@@ -167,7 +167,7 @@ async function handleUpdateRole(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleTogglePro(req: VercelRequest, res: VercelResponse) {
+async function handleTogglePro(req: ApiRequest, res: ApiResponse) {
   const { userId } = req.body;
   if (!userId) {
     return res.status(400).json({ error: 'userId required' });
@@ -206,7 +206,7 @@ async function handleTogglePro(req: VercelRequest, res: VercelResponse) {
 
 // --- REG-006: New handlers for Admin Cockpit ---
 
-async function handleGetUsers(_req: VercelRequest, res: VercelResponse) {
+async function handleGetUsers(_req: ApiRequest, res: ApiResponse) {
   try {
     const supabase = getSupabaseAdminClient();
     const { data, error } = await supabase
@@ -221,7 +221,7 @@ async function handleGetUsers(_req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleUpdateUser(req: VercelRequest, res: VercelResponse) {
+async function handleUpdateUser(req: ApiRequest, res: ApiResponse) {
   const { targetUserId, tier, subscription, role } = req.body;
   if (!targetUserId) {
     return res.status(400).json({ error: 'targetUserId required' });
@@ -248,7 +248,7 @@ async function handleUpdateUser(req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleGetConfig(_req: VercelRequest, res: VercelResponse) {
+async function handleGetConfig(_req: ApiRequest, res: ApiResponse) {
   try {
     const supabase = getSupabaseAdminClient();
     const { data, error } = await supabase
@@ -264,7 +264,7 @@ async function handleGetConfig(_req: VercelRequest, res: VercelResponse) {
   }
 }
 
-async function handleUpdateConfig(req: VercelRequest, res: VercelResponse) {
+async function handleUpdateConfig(req: ApiRequest, res: ApiResponse) {
   const { geminiApiKey } = req.body;
   if (geminiApiKey === undefined) {
     return res.status(400).json({ error: 'geminiApiKey required' });

@@ -65,7 +65,7 @@ jobs:
           cp -f public/_routes.json dist/_routes.json 2>/dev/null || true
           cp -f public/_redirects dist/_redirects 2>/dev/null || true
           test -f functions/api/[[path]].ts
-          test -f functions/lib/vercel-adapter.ts
+          test -f functions/lib/http-adapter.ts
 
       - name: Deploy to Cloudflare Pages
         run: |

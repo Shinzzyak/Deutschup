@@ -11,16 +11,16 @@ Platform belajar Bahasa Jerman interaktif berbasis AI.
 - **Catatan Belajar** — Auto-generated study plan
 - **Simulasi Ujian** — Mock test A1-B2 dengan AI-powered scoring
 - **Chat AI (Herr Deutsch)** — Tutor bahasa Jerman virtual
-- **Pembayaran** — Integrasi iPaymu untuk upgrade Pro
+- **Pembayaran** — Integrasi Bayar.gg untuk upgrade Pro
 
 ## Tech Stack
 
 - **Frontend:** React + Vite + Tailwind CSS + Zustand
-- **Backend:** Vercel Serverless Functions (TypeScript)
+- **Backend:** Cloudflare Pages Functions (TypeScript, handler di `api/`)
 - **Database:** Supabase (PostgreSQL)
 - **AI:** Google Gemini API
-- **Auth:** Supabase Auth (Google OAuth)
-- **Payment:** iPaymu
+- **Auth:** Clerk (Google OAuth) — Supabase dipakai hanya sebagai database
+- **Payment:** Bayar.gg
 
 ## Run Locally
 
@@ -50,26 +50,24 @@ Platform belajar Bahasa Jerman interaktif berbasis AI.
    npm run dev
    ```
 
-## Deployment (Vercel)
+## Deployment (Cloudflare Pages)
 
-Aplikasi sudah dikonfigurasi untuk Vercel:
-- Frontend: SPA Vite dengan rewrite ke `index.html`
-- Backend: Serverless Functions di folder `api/`
+Deploy dijalankan lewat GitHub Actions: `.github/workflows/cf-pages-deploy.yml`.
 
-Pastikan environment variables berikut diset di Vercel Project Settings:
+- Frontend: SPA Vite di `dist/`, fallback routing via `public/_redirects`
+- Backend: Pages Functions — `functions/api/[[path]].ts` merutekan `/api/*` ke handler di `api/`
+- Security + cache header: `public/_headers`
+
+Environment variables diset di Cloudflare Pages → Project Settings (workflow di atas
+me-restore sebagian setelah deploy karena `wrangler pages deploy` bisa menghapusnya):
 - `GEMINI_API_KEY`
-- `ADMIN_EMAIL`
-- `VITE_ADMIN_EMAIL`
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `IPAYMU_VA`, `IPAYMU_API_KEY`, `IPAYMU_URL`
+- `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+- `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+- `CLERK_SECRET_KEY`, `VITE_CLERK_PUBLISHABLE_KEY`
+- `BAYAR_GG_API_KEY`
+- `ADMIN_EMAIL`, `VITE_ADMIN_EMAIL`
 - `APP_URL`
 
 ## License
 
 Private — DeutschUp
-
-force rebuild
-# deploy trigger Thu Jun 25 20:06:56 UTC 2026
-# force redeploy 1782418244

@@ -12,6 +12,8 @@ import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 import { Tooltip, TooltipContent, TooltipTrigger } from '../components/ui/tooltip';
 import { authedFetch } from '../lib/auth-headers';
+import { dbProxy } from '../lib/supabase';
+import { getCourseUnitRoute, isCheckpointUnit } from '../lib/courseUnitRoutes';
 
 const grammarGlossary: Record<string, string> = {
   'Akkusativ': 'Kasus objek langsung (contoh: mich, dich, den Hund).',
@@ -84,18 +86,69 @@ type DynamicExercise = {
   hint?: string;
 };
 
+// Server-verified access state. Content is rendered only on 'allowed'.
+type AccessState = 'checking' | 'allowed' | 'denied' | 'error';
+
 export default function LessonView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuthStore();
   const { addXp, unlockLesson, completeLesson, unlockedLessons, completedLessons } = useProgressStore();
-  const { endSession } = useLessonTimer(id);
-  
+
+  // Bound to the lesson id it was resolved for, so a lesson switch can never
+  // reuse the previous verdict for even one frame.
+  const [accessResult, setAccessResult] = useState<{ lessonId: string | null; state: AccessState }>({
+    lessonId: null,
+    state: 'checking',
+  });
+  const [accessRetry, setAccessRetry] = useState(0);
+  const access: AccessState = accessResult.lessonId === id ? accessResult.state : 'checking';
+
+  // Only clock study time once access is granted.
+  const { endSession } = useLessonTimer(access === 'allowed' ? id : undefined);
+
   const lesson = courseData.find(l => l.id === id);
   const lessonIndex = courseData.findIndex(l => l.id === id);
-  const isLastLesson = lessonIndex === courseData.length - 1;
-  const nextLessonId = isLastLesson ? null : courseData[lessonIndex + 1].id;
-  
+  const nextUnit = lessonIndex >= 0 && lessonIndex < courseData.length - 1
+    ? courseData[lessonIndex + 1]
+    : null;
+  const nextUnitId = nextUnit?.id ?? null;
+  // Checkpoints live on their own route (scoring + requiredScore gate), lessons on /lesson.
+  const nextUnitRoute = nextUnit ? getCourseUnitRoute(nextUnit) : null;
+  const nextUnitIsCheckpoint = nextUnit ? isCheckpointUnit(nextUnit) : false;
+
+  // A checkpoint id opened through /lesson/:id must never be rendered as a plain lesson quiz.
+  const isCheckpointId = id ? isCheckpointUnit({ id }) : false;
+  const checkpointRoute = id && isCheckpointId ? getCourseUnitRoute({ id }) : null;
+
+  useEffect(() => {
+    if (checkpointRoute) navigate(checkpointRoute, { replace: true });
+  }, [checkpointRoute, navigate]);
+
+  // Paywall / progression gate — RPC can_access_lesson via the server-side db proxy.
+  useEffect(() => {
+    if (!id || isCheckpointId) return;
+    let cancelled = false;
+    setAccessResult({ lessonId: id, state: 'checking' });
+
+    (async () => {
+      const { data, error } = await dbProxy('can-access', { lessonId: id });
+      if (cancelled) return;
+      if (error) {
+        console.error('[LESSON] can-access failed:', error);
+        setAccessResult({ lessonId: id, state: 'error' });
+        return;
+      }
+      setAccessResult({ lessonId: id, state: data?.allowed === true ? 'allowed' : 'denied' });
+    })();
+
+    return () => { cancelled = true; };
+  }, [id, isCheckpointId, accessRetry]);
+
+  useEffect(() => {
+    if (access === 'denied') navigate('/pricing', { replace: true });
+  }, [access, navigate]);
+
   const [activeTab, setActiveTab] = useState('materi');
   const [quizFinished, setQuizFinished] = useState(completedLessons?.includes(id || '') || false);
   
@@ -121,8 +174,68 @@ export default function LessonView() {
     setQuizFinished(completedLessons?.includes(id || '') || false);
   }, [id, completedLessons]);
 
+  if (isCheckpointId) {
+    if (checkpointRoute) {
+      return (
+        <div className="max-w-3xl mx-auto py-20 flex flex-col items-center justify-center text-center space-y-4">
+          <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+          <p className="text-muted-foreground font-medium">Mengalihkan ke checkpoint...</p>
+        </div>
+      );
+    }
+    return (
+      <div className="max-w-3xl mx-auto py-20 text-center space-y-4">
+        <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto" />
+        <h1 className="text-2xl font-bold">Checkpoint Belum Tersedia</h1>
+        <p className="text-muted-foreground">Soal untuk checkpoint ini belum siap. Silakan lanjut ke pelajaran lain dulu.</p>
+        <div className="pt-2">
+          <Link to={`/level/${(id?.split('-')[0] || 'a1').toUpperCase()}`}>
+            <Button>Kembali ke Level</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (!lesson) {
     return <div>Pelajaran tidak ditemukan.</div>;
+  }
+
+  if (access === 'checking') {
+    return (
+      <div className="max-w-3xl mx-auto py-20 flex flex-col items-center justify-center text-center space-y-4">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <p className="text-muted-foreground font-medium">Memeriksa akses pelajaran...</p>
+      </div>
+    );
+  }
+
+  if (access === 'error') {
+    return (
+      <div className="max-w-3xl mx-auto py-20 text-center space-y-4">
+        <AlertTriangle className="w-12 h-12 text-amber-500 mx-auto" />
+        <h1 className="text-2xl font-bold">Gagal Memeriksa Akses</h1>
+        <p className="text-muted-foreground">
+          Kami tidak bisa memastikan akses pelajaran ini sekarang. Materi baru ditampilkan setelah verifikasi berhasil.
+        </p>
+        <div className="pt-2 flex gap-3 justify-center">
+          <Button onClick={() => setAccessRetry(n => n + 1)}>Coba Lagi</Button>
+          <Button variant="outline" onClick={() => navigate(`/level/${lesson.level || 'A1'}`)}>
+            Kembali ke Level
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (access !== 'allowed') {
+    // 'denied' — the effect above is redirecting to /pricing.
+    return (
+      <div className="max-w-3xl mx-auto py-20 flex flex-col items-center justify-center text-center space-y-4">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <p className="text-muted-foreground font-medium">Mengalihkan...</p>
+      </div>
+    );
   }
 
   const startQuiz = async () => {
@@ -228,8 +341,8 @@ export default function LessonView() {
     if(user && lesson) {
        await completeLesson(user.id, lesson.id);
        await addXp(user.id, 50); // Bonus XP
-       if (nextLessonId && !unlockedLessons.includes(nextLessonId)) {
-         await unlockLesson(user.id, nextLessonId); 
+       if (nextUnitId && !unlockedLessons.includes(nextUnitId)) {
+         await unlockLesson(user.id, nextUnitId);
        }
     }
   };
@@ -464,9 +577,9 @@ export default function LessonView() {
                 <Button variant="outline" size="lg" className="" onClick={() => navigate(`/level/${lesson?.level || 'A1'}`)}>
                   Kembali ke Level
                 </Button>
-                {nextLessonId && (
-                  <Button size="lg" className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground" onClick={() => navigate(`/lesson/${nextLessonId}`)}>
-                    Pelajaran Berikutnya <ChevronRight className="w-4 h-4 ml-2" />
+                {nextUnitRoute && (
+                  <Button size="lg" className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground" onClick={() => navigate(nextUnitRoute)}>
+                    {nextUnitIsCheckpoint ? 'Lanjut ke Checkpoint' : 'Pelajaran Berikutnya'} <ChevronRight className="w-4 h-4 ml-2" />
                   </Button>
                 )}
               </div>

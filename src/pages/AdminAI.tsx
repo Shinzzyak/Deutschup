@@ -77,8 +77,9 @@ async function getToken(): Promise<string | null> {
 }
 
 export default function AdminAI() {
-  const { profileData } = useAuthStore();
+  const { profileData, profileLoaded } = useAuthStore();
   const navigate = useNavigate();
+  const isAdmin = profileData?.role === 'admin';
 
   const [providers, setProviders] = useState<Provider[]>([]);
   const [healthData, setHealthData] = useState<HealthCheckResult[]>([]);
@@ -115,16 +116,18 @@ export default function AdminAI() {
   const [newModel, setNewModel] = useState({ id: '', model_id: '', display_name: '' });
   const [newKey, setNewKey] = useState({ key_name: 'default', api_key: '' });
 
+  // Only judge the role after the profile fetch settles — on a deep link or a
+  // hard refresh profileData is still {} on the first render, which used to
+  // bounce legitimate admins back to '/'.
   useEffect(() => {
-    if (profileData?.role !== 'admin') {
-      navigate('/');
-    }
-  }, [profileData?.role, navigate]);
+    if (!profileLoaded) return;
+    if (!isAdmin) navigate('/', { replace: true });
+  }, [profileLoaded, isAdmin, navigate]);
 
   useEffect(() => {
-    if (profileData?.role !== 'admin') return;
+    if (!profileLoaded || !isAdmin) return;
     fetchData();
-  }, [profileData?.role]);
+  }, [profileLoaded, isAdmin]);
 
   const fetchData = async () => {
     

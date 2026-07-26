@@ -62,6 +62,28 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function RequireAdmin({ children }: { children: React.ReactNode }) {
+  const { profileData, profileLoaded } = useAuthStore();
+
+  // Wait for the profile before judging the role — on a deep link/refresh the
+  // store still holds an empty profileData when this first renders.
+  if (!profileLoaded) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+        <p className="text-sm text-muted-foreground">Memeriksa hak akses admin...</p>
+        <Link to="/" className="text-sm underline text-muted-foreground">Kembali ke beranda</Link>
+      </div>
+    );
+  }
+
+  if (profileData?.role !== 'admin') {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+}
+
 function Layout({ children }: { children: React.ReactNode }) {
   const { user } = useAuthStore();
   console.log('[LAYOUT] mount:', { hasUser: !!user, userId: user?.id?.substring(0, 8) });
@@ -141,10 +163,10 @@ function AnimatedRoutes() {
         <Route path="/exam" element={<PageWrapper><GoetheExam /></PageWrapper>} />
         <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
         <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
-        <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
-        <Route path="/admin/ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
-        <Route path="/admin-ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
-        <Route path="/admin/canary" element={<PageWrapper><CanaryDashboard /></PageWrapper>} />
+        <Route path="/admin" element={<PageWrapper><RequireAdmin><Admin /></RequireAdmin></PageWrapper>} />
+        <Route path="/admin/ai" element={<PageWrapper><RequireAdmin><AdminAI /></RequireAdmin></PageWrapper>} />
+        <Route path="/admin-ai" element={<PageWrapper><RequireAdmin><AdminAI /></RequireAdmin></PageWrapper>} />
+        <Route path="/admin/canary" element={<PageWrapper><RequireAdmin><CanaryDashboard /></RequireAdmin></PageWrapper>} />
         <Route path="/clerk-test" element={<PageWrapper><ClerkTest /></PageWrapper>} />
         <Route path="/debug-auth" element={<PageWrapper><DebugAuth /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />

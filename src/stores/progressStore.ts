@@ -1,6 +1,5 @@
 import { create } from 'zustand';
-import { supabase } from '../lib/supabase';
-import { resolveInternalId } from '../lib/clerk/identity';
+import { dbProxy } from '../lib/supabase';
 import type { Level } from '../data/course';
 
 // ============================================================
@@ -34,15 +33,25 @@ interface ProgressState extends ProgressData {
   loading: boolean;
   initialized: boolean;
   checkpointProgress: CheckpointProgress[];
+  /** Last persistence failure, in Indonesian, ready to render. Null when healthy. */
+  error: string | null;
+  /** A write is in flight. */
+  saving: boolean;
+  /** Total study seconds from the server (0 until fetchStudyTime runs). */
+  studyTimeSeconds: number;
 
   // Actions
   loadProgress: (userId: string) => Promise<void>;
+  refreshProgress: () => Promise<boolean>;
   addXp: (userId: string, amount: number) => Promise<void>;
   unlockLesson: (userId: string, lessonId: string) => Promise<void>;
   completeLesson: (userId: string, lessonId: string) => Promise<void>;
   submitCheckpoint: (userId: string, checkpointId: string, score: number, totalQuestions?: number) => Promise<boolean>;
   updateVocab: (userId: string, wordId: string, status: 'learning' | 'known') => Promise<void>;
   updateStreak: (userId: string) => Promise<void>;
+  fetchStudyTime: () => Promise<number>;
+  canAccessLesson: (lessonId: string) => Promise<boolean>;
+  clearError: () => void;
 }
 
 const defaultProgress: ProgressData = {
@@ -55,6 +64,26 @@ const defaultProgress: ProgressData = {
   vocab: {},
 };
 
+const VALID_LEVELS: Level[] = ['A1', 'A2', 'B1', 'B2'];
+
+const toLevel = (value: unknown): Level =>
+  VALID_LEVELS.includes(value as Level) ? (value as Level) : 'A1';
+
+// All persistence runs through /api/db-proxy, which resolves the Clerk identity
+// server-side and uses service_role. Direct table access from the browser is
+// impossible: the client holds the anon key only, so auth.uid() is always NULL
+// and every RLS policy on user_* progress tables rejects it.
+
+/** Human-readable failure text for the UI. Never swallow a write error. */
+function failureMessage(action: string, error?: string, status?: number): string {
+  console.error(`[PROGRESS] ${action} failed (${status ?? '?'}):`, error);
+  if (status === 401) return 'Sesi kamu berakhir. Silakan masuk lagi agar progres tersimpan.';
+  if (status === 0) return 'Koneksi terputus. Progres terakhir belum tersimpan.';
+  return 'Progres gagal disimpan. Coba lagi sebentar lagi.';
+}
+
+const vocabKey = (userId: string) => `deutschup_vocab_${userId}`;
+
 // ============================================================
 // Store
 // ============================================================
@@ -64,297 +93,264 @@ export const useProgressStore = create<ProgressState>((set, get) => ({
   loading: false,
   initialized: false,
   checkpointProgress: [],
+  error: null,
+  saving: false,
+  studyTimeSeconds: 0,
+
+  clearError: () => set({ error: null }),
 
   // --------------------------------------------------------
-  // LOAD — reads from new relational tables
+  // REFRESH — pulls the authoritative snapshot from the server
+  // --------------------------------------------------------
+  refreshProgress: async () => {
+    const { data, error, status } = await dbProxy('get-progress');
+    if (error || !data) {
+      set({ error: failureMessage('get-progress', error, status) });
+      return false;
+    }
+
+    set({
+      xp: Number(data.xp) || 0,
+      streak: Number(data.streak) || 0,
+      lastPracticeDate: data.lastPracticeDate || null,
+      currentLevel: toLevel(data.currentLevel),
+      unlockedLessons: Array.isArray(data.unlockedLessons) && data.unlockedLessons.length
+        ? data.unlockedLessons
+        : ['a1-1'],
+      completedLessons: Array.isArray(data.completedLessons) ? data.completedLessons : [],
+      checkpointProgress: Array.isArray(data.checkpoints)
+        ? data.checkpoints.map((c: any) => ({
+            checkpointId: c.checkpointId,
+            passed: c.passed === true,
+            score: Number(c.score) || 0,
+            attempts: Number(c.attempts) || 0,
+            bestScore: Number(c.bestScore) || 0,
+          }))
+        : [],
+      error: null,
+    });
+    return true;
+  },
+
+  // --------------------------------------------------------
+  // LOAD — vocab from localStorage, everything else from the server
   // --------------------------------------------------------
   loadProgress: async (clerkUserId: string) => {
     set({ loading: true });
 
-    // Load vocab from localStorage FIRST (synchronous, before async DB queries)
+    // Vocab is local-only (no server table yet); load it before the network call
+    // so the trainer can render immediately.
     try {
-      const vocabKey = `deutschup_vocab_` + clerkUserId;
-      const savedVocab = localStorage.getItem(vocabKey);
-      if (savedVocab) {
-        const parsed = JSON.parse(savedVocab);
-        set({ vocab: parsed });
-        console.log('[PROGRESS] Loaded vocab from localStorage:', Object.keys(parsed).length, 'words');
-      }
+      const savedVocab = localStorage.getItem(vocabKey(clerkUserId));
+      if (savedVocab) set({ vocab: JSON.parse(savedVocab) });
     } catch (e) {
       console.warn('[PROGRESS] Failed to load vocab from localStorage:', e);
     }
 
-    const userId = await resolveInternalId(clerkUserId);
-    if (!userId) {
-      console.error('[PROGRESS] Could not resolve Clerk ID:', clerkUserId.substring(0, 12));
-      set({ loading: false });
-      return;
-    }
-    try {
-
-      // 1. user_curriculum_progress (xp, streak, current lesson, unlocked lessons)
-      const { data: curriculumProgress, error: cpError } = await supabase
-        .from('user_curriculum_progress')
-        .select('*')
-        .eq('user_id', userId)
-        .maybeSingle();
-
-      if (cpError) throw cpError;
-
-      // 2. user_lesson_progress (completed lessons)
-      const { data: lessonProgress, error: lpError } = await supabase
-        .from('user_lesson_progress')
-        .select('lesson_id, completed, score')
-        .eq('user_id', userId)
-        .eq('completed', true);
-
-      if (lpError) throw lpError;
-
-      // 3. user_checkpoint_progress
-      const { data: checkpointData, error: chkError } = await supabase
-        .from('user_checkpoint_progress')
-        .select('checkpoint_id, passed, score, attempts, best_score')
-        .eq('user_id', userId);
-
-      if (chkError) throw chkError;
-
-      if (curriculumProgress) {
-        const completedLessons = (lessonProgress || []).map((r) => r.lesson_id);
-        set({
-          xp: curriculumProgress.xp || 0,
-          streak: curriculumProgress.streak || 0,
-          lastPracticeDate: curriculumProgress.last_practice_date || null,
-          currentLevel: (curriculumProgress.current_level_id as Level) || 'A1',
-          unlockedLessons: curriculumProgress.unlocked_lessons || ['a1-1'],
-          completedLessons,
-          checkpointProgress: (checkpointData || []).map((r) => ({
-            checkpointId: r.checkpoint_id,
-            passed: r.passed,
-            score: r.score || 0,
-            attempts: r.attempts || 0,
-            bestScore: r.best_score || 0,
-          })),
-          initialized: true,
-          loading: false,
-        });
-      } else {
-        // First login — create default curriculum progress
-        const { error: insertError } = await supabase
-          .from('user_curriculum_progress')
-          .insert({
-            user_id: userId,
-            current_level_id: 'A1',
-            current_lesson_id: 'a1-1',
-            xp: 0,
-            streak: 0,
-            unlocked_lessons: ['a1-1'],
-          });
-
-        if (insertError) throw insertError;
-        set({ ...defaultProgress, vocab: get().vocab, initialized: true, loading: false });
-      }
-
-
-
-    } catch (e) {
-      console.error(`[PROGRESS] load error for ${userId}:`, e);
-      set({ loading: false });
-    }
+    const ok = await get().refreshProgress();
+    set({ loading: false, initialized: ok });
   },
 
   // --------------------------------------------------------
   // ADD XP
   // --------------------------------------------------------
-  addXp: async (clerkUserId: string, amount: number) => {
-    const userId = await resolveInternalId(clerkUserId);
-    if (!userId) return;
-    const { xp } = get();
-    const newXp = xp + amount;
-    set({ xp: newXp });
-    try {
-      const { error } = await supabase
-        .from('user_curriculum_progress')
-        .upsert({ user_id: userId, xp: newXp }, { onConflict: 'user_id' });
-      if (error) throw error;
-    } catch (e) {
-      console.error(`[PROGRESS] addXp error:`, e);
+  addXp: async (_clerkUserId: string, amount: number) => {
+    if (!Number.isFinite(amount) || amount <= 0) return;
+
+    set({ xp: get().xp + amount, saving: true });
+
+    const { data, error, status } = await dbProxy('add-xp', { amount });
+    if (error) {
+      // Roll back the optimistic grant. Subtracting (rather than restoring a
+      // snapshot) keeps concurrent grants from clobbering each other.
+      set({
+        xp: Math.max(0, get().xp - amount),
+        saving: false,
+        error: failureMessage('add-xp', error, status),
+      });
+      return;
     }
+
+    // Trust the server total — it survives concurrent grants from other tabs.
+    const serverXp = Number(data?.xp);
+    set({ xp: Number.isFinite(serverXp) ? serverXp : get().xp, saving: false, error: null });
   },
 
   // --------------------------------------------------------
-  // UNLOCK LESSON
+  // UNLOCK LESSON — the server decides eligibility via can_access_lesson
   // --------------------------------------------------------
-  unlockLesson: async (clerkUserId: string, lessonId: string) => {
-    const userId = await resolveInternalId(clerkUserId);
-    if (!userId) return;
+  unlockLesson: async (_clerkUserId: string, lessonId: string) => {
     const { unlockedLessons, currentLevel } = get();
     if (unlockedLessons.includes(lessonId)) return;
 
-    const next = [...unlockedLessons, lessonId];
+    set({ unlockedLessons: [...unlockedLessons, lessonId], saving: true });
 
-    // Determine new level from lesson prefix
-    let newLevel = currentLevel;
-    if (lessonId.startsWith('a2')) newLevel = 'A2';
-    if (lessonId.startsWith('b1')) newLevel = 'B1';
-    if (lessonId.startsWith('b2')) newLevel = 'B2';
-
-    set({ unlockedLessons: next, currentLevel: newLevel });
-    try {
-      const { error } = await supabase
-        .from('user_curriculum_progress')
-        .upsert(
-          { user_id: userId, unlocked_lessons: next, current_level_id: newLevel },
-          { onConflict: 'user_id' }
-        );
-      if (error) throw error;
-    } catch (e) {
-      console.error(`[PROGRESS] unlockLesson error:`, e);
+    const { data, error, status } = await dbProxy('unlock-lesson', { lessonId });
+    if (error) {
+      set({
+        unlockedLessons: get().unlockedLessons.filter((id) => id !== lessonId),
+        currentLevel,
+        saving: false,
+        error: status === 403
+          ? 'Pelajaran ini belum terbuka. Selesaikan checkpoint sebelumnya dulu.'
+          : failureMessage('unlock-lesson', error, status),
+      });
+      return;
     }
+
+    set({
+      unlockedLessons: Array.isArray(data?.unlockedLessons)
+        ? data.unlockedLessons
+        : get().unlockedLessons,
+      currentLevel: toLevel(data?.currentLevel ?? currentLevel),
+      saving: false,
+      error: null,
+    });
   },
 
   // --------------------------------------------------------
-  // COMPLETE LESSON — uses user_lesson_progress + updates streak
+  // COMPLETE LESSON — complete_lesson RPC also grants XP,
+  // unlocks the next lesson and bumps the streak, so we re-read after.
   // --------------------------------------------------------
-  completeLesson: async (clerkUserId: string, lessonId: string) => {
-    const userId = await resolveInternalId(clerkUserId);
-    if (!userId) return;
+  completeLesson: async (_clerkUserId: string, lessonId: string) => {
     const { completedLessons } = get();
     if (completedLessons.includes(lessonId)) return;
 
-    const next = [...completedLessons, lessonId];
-    set({ completedLessons: next });
+    set({ completedLessons: [...completedLessons, lessonId], saving: true });
 
-    try {
-      // Upsert lesson progress
-      const { error } = await supabase
-        .from('user_lesson_progress')
-        .upsert(
-          {
-            user_id: userId,
-            lesson_id: lessonId,
-            completed: true,
-            completed_at: new Date().toISOString(),
-          },
-          { onConflict: 'user_id,lesson_id' }
-        );
-      if (error) throw error;
-
-      // Update streak via RPC
-      await supabase.rpc('update_streak', { p_user_id: userId });
-
-      // Update current_lesson_id in curriculum progress
-      const { error: updateErr } = await supabase
-        .from('user_curriculum_progress')
-        .upsert(
-          { user_id: userId, current_lesson_id: lessonId },
-          { onConflict: 'user_id' }
-        );
-      if (updateErr) throw updateErr;
-    } catch (e) {
-      console.error(`[PROGRESS] completeLesson error:`, e);
+    const { error, status } = await dbProxy('complete-lesson', {
+      lessonId,
+      score: null,
+      xpEarned: 10,
+    });
+    if (error) {
+      set({
+        completedLessons: get().completedLessons.filter((id) => id !== lessonId),
+        saving: false,
+        error: failureMessage('complete-lesson', error, status),
+      });
+      return;
     }
+
+    // The RPC mutates xp / unlocked_lessons / streak server-side.
+    await get().refreshProgress();
+    set({ saving: false });
   },
 
   // --------------------------------------------------------
-  // SUBMIT CHECKPOINT — uses user_checkpoint_progress
-  // Returns true if passed
+  // SUBMIT CHECKPOINT — returns true if passed
   // --------------------------------------------------------
-  submitCheckpoint: async (clerkUserId: string, checkpointId: string, score: number, totalQuestions: number = 10) => {
-    const userId = await resolveInternalId(clerkUserId);
-    if (!userId) return false;
-    try {
-      const { data, error } = await supabase.rpc('submit_checkpoint', {
-        p_user_id: userId,
-        p_checkpoint_id: checkpointId,
-        p_score: score,
-        p_total_questions: totalQuestions,
-      });
+  submitCheckpoint: async (
+    _clerkUserId: string,
+    checkpointId: string,
+    score: number,
+    totalQuestions: number = 10
+  ) => {
+    set({ saving: true });
 
-      if (error) throw error;
-
-      const passed = data === true || data === 'true';
-
-      // Update local state
-      const { checkpointProgress } = get();
-      const existing = checkpointProgress.find((c) => c.checkpointId === checkpointId);
-      if (existing) {
-        existing.score = Math.max(existing.score, score);
-        existing.attempts += 1;
-        existing.bestScore = Math.max(existing.bestScore, score);
-        if (passed) existing.passed = true;
-        set({ checkpointProgress: [...checkpointProgress] });
-      } else {
-        set({
-          checkpointProgress: [
-            ...checkpointProgress,
-            {
-              checkpointId,
-              passed,
-              score,
-              attempts: 1,
-              bestScore: score,
-            },
-          ],
-        });
-      }
-
-      return passed;
-    } catch (e) {
-      console.error(`[PROGRESS] submitCheckpoint error:`, e);
+    const { data, error, status } = await dbProxy('submit-checkpoint', {
+      checkpointId,
+      score,
+      totalQuestions,
+    });
+    if (error || !data) {
+      set({ saving: false, error: failureMessage('submit-checkpoint', error, status) });
       return false;
     }
+
+    const passed = data.passed === true || data.passed === 'true';
+    const attempts = Number(data.attempts) || 0;
+    const bestScore = Number(data.best_score);
+
+    const { checkpointProgress } = get();
+    const existing = checkpointProgress.find((c) => c.checkpointId === checkpointId);
+    const updated: CheckpointProgress = {
+      checkpointId,
+      passed: passed || existing?.passed || false,
+      score,
+      attempts: attempts || (existing?.attempts ?? 0) + 1,
+      bestScore: Number.isFinite(bestScore)
+        ? bestScore
+        : Math.max(existing?.bestScore ?? 0, score),
+    };
+
+    set({
+      checkpointProgress: existing
+        ? checkpointProgress.map((c) => (c.checkpointId === checkpointId ? updated : c))
+        : [...checkpointProgress, updated],
+      saving: false,
+      error: null,
+    });
+
+    // Passing unlocks review lessons + the next lesson server-side.
+    if (passed) await get().refreshProgress();
+
+    return passed;
   },
 
   // --------------------------------------------------------
-  // UPDATE VOCAB (kept as-is, vocab table deferred)
+  // UPDATE VOCAB — localStorage only, no server table yet
   // --------------------------------------------------------
   updateVocab: async (userId: string, wordId: string, status: 'learning' | 'known') => {
     const { vocab } = get();
-    const nextReview =
-      Date.now() + (status === 'known' ? 86400000 * 3 : 86400000);
+    const nextReview = Date.now() + (status === 'known' ? 86400000 * 3 : 86400000);
     const newVocab = { ...vocab, [wordId]: { status, nextReview } };
     set({ vocab: newVocab });
-    // Persist to localStorage (per-user)
     try {
-      const key = `deutschup_vocab_${userId}`;
-      localStorage.setItem(key, JSON.stringify(newVocab));
+      localStorage.setItem(vocabKey(userId), JSON.stringify(newVocab));
     } catch (e) {
       console.warn('[PROGRESS] Failed to save vocab to localStorage:', e);
+      set({ error: 'Kosakata tidak bisa disimpan di perangkat ini.' });
     }
   },
 
   // --------------------------------------------------------
-  // UPDATE STREAK
+  // UPDATE STREAK — update_streak RPC owns the calendar logic
   // --------------------------------------------------------
-  updateStreak: async (clerkUserId: string) => {
-    const userId = await resolveInternalId(clerkUserId);
-    const { lastPracticeDate, streak } = get();
+  updateStreak: async (_clerkUserId: string) => {
     const today = new Date().toISOString().split('T')[0];
-    if (lastPracticeDate === today) return;
+    if (get().lastPracticeDate === today) return;
 
-    let newStreak = streak;
-    if (lastPracticeDate) {
-      const lastDate = new Date(lastPracticeDate);
-      const curr = new Date(today);
-      const diffTime = Math.abs(curr.getTime() - lastDate.getTime());
-      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-      newStreak = diffDays === 1 ? streak + 1 : 1;
-    } else {
-      newStreak = 1;
+    set({ saving: true });
+    const { error, status } = await dbProxy('update-streak');
+    if (error) {
+      set({ saving: false, error: failureMessage('update-streak', error, status) });
+      return;
     }
 
-    set({ streak: newStreak, lastPracticeDate: today });
-    if (!userId) return;
-    try {
-      const { error } = await supabase
-        .from('user_curriculum_progress')
-        .upsert(
-          { user_id: userId, streak: newStreak, last_practice_date: today },
-          { onConflict: 'user_id' }
-        );
-      if (error) throw error;
-    } catch (e) {
-      console.error(`[PROGRESS] updateStreak error:`, e);
+    await get().refreshProgress();
+    set({ saving: false });
+  },
+
+  // --------------------------------------------------------
+  // STUDY TIME
+  // --------------------------------------------------------
+  fetchStudyTime: async () => {
+    const { data, error, status } = await dbProxy('get-study-time');
+    if (error) {
+      set({ error: failureMessage('get-study-time', error, status) });
+      return get().studyTimeSeconds;
     }
+
+    // get_study_time is a set-returning RPC; tolerate row / object / scalar.
+    const row = Array.isArray(data) ? data[0] : data;
+    const seconds = Number(
+      typeof row === 'number' ? row : (row?.total_seconds ?? row?.totalSeconds ?? 0)
+    );
+    const studyTimeSeconds = Number.isFinite(seconds) ? seconds : 0;
+    set({ studyTimeSeconds });
+    return studyTimeSeconds;
+  },
+
+  // --------------------------------------------------------
+  // ACCESS CHECK
+  // --------------------------------------------------------
+  canAccessLesson: async (lessonId: string) => {
+    const { data, error, status } = await dbProxy('can-access', { lessonId });
+    if (error) {
+      set({ error: failureMessage('can-access', error, status) });
+      return false;
+    }
+    return data?.allowed === true;
   },
 }));

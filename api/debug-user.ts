@@ -1,7 +1,7 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getDb, getVerifiedIdentity } from '../lib/api-utils.js';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
     return res.status(200).end();

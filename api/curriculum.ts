@@ -1,9 +1,9 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getSupabaseAdminClient, getVerifiedIdentity } from '../lib/api-utils.js';
 
 const supabase = getSupabaseAdminClient();
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');

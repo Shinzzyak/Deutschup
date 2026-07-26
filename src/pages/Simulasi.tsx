@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { useLearningStore } from '../stores/learningStore';
 import { isUserPro } from '../lib/subscription';
@@ -9,13 +9,21 @@ import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 import { authedFetch } from '../lib/auth-headers';
 
+// No correctAnswer here on purpose: the answer key stays on the server and is
+// only revealed by /api/ai?action=score-mock-test after the attempt is submitted.
 type MockQuestion = {
   id: string;
   category: string;
   context?: string;
   question: string;
   options: string[];
+};
+
+type ScoredQuestion = {
+  id: string;
   correctAnswer: string;
+  userAnswer: string;
+  isCorrect: boolean;
 };
 
 type UserAnswerInfo = {
@@ -30,17 +38,126 @@ export default function MockTest() {
   const { addXp } = useProgressStore();
 
   const [level, setLevel] = useState<'A1'|'A2'|'B1'|'B2'>('A1');
-  const [testState, setTestState] = useState<'SETUP' | 'LOADING' | 'ONGOING' | 'EVALUATING' | 'RESULT'>('SETUP');
-  
+  const [testState, setTestState] = useState<'SETUP' | 'LOADING' | 'ONGOING' | 'EVALUATING' | 'RESULT' | 'ERROR'>('SETUP');
+
   const [questions, setQuestions] = useState<MockQuestion[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
-  
+  const [attemptToken, setAttemptToken] = useState<string | null>(null);
+
   const [currentIdx, setCurrentIdx] = useState(0);
   const [targetTime, setTargetTime] = useState<number | null>(null);
   const [timeLeft, setTimeLeft] = useState(30 * 60);
 
   const [scoreInfo, setScoreInfo] = useState<{score: number, total: number}>({ score: 0, total: 0 });
+  const [scored, setScored] = useState<Record<string, ScoredQuestion>>({});
   const [feedbacks, setFeedbacks] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState<string>('');
+
+  // The auto-submit fires from inside a setInterval closure created once per
+  // attempt. Reading through refs keeps it on the latest answers without
+  // restarting the interval on every click (which would break the countdown).
+  const answersRef = useRef<Record<string, string>>({});
+  const questionsRef = useRef<MockQuestion[]>([]);
+  const attemptTokenRef = useRef<string | null>(null);
+  const submittingRef = useRef(false);
+
+  useEffect(() => { answersRef.current = answers; }, [answers]);
+  useEffect(() => { questionsRef.current = questions; }, [questions]);
+  useEffect(() => { attemptTokenRef.current = attemptToken; }, [attemptToken]);
+
+  const submitTest = async () => {
+    if (submittingRef.current) return;
+    submittingRef.current = true;
+
+    const submittedAnswers = answersRef.current;
+    const activeQuestions = questionsRef.current;
+    const token = attemptTokenRef.current;
+
+    if (!token) {
+      submittingRef.current = false;
+      setSubmitError('Sesi simulasi tidak valid. Silakan mulai simulasi baru.');
+      setTestState('ERROR');
+      return;
+    }
+
+    setSubmitError('');
+    setTestState('EVALUATING');
+
+    // 1. Server-side scoring — the browser never holds the answer key.
+    let scoreData: { score: number; total: number; results: ScoredQuestion[] };
+    try {
+      const resp = await authedFetch('/api/ai?action=score-mock-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ attemptToken: token, answers: submittedAnswers })
+      });
+      const data = await resp.json();
+      if (!resp.ok || typeof data?.score !== 'number' || !Array.isArray(data?.results)) {
+        throw new Error(data?.error || 'Server tidak dapat menilai jawaban.');
+      }
+      scoreData = data;
+    } catch (e: any) {
+      console.error(e);
+      submittingRef.current = false;
+      setSubmitError(e?.message || 'Gagal menghubungi server penilaian. Jawaban kamu masih tersimpan.');
+      setTestState('ERROR');
+      return;
+    }
+
+    const scoredMap: Record<string, ScoredQuestion> = {};
+    scoreData.results.forEach(r => { scoredMap[r.id] = r; });
+    setScored(scoredMap);
+    setScoreInfo({ score: scoreData.score, total: scoreData.total || activeQuestions.length });
+
+    const wrongAnswers: UserAnswerInfo[] = activeQuestions
+      .filter(q => scoredMap[q.id] && !scoredMap[q.id].isCorrect)
+      .map(q => ({
+        question: q.question,
+        userAnswer: scoredMap[q.id].userAnswer || '(Tidak dijawab)',
+        correctAnswer: scoredMap[q.id].correctAnswer
+      }));
+
+    if (user) {
+      await saveMockTest(user.id, {
+         level,
+         score: scoreData.score,
+         total: scoreData.total || activeQuestions.length,
+         createdAt: Date.now()
+      });
+      await addXp(user.id, scoreData.score * 10);
+    }
+
+    // 2. AI explanations for the wrong answers — cosmetic, never blocks the score.
+    try {
+       if (wrongAnswers.length === 0) {
+          setFeedbacks({});
+       } else {
+          const resp = await authedFetch('/api/ai?action=check-mock-test', {
+             method: 'POST',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ level, wrongAnswers })
+          });
+          const data = await resp.json();
+
+          const feedbackMap: Record<string, string> = {};
+          if (data.feedback && data.feedback.length > 0) {
+             data.feedback.forEach((f: any) => {
+                // Map back to question ID by string matching (approx)
+                const q = activeQuestions.find(qItem => qItem.question === f.question);
+                if (q) feedbackMap[q.id] = f.explanation;
+             });
+          } else {
+             alert("Gagal mendapatkan penjelasan koreksi dari AI.");
+          }
+          setFeedbacks(feedbackMap);
+       }
+    } catch(e) {
+       console.error(e);
+       alert("Terjadi kesalahan jaringan saat mendapatkan koreksi.");
+    } finally {
+       setTestState('RESULT');
+    }
+  };
 
   useEffect(() => {
     let timer: any;
@@ -55,6 +172,8 @@ export default function MockTest() {
       }, 1000);
     }
     return () => clearInterval(timer);
+    // submitTest only reads refs + stable setters, so it is safe to keep it out
+    // of the deps: adding `answers` here would restart the interval on each click.
   }, [testState, targetTime]);
 
   const startTest = async () => {
@@ -76,15 +195,20 @@ export default function MockTest() {
         body: JSON.stringify({ level })
       });
       const data = await resp.json();
-      if (data.questions && data.questions.length > 0) {
+      if (resp.ok && data.questions && data.questions.length > 0 && data.attemptToken) {
+        submittingRef.current = false;
         setQuestions(data.questions);
+        setAttemptToken(data.attemptToken);
         setAnswers({});
+        setScored({});
+        setFeedbacks({});
+        setSubmitError('');
         setCurrentIdx(0);
         setTimeLeft(30 * 60);
         setTargetTime(Date.now() + 30 * 60 * 1000);
         setTestState('ONGOING');
       } else {
-         alert("Gagal memuat soal. Silakan coba lagi.");
+         alert(data?.error || "Gagal memuat soal. Silakan coba lagi.");
          setTestState('SETUP');
       }
     } catch(e) {
@@ -93,61 +217,11 @@ export default function MockTest() {
     }
   };
 
-  const submitTest = async () => {
-    setTestState('EVALUATING');
-    const wrongAnswers: UserAnswerInfo[] = [];
-    let correctCount = 0;
-
-    questions.forEach(q => {
-      const uAns = answers[q.id] || '';
-      if (uAns === q.correctAnswer) {
-        correctCount++;
-      } else {
-        wrongAnswers.push({
-          question: q.question,
-          userAnswer: uAns || '(Tidak dijawab)',
-          correctAnswer: q.correctAnswer
-        });
-      }
-    });
-
-    setScoreInfo({ score: correctCount, total: questions.length });
-
-    if (user) {
-      await saveMockTest(user.id, {
-         level,
-         score: correctCount,
-         total: questions.length,
-         createdAt: Date.now()
-      });
-      await addXp(user.id, correctCount * 10);
-    }
-
-    try {
-       const resp = await authedFetch('/api/ai?action=check-mock-test', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ level, wrongAnswers })
-       });
-       const data = await resp.json();
-       
-       const feedbackMap: Record<string, string> = {};
-       if (data.feedback && data.feedback.length > 0) {
-          data.feedback.forEach((f: any) => {
-             // Map back to question ID by string matching (approx)
-             const q = questions.find(qItem => qItem.question === f.question);
-             if (q) feedbackMap[q.id] = f.explanation;
-          });
-       } else if (wrongAnswers.length > 0) {
-          alert("Gagal mendapatkan penjelasan koreksi dari AI.");
-       }
-       setFeedbacks(feedbackMap);
-    } catch(e) {
-       console.error(e);
-       alert("Terjadi kesalahan jaringan saat mendapatkan koreksi.");
-    } finally {
-       setTestState('RESULT');
-    }
+  const backToSetup = () => {
+    submittingRef.current = false;
+    setAttemptToken(null);
+    setTargetTime(null);
+    setTestState('SETUP');
   };
 
   if (testState === 'SETUP') {
@@ -171,7 +245,7 @@ export default function MockTest() {
                  };
                  const c = levelColors[l];
                  return (
-                   <button 
+                   <button
                      key={l}
                      onClick={() => setLevel(l)}
                      className={cn(
@@ -184,7 +258,7 @@ export default function MockTest() {
                  );
               })}
            </div>
-           
+
            <Button onClick={startTest} size="lg" className="h-14 px-8 text-lg font-bold w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground">
              <PlayCircle className="w-6 h-6 mr-2" /> Mulai Simulasi
            </Button>
@@ -198,6 +272,23 @@ export default function MockTest() {
          <Loader2 className="w-16 h-16 mx-auto mb-6 text-blue-600 animate-spin" />
          <h2 className="text-3xl font-bold mb-4">Menyiapkan soal</h2>
          <p className="text-muted-foreground">Memuat soal untuk level {level}.</p>
+       </div>
+    );
+  }
+
+  if (testState === 'ERROR') {
+    return (
+       <div className="max-w-2xl mx-auto py-16 px-6 text-center">
+         <AlertCircle className="w-14 h-14 mx-auto mb-6 text-red-600" />
+         <h2 className="text-3xl font-bold mb-3">Penilaian gagal</h2>
+         <p className="text-muted-foreground mb-2">{submitError}</p>
+         <p className="text-muted-foreground mb-8">
+           Jawaban kamu masih tersimpan di halaman ini. Coba kumpulkan lagi.
+         </p>
+         <div className="flex flex-col sm:flex-row gap-3 justify-center">
+           <Button onClick={submitTest} size="lg" className="font-bold">Coba nilai lagi</Button>
+           <Button onClick={backToSetup} variant="outline" size="lg">Kembali ke menu awal</Button>
+         </div>
        </div>
     );
   }
@@ -236,7 +327,7 @@ export default function MockTest() {
                   return (
                      <button
                        key={i}
-                       onClick={() => setAnswers({...answers, [q.id]: opt})}
+                       onClick={() => setAnswers(prev => ({...prev, [q.id]: opt}))}
                        className={cn(
                           "w-full rounded-lg border-2 p-4 text-left font-medium transition-colors",
                           isSelected ? "border-blue-600 bg-blue-50 text-blue-800 " : "border-gray-200 hover:border-blue-300 hover:bg-blue-50/50 text-foreground bg-card"
@@ -247,7 +338,7 @@ export default function MockTest() {
                   )
                })}
             </div>
-            
+
             <div className="mt-8 pt-6 border-t border-border flex justify-between">
                <Button variant="outline" disabled={currentIdx === 0} onClick={() => setCurrentIdx(prev => prev - 1)}>Sebelumnya</Button>
                {currentIdx === questions.length - 1 ? (
@@ -262,6 +353,9 @@ export default function MockTest() {
   }
 
   // EVALUATING & RESULT
+  const totalForRatio = scoreInfo.total || 1;
+  const ratio = scoreInfo.score / totalForRatio;
+
   return (
     <div className="max-w-4xl mx-auto pb-20">
       <div className="st-card p-8 md:p-12  border border-border  text-center mb-8">
@@ -276,17 +370,17 @@ export default function MockTest() {
              <div className="relative w-28 h-28 mx-auto mb-6">
                <svg className="w-28 h-28 -rotate-90" viewBox="0 0 100 100">
                  <circle cx="50" cy="50" r="42" fill="none" stroke="#E5E7EB" strokeWidth="8" />
-                 <circle cx="50" cy="50" r="42" fill="none" stroke={scoreInfo.score / scoreInfo.total >= 0.5 ? '#22C55E' : '#EF4444'} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${(scoreInfo.score / scoreInfo.total) * 264} 264`} className="transition-all duration-1000" />
+                 <circle cx="50" cy="50" r="42" fill="none" stroke={ratio >= 0.5 ? '#22C55E' : '#EF4444'} strokeWidth="8" strokeLinecap="round" strokeDasharray={`${ratio * 264} 264`} className="transition-all duration-1000" />
                </svg>
                <div className="absolute inset-0 flex items-center justify-center">
-                 <span className="text-2xl font-black text-foreground">{Math.round((scoreInfo.score / scoreInfo.total) * 100)}%</span>
+                 <span className="text-2xl font-black text-foreground">{Math.round(ratio * 100)}%</span>
                </div>
              </div>
              <h2 className="text-4xl font-extrabold mb-2">Skor Kamu: {scoreInfo.score} / {scoreInfo.total}</h2>
              <p className="text-muted-foreground font-medium text-lg mb-8">
-                ({Math.round((scoreInfo.score / scoreInfo.total) * 100)}%) Tingkat {level}
+                ({Math.round(ratio * 100)}%) Tingkat {level}
              </p>
-             <Button onClick={() => setTestState('SETUP')} variant="outline" size="lg">Kembali ke Menu Awal</Button>
+             <Button onClick={backToSetup} variant="outline" size="lg">Kembali ke Menu Awal</Button>
            </>
         )}
       </div>
@@ -295,8 +389,9 @@ export default function MockTest() {
          <div className="space-y-6">
             <h3 className="text-2xl font-bold mb-4 px-4">Review Jawaban</h3>
             {questions.map((q, i) => {
-               const uAns = answers[q.id];
-               const isAccurate = uAns === q.correctAnswer;
+               const result = scored[q.id];
+               const uAns = result?.userAnswer || answers[q.id];
+               const isAccurate = !!result?.isCorrect;
                return (
                   <div key={q.id} className={cn(
                      "p-6  border-2",
@@ -311,8 +406,8 @@ export default function MockTest() {
                         <p className={cn("font-medium", isAccurate ? "text-green-800" : "text-red-800 line-through opacity-70")}>
                            Kamu: {uAns || '(Kosong)'}
                         </p>
-                        {!isAccurate && (
-                           <p className="font-bold text-green-700">Benar: {q.correctAnswer}</p>
+                        {!isAccurate && result?.correctAnswer && (
+                           <p className="font-bold text-green-700">Benar: {result.correctAnswer}</p>
                         )}
                         {!isAccurate && feedbacks[q.id] && (
                            <div className="mt-4 p-4 bg-card/70  border border-red-100 flex items-start space-x-3 text-red-900">

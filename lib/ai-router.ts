@@ -196,7 +196,7 @@ async function getApiKey(providerId: string): Promise<string | null> {
     process.env[envKey]?.trim() ||
     (providerId === 'gemini' ? process.env.GEMINI_API_KEY?.trim() : '') ||
     '';
-  // Guard against truncated/placeholder keys (e.g. vercel pull stub length 13).
+  // Guard against truncated/placeholder keys (env stubs are ~13 chars).
   if (fromEnv && fromEnv.length >= 20) return fromEnv;
 
   const supabase = getSupabaseAdmin();

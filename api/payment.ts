@@ -1,10 +1,9 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getDb, getVerifiedIdentity } from '../lib/api-utils.js';
 import { notifyDiscord } from './webhook-notify.js';
 
-// Bayar.gg callbacks may carry malformed JSON or a wrong content-type. Parse only this
-// endpoint ourselves so Vercel's parser cannot reject it before the callback guard runs.
-export const config = { api: { bodyParser: false } };
+// Bayar.gg callbacks may carry malformed JSON or a wrong content-type, so this endpoint
+// parses the body itself (readJsonBody) instead of trusting the runtime parser.
 
 // Simple in-memory rate limiter (per-IP, resets on cold start)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
@@ -25,7 +24,7 @@ export function getWebhookPayload(body: unknown): Record<string, unknown> | null
     : null;
 }
 
-async function readJsonBody(req: VercelRequest): Promise<unknown> {
+async function readJsonBody(req: ApiRequest): Promise<unknown> {
   if (req.body !== undefined) return req.body;
   const chunks: Buffer[] = [];
   let size = 0;
@@ -39,7 +38,7 @@ async function readJsonBody(req: VercelRequest): Promise<unknown> {
   try { return JSON.parse(text); } catch { return null; }
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
