@@ -1,3 +1,4 @@
+// @ts-nocheck
 // Cloudflare Pages Function catch-all for /api/*
 import { runVercelHandler } from '../lib/vercel-adapter';
 

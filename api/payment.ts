@@ -71,7 +71,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       const APP_URL = process.env.APP_URL || process.env.VITE_APP_URL || 'https://deutschup.sintec.my.id';
       const BAYAR_GG_BASE_URL = 'https://www.bayar.gg/api';
 
-      const { planType, name } = getWebhookPayload(body) || {};
+      const payloadObj = getWebhookPayload(body) || {};
+      const planType = typeof payloadObj.planType === 'string' ? payloadObj.planType : 'pro';
+      const name = typeof payloadObj.name === 'string' ? payloadObj.name : 'Student';
 
       const isTestMode = process.env.TEST_PAYMENT_MODE === 'true';
       const DEBUG = process.env.DEBUG_PAYMENTS === 'true';
