@@ -5,6 +5,7 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { initDebugCapture } from './stores/debugStore';
 import './index.css';
 import { TooltipProvider } from './components/ui/tooltip';
+import { ToastProvider } from './components/ui/toast';
 
 // === EVIDENCE MODE — always on, captures exact failure ===
 // Global error handlers — catch white-screen crashes
@@ -47,9 +48,11 @@ if (DEBUG_MODE) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
-      <TooltipProvider>
-        <App />
-      </TooltipProvider>
+      <ToastProvider>
+        <TooltipProvider>
+          <App />
+        </TooltipProvider>
+      </ToastProvider>
     </ErrorBoundary>
   </StrictMode>,
 );
