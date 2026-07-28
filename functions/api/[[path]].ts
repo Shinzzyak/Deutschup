@@ -1,6 +1,7 @@
 // @ts-nocheck
 // Cloudflare Pages Function catch-all for /api/*
-import { runVercelHandler } from '../lib/vercel-adapter';
+import { runApiHandler } from '../lib/http-adapter';
+import type { ApiHandler } from '../../lib/http-types';
 
 import ping from '../../api/ping';
 import diag from '../../api/diag';
@@ -16,9 +17,7 @@ import payment from '../../api/payment';
 import webhookNotify from '../../api/webhook-notify';
 import curriculum from '../../api/curriculum';
 
-type Handler = (req: any, res: any) => any;
-
-const ROUTES: Record<string, Handler> = {
+const ROUTES: Record<string, ApiHandler> = {
   ping,
   diag,
   keepalive,
@@ -100,7 +99,7 @@ export const onRequest: PagesFunction = async (context) => {
   }
 
   try {
-    const res = await runVercelHandler(handler, request, parts.slice(1));
+    const res = await runApiHandler(handler, request, parts.slice(1));
     const headers = new Headers(res.headers);
     const cors = corsHeaders(request.headers.get('Origin'));
     for (const [k, v] of Object.entries(cors)) headers.set(k, v as string);

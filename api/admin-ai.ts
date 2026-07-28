@@ -1,9 +1,9 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getSupabaseAdminClient, isVerifiedAdmin } from '../lib/api-utils.js';
 import { invalidateCache } from '../lib/ai-router.js';
 import { joinCustomProviderUrl } from '../lib/custom-provider-security.js';
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method === 'OPTIONS') {
     res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -80,7 +80,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 // Provider Handlers
 // ============================================================
 
-async function handleProviders(_req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleProviders(_req: ApiRequest, res: ApiResponse, supabase: any) {
   try {
     const { data, error } = await supabase
       .from('ai_providers')
@@ -94,7 +94,7 @@ async function handleProviders(_req: VercelRequest, res: VercelResponse, supabas
   }
 }
 
-async function handleProviderUpdate(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleProviderUpdate(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id, name, priority, config } = req.body;
   if (!id) return res.status(400).json({ error: 'id required' });
 
@@ -117,7 +117,7 @@ async function handleProviderUpdate(req: VercelRequest, res: VercelResponse, sup
   }
 }
 
-async function handleProviderToggle(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleProviderToggle(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id, enabled } = req.body;
   if (!id || enabled === undefined) {
     return res.status(400).json({ error: 'id and enabled required' });
@@ -145,7 +145,7 @@ async function handleProviderToggle(req: VercelRequest, res: VercelResponse, sup
 // Model Handlers
 // ============================================================
 
-async function handleModels(_req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleModels(_req: ApiRequest, res: ApiResponse, supabase: any) {
   try {
     const { data, error } = await supabase
       .from('ai_models')
@@ -159,7 +159,7 @@ async function handleModels(_req: VercelRequest, res: VercelResponse, supabase: 
   }
 }
 
-async function handleModelAdd(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleModelAdd(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { provider_id, model_name, display_name, enabled } = req.body;
   if (!provider_id || !model_name || !display_name) {
     return res.status(400).json({ error: 'provider_id, model_name, and display_name required' });
@@ -200,7 +200,7 @@ async function handleModelAdd(req: VercelRequest, res: VercelResponse, supabase:
   }
 }
 
-async function handleModelUpdate(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleModelUpdate(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id, display_name, config } = req.body;
   if (!id) return res.status(400).json({ error: 'id required' });
 
@@ -222,7 +222,7 @@ async function handleModelUpdate(req: VercelRequest, res: VercelResponse, supaba
   }
 }
 
-async function handleModelToggle(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleModelToggle(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id, enabled } = req.body;
   if (!id || enabled === undefined) {
     return res.status(400).json({ error: 'id and enabled required' });
@@ -242,7 +242,7 @@ async function handleModelToggle(req: VercelRequest, res: VercelResponse, supaba
   }
 }
 
-async function handleSetPrimary(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleSetPrimary(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id } = req.body;
   if (!id) return res.status(400).json({ error: 'id required' });
 
@@ -281,7 +281,7 @@ async function handleSetPrimary(req: VercelRequest, res: VercelResponse, supabas
   }
 }
 
-async function handleSetFallback(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleSetFallback(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id } = req.body;
   if (!id) return res.status(400).json({ error: 'id required' });
 
@@ -327,7 +327,7 @@ async function handleSetFallback(req: VercelRequest, res: VercelResponse, supaba
 // Stats Handlers
 // ============================================================
 
-async function handleUsageStats(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleUsageStats(req: ApiRequest, res: ApiResponse, supabase: any) {
   const days = parseInt(req.query.days as string) || 7;
   const startDate = new Date();
   startDate.setDate(startDate.getDate() - days);
@@ -374,7 +374,7 @@ async function handleUsageStats(req: VercelRequest, res: VercelResponse, supabas
   }
 }
 
-async function handleProviderStats(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleProviderStats(req: ApiRequest, res: ApiResponse, supabase: any) {
   const providerId = req.query.provider_id as string;
   const days = parseInt(req.query.days as string) || 7;
 
@@ -400,7 +400,7 @@ async function handleProviderStats(req: VercelRequest, res: VercelResponse, supa
   }
 }
 
-async function handleRoutingConfig(_req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleRoutingConfig(_req: ApiRequest, res: ApiResponse, supabase: any) {
   try {
     // Get enabled providers
     const { data: providers, error: pError } = await supabase
@@ -445,7 +445,7 @@ async function handleRoutingConfig(_req: VercelRequest, res: VercelResponse, sup
 // Secret Management Handlers
 // ============================================================
 
-async function handleSecrets(_req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleSecrets(_req: ApiRequest, res: ApiResponse, supabase: any) {
   try {
     const { data, error } = await supabase
       .from('provider_secrets')
@@ -459,7 +459,7 @@ async function handleSecrets(_req: VercelRequest, res: VercelResponse, supabase:
   }
 }
 
-async function handleSecretAdd(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleSecretAdd(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { provider_id, secret_key, secret_value } = req.body;
   if (!provider_id || !secret_key || !secret_value) {
     return res.status(400).json({ error: 'provider_id, secret_key, and secret_value required' });
@@ -505,7 +505,7 @@ async function handleSecretAdd(req: VercelRequest, res: VercelResponse, supabase
   }
 }
 
-async function handleSecretUpdate(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleSecretUpdate(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id, secret_value } = req.body;
   if (!id || !secret_value) {
     return res.status(400).json({ error: 'id and secret_value required' });
@@ -528,7 +528,7 @@ async function handleSecretUpdate(req: VercelRequest, res: VercelResponse, supab
   }
 }
 
-async function handleSecretDelete(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleSecretDelete(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { id } = req.body;
   if (!id) {
     return res.status(400).json({ error: 'id required' });
@@ -623,7 +623,7 @@ async function getStoredProviderApiKey(supabase: any, providerId: string): Promi
   return data?.secret_value || null;
 }
 
-async function handleDetectModels(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleDetectModels(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { provider_id, api_key } = req.body;
   if (!provider_id) {
     return res.status(400).json({ error: 'provider_id required' });
@@ -772,7 +772,7 @@ async function validateProviderKey(providerId: string, apiKey: string): Promise<
   }
 }
 
-async function handleHealthCheck(_req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleHealthCheck(_req: ApiRequest, res: ApiResponse, supabase: any) {
   try {
     // Get all providers
     const { data: providers, error: pError } = await supabase
@@ -876,7 +876,7 @@ async function handleHealthCheck(_req: VercelRequest, res: VercelResponse, supab
   }
 }
 
-async function handleValidateProvider(req: VercelRequest, res: VercelResponse, supabase: any) {
+async function handleValidateProvider(req: ApiRequest, res: ApiResponse, supabase: any) {
   const { provider_id } = req.body;
   if (!provider_id) {
     return res.status(400).json({ error: 'provider_id required' });

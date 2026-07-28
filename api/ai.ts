@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { executeWithRouting, getRoutingConfig } from '../lib/ai-router.js';
 import { getVerifiedIdentity, getUserTierById, isVerifiedAdmin, checkQuota, QUOTA_MESSAGES } from '../lib/api-utils.js';
 
@@ -198,6 +198,96 @@ async function handleGenerateStudyPlan(uid: string, body: any, userTier: 'free' 
   return result;
 }
 
+// ============================================================
+// Mock test answer key — sealed server-side
+// ============================================================
+// The answer key never reaches the browser. It is AES-GCM encrypted into an
+// opaque attempt token that only this API can open, so scoring stays server-side
+// while the API itself remains stateless (no extra table / migration needed).
+
+const ATTEMPT_TTL_MS = 45 * 60 * 1000; // 30 min test + grace for slow submits
+
+function getWebCrypto(): Crypto {
+  const c = (globalThis as any).crypto as Crypto | undefined;
+  if (!c?.subtle) throw new Error('WebCrypto unavailable in this runtime');
+  return c;
+}
+
+/** Secret for sealing attempt tokens. Falls back to other server-only secrets so
+ *  the feature never silently degrades to shipping the answer key to the client. */
+function getAttemptSecret(): string {
+  return (
+    process.env.MOCK_TEST_KEY_SECRET ||
+    process.env.CLERK_SECRET_KEY ||
+    process.env.SUPABASE_SERVICE_ROLE_KEY ||
+    ''
+  ).trim();
+}
+
+async function getAttemptCryptoKey(): Promise<CryptoKey> {
+  const secret = getAttemptSecret();
+  if (!secret) throw new Error('No server secret available to seal mock-test answer key');
+  const c = getWebCrypto();
+  const material = await c.subtle.digest('SHA-256', new TextEncoder().encode(`mock-test:${secret}`));
+  return c.subtle.importKey('raw', material, { name: 'AES-GCM' }, false, ['encrypt', 'decrypt']);
+}
+
+function bytesToB64Url(bytes: Uint8Array): string {
+  let bin = '';
+  for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
+  return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function b64UrlToBytes(value: string): Uint8Array {
+  const normalized = value.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = normalized + '='.repeat((4 - (normalized.length % 4)) % 4);
+  const bin = atob(padded);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out;
+}
+
+type AttemptPayload = {
+  v: 1;
+  attemptId: string;
+  uid: string;
+  level: string;
+  exp: number;
+  key: Record<string, string>;
+};
+
+async function sealAttempt(payload: AttemptPayload): Promise<string> {
+  const c = getWebCrypto();
+  const cryptoKey = await getAttemptCryptoKey();
+  const iv = c.getRandomValues(new Uint8Array(12));
+  const ciphertext = new Uint8Array(
+    await c.subtle.encrypt({ name: 'AES-GCM', iv }, cryptoKey, new TextEncoder().encode(JSON.stringify(payload)))
+  );
+  const packed = new Uint8Array(iv.length + ciphertext.length);
+  packed.set(iv, 0);
+  packed.set(ciphertext, iv.length);
+  return bytesToB64Url(packed);
+}
+
+async function openAttempt(token: string): Promise<AttemptPayload | null> {
+  try {
+    const packed = b64UrlToBytes(token);
+    if (packed.length <= 12) return null;
+    const c = getWebCrypto();
+    const cryptoKey = await getAttemptCryptoKey();
+    const plain = await c.subtle.decrypt(
+      { name: 'AES-GCM', iv: packed.slice(0, 12) },
+      cryptoKey,
+      packed.slice(12)
+    );
+    const parsed = JSON.parse(new TextDecoder().decode(plain));
+    if (!parsed || parsed.v !== 1 || !parsed.key) return null;
+    return parsed as AttemptPayload;
+  } catch {
+    return null; // tampered, wrong secret, or malformed
+  }
+}
+
 async function handleGenerateMockTest(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
   const { level } = body;
   const prompt = `Buatkan ujian simulasi bahasa Jerman level ${level || 'A1'} format Goethe/TELC. Total 20 soal pilihan ganda (Reading: 5, Grammar: 8, Vocab: 7). Output JSON array.`;
@@ -217,7 +307,94 @@ async function handleGenerateMockTest(uid: string, body: any, userTier: 'free' |
     userTier
   );
 
-  return result;
+  if (result?.status !== 200) return result;
+
+  // Split the model output: public questions for the client, answer key stays here.
+  const raw: any[] = Array.isArray(result.data?.questions) ? result.data.questions : [];
+  const answerKey: Record<string, string> = {};
+  const questions = raw
+    .map((q) => ({
+      ...q,
+      options: Array.isArray(q?.options) ? q.options.filter((o: any) => typeof o === 'string' && o) : [],
+    }))
+    .filter((q) => typeof q.question === 'string' && q.question && q.options.length > 1)
+    .map((q, i) => {
+      // Re-issue ids: the model sometimes emits duplicates, which would collide
+      // in the client answer map and in the answer key.
+      const id = `q${i + 1}`;
+      answerKey[id] = typeof q.correctAnswer === 'string' ? q.correctAnswer : '';
+      const question: Record<string, any> = {
+        id,
+        category: typeof q.category === 'string' && q.category ? q.category : 'Umum',
+        question: q.question,
+        options: q.options,
+      };
+      if (typeof q.context === 'string' && q.context) question.context = q.context;
+      return question;
+    });
+
+  if (questions.length === 0) return { status: 200, data: { questions: [] } };
+
+  const attemptId = bytesToB64Url(getWebCrypto().getRandomValues(new Uint8Array(12)));
+  const expiresAt = Date.now() + ATTEMPT_TTL_MS;
+  const attemptToken = await sealAttempt({
+    v: 1,
+    attemptId,
+    uid,
+    level: String(level || 'A1'),
+    exp: expiresAt,
+    key: answerKey,
+  });
+
+  return { status: 200, data: { questions, attemptId, attemptToken, expiresAt } };
+}
+
+// First scored result per attempt, kept in memory. Two jobs:
+//  - a retry after a lost response returns the same result instead of re-scoring;
+//  - re-submitting an attempt with different answers cannot probe the key.
+// Best-effort only: serverless isolates are not shared, so it is a mitigation, not a guarantee.
+const scoredAttempts = new Map<string, { data: any; at: number }>();
+
+function rememberAttempt(attemptId: string, data: any) {
+  const now = Date.now();
+  for (const [id, entry] of scoredAttempts) {
+    if (now - entry.at > ATTEMPT_TTL_MS) scoredAttempts.delete(id);
+  }
+  scoredAttempts.set(attemptId, { data, at: now });
+}
+
+/** Server-side scoring. The client never sees the key, so it cannot fake a score here. */
+async function handleScoreMockTest(uid: string, body: any): Promise<any> {
+  const { attemptToken, answers } = body || {};
+  if (!attemptToken || typeof attemptToken !== 'string') {
+    return { status: 400, data: { error: 'attemptToken diperlukan.' } };
+  }
+
+  const attempt = await openAttempt(attemptToken);
+  if (!attempt) {
+    return { status: 400, data: { error: 'Sesi simulasi tidak valid. Silakan mulai simulasi baru.' } };
+  }
+  if (attempt.uid !== uid) {
+    return { status: 403, data: { error: 'Sesi simulasi ini bukan milik akun Anda.' } };
+  }
+  if (typeof attempt.exp !== 'number' || Date.now() > attempt.exp) {
+    return { status: 410, data: { error: 'Sesi simulasi sudah kedaluwarsa. Silakan mulai simulasi baru.' } };
+  }
+
+  const cached = scoredAttempts.get(attempt.attemptId);
+  if (cached) return { status: 200, data: cached.data };
+
+  const submitted: Record<string, any> = answers && typeof answers === 'object' ? answers : {};
+  const results = Object.keys(attempt.key).map((id) => {
+    const correctAnswer = attempt.key[id];
+    const userAnswer = typeof submitted[id] === 'string' ? submitted[id] : '';
+    return { id, correctAnswer, userAnswer, isCorrect: userAnswer !== '' && userAnswer === correctAnswer };
+  });
+  const score = results.filter((r) => r.isCorrect).length;
+
+  const data = { attemptId: attempt.attemptId, level: attempt.level, score, total: results.length, results };
+  rememberAttempt(attempt.attemptId, data);
+  return { status: 200, data };
 }
 
 async function handleCheckMockTest(uid: string, body: any, userTier: 'free' | 'pro' = 'free'): Promise<any> {
@@ -268,9 +445,14 @@ const HANDLERS: Record<string, AIHandler> = {
   'generate-exercises': handleGenerateExercises,
   'generate-study-plan': handleGenerateStudyPlan,
   'generate-mock-test': handleGenerateMockTest,
+  'score-mock-test': handleScoreMockTest,
   'check-mock-test': handleCheckMockTest,
   'list-models': handleListModels,
 };
+
+/** Actions that never call a model — they must keep working when AI is switched off,
+ *  otherwise a student mid-simulation loses an already-consumed weekly attempt. */
+const NON_AI_ACTIONS = new Set(['score-mock-test']);
 
 /** AI on when AI_ENABLED=true (secret) OR a model provider key exists. Off only if explicitly false. */
 function isAiRuntimeEnabled(): boolean {
@@ -285,7 +467,7 @@ function isAiRuntimeEnabled(): boolean {
   return false;
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -302,7 +484,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(401).json({ error: 'Unauthorized — token required' });
   }
 
-  if (!isAiRuntimeEnabled()) {
+  if (!NON_AI_ACTIONS.has(action) && !isAiRuntimeEnabled()) {
     return res.status(503).json({
       error: 'Fitur AI sementara nonaktif. Curriculum & belajar tetap jalan.',
       code: 'AI_DISABLED',

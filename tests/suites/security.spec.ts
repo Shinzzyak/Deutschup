@@ -1,10 +1,18 @@
 import { test, expect } from '@playwright/test';
 import { BASE } from '../helpers/auth';
+import { requireEdgeTarget } from '../helpers/env';
 
 // Phase 7: Penetration Test (Lightweight)
 // Header checks, exposed data, basic attack vectors
+//
+// Most of this asserts on things the Cloudflare edge adds (public/_headers) or
+// on the Pages functions behind /api/*. Neither exists in front of the Vite dev
+// server, so those groups skip with a printed reason on a local target instead
+// of failing and training everyone to ignore red output.
 
 test.describe('Security: HTTP Headers', () => {
+  requireEdgeTarget();
+
   test('X-Frame-Options is set', async ({ request }) => {
     const response = await request.get(BASE);
     const xfo = response.headers()['x-frame-options'];
@@ -48,6 +56,8 @@ test.describe('Security: HTTP Headers', () => {
 });
 
 test.describe('Security: Information Disclosure', () => {
+  requireEdgeTarget();
+
   test('no server version header exposed', async ({ request }) => {
     const response = await request.get(BASE);
     const server = response.headers()['server'];
@@ -77,6 +87,8 @@ test.describe('Security: Information Disclosure', () => {
 });
 
 test.describe('Security: API Protection', () => {
+  requireEdgeTarget();
+
   test('admin endpoint requires auth or returns default', async ({ request }) => {
     const response = await request.get(`${BASE}/api/admin?action=users`);
     // Clerk may let through with empty result, or return 401
@@ -98,23 +110,13 @@ test.describe('Security: API Protection', () => {
   });
 });
 
-test.describe('Security: Input Validation', () => {
+test.describe('Security: Input Validation (API)', () => {
+  requireEdgeTarget();
+
   test('SQL injection in query param is handled', async ({ request }) => {
     const response = await request.get(`${BASE}/api/admin?action=users'; DROP TABLE users;--`);
     // Should not crash — return 400 or 401
     expect(response.status()).toBeLessThan(500);
-  });
-
-  test('XSS in query param is handled', async ({ page }) => {
-    const response = await page.goto(`${BASE}/<script>alert(1)</script>`, {
-      waitUntil: 'domcontentloaded',
-    });
-    // Should not execute script — SPA handles routing
-    expect(response?.status()).toBeLessThan(500);
-
-    // Page should not contain unescaped script tag in body
-    const content = await page.textContent('body');
-    expect(content).not.toContain('<script>alert(1)</script>');
   });
 
   test('oversized request body is handled', async ({ request }) => {
@@ -128,5 +130,20 @@ test.describe('Security: Input Validation', () => {
     if (response) {
       expect(response.status()).toBeLessThan(500);
     }
+  });
+});
+
+// Pure client-side check — runs against a local dev server too.
+test.describe('Security: Input Validation (SPA)', () => {
+  test('XSS in query param is handled', async ({ page }) => {
+    const response = await page.goto(`${BASE}/<script>alert(1)</script>`, {
+      waitUntil: 'domcontentloaded',
+    });
+    // Should not execute script — SPA handles routing
+    expect(response?.status()).toBeLessThan(500);
+
+    // Page should not contain unescaped script tag in body
+    const content = await page.textContent('body');
+    expect(content).not.toContain('<script>alert(1)</script>');
   });
 });

@@ -65,7 +65,7 @@ jobs:
           cp -f public/_routes.json dist/_routes.json 2>/dev/null || true
           cp -f public/_redirects dist/_redirects 2>/dev/null || true
           test -f functions/api/[[path]].ts
-          test -f functions/lib/vercel-adapter.ts
+          test -f functions/lib/http-adapter.ts
 
       - name: Deploy to Cloudflare Pages
         run: |
@@ -87,7 +87,15 @@ jobs:
         env:
           # Defaults when GH secrets unset (soft-launch)
           AI_ENABLED_DEFAULT: 'true'
-          TEST_PAYMENT_MODE_DEFAULT: 'true'
+          # Was 'true'. Production therefore charged TEST_PRICE (Rp1.000) instead of
+          # PROD_PRICE (Rp49.000) whenever the secret was unset, while the pricing page
+          # went on advertising Rp49.000. Confirmed in the orders table: 5 charges at
+          # Rp1.000, and BOTH of the orders that actually reached status 'paid' were
+          # Rp1.000. Test pricing must never be what you fall back to.
+          TEST_PAYMENT_MODE_DEFAULT: 'false'
+          # Which Pages branch this run targets, mirroring the logic in the deploy step
+          # above, so the guard below can tell production from a preview.
+          DEPLOY_BRANCH: ${{ github.event.inputs.branch_label || github.ref_name }}
         run: |
           python3 <<'PY'
           import json, os, urllib.request, urllib.error
@@ -100,7 +108,18 @@ jobs:
           jwt_key = (os.environ.get('CLERK_JWT_KEY') or '').strip()
           admin = (os.environ.get('ADMIN_EMAIL') or os.environ.get('VITE_ADMIN_EMAIL') or '').strip()
           ai = (os.environ.get('AI_ENABLED') or os.environ.get('AI_ENABLED_DEFAULT') or 'true').strip() or 'true'
-          test_pay = (os.environ.get('TEST_PAYMENT_MODE') or os.environ.get('TEST_PAYMENT_MODE_DEFAULT') or 'true').strip() or 'true'
+          test_pay = (os.environ.get('TEST_PAYMENT_MODE') or os.environ.get('TEST_PAYMENT_MODE_DEFAULT') or 'false').strip() or 'false'
+          # Refuse to ship discounted pricing to the production branch. Setting the
+          # secret to 'true' is legitimate on a preview branch; on main it means every
+          # subscriber is charged Rp1.000 for a Rp49.000 product, which is exactly what
+          # had been happening.
+          branch = (os.environ.get('DEPLOY_BRANCH') or '').strip()
+          if test_pay == 'true' and branch == 'main':
+              raise SystemExit(
+                  'Refusing to deploy: TEST_PAYMENT_MODE=true on the production branch '
+                  'would sell Pro for Rp1.000 instead of Rp49.000. Unset the secret, or '
+                  'deploy to a preview branch instead.'
+              )
           pk = (os.environ.get('VITE_CLERK_PUBLISHABLE_KEY') or '').strip()
           sb_url = (os.environ.get('VITE_SUPABASE_URL') or '').strip()
           sb_anon = (os.environ.get('VITE_SUPABASE_ANON_KEY') or '').strip()

@@ -49,7 +49,8 @@ describe('lessonIndex', () => {
     });
 
     it('should return empty array for invalid level', () => {
-      const result = courseIndex.filter(l => l.level === 'C2');
+      const invalidLevel: string = 'C2';
+      const result = courseIndex.filter(l => l.level === invalidLevel);
       expect(result).toEqual([]);
     });
   });

@@ -19,7 +19,7 @@ export default function CanaryDashboard() {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center text-foreground">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-red-400">⛔ Access Denied</h1>
+          <h1 className="text-2xl font-bold text-brand-rust">⛔ Access Denied</h1>
           <p className="text-muted-foreground mt-2">Admin only</p>
         </div>
       </div>
@@ -43,13 +43,13 @@ export default function CanaryDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-card border border-border p-4 text-card-foreground">
             <div className="text-sm text-muted-foreground">Clerk SDK</div>
-            <div className={`text-2xl font-bold ${status?.clerkEnabled ? 'text-green-400' : 'text-yellow-400'}`}>
+            <div className={`text-2xl font-bold ${status?.clerkEnabled ? 'text-[#1a6b3d]' : 'text-[#7a5200]'}`}>
               {status?.clerkEnabled ? '✅ Enabled' : '⚠️ Not Configured'}
             </div>
           </div>
           <div className="bg-card border border-border p-4 text-card-foreground">
             <div className="text-sm text-muted-foreground">Auth Mode</div>
-            <div className="text-2xl font-bold text-blue-400">
+            <div className="text-2xl font-bold text-[#1e40af]">
               Full Clerk
             </div>
           </div>
@@ -75,7 +75,7 @@ export default function CanaryDashboard() {
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Auth Provider:</span>
-              <span className="text-green-400">Clerk</span>
+              <span className="text-[#1a6b3d]">Clerk</span>
             </div>
           </div>
         </div>

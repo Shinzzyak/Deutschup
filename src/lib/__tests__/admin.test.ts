@@ -69,21 +69,21 @@ describe('Admin API Logic', () => {
 
   describe('Method Validation', () => {
     it('should reject non-POST for mutations', () => {
-      const method = 'GET';
+      const method: string = 'GET';
       const isMutation = true;
       const valid = !isMutation || method === 'POST';
       expect(valid).toBe(false);
     });
 
     it('should accept POST for mutations', () => {
-      const method = 'POST';
+      const method: string = 'POST';
       const isMutation = true;
       const valid = !isMutation || method === 'POST';
       expect(valid).toBe(true);
     });
 
     it('should allow GET for reads', () => {
-      const method = 'GET';
+      const method: string = 'GET';
       const isMutation = false;
       const valid = !isMutation || method === 'POST';
       expect(valid).toBe(true);

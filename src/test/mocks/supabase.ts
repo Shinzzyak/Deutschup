@@ -78,7 +78,7 @@ export function createMockSupabase() {
   };
 }
 
-// Mock Vercel Request/Response
+// Mock API Request/Response
 export function createMockReqRes(overrides: any = {}) {
   const req: any = {
     method: 'GET',

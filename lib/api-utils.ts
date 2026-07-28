@@ -58,7 +58,63 @@ export async function getAiClient() {
 export interface VerifiedIdentity {
   internalId: string;
   email?: string;
+  /**
+   * True only when the auth provider itself asserts this email is verified
+   * (Supabase email_confirmed_at, or a Clerk "verified" claim on the token).
+   * Never trust `email` for authorization decisions unless this is true.
+   */
+  emailVerified: boolean;
   provider: 'supabase' | 'clerk';
+}
+
+const VERIFIED_FLAG_VALUES = new Set(['true', '1', 'yes', 'verified']);
+
+/** Claim values arrive as boolean, number or string depending on JWT template. */
+function isVerifiedFlag(value: unknown): boolean {
+  if (value === true) return true;
+  if (typeof value === 'number') return value === 1;
+  if (typeof value === 'string') return VERIFIED_FLAG_VALUES.has(value.trim().toLowerCase());
+  return false;
+}
+
+function normalizeEmail(value: unknown): string | undefined {
+  if (typeof value !== 'string') return undefined;
+  const trimmed = value.toLowerCase().trim();
+  return trimmed || undefined;
+}
+
+/**
+ * Read email + verification status out of a Clerk session token.
+ * Clerk only ships these when the JWT template adds them and the claim name
+ * differs per template, so accept the common aliases for both — including the
+ * `email_addresses` array form where the entry is an object with
+ * `{ email_address, verification: { status } }`.
+ */
+function readEmailClaims(payload: Record<string, any> | null): { email?: string; verified: boolean } {
+  if (!payload) return { verified: false };
+
+  const firstEntry = Array.isArray(payload.email_addresses) ? payload.email_addresses[0] : undefined;
+  const entryIsObject = !!firstEntry && typeof firstEntry === 'object';
+  const entryEmail = normalizeEmail(
+    entryIsObject ? (firstEntry.email_address ?? firstEntry.email) : firstEntry
+  );
+
+  const email =
+    normalizeEmail(payload.email) ||
+    normalizeEmail(payload.primary_email_address) ||
+    normalizeEmail(payload.email_address) ||
+    entryEmail;
+
+  if (!email) return { verified: false };
+
+  const verified =
+    isVerifiedFlag(payload.email_verified) ||
+    isVerifiedFlag(payload.primary_email_address_verified) ||
+    isVerifiedFlag(payload.primary_email_verified) ||
+    isVerifiedFlag(payload.email_address_verified) ||
+    (entryIsObject && email === entryEmail && isVerifiedFlag(firstEntry.verification?.status));
+
+  return { email, verified };
 }
 
 export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | null> {
@@ -70,7 +126,12 @@ export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | 
   try {
     const { data: { user }, error } = await getSupabaseAdminClient().auth.getUser(token);
     if (!error && user) {
-      return { internalId: user.id, email: user.email, provider: 'supabase' };
+      return {
+        internalId: user.id,
+        email: normalizeEmail(user.email),
+        emailVerified: Boolean((user as any).email_confirmed_at || (user as any).confirmed_at),
+        provider: 'supabase',
+      };
     }
   } catch {}
 
@@ -87,13 +148,7 @@ export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | 
 
   const clerkId = typeof payload?.sub === 'string' ? payload.sub.trim() : '';
   // Session tokens often omit email; accept common claim aliases.
-  const emailRaw =
-    payload?.email ||
-    payload?.primary_email_address ||
-    payload?.email_address ||
-    (Array.isArray(payload?.email_addresses) ? payload.email_addresses[0] : undefined);
-  const email =
-    typeof emailRaw === 'string' ? emailRaw.toLowerCase().trim() : undefined;
+  const { email, verified: emailVerified } = readEmailClaims(payload);
 
   try {
     if (clerkId) {
@@ -103,30 +158,52 @@ export async function getVerifiedIdentity(req: any): Promise<VerifiedIdentity | 
         .eq('clerk_id', clerkId)
         .maybeSingle();
       if (identity?.internal_id) {
-        return { internalId: identity.internal_id, email: identity.email || email, provider: 'clerk' };
+        const storedEmail = normalizeEmail(identity.email);
+        const resolvedEmail = storedEmail || email;
+        return {
+          internalId: identity.internal_id,
+          email: resolvedEmail,
+          // The stored email is only as trustworthy as the token that asserts it:
+          // flag it verified only when this token vouches for that exact address.
+          emailVerified: emailVerified && !!email && resolvedEmail === email,
+          provider: 'clerk',
+        };
       }
     }
 
-    if (email) {
+    // Fallback by email is an identity *takeover* vector when the address is
+    // unverified — anyone can claim someone else's address on a fresh Clerk
+    // account. Only follow this path for a provider-verified address.
+    if (email && emailVerified) {
       const { data: identity } = await getDb()
         .from('user_identities')
         .select('internal_id, email')
         .eq('email', email)
         .maybeSingle();
       if (identity?.internal_id) {
-        return { internalId: identity.internal_id, email: identity.email || email, provider: 'clerk' };
+        return {
+          internalId: identity.internal_id,
+          email: normalizeEmail(identity.email) || email,
+          emailVerified: true,
+          provider: 'clerk',
+        };
       }
+    } else if (email) {
+      console.warn('[AUTH] skipping by-email identity lookup: email not verified');
     }
 
     // Auto-provision on first valid Clerk JWT (webhook may lag / never fire).
     // ponytail: RPC only; profiles/tier rows still owned by webhook or first profile write.
     if (clerkId) {
+      // Persist the email only when verified, so an unverified claim can never
+      // seed a row that a later by-email lookup would resolve to.
+      const persistedEmail = emailVerified ? email : undefined;
       const { data: iid, error: upErr } = await getDb().rpc('upsert_user_identity', {
         p_clerk_id: clerkId,
-        p_email: email || null,
+        p_email: persistedEmail || null,
       });
       if (!upErr && iid) {
-        return { internalId: iid as string, email, provider: 'clerk' };
+        return { internalId: iid as string, email, emailVerified, provider: 'clerk' };
       }
       if (upErr) console.warn('[AUTH] upsert_user_identity failed:', upErr.message);
     }
@@ -141,9 +218,15 @@ export async function getUserTierById(internalId: string): Promise<'free' | 'pro
   try {
     const { data } = await getDb()
       .from('profiles')
-      .select('subscription, pro_expires_at, tier, tier_expiry')
+      .select('subscription, pro_expires_at, tier, tier_expiry, role')
       .eq('id', internalId)
       .maybeSingle();
+
+    // Admins are Pro. The client already assumes this — src/lib/subscription.ts
+    // isUserPro() returns true for role 'admin' before looking at anything else —
+    // but the server did not, so an admin whose profile had no pro_expires_at was
+    // shown unlimited access while being metered as free tier by checkQuota().
+    if (data?.role === 'admin') return 'pro';
 
     const now = Date.now();
     const proExpires = data?.pro_expires_at || data?.tier_expiry;
@@ -156,14 +239,19 @@ export async function getUserTierById(internalId: string): Promise<'free' | 'pro
   return 'free';
 }
 
+/**
+ * Admin check, in order of reliability:
+ *  1. profiles.role === 'admin' — keyed on the internal id resolved from the
+ *     Clerk `sub`, so it works even when the session token carries no email.
+ *     This is the path to rely on (see supabase/18_set_admin_role.sql).
+ *  2. ADMIN_EMAIL env, and only against a provider-verified email. There is no
+ *     hardcoded fallback: with ADMIN_EMAIL unset this path is simply off.
+ */
 export async function isVerifiedAdmin(req: any): Promise<boolean> {
-  const adminEmail = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
   const identity = await getVerifiedIdentity(req);
-  const email = identity?.email?.toLowerCase().trim();
+  if (!identity) return false;
 
-  if (email && email === adminEmail.toLowerCase().trim()) return true;
-
-  if (identity?.internalId) {
+  if (identity.internalId) {
     try {
       const { data: profile } = await getDb()
         .from('profiles')
@@ -176,7 +264,11 @@ export async function isVerifiedAdmin(req: any): Promise<boolean> {
     }
   }
 
-  return false;
+  const adminEmail = normalizeEmail(process.env.ADMIN_EMAIL);
+  if (!adminEmail) return false;
+  if (!identity.emailVerified) return false;
+
+  return !!identity.email && identity.email === adminEmail;
 }
 
 export interface QuotaResult {
@@ -255,7 +347,8 @@ export const QUOTA_MESSAGES: Record<string, string> = {
 
 export const adminMiddleware = async (req: any, res: any, next: any) => {
   // Use unified verified admin check — verifies Clerk JWT via @clerk/backend,
-  // maps sub → user_identities.clerk_id → internal_id, checks ADMIN_EMAIL + profiles.role
+  // maps sub → user_identities.clerk_id → internal_id, then profiles.role first
+  // and ADMIN_EMAIL (verified email only) as a secondary path.
   const isAdmin = await isVerifiedAdmin(req);
   if (!isAdmin) {
     console.warn('[AdminMiddleware] Access DENIED');

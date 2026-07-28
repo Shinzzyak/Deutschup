@@ -4,7 +4,7 @@
  * Use: notifyDiscord({ title, description, color, fields, event })
  */
 
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { isVerifiedAdmin } from '../lib/api-utils.js';
 
 type WebhookField = { name: string; value: string; inline?: boolean };
@@ -94,7 +94,7 @@ export async function notifyDiscord(opts: NotifyOptions): Promise<{ ok: boolean;
  * Test endpoint — sends a test notification to verify webhook works.
  * POST /api/webhook-notify with { test: true } or { title, description, color }
  */
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }

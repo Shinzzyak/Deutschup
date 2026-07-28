@@ -1,33 +1,181 @@
- import { Link } from 'react-router';
- import { useState, useEffect, useMemo } from 'react';
- import type { Level } from '../data/course';
- import { courseIndex } from '../data/lessonIndex';
- import { useProgressStore } from '../stores/progressStore';
- import { useLearningStore } from '../stores/learningStore';
- import { useAuthStore } from '../stores/authStore';
- import { isUserPro } from '../lib/subscription';
+import { Link } from 'react-router';
+import { useState, useEffect, useMemo } from 'react';
+import type { Level } from '../data/course';
+import { courseIndex } from '../data/lessonIndex';
+import { useProgressStore } from '../stores/progressStore';
+import { useLearningStore } from '../stores/learningStore';
+import { useAuthStore } from '../stores/authStore';
+import { isUserPro } from '../lib/subscription';
 import { generateReportPDF } from '../lib/pdf-report';
-import { supabase } from '../lib/supabase';
-import { resolveInternalId } from '../lib/clerk/identity';
- import { CheckCircle2, Lock, PlayCircle, Download, Loader2, Target, BookOpen, Zap, Trophy, ArrowRight, Clock, Flame, Star, Brain, GraduationCap, Sparkles, Medal, TrendingUp, BarChart3, Award, Database, Layers } from 'lucide-react';
- import { cn } from '../lib/utils';
- import { Progress } from '../components/ui/progress';
- import { Button } from '../components/ui/button';
-import FeatureGate, { ProBadge } from '../components/FeatureGate';
+import { supabase, dbProxy } from '../lib/supabase';
+import {
+  AlertTriangle,
+  ArrowRight,
+  Award,
+  BookOpen,
+  CheckCircle2,
+  ChevronRight,
+  Clock,
+  Download,
+  Flame,
+  GraduationCap,
+  Loader2,
+  Lock,
+  PlayCircle,
+  RefreshCw,
+  Sparkles,
+  Star,
+  Target,
+  Trophy,
+  X,
+  Zap,
+} from 'lucide-react';
+import { cn } from '../lib/utils';
+import { Button } from '../components/ui/button';
+import FeatureGate from '../components/FeatureGate';
 import { DashboardSkeleton } from '../components/skeletons/SkeletonPatterns';
-import { LEVELS, summarizeLevelCounts, type CefrLevel } from '../lib/vocabStats';
-import { getCourseUnitContextCopy, getCourseUnitRoute, isCourseUnitRouteAvailable } from '../lib/courseUnitRoutes';
+import type { CefrLevel } from '../lib/vocabStats';
+import {
+  getCourseUnitContextCopy,
+  getCourseUnitRoute,
+  inferCourseUnitLevel,
+  isCheckpointUnit,
+  isCourseUnitRouteAvailable,
+} from '../lib/courseUnitRoutes';
+
+// ────────────────────────────────────────────────────────────────
+// Static course metadata
+// ────────────────────────────────────────────────────────────────
+
+const LEVEL_META: { id: Level; name: string; blurb: string }[] = [
+  { id: 'A1', name: 'Pemula', blurb: 'Salam, artikel, angka, dan kalimat sederhana.' },
+  { id: 'A2', name: 'Dasar', blurb: 'Kasus, kata kerja modal, dan cerita masa lampau.' },
+  { id: 'B1', name: 'Menengah', blurb: 'Kalimat relatif, kalimat pasif, dan Konjunktiv II.' },
+  { id: 'B2', name: 'Mahir', blurb: 'Partizip, idiom, dan persiapan ujian Goethe.' },
+];
+
+const LEVEL_ORDER: Record<Level, number> = { A1: 0, A2: 1, B1: 2, B2: 3 };
+
+const TOTAL_UNITS = courseIndex.length;
+const TOTAL_CHECKPOINTS = courseIndex.filter((unit) => isCheckpointUnit(unit) && isCourseUnitRouteAvailable(unit)).length;
+
+const nf = new Intl.NumberFormat('id-ID');
+
+/** Every lucide icon shares this type; derived from a value so it can't drift. */
+type IconComponent = typeof Zap;
+
+function greetingFor(hour: number): string {
+  if (hour < 11) return 'Selamat pagi';
+  if (hour < 15) return 'Selamat siang';
+  if (hour < 19) return 'Selamat sore';
+  return 'Selamat malam';
+}
+
+/** Study seconds -> the shortest phrase a person would actually say. */
+function formatStudyTime(seconds: number): string {
+  if (seconds <= 0) return 'Belum tercatat';
+  if (seconds < 60) return 'Kurang dari 1 menit';
+  if (seconds < 3600) return `${Math.round(seconds / 60)} menit`;
+  const hours = seconds / 3600;
+  return `${nf.format(Math.round(hours * 10) / 10)} jam`;
+}
+
+// ────────────────────────────────────────────────────────────────
+// Small presentational pieces
+// ────────────────────────────────────────────────────────────────
+
+/**
+ * Hairline progress meter. Rendered as a real progressbar so screen readers
+ * announce the number instead of reading nothing.
+ */
+function Meter({
+  value,
+  label,
+  trackClass = 'bg-brand-ink/10',
+  fillClass = 'bg-brand-rust',
+}: {
+  value: number;
+  label: string;
+  trackClass?: string;
+  fillClass?: string;
+}) {
+  const pct = Math.max(0, Math.min(100, Math.round(value)));
+  return (
+    <div
+      role="progressbar"
+      aria-valuenow={pct}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      aria-label={label}
+      className={cn('h-1.5 w-full', trackClass)}
+    >
+      <div className={cn('h-full transition-[width] duration-500', fillClass)} style={{ width: `${pct}%` }} />
+    </div>
+  );
+}
+
+/** One cell of the headline number strip. `value` is already formatted. */
+function StatCell({
+  icon: Icon,
+  label,
+  value,
+  hint,
+}: {
+  icon: IconComponent;
+  label: string;
+  value: string;
+  hint?: string;
+}) {
+  return (
+    <div className="bg-brand-cream p-4 md:p-5">
+      <div className="flex items-center gap-2 text-ink-muted">
+        <Icon className="h-4 w-4" aria-hidden="true" />
+        <span className="text-[11px] font-bold tracking-[0.14em] uppercase">{label}</span>
+      </div>
+      <p className="mt-2 font-serif text-3xl leading-none text-brand-ink md:text-4xl">{value}</p>
+      {hint && <p className="mt-2 text-xs text-ink-muted">{hint}</p>}
+    </div>
+  );
+}
+
+// ────────────────────────────────────────────────────────────────
+// Page
+// ────────────────────────────────────────────────────────────────
 
 export default function Dashboard() {
-  const { currentLevel, unlockedLessons, completedLessons, xp, vocab, checkpointProgress, loading, loadProgress, streak, lastPracticeDate } = useProgressStore();
+  const {
+    currentLevel,
+    unlockedLessons,
+    completedLessons,
+    xp,
+    vocab,
+    checkpointProgress,
+    loading,
+    initialized,
+    error,
+    streak,
+    lastPracticeDate,
+    loadProgress,
+    refreshProgress,
+    clearError,
+  } = useProgressStore();
   const { mockTests } = useLearningStore();
   const { user, tierData, profileData } = useAuthStore();
   const role = tierData?.role || profileData?.role;
+  const isPro = isUserPro(tierData, role);
+
   const [exporting, setExporting] = useState(false);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [reportError, setReportError] = useState('');
   const [pdfBlobUrl, setPdfBlobUrl] = useState<string | null>(null);
-  const [dbLevelCounts, setDbLevelCounts] = useState<Partial<Record<CefrLevel, number>>>({});
-  const [dbCountsLoading, setDbCountsLoading] = useState(true);
+  const [retrying, setRetrying] = useState(false);
+  const [levelWords, setLevelWords] = useState<{ status: 'loading' | 'ready' | 'error'; count: number }>({
+    status: 'loading',
+    count: 0,
+  });
+  const [studyTime, setStudyTime] = useState<{ status: 'loading' | 'ready' | 'error'; seconds: number }>({
+    status: 'loading',
+    seconds: 0,
+  });
 
   useEffect(() => {
     if (user?.id && !loading) {
@@ -35,183 +183,234 @@ export default function Dashboard() {
     }
   }, [user?.id]);
 
+  // Vocabulary count for the active level only. The previous version fired one
+  // request per CEFR level on every mount just to draw a four-cell table.
   useEffect(() => {
     let cancelled = false;
+    setLevelWords({ status: 'loading', count: 0 });
     (async () => {
-      setDbCountsLoading(true);
-      try {
-        const entries = await Promise.all(
-          LEVELS.map(async (level) => {
-            const { count, error } = await supabase
-              .from('curriculum_vocabulary')
-              .select('id', { count: 'exact', head: true })
-              .eq('level_id', level);
-            if (error) throw error;
-            return [level, count || 0] as const;
-          }),
-        );
-        if (!cancelled) setDbLevelCounts(Object.fromEntries(entries) as Partial<Record<CefrLevel, number>>);
-      } catch (e) {
-        console.error('Error loading curriculum vocabulary counts:', e);
-      } finally {
-        if (!cancelled) setDbCountsLoading(false);
+      const { count, error: countError } = await supabase
+        .from('curriculum_vocabulary')
+        .select('id', { count: 'exact', head: true })
+        .eq('level_id', currentLevel as CefrLevel);
+      if (cancelled) return;
+      if (countError) {
+        console.error('[DASHBOARD] curriculum vocabulary count failed:', countError);
+        setLevelWords({ status: 'error', count: 0 });
+        return;
       }
+      setLevelWords({ status: 'ready', count: count || 0 });
     })();
-    return () => { cancelled = true; };
-  }, []);
+    return () => {
+      cancelled = true;
+    };
+  }, [currentLevel]);
+
+  // Study time goes through the db proxy: the browser only holds the anon key,
+  // so a direct RPC / table read is rejected by RLS and would silently render 0.
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
+    setStudyTime({ status: 'loading', seconds: 0 });
+    (async () => {
+      const { data, error: proxyError } = await dbProxy('get-study-time');
+      if (cancelled) return;
+      if (proxyError) {
+        console.error('[DASHBOARD] study time request failed:', proxyError);
+        setStudyTime({ status: 'error', seconds: 0 });
+        return;
+      }
+      // get_study_time is a set-returning RPC; tolerate row / object / scalar.
+      const row = Array.isArray(data) ? data[0] : data;
+      const seconds = Number(typeof row === 'number' ? row : (row?.total_seconds ?? row?.totalSeconds ?? 0));
+      setStudyTime({ status: 'ready', seconds: Number.isFinite(seconds) ? seconds : 0 });
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
+
+  // Blob URLs survive navigation unless we hand them back.
+  useEffect(() => {
+    return () => {
+      if (pdfBlobUrl) URL.revokeObjectURL(pdfBlobUrl);
+    };
+  }, [pdfBlobUrl]);
 
   const currentLesson = useMemo(() => {
     const lastUnlocked = [...unlockedLessons]
       .reverse()
-      .find(id => !completedLessons.includes(id) && isCourseUnitRouteAvailable({ id }));
-    return lastUnlocked ? courseIndex.find(l => l.id === lastUnlocked) : null;
+      .find((id) => !completedLessons.includes(id) && isCourseUnitRouteAvailable({ id }));
+    return lastUnlocked ? courseIndex.find((l) => l.id === lastUnlocked) : null;
   }, [unlockedLessons, completedLessons]);
 
-  const nextLesson = useMemo(() => {
-    if (!currentLesson) return null;
-    const idx = courseIndex.findIndex(l => l.id === currentLesson.id);
-    return idx >= 0 && idx < courseIndex.length - 1 ? courseIndex[idx + 1] : null;
-  }, [currentLesson]);
-
   const currentLessonRoute = useMemo(
-    () => currentLesson ? getCourseUnitRoute(currentLesson) : null,
+    () => (currentLesson ? getCourseUnitRoute(currentLesson) : null),
     [currentLesson],
   );
 
   const currentLessonContext = useMemo(() => {
     if (!currentLesson) return '';
-    const position = courseIndex.findIndex(l => l.id === currentLesson.id) + 1;
+    const position = courseIndex.findIndex((l) => l.id === currentLesson.id) + 1;
     return getCourseUnitContextCopy(currentLesson, position, courseIndex.length);
   }, [currentLesson]);
 
   const checkpointStats = useMemo(() => {
-    const total = checkpointProgress.length;
-    const passed = checkpointProgress.filter(c => c.passed).length;
-    const available = courseIndex.filter(l => l.id.includes('checkpoint') && isCourseUnitRouteAvailable(l)).length - total;
-    return { total, passed, available: Math.max(0, available) };
+    const passed = checkpointProgress.filter((c) => c.passed).length;
+    return { passed, total: TOTAL_CHECKPOINTS };
   }, [checkpointProgress]);
 
-  const todayTask = useMemo(() => {
-    const incomplete = courseIndex.filter(l => !completedLessons.includes(l.id) && unlockedLessons.includes(l.id) && isCourseUnitRouteAvailable(l));
-    return incomplete.length > 0 ? incomplete[0] : null;
-  }, [completedLessons, unlockedLessons]);
-
   const overallProgress = useMemo(() => {
-    if (courseIndex.length === 0) return 0;
-    return Math.round((completedLessons.length / courseIndex.length) * 100);
+    if (TOTAL_UNITS === 0) return 0;
+    return Math.round((completedLessons.length / TOTAL_UNITS) * 100);
   }, [completedLessons]);
 
-  const streakData = useMemo(() => {
-    // Best streak: persist in localStorage, update when current exceeds
+  const bestStreak = useMemo(() => {
+    // Best streak lives on the device; the server only tracks the current one.
     const bestKey = 'deutschup_best_streak';
-    const stored = parseInt(localStorage.getItem(bestKey) || '0', 10);
-    const best = Math.max(stored, streak);
-    if (streak > stored) localStorage.setItem(bestKey, String(streak));
-
-    // Today completed: check if lastPracticeDate is today
-    const today = new Date().toISOString().split('T')[0];
-    const todayCompleted = lastPracticeDate === today ? 1 : 0;
-
-    return { current: streak, best, todayCompleted };
+    let stored = 0;
+    try {
+      stored = parseInt(localStorage.getItem(bestKey) || '0', 10) || 0;
+      if (streak > stored) localStorage.setItem(bestKey, String(streak));
+    } catch {
+      // Private mode / storage disabled — fall back to the live streak.
+    }
+    return Math.max(stored, streak);
   }, [streak, lastPracticeDate]);
 
-  const [studyStats, setStudyStats] = useState({ totalSeconds: 0, sessionCount: 0 });
+  const averageScore = useMemo(() => {
+    if (mockTests.length === 0) return null;
+    return Math.round(mockTests.reduce((acc, t) => acc + (t.score / t.total) * 100, 0) / mockTests.length);
+  }, [mockTests]);
 
-  // Fetch real study time from DB
-  useEffect(() => {
-    if (!user?.id) return;
-    let cancelled = false;
-    (async () => {
-      const internalId = await resolveInternalId(user.id);
-      if (!internalId || cancelled) return;
-      const { data, error } = await supabase
-        .rpc('get_study_time', { p_user_id: internalId });
-      if (error || !data || cancelled) return;
-      setStudyStats({
-        totalSeconds: Number(data[0]?.total_seconds || 0),
-        sessionCount: 0,
-      });
-      // Also get session count (= exercises completed)
-      const { count, error: cntErr } = await supabase
-        .from('study_sessions')
-        .select('*', { count: 'exact', head: true })
-        .eq('user_id', internalId)
-        .gt('duration_seconds', 0);
-      if (!cntErr && !cancelled) {
-        setStudyStats(prev => ({ ...prev, sessionCount: count || 0 }));
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [user?.id]);
+  const levelRows = useMemo(() => {
+    return LEVEL_META.map((meta) => {
+      const units = courseIndex.filter((unit) => inferCourseUnitLevel(unit) === meta.id);
+      // LevelView lists lessons only, so the counts here have to match it.
+      const lessons = units.filter((unit) => !isCheckpointUnit(unit));
+      const checkpoints = units.filter((unit) => isCheckpointUnit(unit) && isCourseUnitRouteAvailable(unit));
+      const doneLessons = lessons.filter((unit) => completedLessons.includes(unit.id)).length;
+      const passedCheckpoints = checkpoints.filter((unit) =>
+        checkpointProgress.some((c) => c.checkpointId === unit.id && c.passed),
+      ).length;
+      const needsPro = !isPro && meta.id !== 'A1';
+      const reached = LEVEL_ORDER[meta.id] <= LEVEL_ORDER[currentLevel];
+      // Name the gate the learner actually has to pass first. Buying Pro does
+      // not open a level they have not reached yet, so progress wins.
+      const lockReason: 'progress' | 'pro' | null = !reached ? 'progress' : needsPro ? 'pro' : null;
+      return {
+        ...meta,
+        lessonCount: lessons.length,
+        checkpointCount: checkpoints.length,
+        doneLessons,
+        passedCheckpoints,
+        percent: lessons.length > 0 ? (doneLessons / lessons.length) * 100 : 0,
+        lockReason,
+        locked: lockReason !== null,
+      };
+    });
+  }, [completedLessons, checkpointProgress, currentLevel, isPro]);
 
-  const learningStats = useMemo(() => ({
-    totalVocab: Object.keys(vocab).length,
-    exercisesCompleted: studyStats.sessionCount || completedLessons.length * 12,
-    studyHours: Math.round((studyStats.totalSeconds / 3600) * 10) / 10,
-    averageScore: mockTests.length > 0 
-      ? Math.round(mockTests.reduce((acc, t) => acc + (t.score / t.total) * 100, 0) / mockTests.length)
-      : 0,
-  }), [vocab, completedLessons, mockTests, studyStats]);
+  // Only the first Pro-gated level gets an upgrade link; three of them in a
+  // row turns a progress map into a sales page.
+  const firstProLockedLevel = levelRows.find((row) => row.lockReason === 'pro')?.id ?? null;
 
-  const achievements = useMemo(() => [
-    { id: 'first-lesson', title: 'Pelajaran Pertama', description: 'Selesaikan pelajaran pertama', icon: Star, unlocked: completedLessons.length > 0, color: 'text-yellow-500' },
-    { id: 'vocabulary-50', title: 'Kolektor Kata', description: 'Kuasai 50 kosakata', icon: BookOpen, unlocked: learningStats.totalVocab >= 50, color: 'text-blue-500' },
-    { id: 'streak-7', title: 'Konsisten', description: '7 hari belajar berturut-turut', icon: Flame, unlocked: streakData.best >= 7, color: 'text-orange-500' },
-    { id: 'checkpoint-master', title: 'Master Checkpoint', description: 'Lulus 5 checkpoint', icon: Trophy, unlocked: checkpointStats.passed >= 5, color: 'text-purple-500' },
-    { id: 'level-a2', title: 'Level A2', description: 'Capai level A2', icon: GraduationCap, unlocked: currentLevel !== 'A1', color: 'text-emerald-500' },
-  ], [completedLessons, learningStats.totalVocab, streakData.best, checkpointStats.passed, currentLevel]);
+  const achievements = useMemo(
+    () => [
+      {
+        id: 'first-lesson',
+        title: 'Pelajaran Pertama',
+        description: 'Selesaikan satu pelajaran',
+        icon: Star,
+        unlocked: completedLessons.length > 0,
+      },
+      {
+        id: 'vocabulary-50',
+        title: 'Kolektor Kata',
+        description: 'Latih 50 kosakata',
+        icon: BookOpen,
+        unlocked: Object.keys(vocab).length >= 50,
+      },
+      {
+        id: 'streak-7',
+        title: 'Konsisten',
+        description: 'Belajar 7 hari berturut-turut',
+        icon: Flame,
+        unlocked: bestStreak >= 7,
+      },
+      {
+        id: 'checkpoint-master',
+        title: 'Penakluk Checkpoint',
+        description: 'Lulus 5 checkpoint',
+        icon: Trophy,
+        unlocked: checkpointStats.passed >= 5,
+      },
+      {
+        id: 'level-a2',
+        title: 'Naik ke A2',
+        description: 'Capai level A2',
+        icon: GraduationCap,
+        unlocked: currentLevel !== 'A1',
+      },
+    ],
+    [completedLessons, vocab, bestStreak, checkpointStats.passed, currentLevel],
+  );
 
-  const levels: { id: Level, title: string, color: string }[] = [
-    { id: 'A1', title: 'Pemula A1', color: 'bg-emerald-500' },
-    { id: 'A2', title: 'Dasar A2', color: 'bg-teal-500' },
-    { id: 'B1', title: 'Menengah B1', color: 'bg-blue-500' },
-    { id: 'B2', title: 'Mahir B2', color: 'bg-indigo-500' },
-  ];
-
-  const levelIndexMap = { 'A1': 0, 'A2': 1, 'B1': 2, 'B2': 3 };
-  const userLevelIndex = levelIndexMap[currentLevel];
-  const dbSummary = useMemo(() => summarizeLevelCounts(dbLevelCounts), [dbLevelCounts]);
-  const currentLevelDbWords = dbSummary.byLevel[currentLevel as CefrLevel]?.total || 0;
-
-  // SHOW SKELETON AFTER ALL HOOKS (Rules of Hooks compliance)
-  if (loading) {
-    return (
-      <div className="max-w-6xl mx-auto p-6">
-        <DashboardSkeleton />
-      </div>
-    );
+  // SHOW SKELETON AFTER ALL HOOKS (Rules of Hooks compliance).
+  // `!initialized && !error` covers the gap between mount and the first
+  // response — without it the store defaults (0 XP, 0 selesai) flash on screen
+  // and read as "your progress is gone".
+  if (loading || (!initialized && !error)) {
+    return <DashboardSkeleton />;
   }
 
+  // The store starts at zero. Rendering those zeros after a failed load tells
+  // the learner their progress is gone, so every server-derived number is
+  // withheld until we know we actually have data.
+  const loadFailed = Boolean(error) && !initialized;
+  const isNewLearner = initialized && completedLessons.length === 0;
+  const vocabTrained = Object.keys(vocab).length;
+  const firstName =
+    (profileData?.full_name || user?.user_metadata?.full_name || '').trim().split(' ')[0] || 'Pelajar';
+  const greeting = greetingFor(new Date().getHours());
+
+  const handleRetry = async () => {
+    setRetrying(true);
+    await refreshProgress();
+    setRetrying(false);
+  };
+
   const exportPDF = async () => {
-    setErrorMsg("");
+    setReportError('');
+    // The cleanup effect revokes whatever URL we drop here.
     setPdfBlobUrl(null);
-    
-    if (!isUserPro(tierData, role)) {
-      setErrorMsg("Fitur Export PDF hanya tersedia untuk pengguna Pro.");
+
+    if (!isPro) {
+      setReportError('Laporan PDF tersedia untuk pengguna Pro.');
       return;
     }
-    
+
     setExporting(true);
-    
+
     try {
       const blob = await generateReportPDF({
-        userName: user?.user_metadata?.full_name || 'Siswa',
+        userName: profileData?.full_name || user?.user_metadata?.full_name || 'Siswa',
         currentLevel: currentLevel,
         xp: xp,
-        vocabCount: Object.keys(vocab).length,
+        vocabCount: vocabTrained,
         completedCount: completedLessons.length,
-        totalLessons: courseIndex.length,
+        totalLessons: TOTAL_UNITS,
         overallProgress: overallProgress,
-        streak: streakData.current,
-        studyHours: learningStats.studyHours,
-        averageScore: learningStats.averageScore,
-        lessons: courseIndex.map(l => ({
-          level: l.level || 'A1',
+        streak: streak,
+        studyHours: studyTime.status === 'ready' ? Math.round((studyTime.seconds / 3600) * 10) / 10 : 0,
+        averageScore: averageScore ?? 0,
+        lessons: courseIndex.map((l) => ({
+          level: inferCourseUnitLevel(l),
           title: l.title || l.id,
           goals: l.canDoGoals || [],
           completed: completedLessons.includes(l.id),
         })),
-        mockTests: (mockTests || []).map(t => ({
+        mockTests: (mockTests || []).map((t) => ({
           createdAt: t.createdAt,
           level: t.level,
           score: t.score,
@@ -221,447 +420,481 @@ export default function Dashboard() {
 
       const pdfUrl = URL.createObjectURL(blob);
       setPdfBlobUrl(pdfUrl);
-      // Auto-download
       const a = document.createElement('a');
       a.href = pdfUrl;
-      a.download = `DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`;
+      a.download = `DeutschUp-Laporan-${profileData?.full_name || 'Siswa'}.pdf`;
       a.click();
-    } catch (e: any) {
-      console.error(e);
-      setErrorMsg("Gagal membuat PDF: " + (e.message || "Error tidak diketahui"));
+    } catch (e) {
+      console.error('[DASHBOARD] report generation failed:', e);
+      setReportError('Laporan belum bisa dibuat sekarang. Coba lagi sebentar lagi.');
     } finally {
       setExporting(false);
     }
   };
 
   return (
-    <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-10 space-y-6 md:space-y-8">
-        {errorMsg && (
-          <div className="bg-destructive/10 border border-destructive/20 text-destructive  p-4 font-medium flex items-center justify-between ">
-            <span>{errorMsg}</span>
-            <button onClick={() => setErrorMsg("")} className="opacity-70 hover:opacity-100 transition-opacity" aria-label="Tutup pesan error">✕</button>
-          </div>
-        )}
+    <div className="space-y-8 md:space-y-12">
+      {/* A save failed while the page already had real data — warn, don't wipe. */}
+      {!loadFailed && error && (
+        <div className="flex flex-wrap items-center gap-3 border border-brand-rust/25 bg-brand-rust/10 p-4">
+          <AlertTriangle className="h-5 w-5 shrink-0 text-brand-rust" aria-hidden="true" />
+          <p className="min-w-0 flex-1 text-sm font-medium text-brand-ink">{error}</p>
+          <button
+            onClick={handleRetry}
+            disabled={retrying}
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-rust underline underline-offset-4 disabled:opacity-60"
+          >
+            {retrying ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCw className="h-4 w-4" />}
+            Coba lagi
+          </button>
+          <button
+            onClick={clearError}
+            className="text-ink-muted transition-colors hover:text-brand-ink"
+            aria-label="Tutup pemberitahuan"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
 
-        {/* SECTION A: WELCOME HEADER */}
-        <header className="st-card st-card--hero">
-          {/* German flag accent */}
-          <div className="absolute top-0 left-0 right-0 h-1 flex">
-            <div className="flex-1 bg-primary/70" />
-            <div className="flex-1 bg-red-500" />
-            <div className="flex-1 bg-amber-400" />
+      {/* ── 1. THE ONE THING TO DO NEXT ─────────────────────────── */}
+      <section className="bg-brand-ink" aria-labelledby="lanjutkan-heading">
+        <div className="flex h-1.5 w-full" aria-hidden="true">
+          <div className="flex-1 bg-brand-cream" />
+          <div className="flex-1 bg-brand-rust" />
+          <div className="flex-1 bg-brand-tan" />
+        </div>
+
+        <div className="p-6 md:p-10">
+          <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-2">
+            <span className="text-xs font-bold tracking-[0.18em] text-cream-subtle uppercase">
+              {greeting}, {firstName}
+            </span>
+            <span className="hidden h-px w-8 bg-brand-cream/30 sm:block" aria-hidden="true" />
+            <span className="inline-flex items-center gap-1.5 border border-brand-cream/25 px-2.5 py-1 text-xs font-bold text-brand-cream">
+              <GraduationCap className="h-3.5 w-3.5" aria-hidden="true" />
+              Level {currentLevel}
+            </span>
+            {isPro && (
+              <span className="inline-flex items-center gap-1.5 bg-brand-tan px-2.5 py-1 text-xs font-bold text-brand-ink">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                Pro
+              </span>
+            )}
           </div>
-          {/* Ambient glow */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
-            <div className="absolute -right-20 -top-20 w-80 h-80 bg-amber-400/8  blur-3xl" />
-            <div className="absolute -left-10 -bottom-10 w-60 h-60 bg-blue-400/5  blur-2xl" />
-          </div>
-          
-          <div className="relative z-10">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-              <div className="space-y-2">
-                <p className="text-blue-200 font-medium text-sm md:text-base">
-                  {new Date().getHours() < 12 ? '🌅 Selamat Pagi' : new Date().getHours() < 18 ? '☀️ Selamat Siang' : '🌙 Selamat Malam'}, {user?.user_metadata?.full_name?.split(' ')[0] || 'Siswa'}!
-                </p>
-                <h1 className="text-2xl md:text-4xl font-bold tracking-tight text-primary-foreground">Pusat Belajar</h1>
-                <div className="flex items-center gap-3 flex-wrap">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1  bg-[#f5f0eb]/15 text-sm font-semibold ">
-                    <GraduationCap className="w-4 h-4" />
-                    Level {currentLevel}
-                  </span>
-                  {isUserPro(tierData, role) && (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1  bg-amber-400/20 text-amber-100 text-sm font-semibold ">
-                      <Sparkles className="w-4 h-4" />
-                      Pro
-                    </span>
-                  )}
-                </div>
-              </div>
-              
-              <div className="flex flex-col items-start md:items-end w-full md:w-auto">
-                <FeatureGate
-                  feature="pdf_reports"
-                  sub={{ subscription: tierData?.subscription, pro_expires_at: tierData?.pro_expires_at }}
-                  role={role}
-                  showUpgrade={true}
+
+          {loadFailed ? (
+            <div className="max-w-2xl">
+              <p className="mb-3 text-xs font-bold tracking-[0.18em] text-cream-subtle uppercase">Progres belum termuat</p>
+              <h1 id="lanjutkan-heading" className="font-serif text-3xl leading-[1.08] text-brand-cream md:text-5xl">
+                Kami belum bisa membuka catatan belajarmu
+              </h1>
+              <p className="mt-4 text-base text-cream-muted">
+                Catatanmu aman di server, hanya sambungannya yang bermasalah. Angka progres di halaman ini
+                sengaja dikosongkan supaya tidak menyesatkan.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <Button
+                  onClick={handleRetry}
+                  disabled={retrying}
+                  className="h-auto bg-brand-tan px-8 py-4 text-base font-bold text-brand-ink hover:bg-brand-cream"
                 >
-                  <Button onClick={exportPDF} disabled={exporting} variant="secondary" className="flex items-center space-x-2  bg-[#f5f0eb]/15 hover:bg-[#f5f0eb]/25 border-0 text-primary-foreground  w-full md:w-auto">
-                    {exporting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-                    <span>{exporting ? 'Menyiapkan...' : 'Unduh Laporan'}</span>
-                  </Button>
-                </FeatureGate>
-                {!pdfBlobUrl && (
-                  <span className="text-[11px] text-blue-200 mt-2 max-w-[200px] text-left md:text-right">
-                    *Buka di tab baru jika unduhan tidak muncul
-                  </span>
-                )}
-                {pdfBlobUrl && (
-                  <a href={pdfBlobUrl} download={`DeutschUp-Report-${user?.user_metadata?.full_name || 'Student'}.pdf`} className="text-[12px] font-bold text-primary-foreground mt-2 text-left md:text-right underline underline-offset-2 hover:text-blue-100 transition-colors" aria-label="Unduh laporan PDF secara manual">
-                    Klik di sini untuk mengunduh manual ➔
-                  </a>
-                )}
-              </div>
-            </div>
-          </div>
-        </header>
-
-        {/* LOADING STATE */}
-        {loading && (
-          <div className="flex items-center justify-center py-12">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mr-3" />
-            <span className="text-muted-foreground font-medium">Memuat progres belajar...</span>
-          </div>
-        )}
-
-        {/* EMPTY STATE */}
-        {!loading && completedLessons.length === 0 && (
-          <div className="st-card rounded-lg p-8 text-center">
-            <BookOpen className="w-16 h-16 text-blue-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-foreground mb-2">Selamat Datang di DeutschUp! 🇩🇪</h2>
-            <p className="text-muted-foreground mb-6 max-w-md mx-auto">Mulai dari pelajaran A1. Selesaikan pelajaran pertama untuk membuka level berikutnya.</p>
-            <div className="flex justify-center">
-              <Link to="/lesson/a1-1">
-                <Button className="bg-[#8b2500] hover:bg-[#8b2500]/90 text-primary-foreground px-8 py-3 font-bold text-lg">
-                  <PlayCircle className="w-5 h-5 mr-2" /> Mulai Pelajaran Pertama
+                  {retrying ? (
+                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  ) : (
+                    <RefreshCw className="mr-2 h-5 w-5" />
+                  )}
+                  Muat ulang
                 </Button>
-              </Link>
-            </div>
-          </div>
-        )}
-
-        {/* SECTION B0: VOCABULARY COVERAGE */}
-        {!loading && (
-          <section className="st-card p-4 md:p-5">
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-muted-foreground">
-                  <Database className="w-4 h-4" />
-                  Kosakata Kurikulum
-                </div>
-                <h2 className="text-xl md:text-2xl font-black tracking-tight">{dbCountsLoading ? 'Memuat kosakata...' : `${dbSummary.total.toLocaleString('id-ID')} kata tersedia`}</h2>
-                <p className="text-sm text-muted-foreground">Level aktif {currentLevel} punya {currentLevelDbWords.toLocaleString('id-ID')} kata untuk latihan kosakata.</p>
-              </div>
-              <Link to="/vocab">
-                <Button variant="outline" className="w-full lg:w-auto">
-                  <Layers className="w-4 h-4 mr-2" />
-                  Buka Latihan Kosakata
-                </Button>
-              </Link>
-            </div>
-            <div className="mt-5 grid grid-cols-2 divide-x divide-y border border-border md:grid-cols-4 md:divide-y-0">
-              {LEVELS.map((level) => (
-                <div key={level} className="bg-muted/20 p-4">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="font-black">{level}</span>
-                    <span className="st-badge st-badge--neutral">{dbSummary.byLevel[level].percentOfTotal}%</span>
-                  </div>
-                  <div className="mt-2 text-2xl font-black">{dbCountsLoading ? '...' : dbSummary.byLevel[level].total.toLocaleString('id-ID')}</div>
-                  <div className="mt-3 st-progress"><span style={{ width: `${dbSummary.byLevel[level].percentOfTotal}%` }} className="bg-gradient-to-r from-amber-500 to-red-500" /></div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* SECTION B: STATS GRID */}
-        {!loading && (
-          <div className="grid grid-cols-2 border border-border divide-x divide-y lg:grid-cols-4 lg:divide-y-0">
-
-            <div className="relative overflow-hidden bg-card p-5 flex flex-col items-center justify-center">
-              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11  bg-[#c8956c] flex items-center justify-center mb-2.5  ">
-                  <Zap className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <span className="text-2xl md:text-3xl font-black text-[#0a0a0a]">{xp}</span>
-                <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Total XP</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-card p-5 flex flex-col items-center justify-center">
-              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
-                  <BookOpen className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <span className="text-2xl md:text-3xl font-black text-[#0a0a0a]">{learningStats.totalVocab}</span>
-                <span className="text-[10px] md:text-xs font-bold text-[#0a0a0a]/50 uppercase tracking-wider mt-1">Kosakata</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-card p-5 flex flex-col items-center justify-center">
-              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-11 h-11 bg-primary flex items-center justify-center mb-2.5">
-                  <CheckCircle2 className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <span className="text-2xl md:text-3xl font-black text-green-500">{completedLessons.length}</span>
-                <span className="text-[10px] md:text-xs font-bold text-green-600/80 uppercase tracking-wider mt-1">Selesai</span>
-              </div>
-            </div>
-            <div className="relative overflow-hidden bg-card p-5 flex flex-col">
-              <div className="relative z-10 flex flex-col items-center text-center flex-1 justify-center">
-                <div className="w-12 h-12  bg-purple-500/15 flex items-center justify-center mb-2">
-                  <TrendingUp className="w-6 h-6 text-purple-500" />
-                </div>
-                <span className="text-2xl md:text-3xl font-black text-purple-500">{overallProgress}%</span>
-                <span className="text-[10px] md:text-xs font-bold text-purple-600/80 uppercase tracking-wider mt-1">Progres</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-
-        {/* SECTION C: CONTINUE LEARNING */}
-        {!loading && currentLesson && currentLessonRoute && (
-          <div className="relative overflow-hidden  bg-primary p-6 md:p-8 rounded-lg">
-            {/* German flag accent */}
-            <div className="absolute top-0 left-0 right-0 h-1 flex">
-              <div className="flex-1 bg-primary/70" />
-              <div className="flex-1 bg-red-500" />
-              <div className="flex-1 bg-amber-400" />
-            </div>
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              <div className="absolute -right-16 -top-16 w-60 h-60 bg-amber-400/8  blur-3xl" />
-              <div className="absolute -left-8 -bottom-8 w-40 h-40 bg-blue-400/5  blur-2xl" />
-            </div>
-            <div className="relative z-10">
-              <div className="flex items-center space-x-2 mb-3">
-                <div className="w-6 h-6  bg-amber-400 flex items-center justify-center">
-                  <Zap className="w-3.5 h-3.5 text-[#0a0a0a]" />
-                </div>
-                <span className="text-sm font-bold uppercase tracking-wider text-amber-300">Lanjutkan Belajar</span>
-              </div>
-              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                <div className="space-y-1">
-                  <h3 className="text-xl md:text-2xl font-bold text-primary-foreground">{currentLesson.title}</h3>
-                  <p className="text-primary-foreground/60 text-sm">{currentLessonContext}</p>
-                </div>
-                <Link to={currentLessonRoute}>
-                  <Button className="bg-[#c8956c] hover:bg-[#b8854c] text-[#0a0a0a] px-6 py-3 font-bold transition-all hover:scale-105">
-                    <PlayCircle className="w-5 h-5 mr-2" /> Lanjutkan Sekarang
-                  </Button>
+                <Link
+                  to="/curriculum"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-tan underline-offset-4 hover:text-brand-cream hover:underline"
+                >
+                  Buka daftar materi
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
                 </Link>
               </div>
             </div>
-          </div>
-        )}
+          ) : currentLesson && currentLessonRoute ? (
+            <div className="max-w-3xl">
+              <p className="mb-3 text-xs font-bold tracking-[0.18em] text-cream-subtle uppercase">
+                {isNewLearner ? 'Mulai dari sini' : 'Lanjutkan belajar'}
+              </p>
+              <h1 id="lanjutkan-heading" className="font-serif text-3xl leading-[1.08] text-brand-cream md:text-5xl">
+                {currentLesson.title || currentLesson.id}
+              </h1>
+              <p className="mt-4 text-sm text-cream-muted">{currentLessonContext}</p>
 
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <Button
+                  render={<Link to={currentLessonRoute} />}
+                  className="h-auto bg-brand-tan px-8 py-4 text-base font-bold text-brand-ink hover:bg-brand-cream"
+                >
+                  <PlayCircle className="mr-2 h-5 w-5" aria-hidden="true" />
+                  {isNewLearner ? 'Mulai pelajaran pertama' : 'Lanjutkan'}
+                </Button>
+                <Link
+                  to="/curriculum"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-tan underline-offset-4 hover:text-brand-cream hover:underline"
+                >
+                  Lihat semua materi
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
+              </div>
 
-        {/* SECTION D: GAMIFICATION */}
-        {!loading && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-            <div className="relative overflow-hidden  st-level-card flex flex-col h-full">
-              <div className="absolute -right-8 -top-8 w-32 h-32  bg-orange-400/8 blur-2xl" />
-              <div className="relative z-10">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-9 h-9  bg-[#8b2500] flex items-center justify-center  ">
-                    <Flame className="w-5 h-5 text-primary-foreground" />
+              {!isNewLearner && (
+                <div className="mt-8 max-w-md">
+                  <div className="mb-2 flex items-baseline justify-between gap-3">
+                    <span className="text-xs font-bold tracking-[0.14em] text-cream-subtle uppercase">
+                      Progres keseluruhan
+                    </span>
+                    <span className="text-xs font-bold text-cream-muted tabular-nums">
+                      {completedLessons.length} dari {TOTAL_UNITS} materi
+                    </span>
                   </div>
-                  <h3 className="text-lg font-bold text-[#0a0a0a]">Streak Belajar</h3>
+                  <Meter
+                    value={overallProgress}
+                    label={`Progres keseluruhan ${overallProgress} persen`}
+                    trackClass="bg-brand-cream/20"
+                    fillClass="bg-brand-tan"
+                  />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-1">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-black text-orange-500">{streakData.current}</span>
-                      <span className="text-sm font-medium text-[#0a0a0a]/50">hari</span>
-                    </div>
-                    <p className="text-sm text-[#0a0a0a]/50">Hari berturut-turut</p>
-                  </div>
-                  <div className="text-right space-y-1">
-                    <div className="flex items-center justify-end gap-1.5">
-                      <Trophy className="w-4 h-4 text-amber-500" />
-                      <span className="text-sm font-bold text-[#0a0a0a]/50">Best: {streakData.best}</span>
-                    </div>
-                    <div className="flex gap-1">
-                      {[1, 2, 3, 4, 5, 6, 7].map(day => (
-                        <div key={day} className={cn("w-6 h-6  flex items-center justify-center text-[10px] font-bold", day <= streakData.current ? "bg-[#8b2500] text-primary-foreground " : "bg-primary/5 text-[#0a0a0a]/40")}>
-                          {day}
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
+              )}
+            </div>
+          ) : (
+            <div className="max-w-2xl">
+              <p className="mb-3 text-xs font-bold tracking-[0.18em] text-cream-subtle uppercase">Kerja bagus</p>
+              <h1 id="lanjutkan-heading" className="font-serif text-3xl leading-[1.08] text-brand-cream md:text-5xl">
+                Semua materi yang terbuka sudah kamu selesaikan
+              </h1>
+              <p className="mt-4 text-base text-cream-muted">
+                Uji hasilnya lewat simulasi ujian, atau ulangi pelajaran yang ingin kamu perdalam.
+              </p>
+              <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
+                <Button
+                  render={<Link to="/simulasi" />}
+                  className="h-auto bg-brand-tan px-8 py-4 text-base font-bold text-brand-ink hover:bg-brand-cream"
+                >
+                  <Target className="mr-2 h-5 w-5" aria-hidden="true" />
+                  Coba simulasi ujian
+                </Button>
+                <Link
+                  to="/curriculum"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand-tan underline-offset-4 hover:text-brand-cream hover:underline"
+                >
+                  Lihat semua materi
+                  <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                </Link>
               </div>
             </div>
+          )}
+        </div>
+      </section>
 
-            <div className="relative overflow-hidden  st-level-card flex flex-col h-full">
-              <div className="absolute -right-8 -top-8 w-32 h-32  bg-indigo-400/8 blur-2xl" />
-              <div className="relative z-10">
-                <div className="flex items-center space-x-2 mb-4">
-                  <div className="w-9 h-9  bg-primary flex items-center justify-center  ">
-                    <BarChart3 className="w-5 h-5 text-primary-foreground" />
-                  </div>
-                  <h3 className="text-lg font-bold text-[#0a0a0a]">Statistik Belajar</h3>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground"><Clock className="w-4 h-4" /><span className="text-xs font-medium">Waktu Belajar</span></div>
-                    <p className="text-xl font-bold text-foreground">{learningStats.studyHours} jam</p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground"><Brain className="w-4 h-4" /><span className="text-xs font-medium">Latihan Selesai</span></div>
-                    <p className="text-xl font-bold text-foreground">{learningStats.exercisesCompleted}</p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground"><Target className="w-4 h-4" /><span className="text-xs font-medium">Rata-rata Skor</span></div>
-                    <p className="text-xl font-bold text-foreground">{learningStats.averageScore}%</p>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-muted-foreground"><Medal className="w-4 h-4" /><span className="text-xs font-medium">Checkpoint</span></div>
-                    <p className="text-xl font-bold text-foreground">{checkpointStats.passed}/{checkpointStats.total + checkpointStats.available}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      {/* ── 2. HEADLINE NUMBERS ─────────────────────────────────── */}
+      <section aria-label="Ringkasan angka">
+        <div className="grid grid-cols-2 gap-px bg-brand-ink/10 md:grid-cols-4">
+          <StatCell
+            icon={Flame}
+            label="Streak"
+            value={loadFailed ? '—' : `${streak}`}
+            hint={loadFailed ? 'Belum bisa dimuat' : `Rekor ${bestStreak} hari`}
+          />
+          <StatCell
+            icon={Zap}
+            label="XP"
+            value={loadFailed ? '—' : nf.format(xp)}
+            hint={loadFailed ? 'Belum bisa dimuat' : 'Total sejak awal'}
+          />
+          <StatCell
+            icon={CheckCircle2}
+            label="Materi selesai"
+            value={loadFailed ? '—' : `${completedLessons.length}`}
+            hint={loadFailed ? 'Belum bisa dimuat' : `dari ${TOTAL_UNITS} materi`}
+          />
+          <StatCell
+            icon={BookOpen}
+            label="Kosakata"
+            value={nf.format(vocabTrained)}
+            hint={vocabTrained === 0 ? 'Belum ada yang dilatih' : 'Tersimpan di perangkat ini'}
+          />
+        </div>
+      </section>
+
+      {/* ── 3. LEVEL OVERVIEW (replaces the 86-card catalogue) ──── */}
+      <section aria-labelledby="perjalanan-heading">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-brand-ink/10 pb-3">
+          <div>
+            <h2 id="perjalanan-heading" className="font-serif text-2xl text-brand-ink md:text-3xl">
+              Perjalanan belajarmu
+            </h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              Empat level, {TOTAL_UNITS} materi, {TOTAL_CHECKPOINTS} checkpoint.
+            </p>
           </div>
-        )}
+          <Link
+            to="/curriculum"
+            className="inline-flex shrink-0 items-center gap-1.5 text-sm font-semibold text-brand-rust underline-offset-4 hover:underline"
+          >
+            Kurikulum lengkap
+            <ArrowRight className="h-4 w-4" aria-hidden="true" />
+          </Link>
+        </div>
 
+        <div className="grid gap-px bg-brand-ink/10">
+          {levelRows.map((row) => {
+            const body = (
+              <div className="flex items-start gap-4">
+                <span
+                  aria-hidden="true"
+                  className={cn(
+                    'flex h-12 w-12 shrink-0 items-center justify-center font-serif text-xl',
+                    row.locked ? 'bg-brand-ink/10 text-ink-muted' : 'bg-brand-ink text-brand-cream',
+                  )}
+                >
+                  {row.id}
+                </span>
 
-        {/* SECTION E: ACHIEVEMENTS */}
-        {!loading && achievements.length > 0 && (
-          <div className="relative overflow-hidden  st-card rounded-lg p-5 md:p-6">
-            <div className="absolute -right-8 -top-8 w-32 h-32  bg-amber-400/8 blur-2xl" />
-            <div className="relative z-10">
-              <div className="flex items-center space-x-2 mb-5">
-                <div className="w-9 h-9  bg-[#c8956c] flex items-center justify-center  ">
-                  <Award className="w-5 h-5 text-primary-foreground" />
-                </div>
-                <h3 className="text-lg font-bold text-[#0a0a0a]">Pencapaian</h3>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                {achievements.map(achievement => {
-                  const Icon = achievement.icon;
-                  return (
-                    <div key={achievement.id} className={cn("flex flex-col items-center text-center p-4 transition-colors", achievement.unlocked ? "bg-[#f5f0eb]/70" : "opacity-50")}>
-                      <div className={cn("mb-2 flex h-12 w-12 items-center justify-center rounded-full", achievement.unlocked ? "bg-[#c8956c]" : "bg-primary/5")}>
-                        <Icon className={cn("w-6 h-6", achievement.unlocked ? "text-primary-foreground" : "text-[#0a0a0a]/40")} />
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-start justify-between gap-3">
+                    <h3 className="font-serif text-lg text-brand-ink md:text-xl">
+                      {row.name} {row.id}
+                    </h3>
+                    {row.locked ? (
+                      <Lock className="mt-1 h-4 w-4 shrink-0 text-ink-muted" aria-hidden="true" />
+                    ) : (
+                      <ChevronRight className="mt-1 h-5 w-5 shrink-0 text-ink-muted" aria-hidden="true" />
+                    )}
+                  </div>
+
+                  <p className="mt-1 text-sm text-ink-muted">{row.blurb}</p>
+
+                  {row.locked ? (
+                    <p className="mt-3 text-sm font-semibold text-brand-rust">
+                      {row.lockReason === 'pro'
+                        ? 'Terbuka dengan langganan Pro'
+                        : `Selesaikan level sebelumnya untuk membuka ${row.id}`}
+                    </p>
+                  ) : (
+                    <>
+                      <div className="mt-3 flex items-center gap-3">
+                        <Meter
+                          value={row.percent}
+                          label={`Progres level ${row.id}: ${row.doneLessons} dari ${row.lessonCount} pelajaran`}
+                        />
+                        <span className="shrink-0 text-xs font-bold text-ink-muted tabular-nums">
+                          {loadFailed ? '—' : `${row.doneLessons}/${row.lessonCount}`}
+                        </span>
                       </div>
-                      <p className="text-sm font-bold text-[#0a0a0a]">{achievement.title}</p>
-                      <p className="text-[10px] text-[#0a0a0a]/50 mt-1">{achievement.description}</p>
-                      {achievement.unlocked && <span className="mt-2 text-[10px] font-bold text-amber-600 uppercase tracking-wider">Terbuka</span>}
-                    </div>
-                  );
-                })}
+                      <p className="mt-2 text-xs text-ink-muted">
+                        {row.lessonCount} pelajaran
+                        {row.checkpointCount > 0 &&
+                          ` • ${loadFailed ? '—' : row.passedCheckpoints}/${row.checkpointCount} checkpoint lulus`}
+                      </p>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
-          </div>
-        )}
+            );
 
-
-        {/* SECTION F: LEVELS & LESSONS */}
-        {!loading && (
-          <div className="space-y-12 md:space-y-16">
-            {levels.map((lvl, index) => {
-              const tierLocked = !isUserPro(tierData, role) && lvl.id !== 'A1';
-              const isLevelUnlocked = index <= userLevelIndex && !tierLocked;
-              const levelColors: Record<string, string> = { A1: 'emerald', A2: 'teal', B1: 'blue', B2: 'indigo' };
-              const levelLessons = courseIndex.filter(l => l.level === lvl.id);
-              const actualCompletedInLevel = levelLessons.filter(l => completedLessons.includes(l.id)).length;
-              const isLevelCompleted = actualCompletedInLevel === levelLessons.length && userLevelIndex >= index;
-              
-              let progressPercent = 0;
-              if (isLevelCompleted) progressPercent = 100;
-              else if (isLevelUnlocked && levelLessons.length > 0) progressPercent = Math.max(0, (actualCompletedInLevel / levelLessons.length) * 100);
-
+            if (row.locked) {
               return (
-                <div key={lvl.id} className={cn("relative pl-4 border-l-4", !isLevelUnlocked && "opacity-50 grayscale", lvl.id === 'A1' && 'border-emerald-500', lvl.id === 'A2' && 'border-teal-500', lvl.id === 'B1' && 'border-blue-500', lvl.id === 'B2' && 'border-indigo-500')}>
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center space-x-4">
-                      <Link to={isLevelUnlocked ? `/level/${lvl.id}` : '#'}>
-                        <div className={cn("w-14 h-14  flex items-center justify-center bg-primary text-primary-foreground font-bold text-2xl  transition-transform hover:scale-105", lvl.color)}>
-                          {lvl.id}
-                        </div>
-                      </Link>
-                      <div>
-                        <Link to={isLevelUnlocked ? `/level/${lvl.id}` : '#'} className="hover:underline">
-                          <h2 className="text-2xl font-bold">{lvl.title}</h2>
-                        </Link>
-                        {tierLocked ? (
-                           <p className="text-amber-500 font-bold flex items-center space-x-1">
-                             <Lock className="w-4 h-4 mr-1" /> Premium Only 
-                             <Link to="/pricing" className="ml-2 underline text-sm text-blue-600 font-semibold" aria-label="Upgrade ke Premium">Upgrade</Link>
-                           </p>
-                        ) : isLevelUnlocked ? (
-                           <p className="text-muted-foreground font-medium">Terbuka • {levelLessons.length} Pelajaran</p>
-                        ) : (
-                           <p className="text-muted-foreground font-medium flex items-center space-x-1"><Lock className="w-4 h-4" /> <span>Terkunci</span></p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  
-                  <Progress value={progressPercent} className="h-3 mb-8 bg-muted" />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {levelLessons.map((lesson, idx) => {
-                      const route = getCourseUnitRoute(lesson);
-                      const routeAvailable = Boolean(route);
-                      const isUnlocked = unlockedLessons.includes(lesson.id) && !tierLocked && routeAvailable;
-                      const isCompleted = completedLessons.includes(lesson.id);
-                      const isCheckpoint = lesson.id.includes('checkpoint');
-                      
-                      return (
-                        <Link 
-                          key={lesson.id} 
-                          to={isUnlocked && route ? route : ''}
-                          onClick={(e) => { if (!isUnlocked) e.preventDefault(); }}
-                          className={cn(
-                            "flex flex-col p-5 border transition-all duration-200 relative overflow-hidden card-hover rounded-lg",
-                            isCompleted ? "bg-[#f5f0eb] border border-[#0a0a0a]/10 border-emerald-200/40" :
-                            isUnlocked ? "st-card border-blue-200/40  " :
-                            "bg-[#f5f0eb] border-[#0a0a0a]/10 opacity-50 cursor-not-allowed"
-                          )}
-                          aria-label={`${isCheckpoint ? 'Checkpoint' : 'Pelajaran'}: ${lesson.title}${isCompleted ? ' (selesai)' : isUnlocked ? '' : ' (terkunci)'}`}
-                          aria-disabled={!isUnlocked}
-                        >
-                          <div className="absolute top-0 left-0 w-full h-1.5 bg-muted">
-                             <div className={cn("h-full transition-all duration-500", isCompleted ? "bg-green-500" : isUnlocked ? "bg-blue-500" : "")} style={{ width: isCompleted ? '100%' : '0%' }} />
-                          </div>
-                          <div className="flex justify-between items-start mb-4 mt-2">
-                            <span className="text-xs font-bold px-2 py-1 bg-muted  text-muted-foreground uppercase tracking-widest">{isCheckpoint ? 'Checkpoint' : 'Pelajaran'} {idx + 1}</span>
-                            {isCompleted ? <CheckCircle2 className="w-6 h-6 text-green-500 flex-shrink-0 ml-2" /> : isUnlocked ? <PlayCircle className="w-6 h-6 text-blue-500 flex-shrink-0 ml-2" /> : <Lock className="w-5 h-5 text-[#0a0a0a]/30 flex-shrink-0 ml-2" />}
-                          </div>
-                          <h3 className={cn("text-lg font-bold mb-4", !isUnlocked && "text-muted-foreground")}>{lesson.title}{!routeAvailable ? ' • data belum siap' : ''}</h3>
-                          
-                          {lesson.canDoGoals && lesson.canDoGoals.length > 0 && (
-                            <div className="mb-4">
-                              <p className="text-xs font-bold uppercase text-muted-foreground tracking-wider mb-2">Setelah Pelajaran Ini, Kamu Bisa:</p>
-                              <ul className="space-y-1.5">
-                                {lesson.canDoGoals.slice(0, 3).map((goal, i) => (
-                                  <li key={i} className="flex items-start text-sm text-muted-foreground">
-                                    <CheckCircle2 className="w-3 h-3 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
-                                    <span className="line-clamp-2">{goal}</span>
-                                  </li>
-                                ))}
-                                {lesson.canDoGoals.length > 3 && (
-                                  <li className="text-xs pt-1 opacity-70 italic font-medium ml-3">+ {lesson.canDoGoals.length - 3} materi lainnya...</li>
-                                )}
-                              </ul>
-                            </div>
-                          )}
-                          
-                          <div className="mt-auto pt-4">
-                            {isCompleted ? (
-                              <div className="flex items-center text-sm font-bold text-green-600">
-                                <CheckCircle2 className="w-4 h-4 mr-2" /> Selesai
-                              </div>
-                            ) : isUnlocked ? (
-                              <div className="flex items-center text-sm font-bold text-blue-600">
-                                <ArrowRight className="w-4 h-4 mr-2" /> {isCheckpoint ? 'Mulai Checkpoint' : 'Mulai Pelajaran'}
-                              </div>
-                            ) : (
-                              <div className="flex items-center text-sm font-bold text-[#0a0a0a]/40">
-                                <Lock className="w-4 h-4 mr-2" /> Terkunci
-                              </div>
-                            )}
-                          </div>
-                        </Link>
-                      );
-                    })}
-                  </div>
+                <div key={row.id} className="bg-white p-5">
+                  {body}
+                  {row.id === firstProLockedLevel && (
+                    <Link
+                      to="/pricing"
+                      className="mt-4 ml-16 inline-flex items-center gap-1.5 text-sm font-bold text-brand-rust underline underline-offset-4"
+                    >
+                      Lihat paket Pro
+                      <ArrowRight className="h-4 w-4" aria-hidden="true" />
+                    </Link>
+                  )}
                 </div>
               );
-            })}
+            }
+
+            return (
+              <Link
+                key={row.id}
+                to={`/level/${row.id}`}
+                className="group block bg-brand-cream"
+                aria-label={`Buka level ${row.id} ${row.name}`}
+              >
+                {/* The tint sits on an inner layer so it composites over the
+                    cream instead of replacing it with a cold grey. */}
+                <div className="p-5 transition-colors group-hover:bg-brand-ink/5">{body}</div>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── 4. SECONDARY NUMBERS + PRACTICE ENTRY POINTS ────────── */}
+      <section aria-labelledby="ringkasan-heading">
+        <h2 id="ringkasan-heading" className="mb-5 border-b border-brand-ink/10 pb-3 font-serif text-2xl text-brand-ink">
+          Ringkasan latihan
+        </h2>
+
+        <div className="grid grid-cols-1 gap-px bg-brand-ink/10 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="bg-brand-cream p-5">
+            <div className="flex items-center gap-2 text-ink-muted">
+              <Clock className="h-4 w-4" aria-hidden="true" />
+              <span className="text-[11px] font-bold tracking-[0.14em] uppercase">Waktu belajar</span>
+            </div>
+            <p className="mt-2 text-xl font-bold text-brand-ink">
+              {studyTime.status === 'loading' && 'Menghitung…'}
+              {studyTime.status === 'error' && '—'}
+              {studyTime.status === 'ready' && formatStudyTime(studyTime.seconds)}
+            </p>
+            {studyTime.status === 'error' && <p className="mt-1 text-xs text-ink-muted">Belum bisa dimuat</p>}
           </div>
+
+          <div className="bg-brand-cream p-5">
+            <div className="flex items-center gap-2 text-ink-muted">
+              <Trophy className="h-4 w-4" aria-hidden="true" />
+              <span className="text-[11px] font-bold tracking-[0.14em] uppercase">Checkpoint lulus</span>
+            </div>
+            <p className="mt-2 text-xl font-bold text-brand-ink">
+              {loadFailed ? '—' : `${checkpointStats.passed} dari ${checkpointStats.total}`}
+            </p>
+            {loadFailed && <p className="mt-1 text-xs text-ink-muted">Belum bisa dimuat</p>}
+          </div>
+
+          <div className="bg-brand-cream p-5">
+            <div className="flex items-center gap-2 text-ink-muted">
+              <Target className="h-4 w-4" aria-hidden="true" />
+              <span className="text-[11px] font-bold tracking-[0.14em] uppercase">Rata-rata simulasi</span>
+            </div>
+            <p className="mt-2 text-xl font-bold text-brand-ink">{averageScore === null ? '—' : `${averageScore}%`}</p>
+            {averageScore === null && (
+              <Link to="/simulasi" className="mt-1 inline-block text-xs font-semibold text-brand-rust underline-offset-4 hover:underline">
+                Belum pernah ikut simulasi
+              </Link>
+            )}
+          </div>
+
+          <div className="bg-brand-cream p-5">
+            <div className="flex items-center gap-2 text-ink-muted">
+              <BookOpen className="h-4 w-4" aria-hidden="true" />
+              <span className="text-[11px] font-bold tracking-[0.14em] uppercase">Kosakata {currentLevel}</span>
+            </div>
+            <p className="mt-2 text-xl font-bold text-brand-ink">
+              {levelWords.status === 'loading' && 'Memuat…'}
+              {levelWords.status === 'error' && '—'}
+              {levelWords.status === 'ready' && `${nf.format(levelWords.count)} kata`}
+            </p>
+            {levelWords.status === 'error' ? (
+              <p className="mt-1 text-xs text-ink-muted">Belum bisa dimuat</p>
+            ) : (
+              <Link to="/vocab" className="mt-1 inline-block text-xs font-semibold text-brand-rust underline-offset-4 hover:underline">
+                Latih kosakata
+              </Link>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* ── 5. ACHIEVEMENTS ─────────────────────────────────────── */}
+      <section aria-labelledby="pencapaian-heading">
+        <div className="mb-5 flex items-center gap-2 border-b border-brand-ink/10 pb-3">
+          <Award className="h-5 w-5 text-brand-rust" aria-hidden="true" />
+          <h2 id="pencapaian-heading" className="font-serif text-2xl text-brand-ink">
+            Pencapaian
+          </h2>
+        </div>
+
+        <div className="grid grid-cols-2 gap-px bg-brand-ink/10 sm:grid-cols-3 lg:grid-cols-5">
+          {achievements.map((achievement) => {
+            const Icon = achievement.icon;
+            const unlocked = achievement.unlocked && !loadFailed;
+            return (
+              <div key={achievement.id} className={cn('p-4', unlocked ? 'bg-brand-cream' : 'bg-white')}>
+                <div
+                  className={cn(
+                    'flex h-10 w-10 items-center justify-center',
+                    unlocked ? 'bg-brand-ink text-brand-cream' : 'bg-brand-ink/10 text-ink-muted',
+                  )}
+                >
+                  <Icon className="h-5 w-5" aria-hidden="true" />
+                </div>
+                <p className="mt-3 text-sm font-bold text-brand-ink">{achievement.title}</p>
+                <p className="mt-1 text-xs text-ink-muted">{achievement.description}</p>
+                <p
+                  className={cn(
+                    'mt-2 text-[10px] font-bold tracking-[0.14em] uppercase',
+                    unlocked ? 'text-brand-rust' : 'text-ink-muted',
+                  )}
+                >
+                  {unlocked ? 'Terbuka' : 'Belum'}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── 6. REPORT (quiet, bottom of the page) ───────────────── */}
+      <section aria-labelledby="laporan-heading" className="border border-brand-ink/10 p-5 md:p-6">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-xl">
+            <h2 id="laporan-heading" className="font-serif text-xl text-brand-ink">
+              Laporan belajar
+            </h2>
+            <p className="mt-1 text-sm text-ink-muted">
+              Rekap progres, kosakata, dan hasil simulasi dalam satu berkas PDF — enak dibagikan ke guru atau
+              lembaga kursus.
+            </p>
+          </div>
+
+          <FeatureGate
+            feature="pdf_reports"
+            sub={{ subscription: tierData?.subscription, pro_expires_at: tierData?.pro_expires_at }}
+            role={role}
+            fallback={
+              <Link
+                to="/pricing"
+                className="inline-flex shrink-0 items-center gap-1.5 text-sm font-bold text-brand-rust underline underline-offset-4"
+              >
+                Tersedia untuk pengguna Pro
+                <ArrowRight className="h-4 w-4" aria-hidden="true" />
+              </Link>
+            }
+          >
+            <Button
+              onClick={exportPDF}
+              disabled={exporting}
+              className="h-auto shrink-0 bg-brand-ink px-6 py-3 text-sm font-bold text-brand-cream hover:bg-brand-rust"
+            >
+              {exporting ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+              ) : (
+                <Download className="mr-2 h-4 w-4" aria-hidden="true" />
+              )}
+              {exporting ? 'Menyiapkan…' : 'Unduh laporan'}
+            </Button>
+          </FeatureGate>
+        </div>
+
+        {reportError && (
+          <p className="mt-4 border-l-2 border-brand-rust bg-brand-rust/10 px-3 py-2 text-sm font-medium text-brand-ink">
+            {reportError}
+          </p>
         )}
-      </div>
+
+        {pdfBlobUrl && (
+          <p className="mt-4 text-sm text-ink-muted">
+            Unduhan tidak muncul?{' '}
+            <a
+              href={pdfBlobUrl}
+              download={`DeutschUp-Laporan-${profileData?.full_name || 'Siswa'}.pdf`}
+              className="font-bold text-brand-rust underline underline-offset-4"
+            >
+              Buka laporan secara manual
+            </a>
+          </p>
+        )}
+      </section>
     </div>
   );
 }

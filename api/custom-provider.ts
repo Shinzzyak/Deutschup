@@ -1,4 +1,4 @@
-import type { VercelRequest, VercelResponse } from '@vercel/node';
+import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { createClient } from '@supabase/supabase-js';
 import { invalidateCache } from '../lib/ai-router.js';
 import { isVerifiedAdmin } from '../lib/api-utils.js';
@@ -192,7 +192,7 @@ async function syncMissingCustomRouting(supabase: any, providers: any[], models:
   return { warnings, synced };
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export default async function handler(req: ApiRequest, res: ApiResponse) {
   res.setHeader('Access-Control-Allow-Origin', 'https://deutschup.sintec.my.id');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');

@@ -18,6 +18,11 @@ const navigation = [
   { name: 'Profil', href: '/profile', icon: User },
 ];
 
+// flex-1 + min-w-0 keeps 7 items (6 + Admin) inside a 320px viewport instead of
+// pushing the row wider than the screen; the label truncates rather than wraps.
+const itemClass =
+  'relative flex min-h-[44px] min-w-0 flex-1 flex-col items-center justify-center gap-0.5 px-1 py-1.5 transition-colors duration-200';
+
 export default function MobileBottomNav() {
   const location = useLocation();
   const { profileData } = useAuthStore();
@@ -30,38 +35,35 @@ export default function MobileBottomNav() {
     return location.pathname.startsWith(href.split('?')[0]);
   }
 
+  const adminActive = location.pathname.startsWith('/admin');
+
   return (
     <nav
-      className="glass-nav lg:hidden fixed bottom-0 left-0 right-0 z-50"
-
+      className="glass-nav fixed right-0 bottom-0 left-0 z-50 lg:hidden"
       aria-label="Navigasi mobile"
     >
-      <div className="flex justify-around items-end px-1 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
+      <div className="flex items-stretch justify-around px-1 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
         {navigation.map((item) => {
           const active = isActive(item.href);
           return (
             <Link
               key={item.name}
               to={item.href}
-              className={`relative flex flex-col items-center gap-0.5 px-2 py-1.5 transition-all duration-200 min-w-[48px] ${
-                active
-                  ? 'text-[#8b2500]'
-                  : 'text-[#0a0a0a]/40 active:text-[#0a0a0a]/60'
-              }`}
-              aria-label={item.name}
+              aria-current={active ? 'page' : undefined}
+              className={`${itemClass} ${active ? 'text-brand-rust' : 'text-ink-muted active:text-brand-ink'}`}
             >
               <div className="relative">
                 <item.icon
-                  className={`w-5 h-5 transition-all duration-200 ${
-                    active ? 'stroke-[2.5] scale-110' : 'stroke-[1.8]'
+                  className={`h-5 w-5 transition-all duration-200 ${
+                    active ? 'scale-110 stroke-[2.5]' : 'stroke-[1.8]'
                   }`}
                 />
                 {active && (
-                  <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#8b2500]" />
+                  <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 bg-brand-rust" />
                 )}
               </div>
               <span
-                className={`text-[10px] leading-none transition-all duration-200 ${
+                className={`w-full truncate text-center text-[10px] leading-none ${
                   active ? 'font-bold' : 'font-medium'
                 }`}
               >
@@ -73,28 +75,20 @@ export default function MobileBottomNav() {
         {profileData?.role === 'admin' && (
           <Link
             to="/admin"
-            className={`relative flex flex-col items-center gap-0.5 px-2 py-1.5  transition-all duration-200 min-w-[48px] ${
-              location.pathname.startsWith('/admin')
-                ? 'text-[#8b2500]'
-                : 'text-[#0a0a0a]/40 active:text-[#0a0a0a]/60'
-            }`}
-            aria-label="Admin"
+            aria-current={adminActive ? 'page' : undefined}
+            className={`${itemClass} ${adminActive ? 'text-brand-rust' : 'text-ink-muted active:text-brand-ink'}`}
           >
             <div className="relative">
               <ShieldCheck
-                className={`w-5 h-5 transition-all duration-200 ${
-                  location.pathname.startsWith('/admin') ? 'stroke-[2.5] scale-110' : 'stroke-[1.8]'
+                className={`h-5 w-5 transition-all duration-200 ${
+                  adminActive ? 'scale-110 stroke-[2.5]' : 'stroke-[1.8]'
                 }`}
               />
-              {location.pathname.startsWith('/admin') && (
-                <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-[#8b2500]" />
+              {adminActive && (
+                <div className="absolute -bottom-1 left-1/2 h-1 w-1 -translate-x-1/2 bg-brand-rust" />
               )}
             </div>
-            <span
-              className={`text-[10px] leading-none transition-all duration-200 ${
-                location.pathname.startsWith('/admin') ? 'font-bold' : 'font-medium'
-              }`}
-            >
+            <span className={`w-full truncate text-center text-[10px] leading-none ${adminActive ? 'font-bold' : 'font-medium'}`}>
               Admin
             </span>
           </Link>

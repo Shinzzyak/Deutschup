@@ -33,8 +33,16 @@ export default function TopNav() {
         setShowUserMenu(false);
       }
     }
+    // Escape closes the menu — it was only dismissible with the mouse before.
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === 'Escape') setShowUserMenu(false);
+    }
     document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
+    document.addEventListener('keydown', handleKey);
+    return () => {
+      document.removeEventListener('mousedown', handleClick);
+      document.removeEventListener('keydown', handleKey);
+    };
   }, []);
 
   function isActive(href: string) {
@@ -66,13 +74,13 @@ export default function TopNav() {
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2.5 shrink-0 group">
-              <div className="flex flex-col w-2 h-4">
-                <div className="flex-1 bg-primary" />
-                <div className="flex-1 bg-[#8b2500]" />
-                <div className="flex-1 bg-[#c8956c]" />
+            <Link to="/" className="group flex shrink-0 items-center space-x-2.5">
+              <div className="flex h-4 w-2 flex-col" aria-hidden="true">
+                <div className="flex-1 bg-brand-ink" />
+                <div className="flex-1 bg-brand-rust" />
+                <div className="flex-1 bg-brand-tan" />
               </div>
-              <span className="font-serif text-lg font-bold text-[#0a0a0a] tracking-tight">DeutschUp</span>
+              <span className="font-serif text-lg font-bold tracking-tight text-brand-ink">DeutschUp</span>
             </Link>
 
             {/* Desktop nav */}
@@ -83,28 +91,30 @@ export default function TopNav() {
                   <Link
                     key={item.name}
                     to={item.href}
+                    aria-current={active ? 'page' : undefined}
                     className={`relative flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors ${
                       active
-                        ? 'text-[#0a0a0a] bg-primary/5'
-                        : 'text-[#0a0a0a]/50 hover:text-[#0a0a0a] hover:bg-primary/5'
+                        ? 'bg-primary/5 text-brand-ink'
+                        : 'text-ink-muted hover:bg-primary/5 hover:text-brand-ink'
                     }`}
                   >
-                    <item.icon className="w-4 h-4" />
+                    <item.icon className="h-4 w-4" />
                     {item.name}
-                    {active && <span className="absolute -bottom-[13px] left-1/2 -translate-x-1/2 w-5 h-0.5 bg-[#8b2500]" />}
+                    {active && <span className="absolute -bottom-[13px] left-1/2 h-0.5 w-5 -translate-x-1/2 bg-brand-rust" />}
                   </Link>
                 );
               })}
               {profileData?.role === 'admin' && (
                 <Link
                   to="/admin"
+                  aria-current={location.pathname.startsWith('/admin') ? 'page' : undefined}
                   className={`flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium transition-colors ${
                     location.pathname.startsWith('/admin')
-                      ? 'text-[#8b2500] bg-[#8b2500]/5'
-                      : 'text-[#0a0a0a]/50 hover:text-[#8b2500] hover:bg-[#8b2500]/5'
+                      ? 'bg-brand-rust/5 text-brand-rust'
+                      : 'text-ink-muted hover:bg-brand-rust/5 hover:text-brand-rust'
                   }`}
                 >
-                  <ShieldCheck className="w-4 h-4" />
+                  <ShieldCheck className="h-4 w-4" />
                   Admin
                 </Link>
               )}
@@ -112,47 +122,58 @@ export default function TopNav() {
 
             {/* Right section */}
             <div className="flex items-center gap-1.5">
-              <button onClick={() => setSearchOpen(true)} className="p-2 text-[#0a0a0a]/40 hover:text-[#0a0a0a] hover:bg-primary/5 transition-colors" aria-label="Cari materi">
-                <Search className="w-4 h-4" />
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="flex h-10 w-10 items-center justify-center text-ink-muted transition-colors hover:bg-primary/5 hover:text-brand-ink"
+                aria-label="Cari materi"
+              >
+                <Search className="h-4 w-4" />
               </button>
 
-              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 border border-[#0a0a0a]/10">
-                <Flame className="w-3.5 h-3.5 text-[#c8956c]" />
-                <span className="text-xs font-bold text-[#0a0a0a]/70">{streak}</span>
+              {/* brand-tan is the accent for dark surfaces; on .glass-nav
+                  (#f8f4f1 composite) it measured 2.42:1, under the 3:1 floor
+                  for graphics. brand-rust is 8.15:1 on the same surface. */}
+              <div className="hidden items-center gap-1.5 border border-brand-ink/15 px-2.5 py-1 sm:flex" title="Streak harian">
+                <Flame className="h-3.5 w-3.5 text-brand-rust" aria-hidden="true" />
+                <span className="text-xs font-bold text-ink-muted">
+                  <span className="sr-only">Streak: </span>{streak}
+                </span>
               </div>
 
-              <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 border border-[#0a0a0a]/10">
-                <Zap className="w-3.5 h-3.5 text-[#8b2500]" />
-                <span className="text-xs font-bold text-[#0a0a0a]/70">{xp}</span>
+              <div className="hidden items-center gap-1.5 border border-brand-ink/15 px-2.5 py-1 sm:flex" title="Total XP">
+                <Zap className="h-3.5 w-3.5 text-brand-rust" aria-hidden="true" />
+                <span className="text-xs font-bold text-ink-muted">
+                  <span className="sr-only">XP: </span>{xp}
+                </span>
               </div>
 
               <div className="relative" ref={userMenuRef}>
-                <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex items-center gap-2 p-1 hover:bg-primary/5 transition-colors" aria-label="Menu profil" aria-expanded={showUserMenu} aria-controls="user-menu">
-                  <div className="w-8 h-8 bg-primary/10 flex items-center justify-center overflow-hidden">
+                <button onClick={() => setShowUserMenu(!showUserMenu)} className="flex min-h-10 items-center gap-2 p-1 transition-colors hover:bg-primary/5" aria-label="Menu profil" aria-expanded={showUserMenu} aria-controls="user-menu" aria-haspopup="true">
+                  <div className="flex h-8 w-8 items-center justify-center overflow-hidden bg-primary/10">
                     {profileData?.avatar_url ? (
-                      <img src={profileData.avatar_url} alt="" width="32" height="32" className="w-full h-full object-cover" />
+                      <img src={profileData.avatar_url} alt="" width="32" height="32" className="h-full w-full object-cover" />
                     ) : (
-                      <User className="w-4 h-4 text-[#0a0a0a]/40" />
+                      <User className="h-4 w-4 text-ink-muted" />
                     )}
                   </div>
-                  <ChevronDown className={`w-3.5 h-3.5 text-[#0a0a0a]/40 transition-transform duration-200 hidden sm:block ${showUserMenu ? 'rotate-180' : ''}`} />
+                  <ChevronDown className={`hidden h-3.5 w-3.5 text-ink-muted transition-transform duration-200 sm:block ${showUserMenu ? 'rotate-180' : ''}`} />
                 </button>
 
                 {showUserMenu && (
-                  <div id="user-menu" className="glass absolute right-0 mt-2 w-56 z-50">
-                    <div className="px-4 py-3 border-b border-[#0a0a0a]/10">
-                      <p className="text-sm font-bold text-[#0a0a0a] truncate">{profileData?.full_name || 'Pelajar'}</p>
-                      <p className="text-xs text-[#0a0a0a]/40 truncate mt-0.5">{user?.email}</p>
+                  <div id="user-menu" className="glass absolute right-0 z-50 mt-2 w-56">
+                    <div className="border-b border-brand-ink/10 px-4 py-3">
+                      <p className="truncate text-sm font-bold text-brand-ink">{profileData?.full_name || 'Pelajar'}</p>
+                      <p className="mt-0.5 truncate text-xs text-ink-muted">{user?.email}</p>
                     </div>
                     <div className="p-1.5">
-                      <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#0a0a0a]/70 hover:text-[#0a0a0a] hover:bg-primary/5 transition-colors">
-                        <User className="w-4 h-4 text-[#0a0a0a]/30" /> Profil
+                      <Link to="/profile" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-ink-muted transition-colors hover:bg-primary/5 hover:text-brand-ink">
+                        <User className="h-4 w-4 text-ink-subtle" /> Profil
                       </Link>
-                      <Link to="/pricing" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2 text-sm text-[#0a0a0a]/70 hover:text-[#0a0a0a] hover:bg-primary/5 transition-colors">
-                        <CreditCard className="w-4 h-4 text-[#0a0a0a]/30" /> Langganan
+                      <Link to="/pricing" onClick={() => setShowUserMenu(false)} className="flex items-center gap-2.5 px-3 py-2.5 text-sm text-ink-muted transition-colors hover:bg-primary/5 hover:text-brand-ink">
+                        <CreditCard className="h-4 w-4 text-ink-subtle" /> Langganan
                       </Link>
-                      <button onClick={() => { setShowUserMenu(false); logout(); }} className="flex items-center gap-2.5 w-full px-3 py-2 text-sm text-[#8b2500] hover:bg-[#8b2500]/5 transition-colors">
-                        <LogOut className="w-4 h-4" /> Keluar
+                      <button onClick={() => { setShowUserMenu(false); logout(); }} className="flex w-full items-center gap-2.5 px-3 py-2.5 text-sm text-brand-rust transition-colors hover:bg-brand-rust/5">
+                        <LogOut className="h-4 w-4" /> Keluar
                       </button>
                     </div>
                   </div>
