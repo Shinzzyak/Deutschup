@@ -63,7 +63,7 @@ async function s2() {
 async function s3() {
   console.log('\n📋 3. JWT Validation');
   const jwt = { sub:'u1', email:'a@b.com', is_admin:false, user_metadata:{role:'user'}, app_metadata:{role:'user'} };
-  await test('claims structure valid', async () => { assert(jwt.sub && jwt.email, 'missing claims'); });
+  await test('claims structure valid', async () => { assert(Boolean(jwt.sub && jwt.email), 'missing claims'); });
   const check = (j: any) => j.is_admin===true || j.user_metadata?.role==='admin' || j.app_metadata?.role==='admin';
   await test('isAdmin false for user', async () => { eq(check(jwt), false, 'should not be admin'); });
   await test('isAdmin true for is_admin', async () => { eq(check({...jwt,is_admin:true}), true, 'should be admin'); });
@@ -78,7 +78,7 @@ async function s4() {
   const uid = p?.[0]?.id;
   if (!uid) { console.log('  ⚠️  No profiles — skipping'); return; }
   const { data: prof } = await admin.from('profiles').select('id').eq('id',uid).single();
-  await test('profiles accessible', async () => { assert(prof, 'not found'); });
+  await test('profiles accessible', async () => { assert(Boolean(prof), 'not found'); });
   for (const tbl of ['notes','progress','orders']) {
     const { error } = await admin.from(tbl).select('id').limit(1);
     await test(`${tbl}: accessible`, async () => { assert(!error || error.code==='PGRST116', error?.message); });
@@ -91,7 +91,7 @@ async function s4() {
 async function s5() {
   console.log('\n📋 5. Admin Authorization');
   const ae = process.env.ADMIN_EMAIL || 'abdullahalmughiroh@gmail.com';
-  await test('ADMIN_EMAIL set', async () => { assert(ae, 'not set'); });
+  await test('ADMIN_EMAIL set', async () => { assert(Boolean(ae), 'not set'); });
   await test('email match logic', async () => { eq(ae.toLowerCase().trim() === ae.toLowerCase().trim(), true, 'self-match'); });
   const { data: ap } = await admin.from('profiles').select('role').eq('role','admin').limit(1).single();
   console.log(`  ℹ️  Admin role: ${ap ? 'found' : 'none (POC OK)'}`);

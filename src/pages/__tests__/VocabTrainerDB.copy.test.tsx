@@ -50,12 +50,14 @@ describe('VocabTrainerDB production copy', () => {
   it('renders learner-facing wording without backend or design-system jargon', async () => {
     render(<VocabTrainerDB />);
 
-    await waitFor(() => expect(screen.getByRole('heading', { name: /Pusat Latihan Kosakata/i })).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('heading', { name: /^Latihan Kosakata$/i })).toBeInTheDocument());
 
     expect(screen.getByText(/Kosakata Kurikulum/i)).toBeInTheDocument();
-    expect(screen.getByText(/2\.472 kata tersedia/i)).toBeInTheDocument();
-    expect(screen.getAllByText(/1 perlu review/i).length).toBeGreaterThan(0);
-    expect(screen.getByText(/Latihan kosakata Jerman/i)).toBeInTheDocument();
+    expect(screen.getByText('2.472')).toBeInTheDocument();
+    expect(screen.getByText((_text, element) =>
+      element?.tagName === 'P' && element.textContent?.includes('1 siap diulang') === true
+    )).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Daftar Kata/i })).toBeInTheDocument();
 
     expect(screen.queryByText(/Supabase/i)).not.toBeInTheDocument();
     expect(screen.queryByText(/Stisla/i)).not.toBeInTheDocument();

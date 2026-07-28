@@ -26,15 +26,15 @@ describe('Auth Store Logic', () => {
 
   describe('Role detection', () => {
     it('should identify admin by email', () => {
-      const adminEmail = 'abdullahalmughiroh@gmail.com';
+      const adminEmail: string = 'abdullahalmughiroh@gmail.com';
       const userEmail = adminEmail;
       const isAdmin = userEmail === adminEmail;
       expect(isAdmin).toBe(true);
     });
 
     it('should not identify non-admin as admin', () => {
-      const adminEmail = 'abdullahalmughiroh@gmail.com';
-      const userEmail = 'other@example.com';
+      const adminEmail: string = 'abdullahalmughiroh@gmail.com';
+      const userEmail: string = 'other@example.com';
       const isAdmin = userEmail === adminEmail;
       expect(isAdmin).toBe(false);
     });
