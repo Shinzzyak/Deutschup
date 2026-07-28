@@ -1,0 +1,157 @@
+# Migration runner.
+#
+# Exists because Supabase's service_role key is a PostgREST JWT — it can read and
+# write rows over REST but cannot run DDL. ALTER TABLE needs a real Postgres
+# connection, and the direct host (db.<ref>.supabase.co:5432) is IPv6-only, which
+# GitHub runners cannot reach. The pooler is IPv4 and works.
+#
+# ONE-TIME SETUP
+#   1. Supabase Dashboard -> Project Settings -> Database -> Connection string
+#      -> pick "Session pooler" (port 5432, NOT the 6543 transaction pooler —
+#         transaction mode cannot hold the locks some DDL needs).
+#      It looks like:
+#        postgresql://postgres.mnasgrobmwcpqmnjbvan:PASSWORD@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres
+#   2. GitHub -> repo Settings -> Secrets and variables -> Actions -> New secret
+#      Name:  SUPABASE_DB_URL
+#      Value: that whole string, with the real password substituted
+#
+# The secret is never printed. psql runs with ON_ERROR_STOP so a failing
+# statement aborts instead of half-applying.
+
+name: DB Migrate
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: 'SQL file under supabase/ to run'
+        required: true
+        default: '19_decouple_auth_users_fk.sql'
+      mode:
+        description: 'inspect = connection + read-only checks only. apply = actually run the file.'
+        required: true
+        type: choice
+        options:
+          - inspect
+          - apply
+        default: inspect
+
+concurrency:
+  group: db-migrate
+  cancel-in-progress: false
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Guard — secret present and file exists
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          if [ -z "${DB_URL:-}" ]; then
+            echo "::error::SUPABASE_DB_URL is not set. See the header of this workflow file."
+            exit 1
+          fi
+          if [ ! -f "supabase/${{ inputs.file }}" ]; then
+            echo "::error::supabase/${{ inputs.file }} not found"
+            ls supabase/*.sql
+            exit 1
+          fi
+          echo "Will use supabase/${{ inputs.file }} in '${{ inputs.mode }}' mode."
+
+      - name: Connection check
+        env:
+          PGPASSWORD_UNUSED: ignored
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -Atc "select current_database() || ' @ ' || version();"
+
+      # Read-only. Safe to run at any time, and the thing to look at before applying.
+      - name: Inspect — foreign keys still pointing at auth.users
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          psql "$DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          \pset border 2
+          SELECT tc.table_name  AS "table",
+                 kcu.column_name AS "column",
+                 tc.constraint_name AS "constraint"
+          FROM information_schema.table_constraints tc
+          JOIN information_schema.key_column_usage kcu
+            ON tc.constraint_name = kcu.constraint_name
+           AND tc.table_schema    = kcu.table_schema
+          JOIN information_schema.constraint_column_usage ccu
+            ON ccu.constraint_name = tc.constraint_name
+           AND ccu.table_schema    = tc.table_schema
+          WHERE tc.constraint_type = 'FOREIGN KEY'
+            AND tc.table_schema    = 'public'
+            AND ccu.table_schema   = 'auth'
+            AND ccu.table_name     = 'users'
+          ORDER BY 1;
+          SQL
+
+      - name: Inspect — row counts on the tables that should be filling up
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          psql "$DB_URL" -v ON_ERROR_STOP=1 <<'SQL'
+          \pset border 2
+          SELECT 'profiles' AS t, count(*) FROM profiles
+          UNION ALL SELECT 'user_identities', count(*) FROM user_identities
+          UNION ALL SELECT 'user_curriculum_progress', count(*) FROM user_curriculum_progress
+          UNION ALL SELECT 'user_lesson_progress', count(*) FROM user_lesson_progress
+          UNION ALL SELECT 'notes', count(*) FROM notes
+          UNION ALL SELECT 'study_plans', count(*) FROM study_plans
+          UNION ALL SELECT 'quick_notes', count(*) FROM quick_notes
+          UNION ALL SELECT 'mock_tests', count(*) FROM mock_tests
+          UNION ALL SELECT 'study_sessions', count(*) FROM study_sessions
+          ORDER BY 1;
+          SQL
+
+      - name: Show the SQL that would run
+        if: inputs.mode == 'inspect'
+        run: |
+          echo "--- supabase/${{ inputs.file }} ---"
+          cat "supabase/${{ inputs.file }}"
+          echo
+          echo "::notice::Inspect only — nothing was changed. Re-run with mode=apply to execute."
+
+      - name: Apply migration
+        if: inputs.mode == 'apply'
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          echo "Applying supabase/${{ inputs.file }}"
+          psql "$DB_URL" -v ON_ERROR_STOP=1 -f "supabase/${{ inputs.file }}"
+          echo "::notice::Applied supabase/${{ inputs.file }}"
+
+      - name: Verify — foreign keys after apply
+        if: inputs.mode == 'apply'
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+        run: |
+          set -euo pipefail
+          REMAINING=$(psql "$DB_URL" -v ON_ERROR_STOP=1 -Atc "
+            SELECT count(*)
+            FROM information_schema.table_constraints tc
+            JOIN information_schema.constraint_column_usage ccu
+              ON ccu.constraint_name = tc.constraint_name
+             AND ccu.table_schema    = tc.table_schema
+            WHERE tc.constraint_type='FOREIGN KEY'
+              AND tc.table_schema='public'
+              AND ccu.table_schema='auth' AND ccu.table_name='users';")
+          echo "FKs still pointing at auth.users: $REMAINING"
+          if [ "$REMAINING" != "0" ]; then
+            echo "::warning::$REMAINING foreign key(s) remain. Check the inspect output above."
+          fi

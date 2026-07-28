@@ -48,6 +48,9 @@ if (DEBUG_MODE) {
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ErrorBoundary>
+      {/* Toasts sit inside ErrorBoundary (so a fault in the toast layer is
+          caught rather than white-screening) but outside TooltipProvider, so
+          every route, dialog and widget can reach useToast(). */}
       <ToastProvider>
         <TooltipProvider>
           <App />

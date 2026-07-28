@@ -110,9 +110,9 @@ export default function ClerkTest() {
 
   const statusIcon = (status: TestResult['status']) => {
     switch (status) {
-      case 'success': return <CheckCircle2 className="w-5 h-5 text-emerald-500" />;
-      case 'error': return <XCircle className="w-5 h-5 text-red-500" />;
-      case 'pending': return <Loader2 className="w-5 h-5 text-amber-500 animate-spin" />;
+      case 'success': return <CheckCircle2 className="w-5 h-5 text-[#1a6b3d]" />;
+      case 'error': return <XCircle className="w-5 h-5 text-brand-rust" />;
+      case 'pending': return <Loader2 className="w-5 h-5 text-[#7a5200] animate-spin" />;
     }
   };
 
@@ -121,7 +121,7 @@ export default function ClerkTest() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center space-x-3 mb-8">
-          <div className="w-10 h-10  bg-blue-600 flex items-center justify-center">
+          <div className="w-10 h-10 bg-blue-600 flex items-center justify-center">
             <Shield className="w-5 h-5 text-primary-foreground" />
           </div>
           <div>
@@ -133,13 +133,13 @@ export default function ClerkTest() {
         {/* Test Results */}
         <div className="space-y-3">
           {results.map((result, idx) => (
-            <div key={idx} className="flex items-center justify-between p-4  border border-border bg-card">
+            <div key={idx} className="flex items-center justify-between p-4 border border-border bg-card">
               <div className="flex items-center space-x-3">
                 {statusIcon(result.status)}
                 <span className="font-medium text-sm">{result.label}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <code className="text-xs text-muted-foreground bg-muted px-2 py-1  max-w-[200px] truncate">
+                <code className="text-xs text-ink-muted bg-muted px-2 py-1 max-w-[200px] truncate">
                   {result.value}
                 </code>
                 <button onClick={() => copyToClipboard(result.value)}
@@ -162,23 +162,23 @@ export default function ClerkTest() {
 
         {/* Summary */}
         {!loading && (
-          <div className="mt-8 p-6  border border-border bg-card">
+          <div className="mt-8 p-6 border border-border bg-card">
             <h2 className="font-bold text-lg mb-4">Summary</h2>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
-                <p className="text-2xl font-black text-emerald-500">
+                <p className="text-2xl font-black text-[#1a6b3d]">
                   {results.filter(r => r.status === 'success').length}
                 </p>
                 <p className="text-xs text-muted-foreground">Passed</p>
               </div>
               <div>
-                <p className="text-2xl font-black text-amber-500">
+                <p className="text-2xl font-black text-[#7a5200]">
                   {results.filter(r => r.status === 'pending').length}
                 </p>
                 <p className="text-xs text-muted-foreground">Pending</p>
               </div>
               <div>
-                <p className="text-2xl font-black text-red-500">
+                <p className="text-2xl font-black text-brand-rust">
                   {results.filter(r => r.status === 'error').length}
                 </p>
                 <p className="text-xs text-muted-foreground">Failed</p>
@@ -198,8 +198,8 @@ export default function ClerkTest() {
         </div>
 
         {/* Info */}
-        <div className="mt-8 p-4  bg-blue-500/5 border border-blue-500/10">
-          <p className="text-sm text-blue-600 text-blue-400">
+        <div className="mt-8 p-4 bg-blue-500/5 border border-blue-500/10">
+          <p className="text-sm text-[#1e40af]">
             <strong>POC Note:</strong> This page validates that Supabase Auth still works after Clerk installation.
             Clerk user_id resolution will show "No Clerk mapping" until Clerk project is configured and webhook is deployed.
           </p>

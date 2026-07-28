@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
+import { Loader2 } from 'lucide-react';
 import { useAISecretsStore } from '../../stores/aiSecretsStore';
+import { useToast } from '../ui/toast';
+import { AdminNotice, BTN_QUIET, FIELD_LABEL, INPUT, TAP } from './AdminUI';
+import { Button } from '../ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
 
 interface AddSecretModalProps {
   providerId: string;
@@ -7,19 +19,36 @@ interface AddSecretModalProps {
   onClose: () => void;
 }
 
+/** Turns whatever the store parked in `error` into a sentence worth reading. */
+function humanize(raw: unknown): string {
+  const text = typeof raw === 'string' ? raw.trim() : '';
+  if (!text) return 'Kunci ditolak server. Periksa kuncinya, lalu coba lagi.';
+  if (/^HTTP 40[13]$/.test(text)) {
+    return 'Sesi admin tidak diterima. Muat ulang halaman lalu masuk lagi.';
+  }
+  if (/^HTTP 4\d\d$/.test(text)) return 'Server menolak kunci ini.';
+  if (/^HTTP 5\d\d$/.test(text)) return 'Server sedang bermasalah. Coba lagi sebentar lagi.';
+  if (/Failed to fetch|NetworkError|Load failed/i.test(text)) {
+    return 'Tidak bisa menghubungi server. Periksa koneksi internet, lalu coba lagi.';
+  }
+  const looksTechnical =
+    text.length > 160 || /error:|Error:|undefined|\bnull\b|\bat\s.+:\d+|[{}<>]/.test(text);
+  return looksTechnical ? 'Kunci ditolak server. Periksa kuncinya, lalu coba lagi.' : text;
+}
+
 export default function AddSecretModal({ providerId, providerName, onClose }: AddSecretModalProps) {
   const [apiKey, setApiKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
 
   const addSecret = useAISecretsStore((s) => s.addSecret);
+  const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!apiKey.trim()) {
-      setError('API key is required');
+      setError('Kunci API belum diisi.');
       return;
     }
 
@@ -28,76 +57,98 @@ export default function AddSecretModal({ providerId, providerName, onClose }: Ad
 
     try {
       await addSecret(providerId, 'api_key', apiKey.trim());
-      setSuccess(true);
-      setTimeout(() => onClose(), 1500);
-    } catch (err: any) {
-      setError(err.message);
+
+      // The store catches its own failures and parks the message in state
+      // instead of rethrowing, so awaiting it without incident proves nothing:
+      // this modal used to print "API key saved successfully" for a rejected
+      // key every single time. Read the store back for the real verdict.
+      const storeError = useAISecretsStore.getState().error;
+      if (storeError) {
+        const message = humanize(storeError);
+        setError(message);
+        toast({ title: 'Kunci belum tersimpan', description: message, variant: 'error' });
+        return;
+      }
+
+      toast({
+        title: `Kunci ${providerName} tersimpan`,
+        description: 'Tekan Periksa kunci untuk memastikan kuncinya diterima provider.',
+        variant: 'success',
+      });
+      onClose();
+    } catch (err) {
+      console.error('Add secret failed:', err);
+      const message = humanize((err as { message?: unknown } | null)?.message);
+      setError(message);
+      toast({ title: 'Kunci belum tersimpan', description: message, variant: 'error' });
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="st-card w-full max-w-md mx-4">
-        <div className="px-6 py-4 border-b border-border">
-          <h3 className="text-lg font-semibold text-foreground">
-            {success ? 'Success' : `Add API Key for ${providerName}`}
-          </h3>
-        </div>
+    <Dialog
+      open
+      onOpenChange={(open: boolean) => {
+        if (!open && !loading) onClose();
+      }}
+    >
+      {/* `.glass-heavy` on DialogContent is declared outside every cascade
+          layer, so a plain `bg-white` utility loses to it. The `!` postfix is
+          the only way to win that fight without editing the shared stylesheet. */}
+      <DialogContent
+        showCloseButton={false}
+        className="bg-white! rounded-none! border-brand-ink/15! sm:max-w-md"
+      >
+        <form onSubmit={handleSubmit}>
+          <DialogHeader>
+            <DialogTitle className="font-heading text-xl text-brand-ink">
+              Kunci API {providerName}
+            </DialogTitle>
+            <DialogDescription className="text-ink-muted">
+              Kunci disimpan di server dan tidak pernah ditampilkan utuh lagi setelah tersimpan.
+            </DialogDescription>
+          </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="px-6 py-4">
-          {success ? (
-            <div className="text-center py-4">
-              <div className="text-[#2d8a4e] text-4xl mb-2">✓</div>
-              <p className="text-foreground">API key saved successfully</p>
-            </div>
-          ) : (
-            <>
-              <div className="mb-4">
-                <label htmlFor="apiKey" className="block text-sm font-medium text-foreground/70 mb-2">
-                  API Key
-                </label>
-                <input
-                  type="password"
-                  id="apiKey"
-                  value={apiKey}
-                  onChange={(e) => setApiKey(e.target.value)}
-                  className="w-full px-3 py-2 bg-background border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary"
-                  placeholder="Enter your API key"
-                  autoFocus
-                />
-                <p className="mt-1 text-sm text-muted-foreground">
-                  Key will be stored securely in the database
-                </p>
-              </div>
+          <div className="mt-4">
+            <label className={FIELD_LABEL} htmlFor="secret-api-key">
+              Kunci API
+            </label>
+            <input
+              type="password"
+              id="secret-api-key"
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+              className={INPUT}
+              placeholder="Tempel kunci API di sini…"
+              autoFocus
+              aria-invalid={!!error}
+            />
+          </div>
 
-              {error && (
-                <div className="mb-4 p-3 bg-red-950/20 border border-red-500/25">
-                  <p className="text-sm text-red-400">{error}</p>
-                </div>
-              )}
-
-              <div className="flex justify-end gap-3">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 text-sm font-medium text-foreground/70 bg-muted hover:bg-muted/80 focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="px-4 py-2 text-sm font-medium bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring disabled:opacity-50 text-primary-foreground"
-                >
-                  {loading ? 'Saving...' : 'Save Key'}
-                </button>
-              </div>
-            </>
+          {error && (
+            <AdminNotice tone="bad" title="Belum tersimpan" className="mt-3">
+              {error}
+            </AdminNotice>
           )}
+
+          <DialogFooter className="mt-5">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={onClose}
+              disabled={loading}
+              className={`${BTN_QUIET} ${TAP} px-4`}
+            >
+              Batal
+            </Button>
+            <Button type="submit" disabled={loading || !apiKey.trim()} className={`${TAP} gap-2 px-4`}>
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" /> : null}
+              {loading ? 'Menyimpan…' : 'Simpan kunci'}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

@@ -1,10 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { BASE } from '../helpers/auth';
+import { requireDeployedTarget } from '../helpers/env';
 
 // Phase 6: Performance Tests
 // Lightweight — no Lighthouse, just Playwright metrics
+//
+// These budgets describe the shipped bundle. A Vite dev server serves unbundled
+// modules and recompiles on first hit, so running them locally measures the dev
+// server, not the product — skipped there rather than failed.
 
 test.describe('Performance: Page Load', () => {
+  requireDeployedTarget();
+
   test('landing page loads under 3 seconds', async ({ page }) => {
     const start = Date.now();
     await page.goto(BASE, { waitUntil: 'domcontentloaded' });
@@ -37,6 +44,8 @@ test.describe('Performance: Page Load', () => {
 });
 
 test.describe('Performance: Resource Size', () => {
+  requireDeployedTarget();
+
   test('total page weight under 5MB', async ({ page }) => {
     let totalBytes = 0;
     page.on('response', async (response) => {
@@ -80,6 +89,8 @@ test.describe('Performance: Resource Size', () => {
 });
 
 test.describe('Performance: Network Efficiency', () => {
+  requireDeployedTarget();
+
   test('minimal 404 requests', async ({ page }) => {
     const notFound: string[] = [];
     page.on('response', (response) => {

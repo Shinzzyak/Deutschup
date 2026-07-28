@@ -1,209 +1,327 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/authStore';
 import { dbProxy } from '../lib/supabase';
-import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Target, 
-  GraduationCap, 
-  ChevronRight, 
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
+import {
+  ArrowRight,
   ChevronLeft,
-  Sparkles,
+  GraduationCap,
   MessageCircle,
   Briefcase,
-  Plane
+  Plane,
+  Loader2,
 } from 'lucide-react';
 
-type Step = 'welcome' | 'level' | 'goal';
+type Step = 'welcome' | 'goal' | 'ready';
 
-const levels = [
-  { id: 'A1', label: 'A1 — Pemula', desc: 'Baru mulai belajar Jerman', color: 'bg-[#2d8a4e]/10 text-green-700 border-[#2d8a4e]/20' },
-  { id: 'A2', label: 'A2 — Dasar', desc: 'Bisa percakapan sederhana', color: 'bg-primary/5 text-blue-700 border-[#0a0a0a]/20' },
-  { id: 'B1', label: 'B1 — Menengah', desc: 'Bisa percakapan sehari-hari', color: 'bg-yellow-100 text-yellow-700 border-yellow-200' },
-  { id: 'B2', label: 'B2 — Lanjut', desc: 'Bisa diskusi kompleks', color: 'bg-primary/5 text-purple-700 border-[#0a0a0a]/20' },
+/**
+ * Why there is no "what is your level?" question any more.
+ *
+ * The level shown everywhere in the app comes from the server: progressStore
+ * reads `currentLevel` out of get-progress, and the next level only opens when
+ * the checkpoint before it is passed. The client cannot set it, and
+ * `upsert-profile` (api/db-proxy.ts) accepts exactly three fields —
+ * full_name, avatar_url, onboarding_completed. There is no column to write a
+ * level or a goal into.
+ *
+ * So the old question could never have changed anything: whatever you picked,
+ * you were dropped at A1 with lesson a1-1 unlocked. Asking and then ignoring is
+ * worse than not asking, so the question is gone and the honest version of the
+ * answer is printed on the last step instead.
+ *
+ * The goal question stays because the answer is used immediately and visibly:
+ * it decides where the "Mulai dari sini" button sends you, and it is shown —
+ * and editable — on the Profile page afterwards. It is stored in localStorage
+ * under GOAL_STORAGE_KEY; Profile.tsx reads the same key.
+ */
+export const GOAL_STORAGE_KEY = 'deutschup_goal';
+
+export interface LearningGoal {
+  id: string;
+  label: string;
+  desc: string;
+  icon: typeof GraduationCap;
+  /** Where "Mulai dari sini" takes this user. Every path is a real route in App.tsx. */
+  startPath: string;
+  startLabel: string;
+  /** One line explaining why that is the right first stop. */
+  startReason: string;
+}
+
+export const GOALS: LearningGoal[] = [
+  {
+    id: 'exam',
+    label: 'Persiapan ujian',
+    desc: 'Goethe, TestDaF, atau sertifikasi lain',
+    icon: GraduationCap,
+    startPath: '/simulasi',
+    startLabel: 'Simulasi Ujian',
+    startReason: 'Kerjakan satu simulasi dulu supaya kamu tahu bagian mana yang masih goyah.',
+  },
+  {
+    id: 'conversation',
+    label: 'Percakapan',
+    desc: 'Bisa ngobrol dengan orang Jerman',
+    icon: MessageCircle,
+    startPath: '/verbs',
+    startLabel: 'Latihan Kata Kerja',
+    startReason: 'Kata kerja adalah tulang punggung kalimat lisan — kuasai ini dulu, ngobrol jadi jauh lebih lancar.',
+  },
+  {
+    id: 'career',
+    label: 'Karier',
+    desc: 'Untuk pekerjaan atau bisnis',
+    icon: Briefcase,
+    startPath: '/koreksi',
+    startLabel: 'Koreksi Tulisan',
+    startReason: 'Tulis email atau paragraf pendek, lalu biarkan dikoreksi — itu keterampilan yang paling cepat terpakai di kantor.',
+  },
+  {
+    id: 'travel',
+    label: 'Perjalanan',
+    desc: 'Bepergian ke Jerman atau Austria',
+    icon: Plane,
+    startPath: '/vocab',
+    startLabel: 'Latihan Kosakata',
+    startReason: 'Mulai dari kosakata harian — itu yang paling sering kamu pakai di jalan.',
+  },
 ];
 
-const goals = [
-  { id: 'exam', label: 'Persiapan Ujian', desc: 'Goethe, TestDaF, atau sertifikasi lainnya', icon: GraduationCap },
-  { id: 'conversation', label: 'Percakapan', desc: 'Bisa ngobrol dengan orang Jerman', icon: MessageCircle },
-  { id: 'career', label: 'Karir', desc: 'Untuk pekerjaan atau bisnis', icon: Briefcase },
-  { id: 'travel', label: 'Perjalanan', desc: 'Bepergian ke Jerman atau Austria', icon: Plane },
-];
+/** Reads back the stored goal. Exported so Profile.tsx uses one definition. */
+export function getStoredGoal(): LearningGoal | null {
+  try {
+    const id = localStorage.getItem(GOAL_STORAGE_KEY);
+    return GOALS.find((g) => g.id === id) || null;
+  } catch {
+    return null;
+  }
+}
+
+const STEPS: Step[] = ['welcome', 'goal', 'ready'];
 
 export default function OnboardingFlow({ onComplete }: { onComplete: () => void }) {
   const [step, setStep] = useState<Step>('welcome');
-  const [selectedLevel, setSelectedLevel] = useState<string | null>(null);
-  const [selectedGoal, setSelectedGoal] = useState<string | null>(null);
+  const [goal, setGoal] = useState<LearningGoal | null>(null);
+  const [finishing, setFinishing] = useState(false);
   const { user } = useAuthStore();
-  const [saving, setSaving] = useState(false);
+  const navigate = useNavigate();
+  const reduceMotion = useReducedMotion();
 
-  const handleComplete = async () => {
-    if (selectedLevel) localStorage.setItem('deutschup_level', selectedLevel);
-    if (selectedGoal) localStorage.setItem('deutschup_goal', selectedGoal);
-    
+  /**
+   * Persist, then hand control back to App and go where the user chose.
+   * A failed write is not surfaced: App also records completion in
+   * localStorage, so the flow never repeats on this device either way.
+   */
+  const finish = async (destination: string) => {
+    if (finishing) return;
+    setFinishing(true);
+
+    try {
+      localStorage.setItem(GOAL_STORAGE_KEY, goal?.id || '');
+    } catch {
+      // Private-mode storage. The goal is a convenience, not a requirement.
+    }
+
     if (user) {
-      setSaving(true);
       try {
-        await dbProxy('upsert-profile', { 
-          userId: user.id, 
-          onboarding_completed: true,
-          // We could save selectedLevel/Goal here too if added to backend schema, but flag is enough for now
-        });
+        await dbProxy('upsert-profile', { userId: user.id, onboarding_completed: true });
       } catch (e) {
-        console.error('Failed saving onboarding state:', e);
-      } finally {
-        setSaving(false);
+        console.error('[ONBOARDING] Failed to store completion flag:', e);
       }
     }
+
     onComplete();
+    navigate(destination);
+  };
+
+  // One shared transition for every step. Reduced motion keeps the crossfade
+  // but drops the horizontal travel.
+  const slide = {
+    initial: { opacity: 0, x: reduceMotion ? 0 : 40 },
+    animate: { opacity: 1, x: 0 },
+    exit: { opacity: 0, x: reduceMotion ? 0 : -40 },
+    transition: { duration: reduceMotion ? 0.15 : 0.3 },
   };
 
   return (
-    <div className="min-h-screen bg-[#f5f0eb] flex items-center justify-center p-4">
-      <div className="w-full max-w-lg">
+    <div className="flex min-h-screen items-center justify-center bg-brand-cream px-4 py-12">
+      <div className="w-full max-w-xl">
         <AnimatePresence mode="wait">
           {step === 'welcome' && (
-            <motion.div
-              key="welcome"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center"
-            >
-              <div className="w-20 h-20 bg-[#c8956c] flex items-center justify-center mx-auto mb-6">
-                <Sparkles className="w-10 h-10 text-primary-foreground" />
+            <motion.div key="welcome" {...slide}>
+              <div className="mb-8 flex items-center gap-3">
+                <div className="h-px w-12 bg-brand-rust" />
+                <span className="text-xs font-bold tracking-[0.2em] text-brand-rust uppercase">
+                  Selamat Datang
+                </span>
               </div>
-              <h1 className="text-3xl font-serif font-bold text-[#0a0a0a] mb-3">
-                Selamat Datang di Deutschup! 🇩🇪
-              </h1>
-              <p className="text-lg text-[#0a0a0a]/60 mb-8">
-                Pilih level dan tujuan belajarmu.
-              </p>
-              <button
-                onClick={() => setStep('level')}
-                className="bg-primary px-8 py-3.5 font-semibold text-lg hover:bg-primary/90 transition-all flex items-center gap-2 mx-auto text-primary-foreground"
-              >
-                Mulai <ChevronRight className="w-5 h-5" />
-              </button>
-            </motion.div>
-          )}
 
-          {step === 'level' && (
-            <motion.div
-              key="level"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-            >
-              <button
-                onClick={() => setStep('welcome')}
-                className="text-[#0a0a0a]/50 hover:text-[#0a0a0a]/70 flex items-center gap-1 mb-6 text-sm"
-              >
-                <ChevronLeft className="w-4 h-4" /> Kembali
-              </button>
-              <h2 className="text-2xl font-serif font-bold text-[#0a0a0a] mb-2">
-                Level bahasa Jerman kamu? 🎯
-              </h2>
-              <p className="text-[#0a0a0a]/60 mb-6">
-                Pilih levelmu saat ini.
+              <h1 className="font-serif text-4xl leading-[1.05] tracking-tight text-brand-ink sm:text-5xl">
+                Mari mulai belajar
+                <br />
+                <span className="text-brand-rust italic">bahasa Jerman.</span>
+              </h1>
+
+              <p className="mt-6 text-lg leading-relaxed font-light text-ink-muted">
+                Satu pertanyaan saja, lalu kami antarkan kamu ke latihan yang paling
+                cocok. Kurang dari setengah menit.
               </p>
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                {levels.map((level) => (
-                  <button
-                    key={level.id}
-                    onClick={() => setSelectedLevel(level.id)}
-                    className={`p-4  border-2 text-left transition-all ${
-                      selectedLevel === level.id
-                        ? 'border-[#c8956c] bg-[#f5f0eb] '
-                        : 'border-[#0a0a0a]/10 hover:border-[#0a0a0a]/30 bg-[#f5f0eb]'
-                    }`}
-                  >
-                    <div className={`inline-block px-2 py-0.5  text-xs font-bold mb-2 ${level.color}`}>
-                      {level.id}
-                    </div>
-                    <div className="font-semibold text-[#0a0a0a] text-sm">{level.label}</div>
-                    <div className="text-xs text-[#0a0a0a]/50 mt-1">{level.desc}</div>
-                  </button>
-                ))}
+
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => setStep('goal')}
+                  className="group inline-flex items-center justify-center gap-2 bg-brand-ink px-8 py-4 text-base font-bold tracking-wide text-brand-cream transition-colors hover:bg-brand-rust"
+                >
+                  Mulai
+                  <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => finish('/dashboard')}
+                  disabled={finishing}
+                  className="text-sm font-bold text-ink-muted underline-offset-4 transition-colors hover:text-brand-ink hover:underline disabled:opacity-60"
+                >
+                  Lewati untuk sekarang
+                </button>
               </div>
-              <button
-                onClick={() => selectedLevel && setStep('goal')}
-                disabled={!selectedLevel}
-                className={`w-full py-3.5 font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
-                  selectedLevel
-                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                    : 'bg-primary/5 text-[#0a0a0a]/40 cursor-not-allowed'
-                }`}
-              >
-                Lanjut <ChevronRight className="w-5 h-5" />
-              </button>
             </motion.div>
           )}
 
           {step === 'goal' && (
-            <motion.div
-              key="goal"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-            >
+            <motion.div key="goal" {...slide}>
               <button
-                onClick={() => setStep('level')}
-                className="text-[#0a0a0a]/50 hover:text-[#0a0a0a]/70 flex items-center gap-1 mb-6 text-sm"
+                type="button"
+                onClick={() => setStep('welcome')}
+                className="mb-8 inline-flex items-center gap-1.5 text-sm font-bold text-ink-muted transition-colors hover:text-brand-ink"
               >
-                <ChevronLeft className="w-4 h-4" /> Kembali
+                <ChevronLeft aria-hidden="true" className="h-4 w-4" /> Kembali
               </button>
-              <h2 className="text-2xl font-serif font-bold text-[#0a0a0a] mb-2">
-                Tujuan belajar kamu? 🚀
+
+              <h2 className="font-serif text-3xl leading-tight tracking-tight text-brand-ink sm:text-4xl">
+                Apa tujuan belajarmu?
               </h2>
-              <p className="text-[#0a0a0a]/60 mb-6">
-                Pilih tujuan belajarmu.
+              <p className="mt-3 text-base text-ink-muted">
+                Pilih satu. Ini menentukan latihan mana yang kami buka lebih dulu — dan
+                bisa kamu ubah kapan saja lewat halaman Profil.
               </p>
-              <div className="grid grid-cols-2 gap-3 mb-8">
-                {goals.map((goal) => (
-                  <button
-                    key={goal.id}
-                    onClick={() => setSelectedGoal(goal.id)}
-                    className={`p-4  border-2 text-left transition-all ${
-                      selectedGoal === goal.id
-                        ? 'border-[#c8956c] bg-[#f5f0eb] '
-                        : 'border-[#0a0a0a]/10 hover:border-[#0a0a0a]/30 bg-[#f5f0eb]'
-                    }`}
-                  >
-                    <goal.icon className={`w-6 h-6 mb-2 ${
-                      selectedGoal === goal.id ? 'text-amber-600' : 'text-[#0a0a0a]/40'
-                    }`} />
-                    <div className="font-semibold text-[#0a0a0a] text-sm">{goal.label}</div>
-                    <div className="text-xs text-[#0a0a0a]/50 mt-1">{goal.desc}</div>
-                  </button>
-                ))}
+
+              {/* gap-px over ink draws the hairline rules between cells */}
+              <div className="mt-8 grid gap-px border border-brand-ink bg-brand-ink sm:grid-cols-2">
+                {GOALS.map((g) => {
+                  const Icon = g.icon;
+                  return (
+                    <button
+                      key={g.id}
+                      type="button"
+                      onClick={() => {
+                        setGoal(g);
+                        setStep('ready');
+                      }}
+                      className="group bg-brand-cream p-5 text-left transition-colors hover:bg-brand-ink"
+                    >
+                      <Icon
+                        aria-hidden="true"
+                        className="mb-3 h-6 w-6 text-brand-rust transition-colors group-hover:text-brand-tan"
+                      />
+                      <div className="font-serif text-lg leading-tight text-brand-ink transition-colors group-hover:text-brand-cream">
+                        {g.label}
+                      </div>
+                      <div className="mt-1 text-sm text-ink-subtle transition-colors group-hover:text-cream-muted">
+                        {g.desc}
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
+            </motion.div>
+          )}
+
+          {step === 'ready' && goal && (
+            <motion.div key="ready" {...slide}>
               <button
-                onClick={() => selectedGoal && handleComplete()}
-                disabled={!selectedGoal}
-                className={`w-full py-3.5 font-semibold text-lg transition-all flex items-center justify-center gap-2 ${
-                  selectedGoal
-                    ? 'bg-primary hover:bg-primary/90 text-primary-foreground'
-                    : 'bg-primary/5 text-[#0a0a0a]/40 cursor-not-allowed'
-                }`}
+                type="button"
+                onClick={() => setStep('goal')}
+                className="mb-8 inline-flex items-center gap-1.5 text-sm font-bold text-ink-muted transition-colors hover:text-brand-ink"
               >
-                Selesai <ChevronRight className="w-5 h-5" />
+                <ChevronLeft aria-hidden="true" className="h-4 w-4" /> Ganti tujuan
               </button>
+
+              <div className="mb-6 flex items-center gap-3">
+                <div className="h-px w-12 bg-brand-rust" />
+                <span className="text-xs font-bold tracking-[0.2em] text-brand-rust uppercase">
+                  {goal.label}
+                </span>
+              </div>
+
+              <h2 className="font-serif text-3xl leading-tight tracking-tight text-brand-ink sm:text-4xl">
+                Kami sarankan mulai dari
+                <br />
+                <span className="text-brand-rust italic">{goal.startLabel}.</span>
+              </h2>
+
+              <p className="mt-5 text-base leading-relaxed text-ink-muted">
+                {goal.startReason}
+              </p>
+
+              {/* The honest answer to the question we no longer ask. */}
+              <div className="mt-8 border-l-2 border-brand-ink bg-brand-ink/5 p-5">
+                <p className="text-sm leading-relaxed text-ink-muted">
+                  Materi selalu dimulai dari <span className="font-bold text-brand-ink">A1</span>.
+                  Kalau dasarmu sudah kuat, checkpoint tiap unit bisa kamu lewati cepat dan
+                  level berikutnya langsung terbuka — jadi kamu tidak akan tertahan lama.
+                </p>
+              </div>
+
+              <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center">
+                <button
+                  type="button"
+                  onClick={() => finish(goal.startPath)}
+                  disabled={finishing}
+                  className="group inline-flex items-center justify-center gap-2 bg-brand-ink px-8 py-4 text-base font-bold tracking-wide text-brand-cream transition-colors hover:bg-brand-rust disabled:opacity-70"
+                >
+                  {finishing ? (
+                    <Loader2 aria-hidden="true" className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <>
+                      Mulai dari sini
+                      <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    </>
+                  )}
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => finish('/curriculum')}
+                  disabled={finishing}
+                  className="text-sm font-bold text-ink-muted underline-offset-4 transition-colors hover:text-brand-ink hover:underline disabled:opacity-60"
+                >
+                  Lihat semua materi dulu
+                </button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Progress dots */}
-        <div className="flex justify-center gap-2 mt-8">
-          {['welcome', 'level', 'goal'].map((s, i) => (
-            <div
-              key={s}
-              className={`w-2 h-2 transition-all ${
-                s === step ? 'bg-primary w-6' : 
-                ['welcome', 'level', 'goal'].indexOf(step) > i ? 'bg-[#c8956c]/80' : 'bg-primary/20'
-              }`}
-            />
-          ))}
+        {/* Progress rules — sharp bars, not dots */}
+        <div className="mt-14 flex items-center gap-2" aria-hidden="true">
+          {STEPS.map((s, i) => {
+            const current = STEPS.indexOf(step);
+            return (
+              <div
+                key={s}
+                className={`h-0.5 flex-1 transition-colors ${
+                  i < current ? 'bg-brand-rust' : i === current ? 'bg-brand-ink' : 'bg-brand-ink/15'
+                }`}
+              />
+            );
+          })}
         </div>
+        <p className="mt-3 text-xs tracking-[0.15em] text-ink-subtle uppercase">
+          Langkah {STEPS.indexOf(step) + 1} dari {STEPS.length}
+        </p>
       </div>
     </div>
   );

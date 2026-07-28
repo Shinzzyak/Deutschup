@@ -47,6 +47,11 @@ function hasCompletedOnboarding(): boolean {
   return localStorage.getItem('deutschup_onboarding_complete') === 'true';
 }
 
+/* The three route-level spinners below used text-slate-400 (#90a1b9), which on
+   the app's white `bg-background` measures 2.63:1 — under the 3:1 floor for a
+   graphic that carries meaning. brand-rust is 8.89:1 on the same surface and is
+   the accent this app already uses for progress and loading states. */
+
 function AuthWrapper({ children }: { children: React.ReactNode }) {
   const { user, loading, profileData } = useAuthStore();
   console.log('[AUTH_WRAPPER] render:', { hasUser: !!user, loading, hasProfile: !!profileData?.full_name });
@@ -54,9 +59,31 @@ function AuthWrapper({ children }: { children: React.ReactNode }) {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="w-8 h-8 animate-spin text-slate-400" />
+        <Loader2 className="w-8 h-8 animate-spin text-brand-rust" />
       </div>
     );
+  }
+
+  return <>{children}</>;
+}
+
+function RequireAdmin({ children }: { children: React.ReactNode }) {
+  const { profileData, profileLoaded } = useAuthStore();
+
+  // Wait for the profile before judging the role — on a deep link/refresh the
+  // store still holds an empty profileData when this first renders.
+  if (!profileLoaded) {
+    return (
+      <div className="flex flex-col items-center justify-center py-20 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-brand-rust" />
+        <p className="text-sm text-muted-foreground">Memeriksa hak akses admin...</p>
+        <Link to="/" className="text-sm underline text-muted-foreground">Kembali ke beranda</Link>
+      </div>
+    );
+  }
+
+  if (profileData?.role !== 'admin') {
+    return <Navigate to="/" replace />;
   }
 
   return <>{children}</>;
@@ -141,10 +168,10 @@ function AnimatedRoutes() {
         <Route path="/exam" element={<PageWrapper><GoetheExam /></PageWrapper>} />
         <Route path="/pricing" element={<PageWrapper><Pricing /></PageWrapper>} />
         <Route path="/profile" element={<PageWrapper><Profile /></PageWrapper>} />
-        <Route path="/admin" element={<PageWrapper><Admin /></PageWrapper>} />
-        <Route path="/admin/ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
-        <Route path="/admin-ai" element={<PageWrapper><AdminAI /></PageWrapper>} />
-        <Route path="/admin/canary" element={<PageWrapper><CanaryDashboard /></PageWrapper>} />
+        <Route path="/admin" element={<PageWrapper><RequireAdmin><Admin /></RequireAdmin></PageWrapper>} />
+        <Route path="/admin/ai" element={<PageWrapper><RequireAdmin><AdminAI /></RequireAdmin></PageWrapper>} />
+        <Route path="/admin-ai" element={<PageWrapper><RequireAdmin><AdminAI /></RequireAdmin></PageWrapper>} />
+        <Route path="/admin/canary" element={<PageWrapper><RequireAdmin><CanaryDashboard /></RequireAdmin></PageWrapper>} />
         <Route path="/clerk-test" element={<PageWrapper><ClerkTest /></PageWrapper>} />
         <Route path="/debug-auth" element={<PageWrapper><DebugAuth /></PageWrapper>} />
         <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
@@ -155,7 +182,7 @@ function AnimatedRoutes() {
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
   return (
-    <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-slate-400" /></div>}>
+    <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-brand-rust" /></div>}>
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
@@ -238,7 +265,11 @@ function ClerkAppContent() {
   if (!clerkLoaded || (isSignedIn && !user)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
+        {/* border-amber-500 (#fe9a00) is 2.13:1 on the white bg-background — under
+            the 3:1 floor, and this is the first thing a signed-out visitor sees
+            while Clerk boots. brand-rust is 8.89:1. Square corner to match the
+            rest of the brand; the spin still reads as motion. */}
+        <div className="animate-spin h-8 w-8 border-b-2 border-brand-rust" role="status" aria-label="Memuat"></div>
       </div>
     );
   }

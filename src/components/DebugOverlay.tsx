@@ -5,12 +5,18 @@ import { getDebugLogs, clearDebugLogs, type DebugEntry } from '../stores/debugSt
 import { useAuthStore } from '../stores/authStore';
 
 const TYPE_COLORS: Record<string, string> = {
-  'window.error': '#ef4444',
-  'unhandledrejection': '#ef4444',
-  'render_error': '#ef4444',
-  'auth': '#3b82f6',
-  'route': '#22c55e',
-  'app_start': '#a855f7',
+  /* Light-native. These are printed as text on a white card, so they are
+     measured against #ffffff, not against the dark panel this map was written
+     for: #ef4444 3.76:1, #3b82f6 3.68:1, #22c55e 2.28:1, #a855f7 3.96:1 — all
+     under AA. The replacements are 6.5–8.9:1 and reuse the same tone ramp as
+     the admin surfaces. The type name is printed next to the dot, so colour
+     never carries the category on its own. */
+  'window.error': '#8b2500',
+  'unhandledrejection': '#8b2500',
+  'render_error': '#8b2500',
+  'auth': '#1e40af',
+  'route': '#1a6b3d',
+  'app_start': '#6d28d9',
 };
 
 function timeAgo(ts: string) {
@@ -74,7 +80,7 @@ export default function DebugOverlay() {
       >
         <Bug className="w-3.5 h-3.5" />
         {errorCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-red-600 text-white text-[8px] font-bold flex items-center justify-center rounded-full">
+          <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-brand-rust text-brand-cream text-[8px] font-bold flex items-center justify-center">
             {errorCount}
           </span>
         )}
@@ -106,14 +112,14 @@ export default function DebugOverlay() {
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-border shrink-0">
               <div className="flex items-center gap-2">
-                <Bug className="w-4 h-4 text-yellow-400" />
+                <Bug className="w-4 h-4 text-[#7a5200]" />
                 <span className="text-sm font-bold text-foreground">DEBUG</span>
                 <span className="text-[10px] text-muted-foreground">{logs.length} entries</span>
               </div>
               <div className="flex items-center gap-1">
                 <button
                   onClick={() => { clearDebugLogs(); setLogs([]); }}
-                  className="p-1.5 text-muted-foreground hover:text-red-500 transition-colors rounded hover:bg-muted"
+                  className="p-1.5 text-muted-foreground hover:text-brand-rust transition-colors rounded hover:bg-muted"
                   aria-label="Clear debug logs"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -155,10 +161,10 @@ export default function DebugOverlay() {
                     <div className="flex items-center gap-1.5">
                       <span
                         className="w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ background: TYPE_COLORS[e.type] || '#6b7280' }}
+                        style={{ background: TYPE_COLORS[e.type] || '#5c5956' }}
                       />
                       <span className="text-muted-foreground">{timeAgo(e.timestamp)}</span>
-                      <span className="font-bold" style={{ color: TYPE_COLORS[e.type] || '#9ca3af' }}>
+                      <span className="font-bold" style={{ color: TYPE_COLORS[e.type] || '#5c5956' }}>
                         {e.type}
                       </span>
                     </div>

@@ -50,7 +50,7 @@ describe('curriculumOverview', () => {
     const nextLesson = overview.levels.A1.units.find((u) => u.id === 'a1-2');
     const lockedSameLevel = overview.levels.A1.units.find((u) => u.id === 'a1-3');
     const checkpoint = overview.levels.A1.units.find((u) => u.id === 'a1-checkpoint-1');
-    const missingRuntimeCheckpoint = overview.levels.A1.units.find((u) => u.id === 'a1-checkpoint-4');
+    const levelClosingCheckpoint = overview.levels.A1.units.find((u) => u.id === 'a1-checkpoint-4');
 
     expect(overview.levels.A1.completedCount).toBe(1);
     expect(completed?.href).toBe('/lesson/a1-1');
@@ -58,8 +58,11 @@ describe('curriculumOverview', () => {
     expect(checkpoint?.href).toBe('/checkpoint/a1-checkpoint-1');
     expect(lockedSameLevel?.href).toBeNull();
     expect(lockedSameLevel?.status).toBe('locked');
-    expect(missingRuntimeCheckpoint?.routeAvailable).toBe(false);
-    expect(missingRuntimeCheckpoint?.href).toBeNull();
+    // The gate to A2 has runtime data now; it is locked only because the
+    // learner has not reached it, not because it can never be opened.
+    expect(levelClosingCheckpoint?.routeAvailable).toBe(true);
+    expect(levelClosingCheckpoint?.href).toBeNull();
+    expect(levelClosingCheckpoint?.status).toBe('locked');
     expect(overview.nextUnit?.id).toBe('a1-2');
   });
 
@@ -88,9 +91,35 @@ describe('curriculumOverview', () => {
       availableCheckpointIds,
     });
 
-    expect(overview.availableCheckpointCount).toBe(12);
-    expect(overview.unavailableCheckpointCount).toBe(4);
-    expect(overview.levels.A1.routeReadyCount).toBe(29);
-    expect(overview.levels.A1.pendingDataCount).toBe(1);
+    expect(overview.availableCheckpointCount).toBe(16);
+    expect(overview.unavailableCheckpointCount).toBe(0);
+    expect(overview.levels.A1.routeReadyCount).toBe(30);
+    expect(overview.levels.A1.pendingDataCount).toBe(0);
+    expect(overview.levels.A1.countableCount).toBe(30);
+  });
+
+  it('keeps unreleased units out of progression so a level can still reach 100%', () => {
+    const units = [
+      { id: 'a1-1', level: 'A1' as const },
+      { id: 'a1-2', level: 'A1' as const },
+      { id: 'a1-checkpoint-1' },
+    ];
+    const overview = buildCurriculumOverview(units, {
+      currentLevel: 'A1',
+      completedLessons: ['a1-1', 'a1-2'],
+      unlockedLessons: ['a1-1', 'a1-2', 'a1-checkpoint-1'],
+      availableCheckpointIds: [], // checkpoint has no runtime data — unreleased
+    });
+
+    const unreleased = overview.levels.A1.units.find((u) => u.id === 'a1-checkpoint-1');
+
+    expect(unreleased?.routeAvailable).toBe(false);
+    expect(unreleased?.href).toBeNull();
+    expect(overview.levels.A1.countableCount).toBe(2);
+    expect(overview.levels.A1.progressPercent).toBe(100);
+    expect(overview.countableUnits).toBe(2);
+    expect(overview.progressPercent).toBe(100);
+    // And it is never offered as the next step.
+    expect(overview.nextUnit).toBeNull();
   });
 });

@@ -2,24 +2,42 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { useAuthStore } from '../stores/authStore';
 import { getAuthHeaders } from '../lib/auth-headers';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
-import { 
-  Users, 
-  Activity, 
-  Settings, 
-  ShieldCheck, 
-  RefreshCw, 
+import {
+  AdminFeedbackStack,
+  AdminNotice,
+  BTN_QUIET,
+  ConfirmDialog,
+  INPUT,
+  PANEL,
+  SectionHeading,
+  StatusChip,
+  TAP,
+  TONE,
+  networkMessage,
+  readError,
+  useAdminFeedback,
+  useConfirm,
+  type FeedbackApi,
+  type Tone,
+} from '../components/admin/AdminUI';
+import {
+  Users,
+  Activity,
+  Settings,
+  ShieldCheck,
+  RefreshCw,
   Loader2,
   AlertTriangle,
   CheckCircle2,
-  TrendingUp,
   Zap,
   Database,
   Globe,
   Webhook,
+  CreditCard,
   ExternalLink,
-  ChevronDown
+  ChevronDown,
+  Search,
 } from 'lucide-react';
 
 interface AdminStats {
@@ -42,11 +60,16 @@ interface SystemHealth {
 
 export default function Admin() {
   const navigate = useNavigate();
-  const { user, profileData } = useAuthStore();
+  const { user } = useAuthStore();
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [health, setHealth] = useState<SystemHealth | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  const feedback = useAdminFeedback();
+  const confirm = useConfirm();
+  const { notify } = feedback;
 
   const getAdminHeaders = async (): Promise<Record<string, string>> => {
     if (!user) return {};
@@ -61,10 +84,32 @@ export default function Admin() {
         fetch('/api/admin?action=stats', { headers }),
         fetch('/api/admin?action=system-health', { headers }),
       ]);
-      if (statsRes.ok) setStats(await statsRes.json());
-      if (healthRes.ok) setHealth(await healthRes.json());
+
+      // Report partial failures instead of leaving stale numbers on screen
+      // pretending to be fresh.
+      const problems: string[] = [];
+      if (statsRes.ok) {
+        setStats(await statsRes.json());
+      } else {
+        problems.push(await readError(statsRes, 'Ringkasan angka gagal dimuat.'));
+      }
+      if (healthRes.ok) {
+        setHealth(await healthRes.json());
+      } else {
+        problems.push(await readError(healthRes, 'Status layanan gagal dimuat.'));
+      }
+
+      if (problems.length > 0) {
+        setLoadError(problems.join(' '));
+        if (silent) notify('bad', 'Sebagian data gagal dimuat', problems.join(' '));
+      } else {
+        setLoadError(null);
+        if (silent) notify('ok', 'Data diperbarui');
+      }
     } catch (e) {
       console.error('Admin fetch error:', e);
+      setLoadError(networkMessage());
+      if (silent) notify('bad', 'Gagal memuat ulang', networkMessage());
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -83,164 +128,199 @@ export default function Admin() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[60vh]">
-        <Loader2 className="w-8 h-8 animate-spin text-[#F2C94C]" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3">
+        <Loader2 className="w-7 h-7 animate-spin text-brand-rust" aria-hidden="true" />
+        <p className="text-sm text-ink-muted">Memuat panel admin…</p>
       </div>
     );
   }
 
+  const healthy = health?.status === 'ok';
+
   return (
-    <div className="max-w-7xl mx-auto py-12 px-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-        <div>
-          <div className="flex items-center gap-3 mb-2">
-            <div className="p-2 bg-[#F2C94C]/10 ">
-              <ShieldCheck className="w-6 h-6 text-[#F2C94C]" />
+    <div className="max-w-6xl mx-auto py-10 px-4 sm:px-6">
+      {/* ── Header ─────────────────────────────────────────────────── */}
+      <header className="mb-8">
+        <div className="h-px w-16 bg-brand-rust mb-4" aria-hidden="true" />
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <ShieldCheck className="w-5 h-5 text-brand-rust shrink-0" aria-hidden="true" />
+              <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-ink-subtle">
+                Ruang kendali
+              </span>
             </div>
-            <h1 className="text-4xl font-black tracking-tight text-foreground">
-              Admin <span className="text-[#F2C94C]">Panel</span>
+            <h1 className="font-heading text-4xl sm:text-5xl leading-none text-brand-ink">
+              Panel Admin
             </h1>
+            <p className="text-sm text-ink-muted mt-2 max-w-prose">
+              Pantau kesehatan sistem, kelola pengguna, dan atur mesin AI DeutschUp.
+            </p>
           </div>
-          <p className="text-muted-foreground ml-14">Kelola sistem, pengguna, dan konfigurasi DeutschUp.</p>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className={`${BTN_QUIET} ${TAP} gap-2 px-4 shrink-0`}
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} aria-hidden="true" />
+            {refreshing ? 'Memuat…' : 'Muat ulang'}
+          </Button>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleRefresh}
-          disabled={refreshing}
-          className=" border-border hover:bg-muted gap-2"
-        >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? 'animate-spin' : ''}`} />
-          Refresh Data
-        </Button>
-      </div>
+      </header>
 
-      {/* System Health Banner */}
+      {loadError && (
+        <AdminNotice tone="bad" title="Sebagian data belum tampil" className="mb-6">
+          {loadError}
+        </AdminNotice>
+      )}
+
+      {/* ── System banner ──────────────────────────────────────────── */}
       {health && (
-        <div className={`mb-8 p-4  border flex items-center gap-3 ${
-          health.status === 'ok' 
-            ? 'bg-emerald-500/5 border-emerald-500/20 text-emerald-700 text-emerald-400' 
-            : 'bg-destructive/5 border-destructive/20 text-destructive'
-        }`}>
-          {health.status === 'ok' ? <CheckCircle2 className="w-5 h-5" /> : <AlertTriangle className="w-5 h-5" />}
-          <span className="text-sm font-medium">
-            System {health.status === 'ok' ? 'Operational' : 'Degraded'} — Version {health.version.slice(0, 7)}
+        <div
+          className={`mb-8 p-4 flex flex-wrap items-center gap-x-3 gap-y-1 ${
+            healthy ? TONE.ok.surface : TONE.bad.surface
+          }`}
+        >
+          {healthy ? (
+            <CheckCircle2 className={`w-5 h-5 shrink-0 ${TONE.ok.text}`} aria-hidden="true" />
+          ) : (
+            <AlertTriangle className={`w-5 h-5 shrink-0 ${TONE.bad.text}`} aria-hidden="true" />
+          )}
+          <span className={`text-sm font-semibold ${healthy ? TONE.ok.text : TONE.bad.text}`}>
+            {healthy ? 'Semua sistem berjalan normal' : 'Ada layanan yang bermasalah'}
           </span>
-          <span className="ml-auto text-xs opacity-70">{new Date(health.timestamp).toLocaleString('id-ID')}</span>
+          {health.version && (
+            <span className="text-xs text-ink-muted font-mono">
+              versi {String(health.version).slice(0, 7)}
+            </span>
+          )}
+          <span className="text-xs text-ink-muted sm:ml-auto">
+            Diperiksa {formatWhen(health.timestamp)}
+          </span>
         </div>
       )}
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
-        <StatCard 
-          icon={Users} 
-          label="Total Users" 
-          value={stats?.users.total || 0} 
-          accent="text-blue-500"
-          bg="bg-blue-500/10"
-        />
-        <StatCard 
-          icon={Zap} 
-          label="Pro Members" 
-          value={stats?.users.pro || 0} 
-          accent="text-[#F2C94C]"
-          bg="bg-[#F2C94C]/10"
-        />
-        <StatCard 
-          icon={Activity} 
-          label="AI Requests Hari Ini" 
-          value={stats?.today.requests || 0} 
-          accent="text-emerald-500"
-          bg="bg-emerald-500/10"
-        />
-        <StatCard 
-          icon={AlertTriangle} 
-          label="Errors Hari Ini" 
-          value={stats?.today.errors || 0} 
-          accent="text-rose-500"
-          bg="bg-rose-500/10"
-        />
-      </div>
+      {/* ── Numbers ────────────────────────────────────────────────── */}
+      <section className="mb-10">
+        <SectionHeading icon={Activity} hint="Angka hari ini, dihitung ulang setiap kali dimuat.">
+          Ringkasan
+        </SectionHeading>
+        {/* gap-px over an inked backdrop = hairline rules between cells */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-brand-ink/12 border border-brand-ink/12">
+          <StatCard icon={Users} label="Total pengguna" value={stats?.users.total ?? 0} tone="idle" />
+          <StatCard icon={Zap} label="Anggota Pro" value={stats?.users.pro ?? 0} tone="info" />
+          <StatCard
+            icon={Activity}
+            label="Permintaan AI hari ini"
+            value={stats?.today.requests ?? 0}
+            tone="ok"
+          />
+          <StatCard
+            icon={AlertTriangle}
+            label="Kegagalan hari ini"
+            value={stats?.today.errors ?? 0}
+            tone={(stats?.today.errors ?? 0) > 0 ? 'bad' : 'idle'}
+          />
+        </div>
+      </section>
 
-      {/* Service Status */}
+      {/* ── Services ───────────────────────────────────────────────── */}
       {health && (
-        <div className="mb-10">
-          <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-            <Globe className="w-5 h-5 text-muted-foreground" />
+        <section className="mb-10">
+          <SectionHeading icon={Globe} hint="Yang bertanda mati berarti kuncinya belum dipasang di server.">
             Status Layanan
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
-            <ServicePill icon={Database} label="Database" ok={health.config.databaseConfigured} />
-            <ServicePill icon={Zap} label="AI Engine" ok={health.config.aiConfigured} />
-            <ServicePill icon={TrendingUp} label="Payment" ok={health.config.paymentConfigured} />
-            <ServicePill icon={Webhook} label="Webhooks" ok={health.config.webhookConfigured} />
+          </SectionHeading>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-brand-ink/12 border border-brand-ink/12">
+            <ServicePill icon={Database} label="Basis data" ok={health.config.databaseConfigured} />
+            <ServicePill icon={Zap} label="Mesin AI" ok={health.config.aiConfigured} />
+            <ServicePill icon={CreditCard} label="Pembayaran" ok={health.config.paymentConfigured} />
+            <ServicePill icon={Webhook} label="Notifikasi" ok={health.config.webhookConfigured} />
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Users Table */}
-      <UsersSection getAdminHeaders={getAdminHeaders} />
+      {/* ── Users ──────────────────────────────────────────────────── */}
+      <UsersSection getAdminHeaders={getAdminHeaders} feedback={feedback} confirm={confirm} />
 
-      {/* Quick Actions */}
-      <div className="mt-10">
-        <h2 className="text-lg font-bold text-foreground mb-4 flex items-center gap-2">
-          <Settings className="w-5 h-5 text-muted-foreground" />
+      {/* ── Configuration ──────────────────────────────────────────── */}
+      <section className="mt-10">
+        <SectionHeading icon={Settings} hint="Provider, kunci API, dan pemilihan model ada di halaman terpisah.">
           Konfigurasi Sistem
-        </h2>
-        <Button
-          onClick={() => navigate('/admin/ai')}
-          className=" px-6 py-5 font-bold   gap-2"
-        >
-          <Zap className="w-4 h-4" />
-          Kelola AI Provider & Model
-          <ExternalLink className="w-3.5 h-3.5 opacity-60" />
-        </Button>
-        <p className="text-xs text-muted-foreground mt-2 ml-1">Tambah provider, API key, dan model di satu tempat.</p>
-      </div>
+        </SectionHeading>
+        <div className={`${PANEL} p-5`}>
+          <Button onClick={() => navigate('/admin/ai')} className={`${TAP} gap-2 px-5`}>
+            <Zap className="w-4 h-4" aria-hidden="true" />
+            Kelola Provider &amp; Model AI
+            <ExternalLink className="w-3.5 h-3.5 opacity-70" aria-hidden="true" />
+          </Button>
+          <p className="text-sm text-ink-muted mt-3">
+            Tambah provider, simpan kunci API, dan tentukan model utama beserta cadangannya.
+          </p>
+        </div>
+      </section>
 
-      {/* Spacer */}
       <div className="h-16" />
+
+      <AdminFeedbackStack feedback={feedback} />
+      <ConfirmDialog control={confirm} />
     </div>
   );
 }
 
-function StatCard({ icon: Icon, label, value, accent, bg }: { 
-  icon: any; label: string; value: number; accent: string; bg: string; 
+function formatWhen(iso: string): string {
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return 'baru saja';
+  return d.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+}
+
+function StatCard({
+  icon: Icon,
+  label,
+  value,
+  tone,
+}: {
+  icon: typeof Users;
+  label: string;
+  value: number;
+  tone: Tone;
 }) {
   return (
-    <Card className=" border-border bg-card hover: transition-shadow">
-      <CardContent className="p-5">
-        <div className="flex items-center justify-between mb-3">
-          <div className={`p-2  ${bg}`}>
-            <Icon className={`w-5 h-5 ${accent}`} />
-          </div>
-          <TrendingUp className="w-4 h-4 text-muted-foreground/30" />
-        </div>
-        <p className="text-3xl font-black text-foreground">{value}</p>
-        <p className="text-xs text-muted-foreground font-medium mt-1">{label}</p>
-      </CardContent>
-    </Card>
-  );
-}
-
-function ServicePill({ icon: Icon, label, ok }: { icon: any; label: string; ok: boolean }) {
-  return (
-    <div className={`flex items-center gap-3 px-4 py-3  border transition-colors ${
-      ok 
-        ? 'bg-emerald-500/5 border-emerald-500/20' 
-        : 'bg-rose-500/5 border-rose-500/20'
-    }`}>
-      <Icon className={`w-4 h-4 ${ok ? 'text-emerald-500' : 'text-rose-500'}`} />
-      <span className="text-sm font-medium text-foreground">{label}</span>
-      <span className={`ml-auto text-xs font-bold ${ok ? 'text-emerald-600' : 'text-rose-600'}`}>
-        {ok ? 'ON' : 'OFF'}
-      </span>
+    <div className="bg-white p-4 sm:p-5">
+      <Icon className={`w-4 h-4 mb-3 ${TONE[tone].text}`} aria-hidden="true" />
+      <p className="font-heading text-3xl sm:text-4xl leading-none text-brand-ink tabular-nums">
+        {value.toLocaleString('id-ID')}
+      </p>
+      <p className="text-xs text-ink-muted mt-2 leading-snug">{label}</p>
     </div>
   );
 }
 
-// ==================== CHUNK 2: Users Table + Config Panel ====================
+function ServicePill({
+  icon: Icon,
+  label,
+  ok,
+}: {
+  icon: typeof Database;
+  label: string;
+  ok: boolean;
+}) {
+  return (
+    <div className="bg-white flex items-center gap-3 px-4 py-3">
+      <Icon
+        className={`w-4 h-4 shrink-0 ${ok ? TONE.ok.text : TONE.bad.text}`}
+        aria-hidden="true"
+      />
+      <span className="text-sm font-medium text-brand-ink min-w-0 truncate">{label}</span>
+      <StatusChip tone={ok ? 'ok' : 'bad'} className="ml-auto">
+        {ok ? 'Aktif' : 'Mati'}
+      </StatusChip>
+    </div>
+  );
+}
+
+// ==================== Users ====================
 
 interface UserProfile {
   id: string;
@@ -252,13 +332,23 @@ interface UserProfile {
   updated_at?: string;
 }
 
-function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Record<string, string>> }) {
+function UsersSection({
+  getAdminHeaders,
+  feedback,
+  confirm,
+}: {
+  getAdminHeaders: () => Promise<Record<string, string>>;
+  feedback: FeedbackApi;
+  confirm: ReturnType<typeof useConfirm>;
+}) {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState('');
   const [updating, setUpdating] = useState<string | null>(null);
   const [expanded, setExpanded] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [listError, setListError] = useState<string | null>(null);
+  const { notify } = feedback;
 
   useEffect(() => {
     if (expanded && !loaded) {
@@ -269,127 +359,238 @@ function UsersSection({ getAdminHeaders }: { getAdminHeaders: () => Promise<Reco
 
   const fetchUsers = async () => {
     setLoading(true);
+    setListError(null);
     try {
       const headers = await getAdminHeaders();
       const res = await fetch('/api/admin?action=users', { headers });
-      if (res.ok) setUsers(await res.json());
-    } catch (e) { console.error('Fetch users error:', e); }
-    finally { setLoading(false); }
+      if (res.ok) {
+        setUsers(await res.json());
+      } else {
+        setListError(await readError(res, 'Daftar pengguna gagal dimuat.'));
+      }
+    } catch (e) {
+      console.error('Fetch users error:', e);
+      setListError(networkMessage());
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleTogglePro = async (userId: string) => {
-    setUpdating(userId);
+  const applyTogglePro = async (u: UserProfile) => {
+    const name = displayName(u);
+    setUpdating(u.id);
     try {
       const headers = await getAdminHeaders();
       const res = await fetch('/api/admin?action=toggle-pro', {
-        method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId }),
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: u.id }),
       });
-      if (res.ok) {
-        const result = await res.json();
-        setUsers(prev => prev.map(u => u.id === userId ? { ...u, subscription: result.subscription } : u));
+      if (!res.ok) {
+        notify('bad', 'Status langganan tidak berubah', await readError(res, 'Perubahan ditolak server.'));
+        return;
       }
-    } catch (e) { console.error('Toggle pro error:', e); }
-    finally { setUpdating(null); }
+      const result = await res.json();
+      setUsers(prev =>
+        prev.map(x => (x.id === u.id ? { ...x, subscription: result.subscription } : x))
+      );
+      notify(
+        'ok',
+        result.subscription === 'pro' ? `${name} sekarang Pro` : `${name} kembali ke Free`
+      );
+    } catch (e) {
+      console.error('Toggle pro error:', e);
+      notify('bad', 'Status langganan tidak berubah', networkMessage());
+    } finally {
+      setUpdating(null);
+    }
   };
 
-  const handleUpdateRole = async (userId: string, role: string) => {
-    setUpdating(userId);
+  const applyRole = async (u: UserProfile, role: string) => {
+    const name = displayName(u);
+    setUpdating(u.id);
     try {
       const headers = await getAdminHeaders();
       const res = await fetch('/api/admin?action=update-role', {
-        method: 'POST', headers: { ...headers, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, role }),
+        method: 'POST',
+        headers: { ...headers, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: u.id, role }),
       });
-      if (res.ok) setUsers(prev => prev.map(u => u.id === userId ? { ...u, role } : u));
-    } catch (e) { console.error('Update role error:', e); }
-    finally { setUpdating(null); }
+      if (!res.ok) {
+        notify('bad', 'Peran tidak berubah', await readError(res, 'Perubahan peran ditolak server.'));
+        return;
+      }
+      setUsers(prev => prev.map(x => (x.id === u.id ? { ...x, role } : x)));
+      notify(
+        'ok',
+        role === 'admin' ? `${name} kini seorang admin` : `${name} kembali jadi pengguna biasa`
+      );
+    } catch (e) {
+      console.error('Update role error:', e);
+      notify('bad', 'Peran tidak berubah', networkMessage());
+    } finally {
+      setUpdating(null);
+    }
   };
 
-  const filtered = users.filter(u =>
-    (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
-    u.id.toLowerCase().includes(search.toLowerCase())
+  // Role changes hand out (or take away) full control of this panel, so they
+  // always pass through a confirmation first.
+  const requestRoleChange = (u: UserProfile, role: string) => {
+    const name = displayName(u);
+    confirm.ask({
+      title: role === 'admin' ? 'Jadikan admin?' : 'Cabut akses admin?',
+      body:
+        role === 'admin'
+          ? 'Admin bisa membuka panel ini, mengubah kunci API, dan mengatur peran orang lain.'
+          : 'Orang ini akan kehilangan akses ke panel admin beserta seluruh pengaturannya.',
+      target: name,
+      confirmLabel: role === 'admin' ? 'Ya, jadikan admin' : 'Ya, cabut akses',
+      onConfirm: () => applyRole(u, role),
+    });
+  };
+
+  const requestProChange = (u: UserProfile) => {
+    const isPro = u.subscription === 'pro' || u.tier === 'pro';
+    if (!isPro) {
+      applyTogglePro(u);
+      return;
+    }
+    // Downgrading removes something the person paid for — worth a beat.
+    confirm.ask({
+      title: 'Turunkan ke Free?',
+      body: 'Akses fitur Pro akan dicabut segera setelah perubahan ini disimpan.',
+      target: displayName(u),
+      confirmLabel: 'Ya, turunkan',
+      onConfirm: () => applyTogglePro(u),
+    });
+  };
+
+  const filtered = users.filter(
+    u =>
+      (u.full_name || '').toLowerCase().includes(search.toLowerCase()) ||
+      u.id.toLowerCase().includes(search.toLowerCase())
   );
 
   return (
-    <div className="mt-10">
-      {/* Toggle header — click to expand/collapse */}
+    <section className="mt-10">
       <button
         onClick={() => setExpanded(v => !v)}
-        className="w-full flex items-center justify-between px-4 py-3  border border-border bg-card hover:bg-muted/30 transition-colors"
+        aria-expanded={expanded}
+        className={`w-full flex items-center justify-between gap-3 px-4 py-3 ${PANEL} hover:bg-brand-cream transition-colors`}
       >
-        <div className="flex items-center gap-2">
-          <Users className="w-5 h-5 text-muted-foreground" />
-          <span className="text-sm font-bold text-foreground">Pengguna</span>
-          <span className="text-xs text-muted-foreground font-normal">({users.length})</span>
-        </div>
-        <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform ${expanded ? 'rotate-180' : ''}`} />
+        <span className="flex items-center gap-2 min-w-0">
+          <Users className="w-5 h-5 text-brand-rust shrink-0" aria-hidden="true" />
+          <span className="font-heading text-xl text-brand-ink">Pengguna</span>
+          {loaded && <span className="text-xs text-ink-muted">({users.length})</span>}
+        </span>
+        <ChevronDown
+          className={`w-4 h-4 text-ink-muted shrink-0 transition-transform ${expanded ? 'rotate-180' : ''}`}
+          aria-hidden="true"
+        />
       </button>
 
-      {/* Collapsible content */}
       {expanded && (
-        <div className="mt-3">
-          {/* Search bar */}
-          <div className="mb-3">
+        <div className="mt-3 space-y-3">
+          <div className="relative">
+            <Search
+              className="w-4 h-4 text-ink-subtle absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
+              aria-hidden="true"
+            />
             <input
               type="text"
-              placeholder="Cari nama atau ID..."
+              placeholder="Cari nama atau ID…"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              className="w-full pl-3 pr-3 py-2  border border-border bg-background text-xs focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50"
+              aria-label="Cari pengguna"
+              className={`${INPUT} pl-9 pr-3`}
             />
           </div>
 
+          {listError && (
+            <AdminNotice tone="bad" title="Daftar pengguna belum tampil">
+              {listError}{' '}
+              <button onClick={fetchUsers} className="underline font-medium text-[#8b2500]">
+                Coba lagi
+              </button>
+            </AdminNotice>
+          )}
+
           {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+            <div className="flex items-center justify-center gap-2 py-10 text-sm text-ink-muted">
+              <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
+              Memuat pengguna…
             </div>
           ) : filtered.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-6 text-center">Tidak ada pengguna.</p>
+            <p className="text-sm text-ink-muted py-8 text-center">
+              {users.length === 0 ? 'Belum ada pengguna terdaftar.' : 'Tidak ada yang cocok dengan pencarian itu.'}
+            </p>
           ) : (
-            <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
-              {filtered.map(u => {
-                const isPro = u.subscription === 'pro' || u.tier === 'pro';
-                const initial = (u.full_name || u.id).charAt(0).toUpperCase();
-                return (
-                  <div key={u.id} className="flex items-center gap-3 px-4 py-3  border border-border bg-card hover:bg-muted/30 transition-colors">
-                    <div className="w-8 h-8   from-[#F2C94C] to-[#E0B73A] flex items-center justify-center text-xs font-bold text-[#1F2937] shrink-0">
-                      {initial}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <p className="text-sm font-medium text-foreground truncate">{u.full_name || 'Unnamed'}</p>
-                      <p className="text-[10px] text-muted-foreground font-mono">{u.id.slice(0, 8)}…</p>
-                    </div>
-                    <span className={`text-[10px] font-bold px-2 py-0.5  shrink-0 ${
-                      isPro ? 'bg-[#F2C94C]/15 text-[#B8952E]' : 'bg-muted text-muted-foreground'
-                    }`}>
-                      {isPro ? 'Pro' : 'Free'}
-                    </span>
-                    <select
-                      value={u.role || 'user'}
-                      onChange={e => handleUpdateRole(u.id, e.target.value)}
-                      disabled={updating === u.id}
-                      className="text-[10px] font-medium px-2 py-1  border border-border bg-background focus:outline-none focus:ring-2 focus:ring-[#F2C94C]/50 shrink-0"
-                    >
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                    <button
-                      onClick={() => handleTogglePro(u.id)}
-                      disabled={updating === u.id}
-                      className="text-[10px] font-bold px-2.5 py-1  border border-border hover:bg-muted transition-colors disabled:opacity-50 shrink-0"
-                    >
-                      {updating === u.id ? '…' : isPro ? '↓ Free' : '↑ Pro'}
-                    </button>
-                  </div>
-                );
-              })}
+            <div className="max-h-[26rem] overflow-y-auto border border-brand-ink/12">
+              <ul className="divide-y divide-brand-ink/10">
+                {filtered.map(u => {
+                  const isPro = u.subscription === 'pro' || u.tier === 'pro';
+                  const isAdmin = (u.role || 'user') === 'admin';
+                  const busy = updating === u.id;
+                  return (
+                    <li key={u.id} className="bg-white p-3 sm:px-4">
+                      <div className="flex items-start gap-3">
+                        <span
+                          className="w-8 h-8 shrink-0 bg-brand-ink text-brand-cream flex items-center justify-center text-xs font-bold"
+                          aria-hidden="true"
+                        >
+                          {displayName(u).charAt(0).toUpperCase()}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-brand-ink truncate">
+                            {displayName(u)}
+                          </p>
+                          <p className="text-[11px] text-ink-subtle font-mono truncate">{u.id}</p>
+                        </div>
+                        <div className="flex flex-wrap justify-end gap-1.5 shrink-0">
+                          <StatusChip tone={isPro ? 'info' : 'idle'}>
+                            {isPro ? 'Pro' : 'Free'}
+                          </StatusChip>
+                          {isAdmin && <StatusChip tone="warn">Admin</StatusChip>}
+                        </div>
+                      </div>
+
+                      {/* Controls drop to their own row so nothing is squeezed
+                          off-screen on a phone. */}
+                      <div className="flex flex-wrap items-center gap-2 mt-3 pl-11">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={busy}
+                          onClick={() => requestProChange(u)}
+                          className={`${BTN_QUIET} ${TAP} px-4`}
+                        >
+                          {busy ? (
+                            <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                          ) : null}
+                          {isPro ? 'Turunkan ke Free' : 'Naikkan ke Pro'}
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          disabled={busy}
+                          onClick={() => requestRoleChange(u, isAdmin ? 'user' : 'admin')}
+                          className={`${BTN_QUIET} ${TAP} px-4`}
+                        >
+                          {isAdmin ? 'Cabut akses admin' : 'Jadikan admin'}
+                        </Button>
+                      </div>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }
 
-// Admin page only — Users section
+function displayName(u: UserProfile): string {
+  return u.full_name?.trim() || `Tanpa nama · ${u.id.slice(0, 8)}`;
+}

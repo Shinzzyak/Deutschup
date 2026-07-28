@@ -19,11 +19,16 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
 interface ProxyResponse {
   data?: any;
   error?: string;
+  // HTTP status of the proxy response; 0 when the request never reached the server.
+  // Callers use it to tell "not allowed yet" (403) from a real outage (5xx).
+  status?: number;
 }
 
 export async function dbProxy(action: string, params?: Record<string, any>): Promise<ProxyResponse> {
   const base = window.location.origin;
   const query = new URLSearchParams({ action }).toString();
+  // Reads stay on POST unless they were already GET — GET responses can be
+  // cached by intermediaries, and every payload here is per-user.
   const isGet = ['get-profile', 'get-orders'].includes(action);
 
   try {
@@ -40,12 +45,20 @@ export async function dbProxy(action: string, params?: Record<string, any>): Pro
 
     if (!res.ok) {
       const text = await res.text();
-      return { error: text };
+      // Errors come back as { error: "..." }; fall back to the raw body.
+      let message = text;
+      try {
+        const parsed = JSON.parse(text);
+        if (parsed && typeof parsed.error === 'string') message = parsed.error;
+      } catch {
+        // not JSON — keep the raw text
+      }
+      return { error: message || `HTTP ${res.status}`, status: res.status };
     }
-    return { data: await res.json() };
+    return { data: await res.json(), status: res.status };
   } catch (e: any) {
     console.error('[DB-PROXY] fetch error:', e.message);
-    return { error: e.message };
+    return { error: e.message, status: 0 };
   }
 }
 

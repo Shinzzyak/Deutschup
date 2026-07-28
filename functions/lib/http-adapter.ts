@@ -1,29 +1,10 @@
-// Minimal VercelRequest/VercelResponse shim for Cloudflare Pages Functions.
+// Adapts the Node-style (req, res) handlers in api/ to the Fetch API objects
+// used by Cloudflare Pages Functions.
 // ponytail: in-memory only; no streaming/multipart polish until needed.
 
-export type VercelLikeReq = {
-  method?: string;
-  url?: string;
-  headers: Record<string, string | string[] | undefined>;
-  query: Record<string, string | string[]>;
-  body?: any;
-  cookies?: Record<string, string>;
-};
+import type { ApiRequest, ApiResponse } from '../../lib/http-types';
 
-export type VercelLikeRes = {
-  statusCode: number;
-  headers: Record<string, string | number | string[]>;
-  body: string | Uint8Array | null;
-  headersSent: boolean;
-  status: (code: number) => VercelLikeRes;
-  setHeader: (k: string, v: string | number | string[]) => VercelLikeRes;
-  getHeader: (k: string) => string | number | string[] | undefined;
-  json: (data: any) => VercelLikeRes;
-  end: (data?: any) => VercelLikeRes;
-  send: (data?: any) => VercelLikeRes;
-};
-
-export async function requestToVercel(request: Request, pathParams?: string[]): Promise<VercelLikeReq> {
+export async function toApiRequest(request: Request, pathParams?: string[]): Promise<ApiRequest> {
   const url = new URL(request.url);
   const headers: Record<string, string> = {};
   request.headers.forEach((v, k) => {
@@ -44,10 +25,12 @@ export async function requestToVercel(request: Request, pathParams?: string[]): 
     }
   });
 
+  let rawBody = '';
   let body: any = undefined;
   if (request.method !== 'GET' && request.method !== 'HEAD') {
     const ct = headers['content-type'] || '';
     const raw = await request.text();
+    rawBody = raw;
     if (!raw) body = undefined;
     else if (ct.includes('application/json')) {
       try {
@@ -76,17 +59,22 @@ export async function requestToVercel(request: Request, pathParams?: string[]): 
     query,
     body,
     cookies: {},
+    // Replay the already-buffered body for handlers that read the request as a
+    // stream (e.g. the payment callback parser).
+    async *[Symbol.asyncIterator]() {
+      if (rawBody) yield new TextEncoder().encode(rawBody);
+    },
   };
 }
 
-export function createVercelRes(): { res: VercelLikeRes; wait: Promise<Response> } {
+export function createApiResponse(): { res: ApiResponse; wait: Promise<Response> } {
   let resolve!: (r: Response) => void;
   const wait = new Promise<Response>((r) => {
     resolve = r;
   });
   let settled = false;
 
-  const res: VercelLikeRes = {
+  const res: ApiResponse = {
     statusCode: 200,
     headers: {},
     body: null,
@@ -146,13 +134,13 @@ export function createVercelRes(): { res: VercelLikeRes; wait: Promise<Response>
   return { res, wait };
 }
 
-export async function runVercelHandler(
+export async function runApiHandler(
   handler: (req: any, res: any) => any,
   request: Request,
   pathParams?: string[]
 ): Promise<Response> {
-  const req = await requestToVercel(request, pathParams);
-  const { res, wait } = createVercelRes();
+  const req = await toApiRequest(request, pathParams);
+  const { res, wait } = createApiResponse();
   try {
     const out = await handler(req, res);
     // some handlers return res.json(...) which already ends; others return nothing

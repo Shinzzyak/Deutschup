@@ -13,12 +13,13 @@ export default defineConfig({
     build: {
       rollupOptions: {
         output: {
+          // Only list packages that are actually in the dependency graph —
+          // 'dompurify' and 'html2canvas' were named here but are neither in
+          // package.json nor imported anywhere, so they produced empty chunks.
           manualChunks: {
             'react-vendor': ['react', 'react-dom', 'react-router'],
             'supabase': ['@supabase/supabase-js'],
             'ui-vendor': ['lucide-react', 'motion'],
-            'dompurify': ['dompurify'],
-            'html2canvas': ['html2canvas'],
           },
         },
       },

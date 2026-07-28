@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useSearchParams } from 'react-router';
+import { Loader2 } from 'lucide-react';
 import Dashboard from './Dashboard';
 import { useAuthStore } from '../stores/authStore';
 
@@ -19,10 +20,18 @@ export default function DashboardWithPaymentRefresh() {
 
   if (paymentSuccess) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="animate-spin  h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-muted-foreground">Memproses pembayaran...</p>
+      <div className="flex min-h-[60vh] items-center justify-center">
+        <div className="max-w-sm text-center">
+          <div className="mx-auto mb-6 flex h-1.5 w-16" aria-hidden="true">
+            <div className="flex-1 bg-brand-ink" />
+            <div className="flex-1 bg-brand-rust" />
+            <div className="flex-1 bg-brand-tan" />
+          </div>
+          <Loader2 className="mx-auto mb-4 h-8 w-8 animate-spin text-brand-rust" aria-hidden="true" />
+          <h1 className="font-serif text-2xl text-brand-ink">Pembayaranmu sedang diproses</h1>
+          <p className="mt-2 text-sm text-ink-muted">
+            Sebentar lagi akses Pro aktif dan halaman ini terbuka sendiri. Jangan tutup dulu, ya.
+          </p>
         </div>
       </div>
     );
