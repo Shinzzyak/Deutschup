@@ -265,11 +265,7 @@ function ClerkAppContent() {
   if (!clerkLoaded || (isSignedIn && !user)) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        {/* border-amber-500 (#fe9a00) is 2.13:1 on the white bg-background — under
-            the 3:1 floor, and this is the first thing a signed-out visitor sees
-            while Clerk boots. brand-rust is 8.89:1. Square corner to match the
-            rest of the brand; the spin still reads as motion. */}
-        <div className="animate-spin h-8 w-8 border-b-2 border-brand-rust" role="status" aria-label="Memuat"></div>
+        <Loader2 className="h-8 w-8 animate-spin text-brand-rust" role="status" aria-label="Memuat" />
       </div>
     );
   }
