@@ -206,10 +206,19 @@ jobs:
         # instead (POST /zones/{zone_id}/purge_cache). Resolve zone_id by name.
         if: success()
         run: |
-          ZONE_ID=$(curl -sS -m 30 \
-            "https://api.cloudflare.com/client/v4/zones?name=${VITE_APP_URL#https://}" \
-            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
-            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['result'][0]['id'] if d.get('success') and d.get('result') else '')")
+          # The custom domain is a subdomain; the CF zone is the root (sintec.my.id).
+          # Resolve the zone by walking up the hostname labels.
+          HOST="${VITE_APP_URL#https://}"
+          HOST="${HOST%%/*}"
+          ZONE_ID=""
+          while [ -n "$HOST" ]; do
+            ZONE_ID=$(curl -sS -m 20 \
+              "https://api.cloudflare.com/client/v4/zones?name=${HOST}" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['result'][0]['id'] if d.get('success') and d.get('result') else '')")
+            [ -n "$ZONE_ID" ] && break
+            HOST="${HOST#*.}"
+          done
           test -n "$ZONE_ID"
           curl -sS -m 30 -X POST \
             "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
