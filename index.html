@@ -22,6 +22,37 @@
     <!-- Fallback: jika React gagal mount dalam 8 detik (blank putih), tampilkan pesan error + tombol reload. -->
     <script>
       (function () {
+        // Remote report — inline, works even when the main bundle fails to load.
+        function reportRemote(kind, msg, stack) {
+          try {
+            fetch('/api/error-report', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                kind: kind,
+                message: String(msg || '').slice(0, 500),
+                stack: String(stack || '').slice(0, 2000),
+                url: (location.href || '').slice(0, 300),
+                ua: (navigator.userAgent || '').slice(0, 300),
+              }),
+            }).catch(function () {});
+          } catch (e) {}
+        }
+        // Capture bundle load failure explicitly.
+        window.addEventListener('error', function (e) {
+          reportRemote('window.error', e.message, (e.error && e.error.stack) || 'file:' + (e.filename || '?') + ':' + (e.lineno || '?'));
+        }, true);
+        window.addEventListener('unhandledrejection', function (e) {
+          reportRemote('unhandledrejection', (e.reason && e.reason.message) || String(e.reason), (e.reason && e.reason.stack) || '');
+        }, true);
+        // Also catch module script load errors (they fire 'error' on the script tag, not window).
+        document.addEventListener('error', function (e) {
+          var t = e.target;
+          if (t && t.tagName === 'SCRIPT' && t.src) {
+            reportRemote('script-load-error', 'Failed to load script: ' + t.src.split('/').pop(), t.src);
+          }
+        }, true);
+        // Listen for the module script failing: check after a delay if it loaded.
         var t = 0;
         var timer = setInterval(function () {
           t += 500;
@@ -43,6 +74,8 @@
             document.getElementById('reload-btn').addEventListener('click', function () {
               location.reload();
             });
+            // Report that the app failed to mount — device-specific info.
+            reportRemote('mount-timeout', 'React did not mount within 8s', '');
             try {
               var errs = JSON.parse(localStorage.getItem('debug_errors') || '[]');
               if (errs[0]) {
