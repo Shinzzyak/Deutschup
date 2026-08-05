@@ -19,7 +19,43 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- Fallback: jika React gagal mount dalam 8 detik (blank putih), tampilkan pesan error + tombol reload. -->
+    <script>
+      (function () {
+        var t = 0;
+        var timer = setInterval(function () {
+          t += 500;
+          var root = document.getElementById('root');
+          if (root && root.children.length > 0) {
+            clearInterval(timer);
+            return;
+          }
+          if (t >= 8000) {
+            clearInterval(timer);
+            var msg = document.createElement('div');
+            msg.style.cssText =
+              'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#f5f0eb;color:#0a0a0a;font-family:system-ui,sans-serif;padding:24px;text-align:center;z-index:99999';
+            msg.innerHTML =
+              '<h1 style="font-size:20px;margin:0">Aplikasi gagal dimuat</h1>' +
+              '<p style="font-size:14px;margin:0;max-width:420px">Terjadi kesalahan saat memuat aplikasi. Coba muat ulang, atau bersihkan cache browser.</p>' +
+              '<button id="reload-btn" style="background:#0a0a0a;color:#f5f0eb;border:0;border-radius:0;padding:12px 24px;font-size:14px;cursor:pointer">Muat Ulang</button>';
+            document.body.appendChild(msg);
+            document.getElementById('reload-btn').addEventListener('click', function () {
+              location.reload();
+            });
+            try {
+              var errs = JSON.parse(localStorage.getItem('debug_errors') || '[]');
+              if (errs[0]) {
+                var d = document.createElement('pre');
+                d.style.cssText = 'font-size:11px;color:#8b2500;max-width:420px;overflow:auto;text-align:left;white-space:pre-wrap';
+                d.textContent = (errs[0].message || '') + '\n' + (errs[0].stack || '');
+                msg.appendChild(d);
+              }
+            } catch (e) {}
+          }
+        }, 500);
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
