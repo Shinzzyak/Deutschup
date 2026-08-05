@@ -38,9 +38,13 @@ interface AuthState {
 const SESSION_CACHE = 'deutschup_session';
 const PROFILE_CACHE_PREFIX = 'deutschup_profile_';
 
+// Bump when the cached shape or auth semantics change — forces every stale
+// cache (e.g. pre-admin role, wrong key namespace) to be discarded at once.
+const PROFILE_CACHE_VERSION = 'v2';
+
 function cacheProfile(userId: string, tierData: TierData, profileData: ProfileData) {
   try {
-    localStorage.setItem(`${PROFILE_CACHE_PREFIX}${userId}`, JSON.stringify({
+    localStorage.setItem(`${PROFILE_CACHE_PREFIX}${PROFILE_CACHE_VERSION}:${userId}`, JSON.stringify({
       tierData, profileData, cachedAt: Date.now(),
     }));
   } catch {}
@@ -48,11 +52,11 @@ function cacheProfile(userId: string, tierData: TierData, profileData: ProfileDa
 
 function loadCachedProfile(userId: string): { tierData: TierData; profileData: ProfileData } | null {
   try {
-    const raw = localStorage.getItem(`${PROFILE_CACHE_PREFIX}${userId}`);
+    const raw = localStorage.getItem(`${PROFILE_CACHE_PREFIX}${PROFILE_CACHE_VERSION}:${userId}`);
     if (!raw) return null;
     const { tierData, profileData, cachedAt } = JSON.parse(raw);
     if (Date.now() - cachedAt > 24 * 60 * 60 * 1000) {
-      localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${userId}`);
+      localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${PROFILE_CACHE_VERSION}:${userId}`);
       return null;
     }
     return { tierData, profileData };
@@ -184,7 +188,15 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     const currentUser = get().user;
     if (user && (!currentUser || currentUser.id !== user.id)) {
       console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
-      try { localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${user.id}`); } catch {}
+      // Purge the whole namespace for this user. The old (buggy) cache was
+      // keyed by internal UUID while this branch only knows the Clerk ID, so
+      // removeItem by ID could never hit it — version the key instead so a
+      // stale pre-admin profile can never resurface after a DB-side promote.
+      try {
+        Object.keys(localStorage)
+          .filter((k) => k.startsWith(PROFILE_CACHE_PREFIX))
+          .forEach((k) => localStorage.removeItem(k));
+      } catch {}
       set({ user, loading: false });
       fetchProfile(set, user.id);
     } else if (user && currentUser?.id === user.id && !get().profileLoaded) {
