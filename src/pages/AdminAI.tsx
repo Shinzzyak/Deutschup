@@ -3,7 +3,6 @@ import { useAuthStore } from '../stores/authStore';
 import { useNavigate } from 'react-router';
 
 import { Button } from '../components/ui/button';
-import SecretList from '../components/admin/SecretList';
 import {
   AdminFeedbackStack,
   AdminNotice,
@@ -181,7 +180,7 @@ interface UsageStats {
   total_cost_usd: number;
 }
 
-type TabId = 'health' | 'providers' | 'custom' | 'routing' | 'usage' | 'secrets' | 'webhooks';
+type TabId = 'health' | 'providers' | 'custom' | 'routing' | 'usage' | 'webhooks';
 
 export default function AdminAI() {
   const { profileData, profileLoaded } = useAuthStore();
@@ -1092,7 +1091,6 @@ export default function AdminAI() {
     { id: 'custom', label: 'Tambahan', icon: Puzzle },
     { id: 'routing', label: 'Perutean', icon: Zap },
     { id: 'usage', label: 'Pemakaian', icon: BarChart3 },
-    { id: 'secrets', label: 'Kunci', icon: Key },
     { id: 'webhooks', label: 'Notifikasi', icon: Bell },
   ];
 
@@ -1124,7 +1122,7 @@ export default function AdminAI() {
                 Ruang mesin
               </span>
             </div>
-            <h1 className="font-heading text-4xl sm:text-5xl leading-none text-brand-ink">
+            <h1 className="font-serif text-4xl sm:text-5xl leading-[1.02] tracking-[-0.02em] text-brand-ink">
               Provider &amp; Model AI
             </h1>
             <p className="text-sm text-ink-muted mt-2 max-w-prose">
@@ -1156,40 +1154,44 @@ export default function AdminAI() {
         </AdminNotice>
       )}
 
-      {/* ── Fleet summary ──────────────────────────────────────────── */}
-      <section className="mb-10" aria-labelledby="ringkasan-provider">
-        <SectionHeading icon={Activity} hint="Hasil pemeriksaan terakhir ke setiap provider.">
-          <span id="ringkasan-provider">Ringkasan Provider</span>
-        </SectionHeading>
-        {/* gap-px over an inked backdrop = hairline rules between cells */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-px bg-brand-ink/12 border border-brand-ink/12">
-          <CountCell icon={CheckCircle2} label="Aktif" count={statusCounts.ACTIVE} tone="ok" />
-          <CountCell icon={AlertTriangle} label="Kunci kosong" count={statusCounts.MISSING_KEY} tone="warn" />
-          <CountCell icon={XCircle} label="Kunci ditolak" count={statusCounts.INVALID_KEY} tone="bad" />
-          <CountCell icon={XCircle} label="Tak terjangkau" count={statusCounts.UNREACHABLE} tone="bad" />
-          <CountCell icon={AlertCircle} label="Kena batas" count={statusCounts.RATE_LIMITED} tone="warn" />
-          <CountCell icon={EyeOff} label="Dimatikan" count={statusCounts.DISABLED} tone="idle" />
+      {/* ── Status ringkas ────────────────────────────────────────── */}
+      {/* One compact strip instead of three stacked panels: the fleet
+          summary, service status, and the health tab's first grid all
+          said the same thing in three different shapes. The provider
+          cards below carry the detail. */}
+      <section className="mb-8" aria-label="Status ringkas">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border border-brand-ink/12 bg-white px-4 py-3">
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-ink-subtle" aria-hidden="true" />
+            <span className="text-sm font-medium text-brand-ink">AI</span>
+            <span className={cn('text-xs font-semibold px-2 py-1', statusCounts.ACTIVE > 0 ? TONE.ok.surface + ' ' + TONE.ok.text : TONE.bad.surface + ' ' + TONE.bad.text)}>
+              {statusCounts.ACTIVE > 0 ? 'Aktif' : 'Mati'}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-ink-subtle" aria-hidden="true" />
+            <span className="text-sm font-medium text-brand-ink">Kunci</span>
+            <span className="text-xs tabular-nums text-ink-muted">
+              {statusCounts.MISSING_KEY} kosong · {statusCounts.INVALID_KEY} ditolak
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Activity className="w-4 h-4 text-ink-subtle" aria-hidden="true" />
+            <span className="text-sm font-medium text-brand-ink">Balasan</span>
+            <span className="text-xs tabular-nums text-ink-muted">
+              {totalRequests.toLocaleString('id-ID')} permintaan
+            </span>
+          </div>
+          {systemHealth?.config && (
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+              <ServicePill label="AI" ok={!!systemHealth.config.aiConfigured} />
+              <ServicePill label="Bayar" ok={!!systemHealth.config.paymentConfigured} />
+              <ServicePill label="DB" ok={!!systemHealth.config.databaseConfigured} />
+              <ServicePill label="Notif" ok={!!systemHealth.config.webhookConfigured} />
+            </div>
+          )}
         </div>
       </section>
-
-      {/* ── Service status ─────────────────────────────────────────── */}
-      {systemHealth && (
-        <section className="mb-10" aria-labelledby="status-layanan">
-          <SectionHeading icon={Globe} hint="Yang bertanda mati berarti kuncinya belum dipasang di server.">
-            <span id="status-layanan">Status Layanan</span>
-          </SectionHeading>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-brand-ink/12 border border-brand-ink/12">
-            <ServicePill
-              label="Mesin AI"
-              ok={!!systemHealth.config?.aiConfigured}
-              detail={systemHealth.ai ? `${systemHealth.ai.totalKeys} kunci · ${systemHealth.ai.enabledProviders} provider` : undefined}
-            />
-            <ServicePill label="Pembayaran" ok={!!systemHealth.config?.paymentConfigured} />
-            <ServicePill label="Basis data" ok={!!systemHealth.config?.databaseConfigured} />
-            <ServicePill label="Notifikasi" ok={!!systemHealth.config?.webhookConfigured} />
-          </div>
-        </section>
-      )}
 
       {/* ── Tabs ───────────────────────────────────────────────────── */}
       {/* Full-bleed scroller on a phone: the strip slides, the page does not. */}
@@ -2215,18 +2217,6 @@ export default function AdminAI() {
                 hint="Angka muncul setelah ada yang memakai Herr Deutsch."
               />
             )}
-          </div>
-        </section>
-      )}
-
-      {/* ══ Kunci tersimpan ═══════════════════════════════════════ */}
-      {activeTab === 'secrets' && (
-        <section {...panelProps('secrets')}>
-          <SectionHeading icon={Key} hint="Isi kunci tidak pernah ditampilkan lagi setelah tersimpan.">
-            Kunci Tersimpan
-          </SectionHeading>
-          <div className={`${PANEL} p-4 sm:p-5`}>
-            <SecretList />
           </div>
         </section>
       )}
