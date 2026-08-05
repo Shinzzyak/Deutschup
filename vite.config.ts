@@ -20,6 +20,11 @@ export default defineConfig({
             'react-vendor': ['react', 'react-dom', 'react-router'],
             'supabase': ['@supabase/supabase-js'],
             'ui-vendor': ['lucide-react', 'motion'],
+            // ALL @clerk/* in ONE chunk — splitting only clerk-react caused two
+            // @clerk/shared copies → duplicate <ClerkProvider> runtime error.
+            // Keeping them together avoids that while shrinking the entry chunk.
+            'clerk': ['@clerk/clerk-react', '@clerk/backend', '@clerk/shared'],
+            'base-ui': ['@base-ui/react'],
           },
         },
       },
