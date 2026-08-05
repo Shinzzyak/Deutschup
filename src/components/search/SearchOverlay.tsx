@@ -12,22 +12,12 @@ const typeLabels = {
 };
 
 /* LIGHT-NATIVE. This overlay is reachable from every authenticated screen
-   (TopNav search button, Cmd/Ctrl+K, "/") but it never got the token sweep the
-   pages did, so it still carried the ad-hoc `text-[#0a0a0a]/NN` ramp the brand
-   tokens exist to replace. Measured on the white panel with WCAG 2.1:
-     text-[#0a0a0a]/20  1.57:1   text-[#0a0a0a]/40  2.71:1
-     text-[#0a0a0a]/25  1.79:1   text-[#0a0a0a]/50  3.71:1
-     text-[#0a0a0a]/30  2.04:1   text-[#0a0a0a]/70  7.63:1  (the only one passing)
-   Replacements: --ink-muted 6.96:1 for copy, --ink-subtle 5.14:1 for the
-   smallest labels and for icons (3:1 floor).
-
-   The type chips used raw Tailwind ramps (blue-700 / green-700 / purple-700);
-   green-700 on its own tint measured 4.38:1, under AA. They now use the same
-   measured tone ramp as the admin surfaces, each on its own tint:
-     Kosakata  #1e40af on #e8eefb  7.50:1
-     Pelajaran #1a6b3d on #e6f4ec  5.76:1
-     Verba     #8b2500 on #f6e8e3  7.44:1
-   The chip always prints its Indonesian label, so colour is never the carrier. */
+   (TopNav search button, Cmd/Ctrl+K, "/") — a chrome surface, so it may use
+   glass per DESIGN-LANGUAGE.md Amandemen 1. Cleaned to brand tokens:
+   - panel: bg-surface-0 (solid, not white-on-scrim) + hairline ink/20
+   - type chips: brand-toned, each with its own tint (measured AA)
+   - article plates: der/die/das same teaching colours as VocabTrainerDB
+   - spacing: full steps only (p-2, gap-2, min-h-11 rows) */
 const typeColors = {
   vocabulary: 'bg-[#e8eefb] text-[#1e40af]',
   lesson: 'bg-[#e6f4ec] text-[#1a6b3d]',
@@ -97,23 +87,14 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-black/35 backdrop-blur-sm flex items-start justify-center overscroll-contain pt-[10vh] px-4"
+        className="fixed inset-0 z-50 bg-brand-ink/40 flex items-start justify-center overscroll-contain pt-[10vh] px-4"
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: -10 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: -10 }}
-          /* `.glass-heavy` is rgba(255,255,255,0.55) with brightness(1.08) on its
-             backdrop. Over the bg-black/35 scrim above, that composites to
-             #dddddd — not white — and --ink-subtle drops to 3.77:1 there. Every
-             other dialog in this app already pins `bg-white!` for exactly this
-             reason (AdminUI, AddSecretModal, ValidateSecretModal, Simulasi);
-             the `!` is needed because .glass-heavy is declared outside every
-             cascade layer and outranks a plain utility. On real white
-             --ink-subtle is 5.14:1 and --ink-muted 6.96:1.
-             `rounded-none!` keeps the square corner the brand asks for. */
-          className="glass-heavy bg-white! rounded-none! w-full max-w-xl overflow-hidden"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -6 }}
+          className="w-full max-w-xl overflow-hidden bg-surface-0 border border-brand-ink/20"
           onClick={e => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
@@ -133,7 +114,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <kbd className="glass-subtle hidden md:inline-flex items-center gap-1 px-2 py-0.5 text-xs text-ink-subtle">
+            <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle bg-surface-2 border border-brand-ink/10">
               ESC
             </kbd>
             <button onClick={onClose} className="md:hidden p-1" aria-label="Tutup pencarian">
@@ -150,13 +131,13 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
             )}
 
             {!query && recentSearches.length > 0 && (
-              <div className="p-3">
-                <p className="text-xs font-medium text-ink-subtle px-2 mb-2">Pencarian Terakhir</p>
+              <div className="p-2">
+                <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink-subtle px-2 mb-2">Pencarian Terakhir</p>
                 {recentSearches.map((r, i) => (
                   <button
                     key={i}
                     onClick={() => setQuery(r)}
-                    className="w-full flex items-center gap-2 px-3 py-2 hover:bg-primary/5 text-left text-sm text-ink-muted"
+                    className="w-full flex items-center gap-2 px-3 min-h-11 text-left text-sm text-ink-muted hover:bg-surface-2"
                   >
                     <Clock className="w-4 h-4 text-ink-subtle" />
                     {r}
@@ -172,7 +153,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                   if (items.length === 0) return null;
                   return (
                     <div key={type} className="mb-2">
-                      <p className="text-xs font-medium text-ink-subtle px-3 py-1">
+                      <p className="text-xs font-bold uppercase tracking-[0.2em] text-ink-subtle px-3 py-1">
                         {typeLabels[type]} ({items.length})
                       </p>
                       {items.map(item => {
@@ -182,19 +163,17 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                             key={item.id}
                             onClick={() => handleSelect(item)}
                             className={cn(
-                              "w-full flex items-center gap-3 px-3 py-2.5 text-left transition-colors",
-                              idx === selectedIndex ? "bg-brand-tan/15" : "hover:bg-primary/5"
+                              "w-full flex items-center gap-3 px-3 min-h-11 text-left transition-colors",
+                              idx === selectedIndex ? "bg-surface-2" : "hover:bg-surface-2"
                             )}
                           >
                             {/* Same der/die/das plate as VocabTrainerDB, so the
-                                two screens teach the same colour. The old `das`
-                                plate was #fafafa on #2d8a4e = 4.14:1, under AA;
-                                these are ink/cream 17.48:1, rust/cream 7.85:1,
-                                tan/ink 7.52:1. The article word is printed
-                                inside the plate, so colour is redundant. */}
+                                two screens teach the same colour. The article
+                                word is printed inside the plate, so colour is
+                                redundant. */}
                             {item.article && (
                               <span className={cn(
-                                "text-xs font-bold px-1.5 py-0.5",
+                                "text-xs font-bold px-2 py-1",
                                 item.article === 'der' ? 'bg-brand-ink text-brand-cream' :
                                 item.article === 'die' ? 'bg-brand-rust text-brand-cream' :
                                 'bg-brand-tan text-brand-ink'
@@ -206,7 +185,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                               <p className="font-medium text-brand-ink truncate">{item.primary}</p>
                               <p className="text-sm text-ink-muted truncate">{item.secondary}</p>
                             </div>
-                            <span className={cn("text-xs font-medium px-2 py-0.5 ", typeColors[item.type])}>
+                            <span className={cn("text-xs font-medium px-2 py-1 ", typeColors[item.type])}>
                               {typeLabels[item.type]}
                             </span>
                             <ArrowRight className="w-4 h-4 text-ink-subtle shrink-0" />
