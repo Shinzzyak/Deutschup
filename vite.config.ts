@@ -20,6 +20,8 @@ export default defineConfig({
             'react-vendor': ['react', 'react-dom', 'react-router'],
             'supabase': ['@supabase/supabase-js'],
             'ui-vendor': ['lucide-react', 'motion'],
+            'clerk': ['@clerk/clerk-react'],
+            'base-ui': ['@base-ui/react'],
           },
         },
       },
