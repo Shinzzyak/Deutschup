@@ -4,6 +4,7 @@ import App from './App.tsx';
 import ErrorBoundary from './components/ErrorBoundary';
 import { initDebugCapture } from './stores/debugStore';
 import './index.css';
+/* cache-bust 2026-08-05 — force fresh asset hashes after CF edge served stale text/html for /assets/* (corrupt cache lock) */
 import { TooltipProvider } from './components/ui/tooltip';
 import { ToastProvider } from './components/ui/toast';
 
