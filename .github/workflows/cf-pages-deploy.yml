@@ -199,6 +199,19 @@ jobs:
           print('env_restore_ok')
           PY
 
+      - name: Purge Cloudflare edge cache
+        # Poisoned text/html (SPA fallback) gets cached under /assets/* URLs with
+        # immutable max-age; a device that hits it is blanked by strict MIME checking.
+        # Purge after every deploy so stale asset URLs never serve cached HTML.
+        if: success()
+        run: |
+          curl -sS -m 30 -X POST \
+            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/deutschup/purge" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{}' | tee /tmp/purge.json
+          grep -q '"success":true' /tmp/purge.json
+
       - name: Smoke production host
         if: success()
         run: |
