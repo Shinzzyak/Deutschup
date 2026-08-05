@@ -202,15 +202,20 @@ jobs:
       - name: Purge Cloudflare edge cache
         # Poisoned text/html (SPA fallback) gets cached under /assets/* URLs with
         # immutable max-age; a device that hits it is blanked by strict MIME checking.
-        # Purge after every deploy so stale asset URLs never serve cached HTML.
-        # Correct API: DELETE /pages/projects/{project}/cache (POST → 1001 method_not_allowed).
+        # Pages has no account-level cache purge; purge the custom-domain ZONE cache
+        # instead (POST /zones/{zone_id}/purge_cache). Resolve zone_id by name.
         if: success()
         run: |
-          curl -sS -m 30 -X DELETE \
-            "https://api.cloudflare.com/client/v4/accounts/${CLOUDFLARE_ACCOUNT_ID}/pages/projects/deutschup/cache" \
+          ZONE_ID=$(curl -sS -m 30 \
+            "https://api.cloudflare.com/client/v4/zones?name=${VITE_APP_URL#https://}" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['result'][0]['id'] if d.get('success') and d.get('result') else '')")
+          test -n "$ZONE_ID"
+          curl -sS -m 30 -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
             -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d '{}' | tee /tmp/purge.json
+            -d '{"purge_everything":true}' | tee /tmp/purge.json
           grep -q '"success":true' /tmp/purge.json
 
       - name: Smoke production host
