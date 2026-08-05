@@ -1,3 +1,8 @@
 # Serve real files first; Google verification file must NOT hit SPA fallback
 /google179d6b6cc296ea6b.html    /google179d6b6cc296ea6b.html   200
-/*    /index.html   200
+# /assets/* are content-hashed build outputs. A missing one is a stale-page artifact,
+# NOT an SPA route: return 404 instead of the SPA fallback. Otherwise CF Pages caches
+# index.html (text/html) under the asset URL with immutable max-age, and strict MIME
+# checking then blanks every device that hits that cached URL.
+/assets/*    /404.html    404
+/*    /index.html    200
