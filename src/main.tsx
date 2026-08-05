@@ -7,6 +7,27 @@ import './index.css';
 import { TooltipProvider } from './components/ui/tooltip';
 import { ToastProvider } from './components/ui/toast';
 
+// === REMOTE ERROR REPORTER — fire-and-forget to /api/error-report ===
+// Helps diagnose device-specific white screens we cannot reproduce here.
+function reportRemote(kind: string, err: unknown, extra?: Record<string, string>) {
+  try {
+    const e = err as any;
+    const payload: Record<string, string> = {
+      kind,
+      message: String(e?.message || e?.reason?.message || ''),
+      stack: String(e?.stack || e?.reason?.stack || '').slice(0, 2000),
+      url: window.location.href.slice(0, 300),
+      ua: navigator.userAgent.slice(0, 300),
+      ...extra,
+    };
+    fetch('/api/error-report', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(payload),
+    }).catch(() => {});
+  } catch {}
+}
+
 // === EVIDENCE MODE — always on, captures exact failure ===
 // Global error handlers — catch white-screen crashes
 window.addEventListener('error', (e) => {
@@ -17,6 +38,7 @@ window.addEventListener('error', (e) => {
     col: e.colno,
     stack: e.error?.stack?.substring(0, 500)
   });
+  reportRemote('window.error', e.error || e);
 });
 
 window.addEventListener('unhandledrejection', (e) => {
@@ -24,7 +46,20 @@ window.addEventListener('unhandledrejection', (e) => {
     msg: e.reason?.message || String(e.reason)?.substring(0, 300),
     stack: e.reason?.stack?.substring(0, 500)
   });
+  reportRemote('unhandledrejection', e.reason);
 });
+
+// If React has not mounted 10s after load, report it — device-specific white screen.
+setTimeout(() => {
+  try {
+    const root = document.getElementById('root');
+    if (!root || root.children.length === 0) {
+      reportRemote('mount-timeout', new Error('React did not mount within 10s'), {
+        build: document.querySelector('script[src*="/assets/index-"]')?.getAttribute('src') || '',
+      });
+    }
+  } catch {}
+}, 10000);
 
 console.log('[APP_START] timestamp:', new Date().toISOString());
 console.log('[APP_START] URL:', window.location.href);

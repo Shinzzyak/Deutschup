@@ -16,6 +16,7 @@ import debugUser from '../../api/debug-user';
 import payment from '../../api/payment';
 import webhookNotify from '../../api/webhook-notify';
 import curriculum from '../../api/curriculum';
+import errorReport from '../../api/error-report';
 
 const ROUTES: Record<string, ApiHandler> = {
   ping,
@@ -31,6 +32,7 @@ const ROUTES: Record<string, ApiHandler> = {
   payment,
   'webhook-notify': webhookNotify,
   curriculum,
+  'error-report': errorReport,
 };
 
 function corsHeaders(origin: string | null): HeadersInit {
