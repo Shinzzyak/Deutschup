@@ -620,8 +620,8 @@ body {
     perspective: 1000px;
   }
 
-  /* cache-bust 2026-08-05 */
-.preserve-3d {
+  .preserve-3d {
     transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d; /* cb-20260805 */
   }
 }
