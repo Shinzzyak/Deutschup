@@ -39,6 +39,10 @@ jobs:
       APP_URL: ${{ secrets.VITE_APP_URL }}
       AI_ENABLED: ${{ secrets.AI_ENABLED }}
       TEST_PAYMENT_MODE: ${{ secrets.TEST_PAYMENT_MODE }}
+      PAYMENT_PROVIDER: ${{ secrets.PAYMENT_PROVIDER }}
+      SUMOPOD_API_KEY: ${{ secrets.SUMOPOD_API_KEY }}
+      SUMOPOD_WEBHOOK_SECRET: ${{ secrets.SUMOPOD_WEBHOOK_SECRET }}
+      SUMOPOD_WEBHOOK_TOKEN: ${{ secrets.SUMOPOD_WEBHOOK_TOKEN }}
       CLERK_FAPI: ${{ secrets.VITE_CLERK_FAPI }}
       CLERK_API_URL: ${{ secrets.VITE_CLERK_API_URL }}
       CLERK_JWT_KEY: ${{ secrets.CLERK_JWT_KEY }}
@@ -132,6 +136,10 @@ jobs:
             'AI_ENABLED': ai,
             'TEST_PAYMENT_MODE': test_pay,
             'APP_URL': app,
+            'PAYMENT_PROVIDER': (os.environ.get('PAYMENT_PROVIDER') or 'bayargg').strip(),
+            'SUMOPOD_API_KEY': (os.environ.get('SUMOPOD_API_KEY') or '').strip(),
+            'SUMOPOD_WEBHOOK_SECRET': (os.environ.get('SUMOPOD_WEBHOOK_SECRET') or '').strip(),
+            'SUMOPOD_WEBHOOK_TOKEN': (os.environ.get('SUMOPOD_WEBHOOK_TOKEN') or '').strip(),
           }
           plain = {
             'VITE_APP_URL': app,

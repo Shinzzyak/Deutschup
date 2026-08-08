@@ -58,6 +58,7 @@ export async function toApiRequest(request: Request, pathParams?: string[]): Pro
     headers,
     query,
     body,
+    rawBody,
     cookies: {},
     // Replay the already-buffered body for handlers that read the request as a
     // stream (e.g. the payment callback parser).

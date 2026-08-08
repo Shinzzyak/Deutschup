@@ -7,10 +7,12 @@ import type { PaymentProvider, WebhookMetadata, WebhookRequest } from './types.j
 import { PaymentProviderError } from './types.js';
 import { bayarGgProvider } from './bayargg.js';
 import { manualProvider } from './manual.js';
+import { sumoPodProvider } from './sumopod.js';
 
 export * from './types.js';
 export { bayarGgProvider } from './bayargg.js';
 export { manualProvider } from './manual.js';
+export { sumoPodProvider } from './sumopod.js';
 
 /** Used when PAYMENT_PROVIDER is unset — i.e. what production runs today. */
 export const DEFAULT_PAYMENT_PROVIDER = 'bayargg';
@@ -24,6 +26,7 @@ export const MAX_PROVIDER_REF_LENGTH = 128;
 const REGISTRY: Record<string, PaymentProvider> = {
   bayargg: bayarGgProvider,
   manual: manualProvider,
+  sumopod: sumoPodProvider,
 };
 
 /** Spellings that people actually type into an env var. */

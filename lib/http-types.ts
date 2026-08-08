@@ -13,6 +13,8 @@ export interface ApiRequest extends AsyncIterable<any> {
   query: Record<string, string | string[]>;
   /** Parsed body (JSON / urlencoded), or the raw text when parsing fails. */
   body?: any;
+  /** Byte-exact raw body text, for HMAC signature verification. */
+  rawBody?: string;
   cookies?: Record<string, string>;
   // AsyncIterable: the raw body can also be consumed as a stream. Node runtimes
   // stream the socket; the Cloudflare adapter replays the buffered body.
