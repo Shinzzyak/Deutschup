@@ -1,0 +1,45 @@
+{
+  "book": "Deutsch intensiv Wortschatz B1 — Das Training (Klett Verlag, 2022)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF OCR extraction (61MB, 94 pages)",
+  "level": "B1",
+  "type": "Wortschatz (vocabulary)",
+  "authors": "Christiane Lemcke, Lutz Rohrmann",
+  "isbn": "978-3-12-675078-3",
+  "total_pages": 94,
+  "chapter_list": [
+    {"id": "B1", "title": "Menschen", "pages": "14-21"},
+    {"id": "B2", "title": "Stationen im Leben", "pages": "22-33"},
+    {"id": "B3", "title": "Sprachen", "pages": "34-45"},
+    {"id": "B4", "title": "Freizeit und Kultur", "pages": "46-53"},
+    {"id": "B5", "title": "Reisen und Verkehr", "pages": "54-61"},
+    {"id": "B6", "title": "Gesundheit", "pages": "62-69"},
+    {"id": "B7", "title": "Umwelt", "pages": "70-77"},
+    {"id": "B8", "title": "Beruf und Karriere", "pages": "78-85"},
+    {"id": "B9", "title": "Behörden und Institutionen", "pages": "86-91"}
+  ],
+  "subtopics": {
+    "Menschen": ["Familie", "Kontakte", "Adjektive"],
+    "Stationen im Leben": ["Familienplanung", "Lebensstationen"],
+    "Sprachen": ["Sprachkenntnisse", "Lernen"],
+    "Freizeit und Kultur": ["Freizeit", "Verabredungen", "Medien"],
+    "Reisen und Verkehr": ["Verkehr", "Auf Reisen", "Unterkünfte"],
+    "Gesundheit": ["Körper", "Gesundheit im Alltag"],
+    "Umwelt": ["Umweltpolitik", "Umweltfreundlich leben", "Wetter und Klima"],
+    "Beruf und Karriere": ["Arbeitswelten", "Arbeitssuche", "Unternehmen", "Arbeitnehmerrechte"],
+    "Behörden und Institutionen": ["Politisches System", "Verwaltung", "Versicherungen"]
+  },
+  "appendix": {
+    "selbsttest_a2": "p.6",
+    "losungen": "p.92"
+  },
+  "features": [
+    "Thematischer Wortschatz (thematic vocabulary)",
+    "Selbsttest A2 (self-test for A2 level)",
+    "Quizlet integration",
+    "9 thematic chapters",
+    "Progressive difficulty",
+    "Authentic contexts"
+  ],
+  "vocab_count_estimate": 1500
+}

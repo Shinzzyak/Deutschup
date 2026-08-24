@@ -1,0 +1,243 @@
+/// <reference types="vite/client" />
+import { create } from 'zustand';
+import type { User } from '@supabase/supabase-js';
+import { supabase, dbProxy } from '../lib/supabase';
+import { resolveInternalId } from '../lib/clerk/identity';
+import { isClerkEnabled } from '../lib/clerk/canary';
+import { captureAuth } from './debugStore';
+
+export interface TierData {
+  tier: 'free' | 'pro';
+  tierExpiry?: number;
+  subscription?: 'free' | 'pro';
+  pro_expires_at?: string | null;
+  role?: string;
+  onboarding_completed?: boolean;
+}
+
+interface ProfileData {
+  full_name?: string;
+  avatar_url?: string;
+  role?: string;
+  onboarding_completed?: boolean;
+  tier?: string;
+}
+
+interface AuthState {
+  user: User | null;
+  session: any;
+  tierData: TierData;
+  profileData: ProfileData;
+  loading: boolean;
+  profileLoaded: boolean;
+  setUser: (user: User | null) => void;
+  loginWithGoogle: () => Promise<void>;
+  logout: () => Promise<void>;
+}
+
+const SESSION_CACHE = 'deutschup_session';
+const PROFILE_CACHE_PREFIX = 'deutschup_profile_';
+
+// Bump when the cached shape or auth semantics change — forces every stale
+// cache (e.g. pre-admin role, wrong key namespace) to be discarded at once.
+const PROFILE_CACHE_VERSION = 'v2';
+
+function cacheProfile(userId: string, tierData: TierData, profileData: ProfileData) {
+  try {
+    localStorage.setItem(`${PROFILE_CACHE_PREFIX}${PROFILE_CACHE_VERSION}:${userId}`, JSON.stringify({
+      tierData, profileData, cachedAt: Date.now(),
+    }));
+  } catch {}
+}
+
+function loadCachedProfile(userId: string): { tierData: TierData; profileData: ProfileData } | null {
+  try {
+    const raw = localStorage.getItem(`${PROFILE_CACHE_PREFIX}${PROFILE_CACHE_VERSION}:${userId}`);
+    if (!raw) return null;
+    const { tierData, profileData, cachedAt } = JSON.parse(raw);
+    if (Date.now() - cachedAt > 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(`${PROFILE_CACHE_PREFIX}${PROFILE_CACHE_VERSION}:${userId}`);
+      return null;
+    }
+    return { tierData, profileData };
+  } catch {
+    return null;
+  }
+}
+
+function cacheSession(session: any) {
+  try {
+    if (session?.user) {
+      localStorage.setItem(SESSION_CACHE, JSON.stringify({
+        user: session.user, expires_at: session.expires_at,
+      }));
+    } else {
+      localStorage.removeItem(SESSION_CACHE);
+    }
+  } catch {}
+}
+
+/**
+ * Drop every cached profile variant for this user. Keys are versioned
+ * (PROFILE_CACHE_PREFIX + vN + ':' + id) and written only by fetchProfile
+ * under the internal UUID, but older code removed unversioned keys under the
+ * Clerk id — which could never hit. Purging the whole prefix is the only
+ * shape-proof way to force a fresh fetch. Export: consumers (Pricing,
+ * DashboardWithPaymentRefresh) call this instead of hand-rolling removeItem.
+ */
+export function clearProfileCache(): void {
+  try {
+    for (let i = localStorage.length - 1; i >= 0; i--) {
+      const k = localStorage.key(i);
+      if (k && k.startsWith(PROFILE_CACHE_PREFIX)) localStorage.removeItem(k);
+    }
+  } catch {}
+}
+
+function loadCachedUser(): User | null {
+  try {
+    const raw = localStorage.getItem(SESSION_CACHE);
+    if (!raw) return null;
+    const { user, expires_at } = JSON.parse(raw);
+    if (!user || !expires_at) return null;
+    if (Date.now() > expires_at * 1000) {
+      localStorage.removeItem(SESSION_CACHE);
+      return null;
+    }
+    return user;
+  } catch {
+    return null;
+  }
+}
+
+function shouldUseLocalAuthCacheForE2E(): boolean {
+  return import.meta.env.DEV
+    && !isClerkEnabled()
+    && import.meta.env.VITE_ENABLE_LOCAL_AUTH_CACHE_FOR_E2E === 'true';
+}
+
+function parseProfileData(data: any): { tierData: TierData; profileData: ProfileData } {
+  const now = Date.now();
+  const isPro = data.subscription === 'pro' && data.pro_expires_at && new Date(data.pro_expires_at).getTime() > now;
+  const effectiveTier = isPro ? 'pro' : 'free';
+  return {
+    tierData: {
+      tier: effectiveTier, tierExpiry: data.tier_expiry,
+      subscription: data.subscription || 'free',
+      pro_expires_at: data.pro_expires_at, role: data.role || 'user',
+    },
+    profileData: {
+      full_name: data.full_name,
+      avatar_url: data.avatar_url,
+      role: data.role,
+      onboarding_completed: data.onboarding_completed === true,
+    },
+  };
+}
+
+async function fetchProfile(set: any, clerkUserId: string) {
+  console.log('[AUTH_STATE] fetchProfile:', { clerkUserId: clerkUserId.substring(0, 12) });
+  let tierData: TierData = { tier: 'free' };
+  let profileData: ProfileData = {};
+
+  let userId: string;
+  try {
+    const resolved = await resolveInternalId(clerkUserId);
+    if (!resolved) {
+      console.error('[AUTH] Could not resolve Clerk ID to internal UUID:', clerkUserId.substring(0, 12));
+      set({ tierData, profileData, profileLoaded: true });
+      return;
+    }
+    userId = resolved;
+  } catch (resolveErr) {
+    console.error('[AUTH] resolveUserId error:', resolveErr);
+    set({ tierData, profileData, profileLoaded: true });
+    return;
+  }
+
+  const cached = loadCachedProfile(userId);
+  if (cached) {
+    tierData = cached.tierData;
+    profileData = cached.profileData;
+    set({ tierData, profileData, profileLoaded: true });
+  }
+
+  try {
+    const PROFILE_TIMEOUT_MS = 3000;
+    const profilePromise = dbProxy('get-profile', { userId });
+    const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+      setTimeout(() => resolve({ data: null, error: new Error('[AUTH] profile fetch timeout') }), PROFILE_TIMEOUT_MS)
+    );
+    const result: any = await Promise.race([profilePromise, timeoutPromise]);
+
+    if (result.error) {
+      console.error('[AUTH] profile fetch error:', result.error);
+      if (result.error !== '[AUTH] profile fetch timeout') {
+        try {
+          const createResult = await dbProxy('upsert-profile', { userId, full_name: '', tier: 'free', role: 'user', subscription: 'free' });
+          if (createResult.error) console.error('[AUTH] profile create error:', createResult.error);
+        } catch (insertErr) {
+          console.error('[AUTH] profile insert exception:', insertErr);
+        }
+      }
+    } else if (result.data) {
+      const parsed = parseProfileData(result.data);
+      tierData = parsed.tierData;
+      profileData = parsed.profileData;
+      cacheProfile(userId, tierData, profileData);
+    }
+  } catch (e) {
+    console.error('[AUTH] sync error:', e);
+  }
+
+  console.log('[AUTH_STATE] profile set:', { userId: userId.substring(0, 8), tier: tierData.tier });
+  set({ tierData, profileData, profileLoaded: true });
+}
+
+export const useAuthStore = create<AuthState>()((set, get) => ({
+  user: shouldUseLocalAuthCacheForE2E() ? loadCachedUser() : null,
+  session: null,
+  tierData: { tier: 'free' },
+  profileData: {},
+  loading: false,
+  profileLoaded: false,
+  setUser: (user: User | null) => {
+    const currentUser = get().user;
+    if (user && (!currentUser || currentUser.id !== user.id)) {
+      console.log('[AUTH_STATE] setUser:', { userId: user.id.substring(0, 8) });
+      // Purge the whole namespace for this user. The old (buggy) cache was
+      // keyed by internal UUID while this branch only knows the Clerk ID, so
+      // removeItem by ID could never hit it — version the key instead so a
+      // stale pre-admin profile can never resurface after a DB-side promote.
+      clearProfileCache();
+      set({ user, loading: false });
+      fetchProfile(set, user.id);
+    } else if (user && currentUser?.id === user.id && !get().profileLoaded) {
+      console.log('[AUTH_STATE] setUser same user — fetching missing profile:', { userId: user.id.substring(0, 8) });
+      set({ user, loading: false });
+      fetchProfile(set, user.id);
+    } else if (!user && currentUser) {
+      console.log('[AUTH_STATE] setUser null — signing out');
+      set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
+    }
+  },
+  loginWithGoogle: async () => {
+    console.log('[AUTH_STATE] loginWithGoogle — redirecting to Clerk sign-in');
+    window.location.href = '/sign-in';
+  },
+  logout: async () => {
+    console.log('[AUTH] logout — clearing state');
+    try {
+      const clerk = (window as any).Clerk;
+      if (clerk && typeof clerk.signOut === 'function') await clerk.signOut();
+    } catch (e) { console.warn('[AUTH] Clerk signOut failed:', e); }
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('clerk-') || key.startsWith('__clerk')) localStorage.removeItem(key);
+    });
+    await supabase.auth.signOut();
+    cacheSession(null);
+    clearProfileCache();
+    set({ user: null, session: null, tierData: { tier: 'free' }, profileData: {}, loading: false, profileLoaded: false });
+    window.location.href = '/';
+  },
+}));

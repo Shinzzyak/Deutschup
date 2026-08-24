@@ -1,0 +1,43 @@
+{
+  "analysis_date": "2026-06-18",
+  "source": "Netzwerk Neu A1 WORTSCHATZ list (PDF, 2230 lines)",
+  "total_words": 2012,
+  "chapters": {
+    "K1": {"title": "Guten Tag!", "words": 113},
+    "K2": {"title": "Freunde, Kollegen, und ich", "words": 195},
+    "K3": {"title": "In Hamburg", "words": 185},
+    "K4": {"title": "Guten Appetit!", "words": 218},
+    "K5": {"title": "Alltag und Familie", "words": 152},
+    "K6": {"title": "Zeit mit Freunden", "words": 181},
+    "K7": {"title": "Arbeitsalltag", "words": 184},
+    "K8": {"title": "Fit und Gesund", "words": 219},
+    "K9": {"title": "Meine Wohnung", "words": 144},
+    "K10": {"title": "Studium und Beruf", "words": 195},
+    "K11": {"title": "Medien und Technik", "words": 192},
+    "K12": {"title": "Reisen", "words": 192}
+  },
+  "chapter_titles": [
+    "K1: Guten Tag!",
+    "K2: Freunde, Kollegen, und ich",
+    "K3: In Hamburg",
+    "K4: Guten Appetit!",
+    "K5: Alltag und Familie",
+    "K6: Zeit mit Freunden",
+    "K7: Arbeitsalltag",
+    "K8: Fit und Gesund",
+    "K9: Meine Wohnung",
+    "K10: Studium und Beruf",
+    "K11: Medien und Technik",
+    "K12: Reisen"
+  ],
+  "vocab_categories": {
+    "nomen": "~1200",
+    "verben": "~400",
+    "adjektive": "~200",
+    "andere": "~212"
+  },
+  "chapter_9_title_corrected": "Meine Wohnung (NOT Kleidung)",
+  "chapter_10_title_corrected": "Studium und Beruf (NOT Medien)",
+  "chapter_11_title_corrected": "Medien und Technik (NOT Reisen)",
+  "chapter_12_title_corrected": "Reisen (correct)"
+}

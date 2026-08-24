@@ -1,0 +1,51 @@
+{
+  "book": "Netzwerk neu A1 — Übungsbuch mit Audios (Klett Verlag)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF vision extraction (180 pages)",
+  "level": "A1",
+  "type": "Übungsbuch (exercise book)",
+  "authors": "Stefanie Dengler, Paul Rusch, Helen Schmitz, Tanja Sieber",
+  "total_pages": 180,
+  "chapter_list": [
+    {"id": "K1", "title": "Guten Tag!", "pages": "6-17"},
+    {"id": "K2", "title": "Freunde, Kollegen und ich", "pages": "18-29"},
+    {"id": "K3", "title": "In Hamburg", "pages": "30-41"},
+    {"id": "PT1", "title": "Prüfungstraining 1: Hören Teil 1, Sprechen Teil 1", "pages": "42-45"},
+    {"id": "K4", "title": "Guten Appetit!", "pages": "46-57"},
+    {"id": "K5", "title": "Alltag und Familie", "pages": "58-69"},
+    {"id": "K6", "title": "Zeit mit Freunden", "pages": "70-81"},
+    {"id": "PT2", "title": "Prüfungstraining 2: Lesen Teil 1, Schreiben Teil 1, Sprechen Teil 2", "pages": "82-85"},
+    {"id": "K7", "title": "Arbeitsalltag", "pages": "86-97"},
+    {"id": "K8", "title": "Fit und gesund", "pages": "98-109"},
+    {"id": "K9", "title": "Meine Wohnung", "pages": "110-121"},
+    {"id": "PT3", "title": "Prüfungstraining 3: Hören Teil 3, Lesen Teil 2, Sprechen Teil 3", "pages": "122-125"},
+    {"id": "K10", "title": "Studium und Beruf", "pages": "126-137"},
+    {"id": "K11", "title": "Die Jacke gefällt mir!", "pages": "138-149"},
+    {"id": "K12", "title": "Ab in den Urlaub!", "pages": "150-161"},
+    {"id": "PT4", "title": "Prüfungstraining 4: Hören Teil 2, Lesen Teil 3, Schreiben Teil 2", "pages": "162-165"}
+  ],
+  "appendix": {
+    "thematic_word_groups": "p.166",
+    "trennbare_verben": "p.170",
+    "nicht_trennbare_verben": "p.172",
+    "quellenverzeichnis": "p.173",
+    "kurssprache": "p.175"
+  },
+  "exercise_types": [
+    "Hören (Listening)",
+    "Lesen (Reading)",
+    "Schreiben (Writing)",
+    "Sprechen (Speaking)",
+    "Wortschatz (Vocabulary)",
+    "Grammatik (Grammar)",
+    "Prüfungstraining (Exam training)"
+  ],
+  "exam_training_count": 4,
+  "special_features": [
+    "Audio integration",
+    "4 Prüfungstraining sections (Goethe A1 exam prep)",
+    "Thematic word groups in appendix",
+    "Trennbare/nicht trennbare Verben reference",
+    "Progressive difficulty"
+  ]
+}

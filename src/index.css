@@ -1,0 +1,627 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./styles/liquid-glass.css";
+@import "shadcn/tailwind.css";
+@import "@fontsource-variable/geist";
+@import "@fontsource/dm-serif-display/400.css";
+@import "@fontsource/dm-serif-display/400-italic.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: 'DM Serif Display', Georgia, serif;
+    --font-sans: 'Geist Variable', sans-serif;
+    --font-serif: 'DM Serif Display', Georgia, serif;
+
+    /* Brand palette — the editorial identity that was previously inlined as raw
+       hex in 39 files (634 occurrences). The shadcn tokens below are all
+       oklch(x 0 0) (zero chroma), so they carry no brand colour at all; these
+       do. Use bg-brand-*, text-brand-*, border-brand-* instead of [#hex]. */
+    --color-brand-ink: var(--brand-ink);
+    --color-brand-cream: var(--brand-cream);
+    --color-brand-rust: var(--brand-rust);
+    --color-brand-tan: var(--brand-tan);
+    --color-brand-green: var(--brand-green);
+
+    /* Opacity-safe text ramps. Reading these off arbitrary /40 /30 /20
+       modifiers is what broke contrast — these three are measured. */
+    --color-ink-muted: var(--ink-muted);
+    --color-ink-subtle: var(--ink-subtle);
+    --color-cream-muted: var(--cream-muted);
+    --color-cream-subtle: var(--cream-subtle);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* Brand palette — single source of truth.
+   Ratios below are measured against their intended backdrop, not estimated. */
+:root {
+    --brand-ink: #0a0a0a;      /* 17.5:1 on cream — headlines */
+    --brand-cream: #f5f0eb;    /* page backdrop */
+    --brand-rust: #8b2500;     /*  7.9:1 on cream — accent, italic emphasis */
+    --brand-tan: #c8956c;      /*  6.0:1 on ink   — accent on dark sections */
+    --brand-green: #2d8a4e;    /* status: online / success */
+
+    /* Text ramps. Each is the measured floor for WCAG AA, so these replace the
+       ad-hoc /40 /30 /20 modifiers that were failing:
+         ink/40 on cream  = 2.66:1  FAIL  ->  --ink-subtle  = 4.54:1
+         cream/40 on ink  = 3.71:1  FAIL  ->  --cream-subtle= 4.55:1
+         cream/20 on ink  = 1.77:1  FAIL  ->  --cream-muted = 6.53:1 */
+    --ink-muted: #5c5956;      /*  6.4:1 on cream — body copy */
+    --ink-subtle: #706d6b;     /*  4.5:1 on cream — smallest passing label */
+    --cream-muted: #a7a7a7;    /*  6.5:1 on ink   — body copy on dark */
+    --cream-subtle: #8a8a8a;   /*  4.6:1 on ink   — smallest passing label */
+}
+
+:root {
+    --background: oklch(1 0 0);
+    --foreground: oklch(0.145 0 0);
+    --card: oklch(1 0 0);
+    --card-foreground: oklch(0.145 0 0);
+    --popover: oklch(1 0 0);
+    --popover-foreground: oklch(0.145 0 0);
+    --primary: oklch(0.205 0 0);
+    --primary-foreground: oklch(0.985 0 0);
+    --secondary: oklch(0.97 0 0);
+    --secondary-foreground: oklch(0.205 0 0);
+    --muted: oklch(0.97 0 0);
+    --muted-foreground: oklch(0.556 0 0);
+    --accent: oklch(0.97 0 0);
+    --accent-foreground: oklch(0.205 0 0);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: oklch(0.922 0 0);
+    --input: oklch(0.922 0 0);
+    --ring: oklch(0.708 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --radius: 0.625rem;
+    --sidebar: oklch(0.985 0 0);
+    --sidebar-foreground: oklch(0.145 0 0);
+    --sidebar-primary: oklch(0.205 0 0);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.97 0 0);
+    --sidebar-accent-foreground: oklch(0.205 0 0);
+    --sidebar-border: oklch(0.922 0 0);
+    --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+    --background: oklch(0.175 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.235 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --popover: oklch(0.235 0 0);
+    --popover-foreground: oklch(0.985 0 0);
+    --primary: oklch(0.922 0 0);
+    --primary-foreground: oklch(0.205 0 0);
+    --secondary: oklch(0.295 0 0);
+    --secondary-foreground: oklch(0.985 0 0);
+    --muted: oklch(0.295 0 0);
+    --muted-foreground: oklch(0.78 0 0);
+    --accent: oklch(0.295 0 0);
+    --accent-foreground: oklch(0.985 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 18%);
+    --input: oklch(1 0 0 / 20%);
+    --ring: oklch(0.6 0 0);
+    --chart-1: oklch(0.87 0 0);
+    --chart-2: oklch(0.556 0 0);
+    --chart-3: oklch(0.439 0 0);
+    --chart-4: oklch(0.371 0 0);
+    --chart-5: oklch(0.269 0 0);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-primary: oklch(0.488 0.243 264.376);
+    --sidebar-primary-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans scroll-smooth;
+    }
+}
+
+/* Accessibility: reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Accessibility: visible focus ring for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+/* Global overflow prevention */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+#root {
+  overflow-x: hidden;
+}
+
+/* ============================================
+   DESIGN SYSTEM — Semantic Colors (Foundation)
+   ============================================ */
+
+:root {
+  /* Semantic: Success */
+  --success: oklch(0.6 0.15 145);
+  --success-foreground: oklch(0.985 0 0);
+  /* Semantic: Warning */
+  --warning: oklch(0.75 0.15 75);
+  --warning-foreground: oklch(0.205 0 0);
+  /* Semantic: Danger */
+  --danger: oklch(0.577 0.245 27.325);
+  --danger-foreground: oklch(0.985 0 0);
+  /* Semantic: Info */
+  --info: oklch(0.55 0.15 264);
+  --info-foreground: oklch(0.985 0 0);
+}
+
+.dark {
+  --success: oklch(0.7 0.15 145);
+  --success-foreground: oklch(0.205 0 0);
+  --warning: oklch(0.8 0.15 75);
+  --warning-foreground: oklch(0.205 0 0);
+  --danger: oklch(0.704 0.191 22.216);
+  --danger-foreground: oklch(0.985 0 0);
+  --info: oklch(0.65 0.15 264);
+  --info-foreground: oklch(0.985 0 0);
+}
+
+/* Prevent body overflow */
+body {
+  overflow-x: hidden;
+  min-height: 100dvh;
+  -webkit-tap-highlight-color: rgba(139, 37, 0, 0.16);
+  touch-action: manipulation;
+}
+
+/* ============================================
+   DESIGN SYSTEM — Premium Utilities (v2)
+   ============================================ */
+
+/* Glassmorphism / glow classes removed — Deutsche Präzision editorial style */
+
+/* Staggered animation classes */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Mesh gradient backgrounds removed — flat matte editorial */
+
+/* Premium card hover effect — Editorial: subtle bg shift, no shadow */
+.card-hover {
+  transition: background-color 0.15s ease;
+}
+
+.card-hover:hover {
+  background-color: rgba(10, 10, 10, 0.03);
+}
+
+/* German flag accent bar — Editorial colors */
+.flag-accent {
+  background: linear-gradient(90deg, #0a0a0a 33%, #8b2500 33% 66%, #c8956c 66%);
+  height: 3px;
+  border-radius: 0;
+}
+
+/* Typography: section headers */
+.section-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: hsl(222.2 84% 4.9%);
+}
+
+.section-subtitle {
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: hsl(215.4 16.3% 46.9%);
+  line-height: 1.5;
+}
+
+/* Badge with gradient — Editorial: flat matte */
+.badge-pro {
+  background: #8b2500;
+  color: #f5f0eb;
+  font-weight: 700;
+  font-size: 0.625rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+
+/* Divider with fade edges */
+.divider-fade {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, hsl(214.3 31.8% 91.4%), transparent);
+}
+
+/* ============================================
+   Stisla-inspired DeutschUp Database UI
+   - Constraint-first tokens
+   - BEM-ish component classes
+   - Compact dashboard/card/table primitives
+   ============================================ */
+@layer components {
+  .st-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .st-page {
+      gap: 1.25rem;
+    }
+  }
+
+  .st-card {
+    position: relative;
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: color-mix(in oklch, var(--card) 92%, transparent);
+    color: var(--foreground);
+    box-shadow:
+      0 1px 2px color-mix(in oklch, black 5%, transparent),
+      0 18px 50px -32px color-mix(in oklch, black 25%, transparent);
+  }
+
+  .st-card--hero {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    overflow: hidden;
+    border-color: color-mix(in oklch, white 10%, transparent);
+    background:
+      radial-gradient(circle at top right, color-mix(in oklch, var(--warning) 22%, transparent), transparent 34rem),
+      radial-gradient(circle at bottom left, color-mix(in oklch, var(--info) 16%, transparent), transparent 30rem),
+      linear-gradient(135deg, #0a0a0a, color-mix(in oklch, #0a0a0a 88%, var(--primary)));
+  }
+
+  @media (min-width: 768px) {
+    .st-card--hero {
+      padding: 2rem;
+    }
+  }
+
+  .st-flag-accent {
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline: 0;
+    display: flex;
+    height: 4px;
+    background: linear-gradient(90deg, #0a0a0a 0 33%, #ef4444 33% 66%, #f59e0b 66%);
+  }
+
+  .st-badge {
+    display: inline-flex;
+    min-height: 1.35rem;
+    align-items: center;
+    gap: 0.35rem;
+    border-radius: 9999px;
+    padding: 0.18rem 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .st-badge--neutral {
+    background: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  .st-badge--primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .st-badge--success {
+    background: var(--success);
+    color: var(--success-foreground);
+  }
+
+  .st-badge--warning {
+    background: var(--warning);
+    color: var(--warning-foreground);
+  }
+
+  /* Soft badges.
+     The previous rule replaced only `background` and left the variant's `color`
+     untouched. Combined with --primary that meant near-white text
+     (--primary-foreground, oklch 0.985) on a near-white tint: 1.04:1, i.e.
+     invisible. Every pairing below sets background AND colour together, each
+     measured against the white card these badges sit on. */
+  .st-badge--soft {
+    background: #f1efed;
+    color: var(--ink-muted);                 /* 6.07:1 */
+    border: 1px solid rgba(10, 10, 10, 0.10);
+  }
+
+  .st-badge--neutral.st-badge--soft {
+    background: #f1efed;
+    color: var(--ink-muted);                 /* 6.07:1 */
+  }
+
+  .st-badge--primary.st-badge--soft {
+    background: #eeecea;
+    color: var(--brand-ink);                 /* 16.80:1 */
+  }
+
+  .st-badge--success.st-badge--soft {
+    background: #e6f4ec;
+    color: #1a6b3d;                          /* 5.76:1 */
+  }
+
+  .st-badge--warning.st-badge--soft {
+    background: #fdf1dc;
+    color: #7a5200;                          /* 6.19:1 */
+  }
+
+  .st-card--hero .st-badge--soft {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(255, 255, 255, 0.24);
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .st-card--hero .st-badge--warning.st-badge--soft {
+    background: color-mix(in oklch, var(--warning) 35%, transparent);
+    border-color: color-mix(in oklch, var(--warning) 55%, transparent);
+    color: white;
+  }
+
+  .st-level-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: color-mix(in oklch, var(--card) 94%, transparent);
+    padding: 1rem;
+    color: var(--foreground);
+    transition:
+      transform 160ms ease,
+      border-color 160ms ease,
+      background-color 160ms ease,
+      box-shadow 160ms ease;
+  }
+
+  .st-level-card:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in oklch, var(--primary) 22%, var(--border));
+    background: var(--card);
+  }
+
+  .st-level-card--active {
+    border-color: color-mix(in oklch, var(--primary) 48%, var(--border));
+    background: color-mix(in oklch, var(--primary) 7%, var(--card));
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--primary) 16%, transparent);
+  }
+
+  .st-progress {
+    display: block;
+    height: 0.45rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: color-mix(in oklch, var(--foreground) 8%, transparent);
+  }
+
+  .st-progress > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    transition: width 280ms ease;
+  }
+
+  .st-field {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+
+  .st-field > span {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted-foreground);
+  }
+
+  .st-input {
+    width: 100%;
+    min-height: 2.75rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklch, var(--background) 60%, var(--card));
+    padding: 0.65rem 0.85rem;
+    color: var(--foreground);
+    outline: none;
+    transition:
+      border-color 160ms ease,
+      box-shadow 160ms ease,
+      background-color 160ms ease;
+  }
+
+  .st-input:focus-visible {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 18%, transparent);
+  }
+
+  .st-segmented {
+    display: inline-flex;
+    gap: 0.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    background: var(--muted);
+    padding: 0.25rem;
+  }
+
+  .st-study-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid color-mix(in oklch, var(--primary) 18%, var(--border));
+    border-radius: var(--radius-2xl);
+    background:
+      radial-gradient(circle at top, color-mix(in oklch, var(--primary) 8%, transparent), transparent 22rem),
+      var(--card);
+    padding: 2rem;
+    box-shadow:
+      0 1px 2px color-mix(in oklch, black 4%, transparent),
+      0 24px 70px -40px color-mix(in oklch, black 28%, transparent);
+  }
+
+  .st-study-card--answer {
+    border-color: color-mix(in oklch, var(--primary) 48%, var(--border));
+    background:
+      radial-gradient(circle at bottom, color-mix(in oklch, var(--primary) 12%, transparent), transparent 24rem),
+      var(--card);
+  }
+
+  .st-note {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: color-mix(in oklch, var(--muted) 65%, transparent);
+    padding: 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .st-table {
+    width: 100%;
+    border-collapse: collapse;
+    color: var(--foreground);
+    text-align: left;
+  }
+
+  .st-table > thead > tr > th {
+    border-bottom: 1px solid var(--border);
+    background: color-mix(in oklch, var(--muted) 70%, transparent);
+    padding: 0.85rem 1rem;
+    color: var(--muted-foreground);
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .st-table > tbody > tr > td {
+    border-bottom: 1px solid var(--border);
+    padding: 0.85rem 1rem;
+    vertical-align: middle;
+  }
+
+  .st-table > tbody > tr:hover > td {
+    background: color-mix(in oklch, var(--accent) 80%, transparent);
+  }
+
+  .st-table > tbody > tr[data-state="active"] > td {
+    background: color-mix(in oklch, var(--success) 8%, transparent);
+  }
+}
+
+/* 3D utilities for the vocabulary flashcard flip.
+
+   VocabTrainerDB/VocabTrainer already had complete flip markup — a
+   perspective parent, a preserve-3d child, and two backface-hidden faces with
+   the answer side rotated. Two of the four classes it relies on never existed:
+
+     backface-hidden  Tailwind 4.1 ships this        -> do not redefine
+     rotate-y-180     Tailwind 4.1 ships this        -> do not redefine
+     preserve-3d      NOT a Tailwind name (it is `transform-3d`)  -> defined here
+     perspective-1000 NOT a Tailwind name (the scale is named: `perspective-normal`
+                      etc., numeric needs perspective-[1000px])   -> defined here
+
+   Only the two genuinely missing names are declared, using exactly the names the
+   components already use. Redefining the two Tailwind ships would risk the
+   duplicate-rule ordering deciding which wins. */
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d; /* cb-20260805 */
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "A1": {
+    "chapters": [
+      {
+        "number": 1,
+        "title": "Guten Tag!",
+        "topics": [
+          "Begrüßung",
+          "Vorstellung",
+          "Zahlen"
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Freunde, Kollegen und ich",
+        "topics": [
+          "Berufe",
+          "Familie",
+          "Eigenschaften"
+        ]
+      },
+      {
+        "number": 3,
+        "title": "In Hamburg",
+        "topics": [
+          "Stadt",
+          "Transport",
+          "Wegbeschreibung"
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Guten Appetit!",
+        "topics": [
+          "Essen",
+          "Getränke",
+          "Restaurant"
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Alltag und Familie",
+        "topics": [
+          "Familie",
+          "Tagesablauf",
+          "Uhrzeiten"
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Zeit mit Freunden",
+        "topics": [
+          "Freizeit",
+          "Geburtstage",
+          "Einladungen"
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Arbeitsalltag",
+        "topics": [
+          "Beruf",
+          "Büro",
+          "Ortsangaben"
+        ]
+      },
+      {
+        "number": 8,
+        "title": "Fit und gesund",
+        "topics": [
+          "Körper",
+          "Krankheiten",
+          "Arzt"
+        ]
+      },
+      {
+        "number": 9,
+        "title": "Meine Wohnung",
+        "topics": [
+          "Wohnung",
+          "Möbel",
+          "Farben"
+        ]
+      },
+      {
+        "number": 10,
+        "title": "Reisen und Verkehr",
+        "topics": [
+          "Reise",
+          "Verkehr",
+          "Hotel"
+        ]
+      },
+      {
+        "number": 11,
+        "title": "Unterwegs in Deutschland",
+        "topics": [
+          "Stadt",
+          "Sehenswürdigkeiten"
+        ]
+      },
+      {
+        "number": 12,
+        "title": "Feiern und Feste",
+        "topics": [
+          "Feiertage",
+          "Geschenke",
+          "Einladungen"
+        ]
+      }
+    ],
+    "total_vocab": 2113,
+    "sources": [
+      "Netzwerk Neu A1 Kursbuch",
+      "Netzwerk Neu A1 Übungsbuch",
+      "Wortschatz A1"
+    ]
+  },
+  "A2": {
+    "chapters": [
+      {
+        "number": 1,
+        "title": "Lebensart",
+        "topics": [
+          "Gewohnheiten",
+          "Alltag"
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Reisen",
+        "topics": [
+          "Urlaub",
+          "Verkehrsmittel"
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Medien",
+        "topics": [
+          "Internet",
+          "Fernsehen",
+          "Zeitung"
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Bildung",
+        "topics": [
+          "Schule",
+          "Universität",
+          "Sprachen"
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Zuhause",
+        "topics": [
+          "Wohnen",
+          "Nachbarschaft"
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Einkaufen",
+        "topics": [
+          "Kleidung",
+          "Lebensmittel",
+          "Online-Shopping"
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Arbeit",
+        "topics": [
+          "Bewerbung",
+          "Beruf",
+          "Praktikum"
+        ]
+      },
+      {
+        "number": 8,
+        "title": "Gesundheit",
+        "topics": [
+          "Sport",
+          "Ernährung",
+          "Arzt"
+        ]
+      },
+      {
+        "number": 9,
+        "title": "Kultur",
+        "topics": [
+          "Musik",
+          "Film",
+          "Kunst"
+        ]
+      },
+      {
+        "number": 10,
+        "title": "Umwelt",
+        "topics": [
+          "Natur",
+          "Umweltschutz",
+          "Tiere"
+        ]
+      },
+      {
+        "number": 11,
+        "title": "Kommunikation",
+        "topics": [
+          "Telefon",
+          "Brief",
+          "E-Mail"
+        ]
+      },
+      {
+        "number": 12,
+        "title": "Pläne",
+        "topics": [
+          "Zukunft",
+          "Wünsche",
+          "Träume"
+        ]
+      }
+    ],
+    "total_vocab": 0,
+    "sources": [
+      "Netzwerk Neu A2 Kursbuch",
+      "Netzwerk Neu A2 Übungsbuch",
+      "Wortschatz A2"
+    ]
+  },
+  "B1": {
+    "chapters": [
+      {
+        "number": 1,
+        "title": "Gute Reise!",
+        "topics": [
+          "Reisen",
+          "Fremdsprachen"
+        ]
+      },
+      {
+        "number": 2,
+        "title": "Das ist ja praktisch!",
+        "topics": [
+          "Technik",
+          "Alltag"
+        ]
+      },
+      {
+        "number": 3,
+        "title": "Veränderungen",
+        "topics": [
+          "Leben",
+          "Wandel"
+        ]
+      },
+      {
+        "number": 4,
+        "title": "Arbeitswelt",
+        "topics": [
+          "Beruf",
+          "Karriere"
+        ]
+      },
+      {
+        "number": 5,
+        "title": "Umweltfreundlich?",
+        "topics": [
+          "Umwelt",
+          "Nachhaltigkeit"
+        ]
+      },
+      {
+        "number": 6,
+        "title": "Blick nach vorn",
+        "topics": [
+          "Zukunft",
+          "Pläne"
+        ]
+      },
+      {
+        "number": 7,
+        "title": "Zwischenmenschliches",
+        "topics": [
+          "Beziehungen",
+          "Gefühle"
+        ]
+      },
+      {
+        "number": 8,
+        "title": "Rund um Körper und Geist",
+        "topics": [
+          "Gesundheit",
+          "Wohlbefinden"
+        ]
+      },
+      {
+        "number": 9,
+        "title": "Kunststücke",
+        "topics": [
+          "Kunst",
+          "Kreativität"
+        ]
+      },
+      {
+        "number": 10,
+        "title": "Miteinander",
+        "topics": [
+          "Gesellschaft",
+          "Zusammenleben"
+        ]
+      },
+      {
+        "number": 11,
+        "title": "Stadt, Land, Fluss",
+        "topics": [
+          "Geografie",
+          "Städte"
+        ]
+      },
+      {
+        "number": 12,
+        "title": "Geld regiert die Welt?",
+        "topics": [
+          "Geld",
+          "Wirtschaft"
+        ]
+      }
+    ],
+    "total_vocab": 0,
+    "sources": [
+      "Netzwerk B1 Kursbuch",
+      "Netzwerk B1 Übungsbuch",
+      "Wortschatz B1"
+    ]
+  }
+}

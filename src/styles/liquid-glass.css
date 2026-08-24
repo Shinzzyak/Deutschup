@@ -1,0 +1,281 @@
+/* ============================================
+   LIQUID GLASS SYSTEM — CSS-only Apple-style glass
+   Zero dependency. backdrop-filter + SVG displacement
+   + gradient edge highlight = 90% match to iOS liquid glass
+   ============================================ */
+
+/* Glass tokens */
+:root {
+  --glass-blur: 24px;
+  --glass-blur-heavy: 40px;
+  --glass-saturation: 1.8;
+  --glass-brightness: 1.05;
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.25);
+  --glass-highlight: rgba(255, 255, 255, 0.4);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --glass-shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.18);
+  --glass-radius: 20px;
+  --glass-radius-sm: 14px;
+  --glass-radius-lg: 28px;
+  --glass-inset-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  --glass-inset-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.05);
+  --glass-transition: background-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark {
+  --glass-bg: rgba(30, 30, 30, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-highlight: rgba(255, 255, 255, 0.15);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  --glass-inset-highlight: inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  --glass-inset-shadow: inset 0 -1px 1px rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   Core Glass Surface
+   ============================================ */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation)) brightness(var(--glass-brightness));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation)) brightness(var(--glass-brightness));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow), var(--glass-inset-highlight), var(--glass-inset-shadow);
+  overflow: hidden;
+  transition: var(--glass-transition);
+}
+
+/* Glass owns visuals only. Components/Tailwind own layout positioning.
+   Without this guard, .glass/.glass-card/.glass-nav can override fixed/sticky
+   utilities and push navigation/widgets into the document flow. */
+.glass:not(.fixed):not(.sticky):not(.absolute),
+.glass-card:not(.fixed):not(.sticky):not(.absolute) {
+  position: relative;
+}
+
+/* Specular edge highlight — simulates glass rim lighting */
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--glass-highlight) 0%, transparent 30%, transparent 70%, var(--glass-highlight) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Inner glow — simulated refraction at edges */
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(ellipse at top left, rgba(255, 255, 255, 0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* ============================================
+   Glass Variants
+   ============================================ */
+
+/* Subtle — badges, chips, small inline elements */
+.glass-subtle {
+  background: rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--glass-radius-sm);
+  box-shadow: var(--glass-inset-highlight);
+}
+.dark .glass-subtle {
+  background: rgba(40, 40, 40, 0.35);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Panel — solid content panels (Koreksi, Catatan, etc.) where glass is too transparent */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow), var(--glass-inset-highlight);
+  transition: var(--glass-transition);
+}
+.dark .glass-panel {
+  background: rgba(30, 30, 30, 0.88);
+}
+
+/* Heavy — modal overlays, main panels */
+.glass-heavy {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur-heavy)) saturate(2) brightness(1.08);
+  -webkit-backdrop-filter: blur(var(--glass-blur-heavy)) saturate(2) brightness(1.08);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius-lg);
+  box-shadow: var(--glass-shadow-lg), var(--glass-inset-highlight), var(--glass-inset-shadow);
+}
+
+/* Tinted — accent-colored glass */
+.glass-tinted {
+  background: rgba(139, 37, 0, 0.08);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.8);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.8);
+  border: 1px solid rgba(139, 37, 0, 0.15);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-inset-highlight);
+}
+
+/* Nav — for top/bottom bars */
+.glass-nav {
+  background: rgba(245, 240, 235, 0.7);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+.dark .glass-nav {
+  background: rgba(20, 20, 20, 0.7);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Nav dark — footer.
+   Alpha is a contrast value, not a taste value. At 0.8 this composites over the
+   landing page's #f5f0eb backdrop to #393837, where --cream-subtle (#8a8a8a)
+   measures 3.39:1 — the four footer labels in LandingPage.tsx were failing AA
+   because the ramp is specified against #0a0a0a, not against this glass. At
+   0.94 the composite is #181818: cream-subtle 5.15:1, cream-muted 7.39:1,
+   brand-cream 15.71:1. The blur and saturation are untouched. */
+.glass-nav-dark {
+  background: rgba(10, 10, 10, 0.94);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ============================================
+   Glass Interactive States
+   ============================================ */
+.glass-interactive {
+  cursor: pointer;
+  transition: var(--glass-transition);
+}
+.glass-interactive:hover {
+  background: rgba(255, 255, 255, 0.65);
+  box-shadow: var(--glass-shadow-lg), var(--glass-inset-highlight);
+  transform: translateY(-1px);
+}
+.glass-interactive:active {
+  transform: translateY(0);
+  box-shadow: var(--glass-shadow), var(--glass-inset-highlight);
+}
+.dark .glass-interactive:hover {
+  background: rgba(40, 40, 40, 0.65);
+}
+
+/* ============================================
+   Animated ambient background
+   ============================================ */
+.glass-bg-ambient {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(139, 37, 0, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(200, 149, 108, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 90%, rgba(10, 10, 10, 0.04) 0%, transparent 50%),
+    var(--background, #f5f0eb);
+  pointer-events: none;
+}
+.dark .glass-bg-ambient {
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 10%, rgba(139, 37, 0, 0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(200, 149, 108, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 60% at 50% 90%, rgba(255, 255, 255, 0.02) 0%, transparent 50%),
+    var(--background, #0a0a0a);
+}
+
+/* ============================================
+   Glass Card — dashboard/lesson cards
+   ============================================ */
+.glass-card {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturation));
+  border: 1px solid var(--glass-border);
+  border-radius: var(--glass-radius);
+  box-shadow: var(--glass-shadow), var(--glass-inset-highlight);
+  overflow: hidden;
+  transition: var(--glass-transition);
+}
+.glass-card:hover {
+  box-shadow: var(--glass-shadow-lg), var(--glass-inset-highlight), var(--glass-inset-shadow);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+.dark .glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+.dark .glass-card {
+  background: rgba(38, 38, 38, 0.85);
+}
+
+/* ============================================
+   Floating glass — Apple-style floating tab bar
+   ============================================ */
+.glass-floating {
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(30px) saturate(2) brightness(1.05);
+  -webkit-backdrop-filter: blur(30px) saturate(2) brightness(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15), var(--glass-inset-highlight), inset 0 -2px 2px rgba(0, 0, 0, 0.03);
+}
+.dark .glass-floating {
+  background: rgba(30, 30, 30, 0.6);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* ============================================
+   Liquid shimmer animation
+   ============================================ */
+@keyframes liquid-shimmer {
+  0%, 100% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(0.3deg) scale(1.005); }
+}
+.glass-liquid {
+  animation: liquid-shimmer 8s ease-in-out infinite;
+}
+
+/* ============================================
+   Reduced motion
+   ============================================ */
+@media (prefers-reduced-motion: reduce) {
+  .glass-liquid { animation: none; }
+  .glass, .glass-card, .glass-interactive { transition: none; }
+}
+
+/* ============================================
+   Mobile — lighter blur for performance
+   ============================================ */
+@media (max-width: 768px) {
+  :root {
+    --glass-blur: 16px;
+    --glass-blur-heavy: 24px;
+  }
+}
+
+/* ============================================
+   Fallback — no backdrop-filter support
+   ============================================ */
+@supports not (backdrop-filter: blur(1px)) {
+  .glass, .glass-card, .glass-heavy, .glass-nav, .glass-floating {
+    background: rgba(255, 255, 255, 0.92);
+  }
+  .dark .glass, .dark .glass-card, .dark .glass-heavy, .dark .glass-nav, .dark .glass-floating {
+    background: rgba(20, 20, 20, 0.92);
+  }
+}

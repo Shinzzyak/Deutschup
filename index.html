@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="DeutschUp — Platform belajar Bahasa Jerman interaktif dengan AI, latihan soal, koreksi kalimat, dan simulasi ujian." />
+    <meta name="keywords" content="belajar bahasa jerman, kursus online, AI tutor, simulasi ujian, kosakata jerman" />
+    <meta property="og:title" content="DeutschUp — Belajar Bahasa Jerman" />
+    <meta property="og:description" content="Platform belajar Bahasa Jerman interaktif dengan AI, latihan soal, koreksi kalimat, dan simulasi ujian." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://deutschup.sintec.my.id" />
+    <meta property="og:image" content="https://deutschup.sintec.my.id/android-chrome-512x512.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <title>DeutschUp — Belajar Bahasa Jerman</title>
+    <link rel="canonical" href="https://deutschup.sintec.my.id/" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "DeutschUp",
+      "url": "https://deutschup.sintec.my.id/",
+      "applicationCategory": "EducationalApplication",
+      "operatingSystem": "Web",
+      "description": "Platform belajar Bahasa Jerman interaktif dengan AI, latihan soal, koreksi kalimat, dan simulasi ujian.",
+      "inLanguage": ["id", "de"],
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "IDR" }
+    }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Fallback: jika React gagal mount dalam 8 detik (blank putih), tampilkan pesan error + tombol reload. -->
+    <script>
+      (function () {
+        // Remote report — inline, works even when the main bundle fails to load.
+        function reportRemote(kind, msg, stack) {
+          try {
+            fetch('/api/error-report', {
+              method: 'POST',
+              headers: { 'content-type': 'application/json' },
+              body: JSON.stringify({
+                kind: kind,
+                message: String(msg || '').slice(0, 500),
+                stack: String(stack || '').slice(0, 2000),
+                url: (location.href || '').slice(0, 300),
+                ua: (navigator.userAgent || '').slice(0, 300),
+              }),
+            }).catch(function () {});
+          } catch (e) {}
+        }
+        // Capture bundle load failure explicitly.
+        window.addEventListener('error', function (e) {
+          reportRemote('window.error', e.message, (e.error && e.error.stack) || 'file:' + (e.filename || '?') + ':' + (e.lineno || '?'));
+        }, true);
+        window.addEventListener('unhandledrejection', function (e) {
+          reportRemote('unhandledrejection', (e.reason && e.reason.message) || String(e.reason), (e.reason && e.reason.stack) || '');
+        }, true);
+        // Also catch module script load errors (they fire 'error' on the script tag, not window).
+        document.addEventListener('error', function (e) {
+          var t = e.target;
+          if (t && t.tagName === 'SCRIPT' && t.src) {
+            reportRemote('script-load-error', 'Failed to load script: ' + t.src.split('/').pop(), t.src);
+          }
+        }, true);
+        // Listen for the module script failing: check after a delay if it loaded.
+        var t = 0;
+        var timer = setInterval(function () {
+          t += 500;
+          var root = document.getElementById('root');
+          if (root && root.children.length > 0) {
+            clearInterval(timer);
+            return;
+          }
+          if (t >= 8000) {
+            clearInterval(timer);
+            var msg = document.createElement('div');
+            msg.style.cssText =
+              'position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:#f5f0eb;color:#0a0a0a;font-family:system-ui,sans-serif;padding:24px;text-align:center;z-index:99999';
+            msg.innerHTML =
+              '<h1 style="font-size:20px;margin:0">Aplikasi gagal dimuat</h1>' +
+              '<p style="font-size:14px;margin:0;max-width:420px">Terjadi kesalahan saat memuat aplikasi. Coba muat ulang, atau bersihkan cache browser.</p>' +
+              '<button id="reload-btn" style="background:#0a0a0a;color:#f5f0eb;border:0;border-radius:0;padding:12px 24px;font-size:14px;cursor:pointer">Muat Ulang</button>';
+            document.body.appendChild(msg);
+            document.getElementById('reload-btn').addEventListener('click', function () {
+              location.reload();
+            });
+            // Report that the app failed to mount — device-specific info.
+            reportRemote('mount-timeout', 'React did not mount within 8s', '');
+            try {
+              var errs = JSON.parse(localStorage.getItem('debug_errors') || '[]');
+              if (errs[0]) {
+                var d = document.createElement('pre');
+                d.style.cssText = 'font-size:11px;color:#8b2500;max-width:420px;overflow:auto;text-align:left;white-space:pre-wrap';
+                d.textContent = (errs[0].message || '') + '\n' + (errs[0].stack || '');
+                msg.appendChild(d);
+              }
+            } catch (e) {}
+          }
+        }, 500);
+      })();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+<!-- build 20260805050706 -->

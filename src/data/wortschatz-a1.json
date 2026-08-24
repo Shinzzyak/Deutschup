@@ -1,0 +1,5882 @@
+[
+  {
+    "german": "die Stadt",
+    "indonesian": "kota",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Name",
+    "indonesian": "nama",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die E-Mail-Adresse",
+    "indonesian": "alamat E-Mail",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Vorname",
+    "indonesian": "nama depan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Handynummer",
+    "indonesian": "nomor hp",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Nachname",
+    "indonesian": "nama belakang",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Telefonnummer",
+    "indonesian": "nomor hp",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Partner",
+    "indonesian": "partner laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Schweiz",
+    "indonesian": "Swiss",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Text",
+    "indonesian": "teks",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Sprache",
+    "indonesian": "bahasa",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kindergarten",
+    "indonesian": "TK",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Zahl",
+    "indonesian": "angka",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Koffer",
+    "indonesian": "koper",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Antwort",
+    "indonesian": "jawaban",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Partnerin",
+    "indonesian": "partner perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Wort",
+    "indonesian": "kata",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "die Person",
+    "indonesian": "orang",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Land",
+    "indonesian": "negara",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "die Autobahn",
+    "indonesian": "jalan tol",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Flasche",
+    "indonesian": "botol",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "heißen",
+    "indonesian": "bernama",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "machen",
+    "indonesian": "membuat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "buchstabieren",
+    "indonesian": "mengeja",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "notieren",
+    "indonesian": "mencatat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wohnen",
+    "indonesian": "tinggal",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "raten",
+    "indonesian": "menebak",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kommen",
+    "indonesian": "datang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sagen",
+    "indonesian": "mengatakan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "hören",
+    "indonesian": "mendengar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sammeln",
+    "indonesian": "mengumpulkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lesen",
+    "indonesian": "membaca",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "spielen",
+    "indonesian": "bermain",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schreiben",
+    "indonesian": "menulis",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zu│ordnen",
+    "indonesian": "mengatur",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sprechen",
+    "indonesian": "berbicara",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "verstehen",
+    "indonesian": "memahami",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lernen",
+    "indonesian": "belajar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sich vorstellen",
+    "indonesian": "mengenalkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "grüßen",
+    "indonesian": "menyapa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "nennen",
+    "indonesian": "menyebutkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "verabschieden",
+    "indonesian": "berpamitan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "andere wichtige Wörter",
+    "indonesian": "mein Name",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wie",
+    "indonesian": "bagaimana",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "dein Name",
+    "indonesian": "nama kamu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wer",
+    "indonesian": "siapa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wo",
+    "indonesian": "di mana",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "woher",
+    "indonesian": "dari mana",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bahasa Jerman",
+    "indonesian": "Entschuldigung",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "in",
+    "indonesian": "di",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "aus",
+    "indonesian": "dari",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bis bald",
+    "indonesian": "sampai jumpa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bis später",
+    "indonesian": "sampai nanti",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Verabredung",
+    "indonesian": "janji temu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Computer",
+    "indonesian": "komputer",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Freundin",
+    "indonesian": "teman perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Freund",
+    "indonesian": "teman laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Leute (pl)",
+    "indonesian": "orang-orang",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Fußball",
+    "indonesian": "sepak bola",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Musik",
+    "indonesian": "musik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Beruf",
+    "indonesian": "pekerjaan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kellnerin",
+    "indonesian": "pelayan perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Friseur",
+    "indonesian": "penata rambut laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Köchin",
+    "indonesian": "koki perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Koch",
+    "indonesian": "koki laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kollegin",
+    "indonesian": "rekan kerja perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kollege",
+    "indonesian": "rekan kerja laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Firma",
+    "indonesian": "kantor",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Journalist",
+    "indonesian": "jurnalis",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Schule",
+    "indonesian": "sekolah",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Krankenpfleger",
+    "indonesian": "perawat laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Mechanikerin",
+    "indonesian": "mekanik perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Lehrer",
+    "indonesian": "guru laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Studentin",
+    "indonesian": "mahasiswi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kurs",
+    "indonesian": "kursus",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Universität",
+    "indonesian": "universitas",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Polizist",
+    "indonesian": "polisi laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Verkäuferin",
+    "indonesian": "penjual perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Taxifahrer",
+    "indonesian": "sopir taxi laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Ärztin",
+    "indonesian": "dokter perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Arzt",
+    "indonesian": "dokter laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Handwerkerin",
+    "indonesian": "pengrajin perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Abend",
+    "indonesian": "malam",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Stunde",
+    "indonesian": "jam (durasi)",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Nachmittag",
+    "indonesian": "siang hari",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Woche",
+    "indonesian": "minggu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Moment",
+    "indonesian": "momen",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Information",
+    "indonesian": "informasi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Tag",
+    "indonesian": "hari",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Adresse",
+    "indonesian": "alamat",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Wochentag",
+    "indonesian": "hari kerja",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Straße",
+    "indonesian": "jalan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Termin",
+    "indonesian": "janji temu",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Hausnummer",
+    "indonesian": "nomor rumah",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Familienname",
+    "indonesian": "nama keluarga",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Postleitzahl",
+    "indonesian": "kode pos",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Wohnort",
+    "indonesian": "tempat tinggal",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Notiz",
+    "indonesian": "catatan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Gerburtsort",
+    "indonesian": "tempat lahir",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Foto",
+    "indonesian": "foto",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Hobby",
+    "indonesian": "hobi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Krankenhaus",
+    "indonesian": "rumah sakit",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Buch",
+    "indonesian": "buku",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Seminar",
+    "indonesian": "seminar",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Cafe",
+    "indonesian": "cafe",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Taxi",
+    "indonesian": "taxi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Kino",
+    "indonesian": "bioskop",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Auto",
+    "indonesian": "mobil",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Theater",
+    "indonesian": "teater",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Wochenende",
+    "indonesian": "akhir pekan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Museum",
+    "indonesian": "museum",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Geburtsdatum",
+    "indonesian": "tanggal lahir",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Schwimmbad",
+    "indonesian": "kolam renang",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Formular",
+    "indonesian": "formulir",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Beispiel",
+    "indonesian": "contoh",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Wörterbuch",
+    "indonesian": "kamus",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Zimmer",
+    "indonesian": "kamar",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "joggen",
+    "indonesian": "joging",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "frei│haben",
+    "indonesian": "memiliki waktu luang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schwimmen",
+    "indonesian": "berenang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "arbeiten",
+    "indonesian": "bekerja",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "fotografieren",
+    "indonesian": "fotografi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "studieren",
+    "indonesian": "belajar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kochen",
+    "indonesian": "memasak",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "fahren",
+    "indonesian": "mengendarai",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "reisen",
+    "indonesian": "berpergian",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "haben",
+    "indonesian": "memiliki",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "singen",
+    "indonesian": "menyanyi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "passen",
+    "indonesian": "cocok",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tanzen",
+    "indonesian": "menari",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "suchen",
+    "indonesian": "mencari",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "warten",
+    "indonesian": "menunggu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gehen",
+    "indonesian": "pergi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kapan",
+    "indonesian": "leider",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sayangnya",
+    "indonesian": "alle",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "semua",
+    "indonesian": "groß",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "besar",
+    "indonesian": "hier",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "di sini",
+    "indonesian": "lustig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lucu",
+    "indonesian": "gern",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "suka",
+    "indonesian": "neu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "baru",
+    "indonesian": "viel",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "banyak",
+    "indonesian": "toll",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "keren",
+    "indonesian": "wirklich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "benar-benar",
+    "indonesian": "alt",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tua",
+    "indonesian": "männlich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "laki-laki",
+    "indonesian": "weiblich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "perempuan",
+    "indonesian": "morgen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "besok",
+    "indonesian": "nachts",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "setiap malam",
+    "indonesian": "meistens",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "paling sering",
+    "indonesian": "noch",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "masih",
+    "indonesian": "=== PAGE 4 ===",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Kirche",
+    "indonesian": "gereja",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Mensch",
+    "indonesian": "manusia",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Brücke",
+    "indonesian": "jembatan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Turm",
+    "indonesian": "menara",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Station",
+    "indonesian": "stasiun (pemberhentian)",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Park",
+    "indonesian": "taman",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kosten",
+    "indonesian": "biaya",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Markt",
+    "indonesian": "pasar",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Straßenbahn",
+    "indonesian": "trem",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Bahnhof",
+    "indonesian": "stasiun kereta",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die U-Bahn",
+    "indonesian": "kereta bawah tanah",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Hafen",
+    "indonesian": "pelabuhan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die S-Bahn",
+    "indonesian": "kereta kota",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der See",
+    "indonesian": "danau",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Fahrkarte",
+    "indonesian": "kartu perjalanan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Fluss",
+    "indonesian": "sungai",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Mitte",
+    "indonesian": "bagian tengah",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Ort",
+    "indonesian": "tempat",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Besucherin",
+    "indonesian": "pengunjung perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Besucher",
+    "indonesian": "pengunjung laki2",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Konzertkarte",
+    "indonesian": "kartu konser",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kilometer",
+    "indonesian": "kilometer",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Schauspielerin",
+    "indonesian": "aktris",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schauspieler",
+    "indonesian": "aktor",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Regisseurin",
+    "indonesian": "sutradara perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Regisseur",
+    "indonesian": "sutradara laki2",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Ausstellung",
+    "indonesian": "pameran",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Euro",
+    "indonesian": "Euro",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Jahreszeit",
+    "indonesian": "musim",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Bus",
+    "indonesian": "bus",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Gruppe",
+    "indonesian": "grup",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Zug",
+    "indonesian": "kereta",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Welt",
+    "indonesian": "dunia",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Weg",
+    "indonesian": "jalan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Lösung",
+    "indonesian": "jawaban/solusi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Plan",
+    "indonesian": "peta",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Start",
+    "indonesian": "permulaan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Haus",
+    "indonesian": "rumah",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Meter",
+    "indonesian": "meter",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Rathaus",
+    "indonesian": "balai kota",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Gast",
+    "indonesian": "tamu",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Konzerthaus",
+    "indonesian": "rumah konser",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Chor",
+    "indonesian": "paduan suara",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Hotel",
+    "indonesian": "hotel",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Film",
+    "indonesian": "film",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Meer",
+    "indonesian": "laut",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Star",
+    "indonesian": "sang bintang",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Fahrrad",
+    "indonesian": "sepeda",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Frühling",
+    "indonesian": "musim semi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Schiff",
+    "indonesian": "kapal",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Sommer",
+    "indonesian": "musim panas",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Flugzeug",
+    "indonesian": "pesawat terbang",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Herbst",
+    "indonesian": "musim gugur",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Ziel",
+    "indonesian": "tujuan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Winter",
+    "indonesian": "musim dingin",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Event",
+    "indonesian": "acara",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Test",
+    "indonesian": "tes",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Festival",
+    "indonesian": "festival",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Ticket",
+    "indonesian": "tiket",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Publikum",
+    "indonesian": "penonton",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Konzert",
+    "indonesian": "konser",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Orchester",
+    "indonesian": "orkestra",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Bild",
+    "indonesian": "gambar",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Plakat",
+    "indonesian": "poster",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Glück",
+    "indonesian": "kebahagiaan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das erste Mal",
+    "indonesian": "pertama kali",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "sehen",
+    "indonesian": "melihat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zeigen",
+    "indonesian": "menunjukkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "interessieren",
+    "indonesian": "tertarik",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zeichnen",
+    "indonesian": "menggambar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zu fuß gehen",
+    "indonesian": "jalan kaki",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "finden",
+    "indonesian": "menemukan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "di sana",
+    "indonesian": "schnell",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "cepat",
+    "indonesian": "interresant",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menarik",
+    "indonesian": "nach",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ke (kota,negara)",
+    "indonesian": "schön",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bagus/cantik",
+    "indonesian": "einfach",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mudah",
+    "indonesian": "lang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "panjang",
+    "indonesian": "rechts",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kanan",
+    "indonesian": "breit",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lebar",
+    "indonesian": "links",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kiri",
+    "indonesian": "hoch",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tinggi",
+    "indonesian": "geradeaus",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lurus",
+    "indonesian": "über",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tentang",
+    "indonesian": "richtig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "benar",
+    "indonesian": "also",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "jadi",
+    "indonesian": "falsch",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "salah",
+    "indonesian": "schon",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sudah",
+    "indonesian": "genau",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tepat",
+    "indonesian": "heute",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "hari ini",
+    "indonesian": "jetzt",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sekarang",
+    "indonesian": "ein Mal",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sekali",
+    "indonesian": "langsam",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lambat",
+    "indonesian": "=== PAGE 6 ===",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Banane",
+    "indonesian": "pisang",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Apfel",
+    "indonesian": "apel",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Birne",
+    "indonesian": "pir",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Salat",
+    "indonesian": "salad",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Gurke",
+    "indonesian": "timun",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Keks",
+    "indonesian": "biskuit",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kartoffel",
+    "indonesian": "kentang",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kuchen",
+    "indonesian": "kue",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Tomate",
+    "indonesian": "tomat",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schinken",
+    "indonesian": "daging babi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Olive",
+    "indonesian": "zaitun/oliv",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Käse",
+    "indonesian": "keju",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Zwiebel",
+    "indonesian": "bawang bombay",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Pfeffer",
+    "indonesian": "lada",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Wurst",
+    "indonesian": "sosis",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Zucker",
+    "indonesian": "gula",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Butter",
+    "indonesian": "mentega",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Essig",
+    "indonesian": "cuka",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Milch",
+    "indonesian": "susu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Reis",
+    "indonesian": "beras",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Sahne",
+    "indonesian": "krim",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Fisch",
+    "indonesian": "ikan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Nudeln",
+    "indonesian": "mie",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Saft",
+    "indonesian": "jus",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Schokolade",
+    "indonesian": "coklat",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kaffee",
+    "indonesian": "kopi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Marmelade",
+    "indonesian": "selai",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Tee",
+    "indonesian": "teh",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Limonade",
+    "indonesian": "es lemon",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Cola",
+    "indonesian": "cola",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Supermarkt",
+    "indonesian": "supermarket",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Bäckerei",
+    "indonesian": "toko roti",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Becher",
+    "indonesian": "mug",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Metzgerei",
+    "indonesian": "toko daging",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Liter",
+    "indonesian": "liter",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Packung",
+    "indonesian": "bungkusan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Preis",
+    "indonesian": "harga",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Dose",
+    "indonesian": "kaleng",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kassenzettel",
+    "indonesian": "struk",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Tüte",
+    "indonesian": "totebag",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Morgen",
+    "indonesian": "pagi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Suppe",
+    "indonesian": "sup",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Mittag",
+    "indonesian": "siang hari",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Pizza",
+    "indonesian": "pizza",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Pommes",
+    "indonesian": "kentang goreng",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Nacht",
+    "indonesian": "malam",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Einkaufswagen",
+    "indonesian": "keranjang belanja",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Einladung",
+    "indonesian": "undangan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Kantine",
+    "indonesian": "kantin",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Obst",
+    "indonesian": "buah",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Gemüse",
+    "indonesian": "sayuran",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Brötchen",
+    "indonesian": "roti kecil",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Brot",
+    "indonesian": "roti",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Fleisch",
+    "indonesian": "daging",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Hähnchen",
+    "indonesian": "ayam kecil",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das/der Joghurt",
+    "indonesian": "yoghurt",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "das Würtschen",
+    "indonesian": "sosis kecil",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Saltz",
+    "indonesian": "garam",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Öl",
+    "indonesian": "minyak",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Ei",
+    "indonesian": "telur",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Müsli",
+    "indonesian": "sereal",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Wasser",
+    "indonesian": "air",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Getränk",
+    "indonesian": "minuman",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Stückt",
+    "indonesian": "potongan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Gramm",
+    "indonesian": "gram",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Essen",
+    "indonesian": "makanan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Kilogramm",
+    "indonesian": "kilogram",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Frühstück",
+    "indonesian": "sarapan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Mittagessen",
+    "indonesian": "makan siang",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Gericht",
+    "indonesian": "hidangan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Abendessen",
+    "indonesian": "makan malam",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "kaufen",
+    "indonesian": "membeli",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ein│kaufen",
+    "indonesian": "berbelanja",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "brauchen",
+    "indonesian": "membutuhkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "möchten",
+    "indonesian": "menginginkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kosten",
+    "indonesian": "harga",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wechseln",
+    "indonesian": "menukar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "essen",
+    "indonesian": "makan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mögen",
+    "indonesian": "menyukai",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "trinken",
+    "indonesian": "minum",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "nehmen",
+    "indonesian": "mengambil",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schmecken",
+    "indonesian": "berasa/rasanya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "waschen",
+    "indonesian": "mencuci",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "frühstücken",
+    "indonesian": "sarapan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schneiden",
+    "indonesian": "memotong",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "grillen",
+    "indonesian": "memanggang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "probieren",
+    "indonesian": "mencoba",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mahal",
+    "indonesian": "süß",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "manis",
+    "indonesian": "fertig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "selesai",
+    "indonesian": "frisch",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "fresh",
+    "indonesian": "lecker",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "enak",
+    "indonesian": "nett",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "baik",
+    "indonesian": "morgens",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "setiap pagi",
+    "indonesian": "gesund",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sehat",
+    "indonesian": "abends",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sedikit",
+    "indonesian": "mittags",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "setiap tengah hari",
+    "indonesian": "vielleicht",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mungkin",
+    "indonesian": "nachmittags",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "setiap sore",
+    "indonesian": "wichtig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "penting",
+    "indonesian": "abends",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "nachts",
+    "indonesian": "setiap malam (>21)",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "makasih, kamu juga",
+    "indonesian": "Wo finde ich…?",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "di mana aku",
+    "indonesian": "menemukan…",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Nachricht",
+    "indonesian": "pesan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Mutter",
+    "indonesian": "ibu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Uni",
+    "indonesian": "universitas",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Eltern",
+    "indonesian": "orang tua",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Mensa",
+    "indonesian": "kantin",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Schwester",
+    "indonesian": "saudara perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Bibliothek",
+    "indonesian": "perpustakaan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Geschwister",
+    "indonesian": "saudara kandung",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Musikschule",
+    "indonesian": "sekolah musik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Großmutter",
+    "indonesian": "nenek",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Hausaufgabe",
+    "indonesian": "PR",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Oma",
+    "indonesian": "oma",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Zeitung",
+    "indonesian": "koran",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Großeltern",
+    "indonesian": "kakek-nenek",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Homepage",
+    "indonesian": "situs",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Frau",
+    "indonesian": "istri",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Uhr",
+    "indonesian": "jam",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Zeit",
+    "indonesian": "waktu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Sekunde",
+    "indonesian": "detik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Party",
+    "indonesian": "pesta",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Minute",
+    "indonesian": "menit",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Bar",
+    "indonesian": "bar",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Besprechung",
+    "indonesian": "diskusi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Verspätung",
+    "indonesian": "keterlambatan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Geige",
+    "indonesian": "biola",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Familie",
+    "indonesian": "keluarga",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Trompete",
+    "indonesian": "terompet",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die/derVerwandte",
+    "indonesian": "saudara",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Idee",
+    "indonesian": "ide",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Töchter",
+    "indonesian": "anak perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Praxis",
+    "indonesian": "klinik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Stress",
+    "indonesian": "stress",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Baby",
+    "indonesian": "bayi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Junge",
+    "indonesian": "anak kecil laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Kind",
+    "indonesian": "anak",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Sohn",
+    "indonesian": "anak laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Mädchen",
+    "indonesian": "anak kecil perempuan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Vater",
+    "indonesian": "ayah",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Motorrad",
+    "indonesian": "motor",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Bruder",
+    "indonesian": "saudara laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Saxofon",
+    "indonesian": "saxofon",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Großvater",
+    "indonesian": "kakek",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Problem",
+    "indonesian": "problem",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Opa",
+    "indonesian": "opa",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Mann",
+    "indonesian": "suami",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Kalender",
+    "indonesian": "kalender",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Sport",
+    "indonesian": "olahraga",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Ball",
+    "indonesian": "bola",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Hund",
+    "indonesian": "anjing",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "schlafen",
+    "indonesian": "tidur",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "können",
+    "indonesian": "bisa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "duschen",
+    "indonesian": "mandi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "müssen",
+    "indonesian": "harus",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "besuchen",
+    "indonesian": "mengunjungi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wollen",
+    "indonesian": "akan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "treffen",
+    "indonesian": "bertemu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sitzen",
+    "indonesian": "duduk",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "verheiratet",
+    "indonesian": "menikah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "telefonieren",
+    "indonesian": "menelfon",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ander wichtige Wörter",
+    "indonesian": "Wie viel Uhr ist es?",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "pünktlich",
+    "indonesian": "tepat waktu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zu spät kommen",
+    "indonesian": "datang terlambat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ledig",
+    "indonesian": "single",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tun?",
+    "indonesian": "apa ya bisa saya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lakukan untuk Anda?",
+    "indonesian": "Ich hätte gern einen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "saya ingin membuat",
+    "indonesian": "janji temu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gute Idee!",
+    "indonesian": "ide bagus",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "liebe Grüße",
+    "indonesian": "salam hangat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "cool",
+    "indonesian": "keren",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "willkommen",
+    "indonesian": "selamat datang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "falsch",
+    "indonesian": "salah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schade",
+    "indonesian": "sayang sekali",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "macht nichts",
+    "indonesian": "tidak apa-apa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tut mir leid",
+    "indonesian": "minta maaf",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Fahrradtour",
+    "indonesian": "tour sepeda",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Rechnung",
+    "indonesian": "struk",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Überraschung",
+    "indonesian": "kejutan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Gabel",
+    "indonesian": "garpu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Mail",
+    "indonesian": "e-mail",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Tasse",
+    "indonesian": "cangkir",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Anrede",
+    "indonesian": "salam",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Serviette",
+    "indonesian": "kain lap",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Schorle",
+    "indonesian": "jus soda",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Kneipe",
+    "indonesian": "pub",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Salami",
+    "indonesian": "salami",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Bank",
+    "indonesian": "bank",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Tomatensuppe",
+    "indonesian": "sup tomat",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Selbstbedienung",
+    "indonesian": "self service",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Speisekarte",
+    "indonesian": "buku menu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Anmeldung",
+    "indonesian": "pendaftaran",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Bestellung",
+    "indonesian": "pesanan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Karte",
+    "indonesian": "kartu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Ausflug",
+    "indonesian": "tamasya",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Picknick",
+    "indonesian": "piknik",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Geburtstag",
+    "indonesian": "hari ulang tahun",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Fest",
+    "indonesian": "festival",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Betreff",
+    "indonesian": "subjek",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Geschenk",
+    "indonesian": "hadiah",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Sandwich",
+    "indonesian": "sandwich",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Datum",
+    "indonesian": "tanggal",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Durst",
+    "indonesian": "haus",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Hunger",
+    "indonesian": "lapar",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Schnitzel",
+    "indonesian": "schnitzel",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Löffel",
+    "indonesian": "sendok",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Trinkgeld",
+    "indonesian": "uang tip",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Teller",
+    "indonesian": "piring",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Messer",
+    "indonesian": "pisau",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Biergarten",
+    "indonesian": "taman bir",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Glas",
+    "indonesian": "gelas",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Treffpunkt",
+    "indonesian": "titik kumpul",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Kaffeehaus",
+    "indonesian": "rumah kopi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Eintritt",
+    "indonesian": "pintu masuk",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Lokal",
+    "indonesian": "tempat makan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "der Spielplatz",
+    "indonesian": "tempat bermain",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Programm",
+    "indonesian": "program",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "klettern",
+    "indonesian": "panjat tebing",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schicken",
+    "indonesian": "mengirim",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bermain ski",
+    "indonesian": "bestellen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "memesan",
+    "indonesian": "wandern",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mendaki",
+    "indonesian": "bringen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "membawa",
+    "indonesian": "feiern",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "merayakan",
+    "indonesian": "bezahlen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "membayar",
+    "indonesian": "werden",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menjadi",
+    "indonesian": "zahlen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menghadiahkan",
+    "indonesian": "geben",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "memberikan",
+    "indonesian": "wissen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mengetahui",
+    "indonesian": "beginnen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "memulai",
+    "indonesian": "Spaß haben",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menyenangkan",
+    "indonesian": "ein│laden",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mengundang",
+    "indonesian": "Lust haben",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "berminat",
+    "indonesian": "mit│bringen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "terjadi",
+    "indonesian": "mit│kommen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "datang",
+    "indonesian": "genießen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menikmati",
+    "indonesian": "ab│holen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menjemput",
+    "indonesian": "beginnen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mengakhiri",
+    "indonesian": "an│rufen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menelfon",
+    "indonesian": "glauben",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "percaya",
+    "indonesian": "auf│hören",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "berhenti",
+    "indonesian": "laufen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "berlari",
+    "indonesian": "mit│machen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bergabung",
+    "indonesian": "andere wichtige Wörter",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "perhatian",
+    "indonesian": "Stimmt so",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "setuju",
+    "indonesian": "hoffentlich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "semoga",
+    "indonesian": "geöffnet",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "buka",
+    "indonesian": "herzliche Grüße",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "salam hangat",
+    "indonesian": "draußen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "di luar",
+    "indonesian": "=== PAGE 11 ===",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "los sein",
+    "indonesian": "terjadi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zusammen",
+    "indonesian": "bersama",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zu Hause",
+    "indonesian": "di rumah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "getrennt",
+    "indonesian": "dipisah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kalt",
+    "indonesian": "dingin",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wieder",
+    "indonesian": "kembali",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "warm",
+    "indonesian": "hangat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "typisch",
+    "indonesian": "tipikal/khas",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "verboten",
+    "indonesian": "dilarang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "besonders",
+    "indonesian": "khususnya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "überall",
+    "indonesian": "di mana-mana",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "früh",
+    "indonesian": "awal/pagi-pagi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kenapa tidak?",
+    "indonesian": "Wann denn?",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lalu kapan?",
+    "indonesian": "Alles klar?",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "semuanya oke?",
+    "indonesian": "paham?",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "terdengar bagus",
+    "indonesian": "=== PAGE 12 ===",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Zahnarzt",
+    "indonesian": "dokter gigi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Arbeitsalltag",
+    "indonesian": "kehidupan kerja",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Mitarbeiterin",
+    "indonesian": "karyawan perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Mitarbeiter",
+    "indonesian": "karyawan laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Präsentation",
+    "indonesian": "presentasi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Hausmeister",
+    "indonesian": "manajer rumah tangga",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Pause",
+    "indonesian": "istirahat",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Bäcker",
+    "indonesian": "tukang roti",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Medien",
+    "indonesian": "media",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Bericht",
+    "indonesian": "laporan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Datei",
+    "indonesian": "data",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Fehler",
+    "indonesian": "kesalahan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Urlaub",
+    "indonesian": "liburan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kontonummer",
+    "indonesian": "nomor rekening",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Drucker",
+    "indonesian": "printer",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kreditkarte",
+    "indonesian": "kartu kredit",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Blog",
+    "indonesian": "blog",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Post",
+    "indonesian": "kantor pos",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Akku",
+    "indonesian": "batrai",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Musikgruppe",
+    "indonesian": "grup musik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Automat",
+    "indonesian": "ATM",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Spezialität",
+    "indonesian": "makanan khas",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Brief",
+    "indonesian": "surat",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Politik",
+    "indonesian": "politik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Absender",
+    "indonesian": "pengirim",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Serie",
+    "indonesian": "series",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Empfänger",
+    "indonesian": "penerima",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Religion",
+    "indonesian": "agama",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kontakt",
+    "indonesian": "kontak",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die/der Erwachsene",
+    "indonesian": "orang dewasa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "der Small Talk",
+    "indonesian": "small talk",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Nachbarin",
+    "indonesian": "tetangga perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Nachbar",
+    "indonesian": "tetangga laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Unterschrift",
+    "indonesian": "tanda tangan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Aufzug",
+    "indonesian": "lift",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Praktikum",
+    "indonesian": "praktek",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Mitglied",
+    "indonesian": "anggota",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Passwort",
+    "indonesian": "password",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Lied",
+    "indonesian": "lagu",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das WLAN",
+    "indonesian": "wifi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Leben",
+    "indonesian": "kehidupan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Netz",
+    "indonesian": "internet/jaringan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Paket",
+    "indonesian": "paket",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Konto",
+    "indonesian": "akun/rekening",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Sprachinstitut",
+    "indonesian": "institusi bahasa",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "erklären",
+    "indonesian": "menjelaskan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "drucken",
+    "indonesian": "mengeprint",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "korrigieren",
+    "indonesian": "mengoreksi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ein│geben",
+    "indonesian": "memasukkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "holen",
+    "indonesian": "mengambil",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "diskutieren",
+    "indonesian": "berdiskusi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "überweisen",
+    "indonesian": "transfer",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "hoch│fahren",
+    "indonesian": "menyala/booting",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kennen│lernen",
+    "indonesian": "mengenal",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "an│machen",
+    "indonesian": "menyalakan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "reden",
+    "indonesian": "ngobrol",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "aus│machen",
+    "indonesian": "mematikan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "an│nehmen",
+    "indonesian": "menerima",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "öffnen",
+    "indonesian": "membuka",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bedeuten",
+    "indonesian": "berarti/bermakna",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "speichern",
+    "indonesian": "menyimpan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "dauern",
+    "indonesian": "berdurasi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "denken",
+    "indonesian": "berpikir",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bleiben",
+    "indonesian": "menetap",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mit│nehmen",
+    "indonesian": "membawa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "verwenden",
+    "indonesian": "menggunakan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "habis",
+    "indonesian": "neutral",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "netral",
+    "indonesian": "offline",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die meisten",
+    "indonesian": "umumnya",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "bar",
+    "indonesian": "tunai/cash",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "langweilig",
+    "indonesian": "bosan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "an",
+    "indonesian": "kepada",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "heiß",
+    "indonesian": "panas",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "aktuell",
+    "indonesian": "terkini",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schrecklich",
+    "indonesian": "buruk",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "oke semuanya jelas",
+    "indonesian": "So ein Zufall",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sebuah kebetulan",
+    "indonesian": "bis dann!",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "nach Hause",
+    "indonesian": "ke rumah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "anders",
+    "indonesian": "berbeda",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "beliebt",
+    "indonesian": "populer/disukai",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "leicht",
+    "indonesian": "mudah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gar",
+    "indonesian": "sama sekali",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schwer",
+    "indonesian": "sulit",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "eigentlich",
+    "indonesian": "sebenarnya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gestern",
+    "indonesian": "kemarin",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "endlich",
+    "indonesian": "akhirnya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "später",
+    "indonesian": "nanti",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wohin",
+    "indonesian": "kemana",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "und Herren",
+    "indonesian": "yang terhormat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "salam hormat",
+    "indonesian": "=== PAGE 14 ===",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Sportlerin",
+    "indonesian": "olahragawan wanita",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Körper",
+    "indonesian": "tubuh",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Süßigkeit",
+    "indonesian": "manisan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kopf",
+    "indonesian": "kepala",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Größe",
+    "indonesian": "ukurannya",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Hals",
+    "indonesian": "tenggorokan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Hand",
+    "indonesian": "tangan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Bauch",
+    "indonesian": "perut",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Nase",
+    "indonesian": "hidung",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Rücken",
+    "indonesian": "punggung",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die/der Verletzte",
+    "indonesian": "orang ya cidera",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "der Arm",
+    "indonesian": "lengan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Wunde",
+    "indonesian": "luka",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Finger",
+    "indonesian": "jari",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Salbe",
+    "indonesian": "salep",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Füß",
+    "indonesian": "kaki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Apotheke",
+    "indonesian": "apotek",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Mund",
+    "indonesian": "mulut",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Krankheit",
+    "indonesian": "penyakit",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Zahn",
+    "indonesian": "gigi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kopfschmerzen",
+    "indonesian": "sakit kepala",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Unfall",
+    "indonesian": "kecelakaan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Tablette",
+    "indonesian": "obat tablet",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schmerz",
+    "indonesian": "sakit",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Spritze",
+    "indonesian": "suntikan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Verband",
+    "indonesian": "perban",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kontrolle",
+    "indonesian": "kontrol",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Doktor",
+    "indonesian": "doktor",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die",
+    "indonesian": "Physiotherapeutin",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "der Schnupfen",
+    "indonesian": "flu/pilek",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Übung",
+    "indonesian": "latihan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Laborantin",
+    "indonesian": "laboran",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Tropfen",
+    "indonesian": "penurunan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Tafel",
+    "indonesian": "papan tulis",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Notarzt",
+    "indonesian": "catatan doktor",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Freizeit",
+    "indonesian": "waktu luang",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die App",
+    "indonesian": "aplikasi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Tipp",
+    "indonesian": "tips",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Alter",
+    "indonesian": "usia",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Gesicht",
+    "indonesian": "wajah",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Gewicht",
+    "indonesian": "berat badan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Auge",
+    "indonesian": "mata",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Bein",
+    "indonesian": "kaki",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Ohr",
+    "indonesian": "telinga",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Knie",
+    "indonesian": "lutut",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Haar",
+    "indonesian": "rambut",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Rezept",
+    "indonesian": "resep",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Pflaster",
+    "indonesian": "plester",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Fieber",
+    "indonesian": "demam",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Hausmittel",
+    "indonesian": "obat rumah",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Blut",
+    "indonesian": "darah",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Ergebnis",
+    "indonesian": "hasil",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Fenster",
+    "indonesian": "jendela",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Experiment",
+    "indonesian": "percobaan",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "an│ziehen",
+    "indonesian": "memakai",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "riechen",
+    "indonesian": "mencium",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "weiter│machen",
+    "indonesian": "melanjutkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "weh│tun",
+    "indonesian": "sakit",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schaffen",
+    "indonesian": "melalui",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gesund leben",
+    "indonesian": "hidup sehat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "vergessen",
+    "indonesian": "melupakan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sauber machen",
+    "indonesian": "membersihkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "vermissen",
+    "indonesian": "merindukan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bekommen",
+    "indonesian": "memberikan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wiegen",
+    "indonesian": "berat badan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bewegen",
+    "indonesian": "bergerak",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "husten",
+    "indonesian": "batuk",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sollen",
+    "indonesian": "sebaiknya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "erkältet sein",
+    "indonesian": "masuk angin",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "dürfen",
+    "indonesian": "boleh",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "untersuchen",
+    "indonesian": "menganalisis",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "rauchen",
+    "indonesian": "merokok",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wiederholen",
+    "indonesian": "mengulangi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "auf│schreiben",
+    "indonesian": "menulis",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "vor│lesen",
+    "indonesian": "membaca nyaring",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "auf│machen",
+    "indonesian": "membuka",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ein│schlafen",
+    "indonesian": "tertidur",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "versuchen",
+    "indonesian": "mencoba",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "baden",
+    "indonesian": "mandi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "verletzen",
+    "indonesian": "cedera",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "erlauben",
+    "indonesian": "membolehkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "fit",
+    "indonesian": "müde",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "letih",
+    "indonesian": "sportlich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "atletis",
+    "indonesian": "hungrig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lapar",
+    "indonesian": "egal",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "terserah",
+    "indonesian": "richtig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "benar/benar-benar",
+    "indonesian": "regelmäßig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "rutin",
+    "indonesian": "mindestens",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "minimal/paling tidak",
+    "indonesian": "täglich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "setiap hari",
+    "indonesian": "schwer",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sulit",
+    "indonesian": "faul",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "malas",
+    "indonesian": "Gute Besserung",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "cepat sembuh",
+    "indonesian": "aktiv",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "aktif",
+    "indonesian": "total",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "total",
+    "indonesian": "gefährlich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "berbahaya",
+    "indonesian": "schlecht",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "buruk",
+    "indonesian": "gegen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "melawan",
+    "indonesian": "Danke für Ihre Hilfe",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bantuan Anda",
+    "indonesian": "anstrengend",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "melelahkan",
+    "indonesian": "leise",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tenang",
+    "indonesian": "jemand",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "seseorang",
+    "indonesian": "ruhig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sunyi",
+    "indonesian": "glücklich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bahagia/senang/beruntung",
+    "indonesian": "perfekt",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "perfek",
+    "indonesian": "sicher",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "sofort",
+    "indonesian": "segera",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Wohnung",
+    "indonesian": "tempat tinggal",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Raum",
+    "indonesian": "ruangan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die WG",
+    "indonesian": "flat bersama",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Flur",
+    "indonesian": "koridor",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Dusche",
+    "indonesian": "kamar mandi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Balkon",
+    "indonesian": "balkon",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Küche",
+    "indonesian": "dapur",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Garten",
+    "indonesian": "taman",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Terasse",
+    "indonesian": "teras",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Stock",
+    "indonesian": "lantai",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Treppe",
+    "indonesian": "tangga",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Blick",
+    "indonesian": "pemandangan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Tür",
+    "indonesian": "pintu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schrank",
+    "indonesian": "lemari",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Decke",
+    "indonesian": "langit langit",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schreibtisch",
+    "indonesian": "meja tulis",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Lage",
+    "indonesian": "lokasi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Sessel",
+    "indonesian": "kursi berlengan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Nähe",
+    "indonesian": "dekat",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Stuhl",
+    "indonesian": "kursi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Möbel",
+    "indonesian": "perabotan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Tisch",
+    "indonesian": "meja",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Lampe",
+    "indonesian": "lampu",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Teppich",
+    "indonesian": "karpet",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Pflanze",
+    "indonesian": "tanaman",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Fernseher",
+    "indonesian": "TV",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kaffeemaschine",
+    "indonesian": "mesin kopi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Herd",
+    "indonesian": "kompor",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Spülmaschine",
+    "indonesian": "mesin cuci piring",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Kühlschrank",
+    "indonesian": "lemari es",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Waschmaschine",
+    "indonesian": "esin cuci baju",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Vertrag",
+    "indonesian": "kontrak",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Anzeige",
+    "indonesian": "iklan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Vermieter",
+    "indonesian": "penyewa (pemilik)",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Miete",
+    "indonesian": "biaya sewa",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Umzug",
+    "indonesian": "pindahan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Feier",
+    "indonesian": "perayaan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Baum",
+    "indonesian": "pohon",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Blume",
+    "indonesian": "bunga",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Wunsch",
+    "indonesian": "harapan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Glückwunsh",
+    "indonesian": "ucapan selamat",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "das Hochhaus",
+    "indonesian": "rumah susun",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Erdgeschoss",
+    "indonesian": "lantai 1",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Apartment",
+    "indonesian": "apartment",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Zentrum",
+    "indonesian": "pusat",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Reihenhaus",
+    "indonesian": "rumah bertingkat",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Gerät",
+    "indonesian": "perangkat",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Bad",
+    "indonesian": "kamar mandi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Licht",
+    "indonesian": "cahaya",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Schlafzimmer",
+    "indonesian": "kamar tidur",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Regal",
+    "indonesian": "rak",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Wohnzimmer",
+    "indonesian": "ruang keluarga",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Sofa",
+    "indonesian": "sofa",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Kinderzimmer",
+    "indonesian": "kamar anak",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Bett",
+    "indonesian": "kasur",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Heft",
+    "indonesian": "buku tulis",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Holz",
+    "indonesian": "kayu",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "aus│sehen",
+    "indonesian": "terlihat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "stellen",
+    "indonesian": "menaruh",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "besichtigen",
+    "indonesian": "mengunjungi",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "schließen",
+    "indonesian": "menutup",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "unterschreiben",
+    "indonesian": "menandatangani",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "packen",
+    "indonesian": "membungkus",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "vermieten",
+    "indonesian": "menyewakan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ziehen",
+    "indonesian": "pindah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mieten",
+    "indonesian": "menyewa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "um│ziehen",
+    "indonesian": "pindah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "di tengah",
+    "indonesian": "dunkel",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gelap",
+    "indonesian": "direkt",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "langsung",
+    "indonesian": "hell",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "terang",
+    "indonesian": "weit",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "jauh",
+    "indonesian": "gemütlich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "nyaman",
+    "indonesian": "billig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "murah",
+    "indonesian": "elegant",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "elegan",
+    "indonesian": "günstig",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "murah(menguntungkan",
+    "indonesian": "hinter",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "di belakang",
+    "indonesian": "=== PAGE 17 ===",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "blau",
+    "indonesian": "biru",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "neben",
+    "indonesian": "di samping",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "braun",
+    "indonesian": "coklat",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "über",
+    "indonesian": "di atas (gk nempel)",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gelb",
+    "indonesian": "kuning",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "unter",
+    "indonesian": "di bawah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "grau",
+    "indonesian": "abu-abu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zwischen",
+    "indonesian": "di antara",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "grün",
+    "indonesian": "hijau",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bald",
+    "indonesian": "segera",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lila",
+    "indonesian": "ungu",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "nie",
+    "indonesian": "tidak pernah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "oren",
+    "indonesian": "ein paar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "beberapa/pasang",
+    "indonesian": "rot",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "merah",
+    "indonesian": "genau",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "hitam",
+    "indonesian": "hässlich",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "jelek",
+    "indonesian": "weiß",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "putih",
+    "indonesian": "jung",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "muda",
+    "indonesian": "oben",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "atas",
+    "indonesian": "zufrieden",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "senang",
+    "indonesian": "nicht mehr",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zurzeit",
+    "indonesian": "saat ini",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "positiv",
+    "indonesian": "positif",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "negativ",
+    "indonesian": "negatif",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Stelle",
+    "indonesian": "posisi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Arbeitsplatz",
+    "indonesian": "tempat kerja",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Karriere",
+    "indonesian": "karir",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Job",
+    "indonesian": "job",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Aufgabe",
+    "indonesian": "tugas",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Saison-Job",
+    "indonesian": "pekerjaan musiman",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Bewerbung",
+    "indonesian": "lamaran",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Unterricht",
+    "indonesian": "pengajaran",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Händlerin",
+    "indonesian": "penyalur perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Händler",
+    "indonesian": "penyalur laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Ware",
+    "indonesian": "barang",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Anruf",
+    "indonesian": "panggilan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Künstlerin",
+    "indonesian": "seniman perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Künstler",
+    "indonesian": "seniman laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Professorin",
+    "indonesian": "profesor perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Professor",
+    "indonesian": "profesor laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Segellehrerin",
+    "indonesian": "instruktur berlayar",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Segellehrer",
+    "indonesian": "instruktur berlayar",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Sekretärin",
+    "indonesian": "sekretaris perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Sekretär",
+    "indonesian": "sekretaris laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Hotelchefin",
+    "indonesian": "manajer hotel",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Hotelchef",
+    "indonesian": "manajer hotel",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Baustelle",
+    "indonesian": "konstruksi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Feierabend",
+    "indonesian": "perayaan malam",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Computerfirma",
+    "indonesian": "kantor komputer",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Anschluss",
+    "indonesian": "koneksi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Werkstatt",
+    "indonesian": "bengkel",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Weihnachtsmarkt",
+    "indonesian": "pasar natal",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Prüfung",
+    "indonesian": "ujian",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Anfang",
+    "indonesian": "awal",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Statistik",
+    "indonesian": "statistik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Spaziergang",
+    "indonesian": "jalan-jalan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Liste",
+    "indonesian": "list",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Tennisplatz",
+    "indonesian": "tempat tenis",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Zuschauerin",
+    "indonesian": "penonton perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Zuschauer",
+    "indonesian": "penonton perempuan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Ehefrau",
+    "indonesian": "istri",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Ehemann",
+    "indonesian": "suami",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Statistin",
+    "indonesian": "figuran perempuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Statist",
+    "indonesian": "figuran laki-laki",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Veranstaltung",
+    "indonesian": "acara",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Attraktion",
+    "indonesian": "atraksi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Projekt",
+    "indonesian": "proyek",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "die Bühne",
+    "indonesian": "panggung",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Profil",
+    "indonesian": "profil",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "die Oper",
+    "indonesian": "opra",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Internet",
+    "indonesian": "internet",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "die Heimat",
+    "indonesian": "kampung halaman",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Kaufhaus",
+    "indonesian": "tempat belanja",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Semester",
+    "indonesian": "semester",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "die Radiosendung",
+    "indonesian": "siaran radio",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Studium",
+    "indonesian": "studi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "die Durchwahl",
+    "indonesian": "panggilan langsung",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "das Karussell",
+    "indonesian": "komedi putar",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Ende",
+    "indonesian": "akhir",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Ausland",
+    "indonesian": "luar negeri",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "verdienen",
+    "indonesian": "menghasilkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "laufen",
+    "indonesian": "berlari",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "verkaufen",
+    "indonesian": "menjual",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "trainieren",
+    "indonesian": "berlatih",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "malen",
+    "indonesian": "melukis",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mengambil libur",
+    "indonesian": "segeln",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "berlayar",
+    "indonesian": "nach│fragen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menanyakan",
+    "indonesian": "betreuen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "mendampingi",
+    "indonesian": "verbinden",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menghubungkan",
+    "indonesian": "vorbei sein",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "selesai/berlalu",
+    "indonesian": "statt│finden",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "diadakan",
+    "indonesian": "melden",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "melapor",
+    "indonesian": "fliegen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "terbang",
+    "indonesian": "andere wichtige Wörter",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "arbeitslos",
+    "indonesian": "menganggur",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "besetzt",
+    "indonesian": "digunakan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "durch",
+    "indonesian": "melalui",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "beide",
+    "indonesian": "keduanya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "fleißig",
+    "indonesian": "rajin",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "berühmt",
+    "indonesian": "terkenal",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "leer",
+    "indonesian": "kosong",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "eilig",
+    "indonesian": "tergesa-gesa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "normal",
+    "indonesian": "normal",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "freundlich",
+    "indonesian": "ramah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "früher",
+    "indonesian": "sebelumnya",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "insgesamt",
+    "indonesian": "total",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "wirklich",
+    "indonesian": "benar-benar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kaum",
+    "indonesian": "hampir tidak",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "die Kleidung",
+    "indonesian": "pakaian",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Pullover",
+    "indonesian": "sweater",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Klamotten",
+    "indonesian": "pakaian",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Rock",
+    "indonesian": "rok",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Hose",
+    "indonesian": "celana",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Anzug",
+    "indonesian": "setelan jas",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Jeans",
+    "indonesian": "jeans",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Mantel",
+    "indonesian": "mantel",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Bluse",
+    "indonesian": "blus",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schuh",
+    "indonesian": "sepatu",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Krawatte",
+    "indonesian": "dasi",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Stiefel",
+    "indonesian": "sepatu boot",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Jacke",
+    "indonesian": "jaket",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Hut",
+    "indonesian": "topi",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Mütze",
+    "indonesian": "tutup",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schal",
+    "indonesian": "syal",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Tasche",
+    "indonesian": "tas",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Schmuck",
+    "indonesian": "perhiasan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "der Laden",
+    "indonesian": "toko",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kasse",
+    "indonesian": "kasir",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Buchladen",
+    "indonesian": "toko buku",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Mode",
+    "indonesian": "moda",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Secondhand-laden",
+    "indonesian": "toko trift",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Zeitschrift",
+    "indonesian": "majalah",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Shop",
+    "indonesian": "toko",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kosmetik",
+    "indonesian": "kosmetik",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Bleistift",
+    "indonesian": "pensil",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Kamera",
+    "indonesian": "kamera",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der USB-Stick",
+    "indonesian": "flashdisk",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Öffnungszeiten",
+    "indonesian": "jam buka",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Haushalt",
+    "indonesian": "anggaran",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Hauptstadt",
+    "indonesian": "ibukota",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "der Hof",
+    "indonesian": "peternakan",
+    "level": "A1",
+    "article": "der"
+  },
+  {
+    "german": "die Architektur",
+    "indonesian": "arsitektur",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Erfindung",
+    "indonesian": "penemuan",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die Sache",
+    "indonesian": "hal",
+    "level": "A1",
+    "article": "die"
+  },
+  {
+    "german": "die/der Jugendliche",
+    "indonesian": "anak muda",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "das T-Shirt",
+    "indonesian": "kaos",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Kleid",
+    "indonesian": "dres",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Hemd",
+    "indonesian": "kemeja",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Tuch",
+    "indonesian": "handuk",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Sweatshirt",
+    "indonesian": "baju hangat",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Kleidergeschäft",
+    "indonesian": "toko pakaian",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Produkt",
+    "indonesian": "produk",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Papier",
+    "indonesian": "kertas",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Duschgel",
+    "indonesian": "sabun mandi",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Parfum",
+    "indonesian": "parfum",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Untergeschoss",
+    "indonesian": "ruang bawah tanah",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Design",
+    "indonesian": "design",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Schild",
+    "indonesian": "tanda",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "das Souvenir",
+    "indonesian": "souvenir",
+    "level": "A1",
+    "article": "das"
+  },
+  {
+    "german": "schoppen",
+    "indonesian": "berbelanja",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "meinen",
+    "indonesian": "maksud",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tragen",
+    "indonesian": "memakai",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "stehen",
+    "indonesian": "berada",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "aus│ziehen",
+    "indonesian": "melepaskan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "gefallen",
+    "indonesian": "menyukai",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "an│probieren",
+    "indonesian": "mencoba",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "empfehlen",
+    "indonesian": "merekomendasikan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kriegen",
+    "indonesian": "mendapatkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "entdecken",
+    "indonesian": "menemukan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "an│kommen",
+    "indonesian": "tiba",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "zurück│schicken",
+    "indonesian": "mengirimkan",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kembali",
+    "indonesian": "um│tauschen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menukar",
+    "indonesian": "öffnen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "menjengkelkan",
+    "indonesian": "schließen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "tutup",
+    "indonesian": "zu sein",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "fern│sehen",
+    "indonesian": "menonton TV",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "aus│gehen",
+    "indonesian": "pergi keluar",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "andere wichtige Worter",
+    "indonesian": "bequem",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "lebih baik",
+    "indonesian": "eng",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ketat",
+    "indonesian": "kaputt",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "rusak",
+    "indonesian": "weit",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "besar/jauh",
+    "indonesian": "doof",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "bodoh",
+    "indonesian": "kurz",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "pendek",
+    "indonesian": "also",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "jadi/juga",
+    "indonesian": "lang",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "online",
+    "indonesian": "kreativ",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "kreativ",
+    "indonesian": "praktisch",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "praktis",
+    "indonesian": "originell",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "original",
+    "indonesian": "attraktiv",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "aktraktif",
+    "indonesian": "ich danke Ihnen",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "saya berterima kasih",
+    "indonesian": "kepada Anda",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "auf jeden Fall",
+    "indonesian": "tentu saja",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "böse",
+    "indonesian": "marah",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "quatsch!",
+    "indonesian": "omong kosong",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "ohne",
+    "indonesian": "tanpa",
+    "level": "A1",
+    "article": ""
+  },
+  {
+    "german": "vorgestern",
+    "indonesian": "kemarin lusa",
+    "level": "A1",
+    "article": ""
+  }
+]

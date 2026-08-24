@@ -1,0 +1,251 @@
+# Build SPA + deploy dist/ + functions/ to Cloudflare Pages (no VPS OOM).
+# NOTE: `wrangler pages deploy` can drop production plain_text env vars; we re-apply them after deploy.
+name: CF Pages Deploy
+
+on:
+  push:
+    branches: [main, cutover/cf-pages-fullstack]
+  workflow_dispatch:
+    inputs:
+      branch_label:
+        description: 'Pages branch label (main = production)'
+        required: false
+        default: 'main'
+
+concurrency:
+  group: cf-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    permissions:
+      contents: read
+    env:
+      # Client bake at build time (public keys only — never secret keys as VITE_)
+      VITE_CLERK_PUBLISHABLE_KEY: ${{ secrets.VITE_CLERK_PUBLISHABLE_KEY }}
+      VITE_CLERK_FAPI: ${{ secrets.VITE_CLERK_FAPI }}
+      VITE_CLERK_API_URL: ${{ secrets.VITE_CLERK_API_URL }}
+      VITE_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL: ${{ secrets.VITE_APP_URL }}
+      VITE_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL: ${{ secrets.VITE_APP_URL }}
+      VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      VITE_ADMIN_EMAIL: ${{ secrets.VITE_ADMIN_EMAIL }}
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # Soft-launch server plain env (re-applied post-deploy; secrets left alone)
+      APP_URL: ${{ secrets.VITE_APP_URL }}
+      AI_ENABLED: ${{ secrets.AI_ENABLED }}
+      TEST_PAYMENT_MODE: ${{ secrets.TEST_PAYMENT_MODE }}
+      PAYMENT_PROVIDER: ${{ secrets.PAYMENT_PROVIDER }}
+      SUMOPOD_API_KEY: ${{ secrets.SUMOPOD_API_KEY }}
+      SUMOPOD_WEBHOOK_SECRET: ${{ secrets.SUMOPOD_WEBHOOK_SECRET }}
+      SUMOPOD_WEBHOOK_TOKEN: ${{ secrets.SUMOPOD_WEBHOOK_TOKEN }}
+      CLERK_FAPI: ${{ secrets.VITE_CLERK_FAPI }}
+      CLERK_API_URL: ${{ secrets.VITE_CLERK_API_URL }}
+      CLERK_JWT_KEY: ${{ secrets.CLERK_JWT_KEY }}
+      ADMIN_EMAIL: ${{ secrets.VITE_ADMIN_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build SPA
+        run: npm run build
+
+      - name: Ensure Pages artifacts in dist
+        run: |
+          set -e
+          test -f dist/index.html
+          cp -f public/_headers dist/_headers 2>/dev/null || true
+          cp -f public/_routes.json dist/_routes.json 2>/dev/null || true
+          cp -f public/_redirects dist/_redirects 2>/dev/null || true
+          test -f functions/api/[[path]].ts
+          test -f functions/lib/http-adapter.ts
+
+      - name: Deploy to Cloudflare Pages
+        run: |
+          set -e
+          BRANCH="${{ github.event.inputs.branch_label }}"
+          if [ -z "$BRANCH" ]; then
+            if [ "${GITHUB_REF_NAME}" = "main" ]; then BRANCH=main; else BRANCH="${GITHUB_REF_NAME}"; fi
+          fi
+          # Note: wrangler pages deploy has NO --var. Plain project env is often NOT on the
+          # deployment object — only secret_text is inherited. Put runtime-critical config in
+          # secrets or hardcode safe defaults in code (APP_URL / Clerk FAPI).
+          npx --yes wrangler@4.113.0 pages deploy dist \
+            --project-name deutschup \
+            --branch "$BRANCH" \
+            --commit-dirty=true
+
+      - name: Restore production plain env (wrangler deploy can wipe them)
+        if: success()
+        env:
+          # Defaults when GH secrets unset (soft-launch)
+          AI_ENABLED_DEFAULT: 'true'
+          # Was 'true'. Production therefore charged TEST_PRICE (Rp1.000) instead of
+          # PROD_PRICE (Rp49.000) whenever the secret was unset, while the pricing page
+          # went on advertising Rp49.000. Confirmed in the orders table: 5 charges at
+          # Rp1.000, and BOTH of the orders that actually reached status 'paid' were
+          # Rp1.000. Test pricing must never be what you fall back to.
+          TEST_PAYMENT_MODE_DEFAULT: 'false'
+          # Which Pages branch this run targets, mirroring the logic in the deploy step
+          # above, so the guard below can tell production from a preview.
+          DEPLOY_BRANCH: ${{ github.event.inputs.branch_label || github.ref_name }}
+        run: |
+          python3 <<'PY'
+          import json, os, urllib.request, urllib.error
+          tok = os.environ['CLOUDFLARE_API_TOKEN']
+          acc = os.environ['CLOUDFLARE_ACCOUNT_ID']
+          proj = 'deutschup'
+          app = (os.environ.get('APP_URL') or os.environ.get('VITE_APP_URL') or 'https://deutschup.sintec.my.id').strip()
+          fapi = (os.environ.get('CLERK_FAPI') or os.environ.get('VITE_CLERK_FAPI') or '').strip()
+          api_url = (os.environ.get('CLERK_API_URL') or os.environ.get('VITE_CLERK_API_URL') or 'https://api.clerk.com').strip()
+          jwt_key = (os.environ.get('CLERK_JWT_KEY') or '').strip()
+          admin = (os.environ.get('ADMIN_EMAIL') or os.environ.get('VITE_ADMIN_EMAIL') or '').strip()
+          ai = (os.environ.get('AI_ENABLED') or os.environ.get('AI_ENABLED_DEFAULT') or 'true').strip() or 'true'
+          test_pay = (os.environ.get('TEST_PAYMENT_MODE') or os.environ.get('TEST_PAYMENT_MODE_DEFAULT') or 'false').strip() or 'false'
+          # Refuse to ship discounted pricing to the production branch. Setting the
+          # secret to 'true' is legitimate on a preview branch; on main it means every
+          # subscriber is charged Rp1.000 for a Rp49.000 product, which is exactly what
+          # had been happening.
+          branch = (os.environ.get('DEPLOY_BRANCH') or '').strip()
+          if test_pay == 'true' and branch == 'main':
+              raise SystemExit(
+                  'Refusing to deploy: TEST_PAYMENT_MODE=true on the production branch '
+                  'would sell Pro for Rp1.000 instead of Rp49.000. Unset the secret, or '
+                  'deploy to a preview branch instead.'
+              )
+          pk = (os.environ.get('VITE_CLERK_PUBLISHABLE_KEY') or '').strip()
+          sb_url = (os.environ.get('VITE_SUPABASE_URL') or '').strip()
+          sb_anon = (os.environ.get('VITE_SUPABASE_ANON_KEY') or '').strip()
+          issuer = fapi
+          jwks = f'{fapi}/.well-known/jwks.json' if fapi else ''
+
+          # Runtime-critical flags as secret_text so they inherit onto deployments
+          # (plain_text on project is often missing from the deployment env_vars object).
+          secrets = {
+            'AI_ENABLED': ai,
+            'TEST_PAYMENT_MODE': test_pay,
+            'APP_URL': app,
+            'PAYMENT_PROVIDER': (os.environ.get('PAYMENT_PROVIDER') or 'bayargg').strip(),
+            'SUMOPOD_API_KEY': (os.environ.get('SUMOPOD_API_KEY') or '').strip(),
+            'SUMOPOD_WEBHOOK_SECRET': (os.environ.get('SUMOPOD_WEBHOOK_SECRET') or '').strip(),
+            'SUMOPOD_WEBHOOK_TOKEN': (os.environ.get('SUMOPOD_WEBHOOK_TOKEN') or '').strip(),
+          }
+          plain = {
+            'VITE_APP_URL': app,
+          }
+          if admin:
+            plain['ADMIN_EMAIL'] = admin
+            plain['VITE_ADMIN_EMAIL'] = admin
+          if fapi:
+            plain.update({
+              'CLERK_FAPI': fapi,
+              'CLERK_FRONTEND_API': fapi,
+              'CLERK_ISSUER': issuer,
+              'CLERK_JWKS_URL': jwks,
+              'VITE_CLERK_FAPI': fapi,
+              'VITE_CLERK_FRONTEND_API': fapi,
+              'VITE_CLERK_ISSUER': issuer,
+              'VITE_CLERK_JWKS_URL': jwks,
+            })
+          if api_url:
+            plain['CLERK_API_URL'] = api_url
+            plain['CLERK_BACKEND_API'] = api_url
+            plain['VITE_CLERK_API_URL'] = api_url
+          if jwt_key:
+            plain['CLERK_JWT_KEY'] = jwt_key
+            plain['CLERK_JWKS_PUBLIC_KEY'] = jwt_key
+          if pk:
+            plain['VITE_CLERK_PUBLISHABLE_KEY'] = pk
+          if app:
+            plain['VITE_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL'] = app
+            plain['VITE_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL'] = app
+          if sb_url:
+            plain['VITE_SUPABASE_URL'] = sb_url
+          if sb_anon:
+            plain['VITE_SUPABASE_ANON_KEY'] = sb_anon
+
+          env_vars = {k: {'type': 'plain_text', 'value': v} for k, v in plain.items() if v}
+          env_vars.update({k: {'type': 'secret_text', 'value': v} for k, v in secrets.items() if v})
+          # Clerk JWT public key as secret when provided via GH secret
+          if jwt_key:
+            env_vars['CLERK_JWT_KEY'] = {'type': 'secret_text', 'value': jwt_key}
+            env_vars['CLERK_JWKS_PUBLIC_KEY'] = {'type': 'secret_text', 'value': jwt_key}
+          body = {'deployment_configs': {'production': {'env_vars': env_vars}}}
+          req = urllib.request.Request(
+            f'https://api.cloudflare.com/client/v4/accounts/{acc}/pages/projects/{proj}',
+            data=json.dumps(body).encode(),
+            headers={'Authorization': f'Bearer {tok}', 'Content-Type': 'application/json'},
+            method='PATCH',
+          )
+          with urllib.request.urlopen(req, timeout=30) as r:
+            out = json.load(r)
+          if not out.get('success'):
+            raise SystemExit(f'env restore failed: {out}')
+          # verify
+          req2 = urllib.request.Request(
+            f'https://api.cloudflare.com/client/v4/accounts/{acc}/pages/projects/{proj}',
+            headers={'Authorization': f'Bearer {tok}'},
+          )
+          with urllib.request.urlopen(req2, timeout=20) as r:
+            prod = (((json.load(r)['result'].get('deployment_configs') or {}).get('production') or {}).get('env_vars') or {})
+          need = ['APP_URL', 'AI_ENABLED', 'TEST_PAYMENT_MODE', 'CLERK_SECRET_KEY', 'SUPABASE_URL', 'BAYAR_GG_API_KEY', 'GEMINI_API_KEY']
+          missing = [k for k in need if k not in prod]
+          print('env_n', len(prod), 'AI_type', (prod.get('AI_ENABLED') or {}).get('type'), 'TEST_type', (prod.get('TEST_PAYMENT_MODE') or {}).get('type'))
+          if missing:
+            raise SystemExit(f'missing after restore: {missing}')
+          print('env_restore_ok')
+          PY
+
+      - name: Purge Cloudflare edge cache
+        # Poisoned text/html (SPA fallback) gets cached under /assets/* URLs with
+        # immutable max-age; a device that hits it is blanked by strict MIME checking.
+        # Pages has no account-level cache purge; purge the custom-domain ZONE cache
+        # instead (POST /zones/{zone_id}/purge_cache). Resolve zone_id by name.
+        if: success()
+        run: |
+          # The custom domain is a subdomain; the CF zone is the root (sintec.my.id).
+          # Resolve the zone by walking up the hostname labels.
+          HOST="${VITE_APP_URL#https://}"
+          HOST="${HOST%%/*}"
+          ZONE_ID=""
+          while [ -n "$HOST" ]; do
+            ZONE_ID=$(curl -sS -m 20 \
+              "https://api.cloudflare.com/client/v4/zones?name=${HOST}" \
+              -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+              | python3 -c "import sys,json; d=json.load(sys.stdin); print(d['result'][0]['id'] if d.get('success') and d.get('result') else '')")
+            [ -n "$ZONE_ID" ] && break
+            HOST="${HOST#*.}"
+          done
+          test -n "$ZONE_ID"
+          curl -sS -m 30 -X POST \
+            "https://api.cloudflare.com/client/v4/zones/${ZONE_ID}/purge_cache" \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d '{"purge_everything":true}' | tee /tmp/purge.json
+          grep -q '"success":true' /tmp/purge.json
+
+      - name: Smoke production host
+        if: success()
+        run: |
+          set -e
+          BASE="${{ secrets.VITE_APP_URL }}"
+          BASE="${BASE:-https://deutschup.sintec.my.id}"
+          sleep 5
+          code=$(curl -sS -m 30 -o /tmp/h -w '%{http_code}' "$BASE/")
+          echo "home=$code"
+          test "$code" = "200"
+          curl -sS -m 30 "$BASE/api/ping" | tee /tmp/ping.json
+          grep -q '"ok":true' /tmp/ping.json
+          curl -sS -m 30 "$BASE/api/diag" | tee /tmp/diag.json
+          grep -q '"status":"ok"' /tmp/diag.json

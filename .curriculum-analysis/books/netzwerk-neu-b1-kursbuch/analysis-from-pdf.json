@@ -1,0 +1,134 @@
+{
+  "book": "Netzwerk neu B1 Kursbuch (Klett Verlag, 2021)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF vision extraction (178 pages, scanned)",
+  "isbn": "978-3-12-607172-7",
+  "total_pages": 178,
+  "total_chapters": 12,
+  "level": "B1",
+  "chapter_list": [
+    {
+      "id": "K1", "title": "Gute Reise!", "pages": "8-17",
+      "topics": ["Travel preferences", "Travel planning", "Announcements", "Blog entries", "Working holiday"],
+      "wortschatz": ["Urlaubsarten", "Reiseangebote"],
+      "grammatik": ["Infinitiv mit zu", "Nebensatz mit da/weil", "Nebensatz mit obwohl"],
+      "landeskunde": ["Arbeiten auf der Alm", "Nationalpark Schwarzwald"]
+    },
+    {
+      "id": "K2", "title": "Das ist ja praktisch!", "pages": "18-27",
+      "topics": ["Buying behavior", "Services", "New technology", "Advertising", "Complaints"],
+      "wortschatz": ["Technik und Geräte", "Reklamation", "Werbung"],
+      "grammatik": ["Verb lassen", "Folgen ausdrücken (deshalb/deswegen/darum/daher)", "sodass/so...dass", "Genitiv", "Präpositionen wegen/trotz + Genitiv"],
+      "landeskunde": ["Werbung in Deutschland", "Repair Café"]
+    },
+    {
+      "id": "K3", "title": "Veränderungen", "pages": "28-37",
+      "topics": ["Life changes", "Past experiences", "Happiness", "Radio broadcast", "Good behavior"],
+      "wortschatz": ["Lebensveränderungen", "Zeitangaben"],
+      "grammatik": ["Präteritum (regular/irregular)", "Konjunktiv II (würde + Infinitiv)", "Possessivpronomen"],
+      "landeskunde": ["Lebensveränderungen in D-A-CH"]
+    },
+    {
+      "id": "K4", "title": "Bewerbungstipps", "pages": "38-47",
+      "topics": ["Job applications", "Career tips", "Interviews", "Professional writing"],
+      "wortschatz": ["Bewerbungsunterlagen", "Lebenslauf", "Vorstellungsgespräch"],
+      "grammatik": ["Verben mit Präpositionen", "Pronominaladverbien (da(r)- + Präposition)"],
+      "landeskunde": ["Bewerbung in Deutschland"]
+    },
+    {
+      "id": "K5", "title": "Start-ups", "pages": "48-57",
+      "topics": ["Green business models", "Sustainability", "Start-ups", "Food rescue", "Solar technology"],
+      "wortschatz": ["Start-ups", "Nachhaltigkeit", "Lebensmittelrettung"],
+      "grammatik": ["Präteritum (in reading context)", "Konditionalsätze"],
+      "landeskunde": ["Ökologische Aktivitäten in D-A-CH"]
+    },
+    {
+      "id": "K6", "title": "Lernen macht Spaß", "pages": "58-67",
+      "topics": ["Learning strategies", "Study methods", "Education systems", "Tips for success"],
+      "wortschatz": ["Lernstrategien", "Bildungssystem"],
+      "grammatik": ["Adjektivdeklination", "Komparativ/Superlativ"],
+      "landeskunde": ["Bildung in D-A-CH"]
+    },
+    {
+      "id": "K7", "title": "Körper und Geist", "pages": "68-77",
+      "topics": ["Health", "Body", "Mental health", "Wellness", "Doctor visits"],
+      "wortschatz": ["Körper", "Gesundheit", "Arztbesuch"],
+      "grammatik": ["Reflexive Verben", "Reflexive Pronomen"],
+      "landeskunde": ["Gesundheitssystem in D-A-CH"]
+    },
+    {
+      "id": "K8", "title": "Wohnen", "pages": "78-87",
+      "topics": ["Housing", "Moving", "Furniture", "Interior design", "Neighbors"],
+      "wortschatz": ["Wohnung", "Möbel", "Nachbarn"],
+      "grammatik": ["Wechselpräpositionen (full)", "Dativ vs Akkusativ"],
+      "landeskunde": ["Wohnen in D-A-CH"]
+    },
+    {
+      "id": "K9", "title": "Kultur und Freizeit", "pages": "88-97",
+      "topics": ["Culture", "Leisure", "Museums", "Theater", "Events"],
+      "wortschatz": ["Kultur", "Freizeit", "Veranstaltungen"],
+      "grammatik": ["Relativsätze (full)", "Relativpronomen"],
+      "landeskunde": ["Kulturleben in D-A-CH"]
+    },
+    {
+      "id": "K10", "title": "Miteinander", "pages": "98-107",
+      "topics": ["Social values", "Europe", "Politics", "EU", "Interpreting"],
+      "wortschatz": ["Gesellschaftliche Werte", "Europa", "Politik"],
+      "grammatik": ["Passiv Präsens/Präteritum/Perfekt", "Passiv mit Modalverb"],
+      "landeskunde": ["Mini-München", "Europäische Union"]
+    },
+    {
+      "id": "K11", "title": "Stadt, Land, Fluss", "pages": "108-117",
+      "topics": ["City life", "Traffic", "Urban vs rural", "Letters/emails"],
+      "wortschatz": ["Stadt", "Verkehr"],
+      "grammatik": ["Artikelwörter als Pronomen", "irgendein/-e/-welche", "Adjektive als Nomen", "Relativsätze mit was/wo"],
+      "landeskunde": ["Leipzig", "Zürich", "Tübingen"]
+    },
+    {
+      "id": "K12", "title": "Geld regiert die Welt?", "pages": "118-127",
+      "topics": ["Money", "Banking", "Globalization", "Discussions"],
+      "wortschatz": ["Bank", "Geld", "Globalisierung"],
+      "grammatik": ["Sätze mit je..., desto/umso...", "Partizip II als Adjektiv", "Partizip I als Adjektiv"],
+      "landeskunde": ["Fuggerei in Augsburg", "Tauschring"]
+    }
+  ],
+  "grammar_topics_complete": [
+    "Infinitiv mit zu",
+    "Nebensatz mit da/weil",
+    "Nebensatz mit obwohl",
+    "Verb lassen",
+    "Folgen ausdrücken (deshalb/deswegen/darum/daher)",
+    "sodass/so...dass",
+    "Genitiv",
+    "Präpositionen wegen/trotz + Genitiv",
+    "Präteritum (regular/irregular)",
+    "Konjunktiv II (würde + Infinitiv)",
+    "Possessivpronomen",
+    "Verben mit Präpositionen",
+    "Pronominaladverbien (da(r)- + Präposition)",
+    "Adjektivdeklination",
+    "Komparativ/Superlativ",
+    "Reflexive Verben",
+    "Wechselpräpositionen (full)",
+    "Relativsätze (full)",
+    "Passiv Präsens/Präteritum/Perfekt",
+    "Passiv mit Modalverb",
+    "Artikelwörter als Pronomen",
+    "irgendein/-e/-welche",
+    "Adjektive als Nomen",
+    "Relativsätze mit was/wo",
+    "je...desto/umso...",
+    "Partizip II als Adjektiv",
+    "Partizip I als Adjektiv"
+  ],
+  "vocab_count_estimate": 900,
+  "special_features": [
+    "Video integration (Nationalpark, Tübingen)",
+    "Netzwerk-WG storyline continues",
+    "Plattform review sections",
+    "D-A-CH cultural focus (Leipzig, Zürich, Augsburg)",
+    "Pronunciation per chapter",
+    "Strategy tips per chapter",
+    "Exam preparation integrated"
+  ]
+}

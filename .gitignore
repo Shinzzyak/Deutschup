@@ -1,0 +1,39 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+*.log
+.env*
+!.env.example
+.vercel
+.env
+.wrangler/
+
+# Supabase CLI artifacts
+supabase/.temp/
+supabase/migrations/
+
+# Local deployment scripts
+supabase_migrate.sh
+verify_nav.sh
+migrate.js
+
+# Secrets
+.secrets/
+
+# NOTE: tests/ and playwright.config.ts used to be listed here while being
+# tracked at the same time. Git honours the tracked copies, so the entries did
+# nothing except silently swallow every NEW file added under tests/ — a trap.
+# They are tracked on purpose; do not re-add them. Test credentials belong in
+# the environment (see docs/TESTING.md), never in a file.
+
+# Test run artifacts — screenshots/traces of a signed-in session must never be
+# committed. The report currently in playwright-report/ predates this rule.
+tests/results/
+tests/screenshots/
+test-results/
+playwright-report/
+blob-report/
+.curriculum-analysis/books/
+playwright-report/

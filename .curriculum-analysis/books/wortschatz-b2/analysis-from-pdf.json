@@ -1,0 +1,55 @@
+{
+  "book": "Deutsch intensiv Wortschatz B2 — Das Training (Klett Verlag, 2020)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF vision extraction (96 pages)",
+  "isbn": "978-3-12-675078-3",
+  "author": "Arwen Schnack",
+  "total_pages": 96,
+  "total_chapters": 13,
+  "level": "B2",
+  "structure": {
+    "part_a": "Selbsttest B1 (pages 6-13)",
+    "part_b": "Thematischer Wortschatz (pages 14-91)",
+    "part_c": "Anhang/Lösungen (pages 92-96)"
+  },
+  "chapter_list": [
+    {"id": 1, "title": "Sprache und Kommunikation", "pages": "14-19", "subtopics": ["Sprache im Alltag", "Nonverbale Kommunikation"]},
+    {"id": 2, "title": "Gefühle und Beziehungen", "pages": "20-25", "subtopics": ["Emotionen", "Reaktionen und Beziehungen"]},
+    {"id": 3, "title": "Im In- und Ausland", "pages": "26-31", "subtopics": ["Migration", "Kultur und Mentalität"]},
+    {"id": 4, "title": "Dinge, Sachen, Gegenstände", "pages": "32-37", "subtopics": ["Dinge beschreiben", "Der Umgang mit den Dingen"]},
+    {"id": 5, "title": "Kunst, Musik und Literatur", "pages": "38-43", "subtopics": ["Bildende Kunst und Musik", "Literatur"]},
+    {"id": 6, "title": "Geschichte", "pages": "44-49", "subtopics": ["Ereignisse und Epochen", "Die Moderne"]},
+    {"id": 7, "title": "Studium und Arbeit", "pages": "50-55", "subtopics": ["Im Studium", "Bei der Arbeit"]},
+    {"id": 8, "title": "Gesundheit und Pflege", "pages": "56-61", "subtopics": ["Gesundheitliche Probleme", "Untersuchungen und Behandlungen"]},
+    {"id": 9, "title": "Handwerk und Technik", "pages": "62-67", "subtopics": ["Berufe und Tätigkeiten", "Technik und Trends"]},
+    {"id": 10, "title": "Umwelt und Zukunft", "pages": "68-73", "subtopics": ["Nachhaltigkeit", "Klima und Zukunft"]},
+    {"id": 11, "title": "Wissenschaft", "pages": "74-79", "subtopics": ["Vorträge und Diskussionen", "Naturwissenschaften"]},
+    {"id": 12, "title": "Die Gesellschaft", "pages": "80-85", "subtopics": ["Menschenrechte", "Die Gesellschaft beschreiben"]},
+    {"id": 13, "title": "Behörden und Institutionen", "pages": "86-91", "subtopics": ["Amtsdeutsch", "Ihr gutes Recht"]}
+  ],
+  "vocab_count_estimate": "~150-200 per chapter = ~2,000-2,600 total",
+  "special_features": [
+    "Selbsttest B1 (diagnostic pre-test)",
+    "Digital flashcards (flipQuiz + Klett-Augmented App)",
+    "Word lists with grammar info (articles, plurals, cases)",
+    "Typical verb-noun combinations",
+    "Idiomatic expressions",
+    "Tips for word usage and common confusion",
+    "Progressive difficulty (K1 easiest → K13 hardest)"
+  ],
+  "topics_covered": [
+    "Sprache und Kommunikation",
+    "Gefühle und Beziehungen",
+    "Im In- und Ausland",
+    "Dinge, Sachen, Gegenstände",
+    "Kunst, Musik und Literatur",
+    "Geschichte",
+    "Studium und Arbeit",
+    "Gesundheit und Pflege",
+    "Handwerk und Technik",
+    "Umwelt und Zukunft",
+    "Wissenschaft",
+    "Die Gesellschaft",
+    "Behörden und Institutionen"
+  ]
+}

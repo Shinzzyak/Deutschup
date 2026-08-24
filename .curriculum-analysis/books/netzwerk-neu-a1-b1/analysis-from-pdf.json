@@ -1,0 +1,171 @@
+{
+  "book": "Netzwerk neu A1 Kursbuch (Klett Verlag, 2019)",
+  "analysis_date": "2026-06-18",
+  "source": "PDF extraction via vision model (176 pages, scanned)",
+  "isbn": "978-3-12-607156-7",
+  "authors": ["Stefanie Dengler", "Paul Rusch", "Helen Schmitz", "Tanja Sieber"],
+  "total_pages": 176,
+  "total_chapters": 12,
+  "levels": {
+    "A1": {
+      "chapters": 12,
+      "chapter_list": [
+        {
+          "id": "K1",
+          "title": "Guten Tag!",
+          "pages": "8-17",
+          "topics": ["Greetings", "Introductions", "Countries", "Languages", "Numbers 1-20", "Phone numbers", "Email addresses", "Alphabet"],
+          "wortschatz": ["Zahlen 1-20", "Länder und Sprachen"],
+          "grammatik": ["W-Frage", "Aussagesatz", "Verben und Personalpronomen", "Personalpronomen in Texten"],
+          "aussprache": ["Alphabet"],
+          "strategie": ["E-Mail-Adresse schreiben und sagen"],
+          "landeskunde": ["Länder und Sprachen"]
+        },
+        {
+          "id": "K2",
+          "title": "Freunde, Kollegen und ich",
+          "pages": "18-27",
+          "topics": ["Hobbies", "Making appointments", "Weekdays", "Work and professions", "Numbers above 20", "Filling forms"],
+          "wortschatz": ["Hobbys", "Wochentage", "Zahlen ab 20", "Berufe"],
+          "grammatik": ["Unregelmäßige Verben und Personalpronomen", "Ja-/Nein-Frage", "Bestimmter Artikel: der, das, die", "Nomen: Singular und Plural", "Verben haben und sein"],
+          "aussprache": ["Satzmelodie: Fragen und Antworten"],
+          "strategie": ["Artikel lernen"]
+        },
+        {
+          "id": "K3",
+          "title": "In Hamburg",
+          "pages": "28-37",
+          "topics": ["Places and buildings", "Asking about locations", "Transport", "Asking for things", "Asking for directions", "Seasons and months"],
+          "wortschatz": ["Plätze und Gebäude", "Verkehrsmittel", "Richtungen", "Monate und Jahreszeiten"],
+          "grammatik": ["Unbestimmter Artikel: ein, eine", "Negationsartikel: kein, keine", "Imperativ mit Sie", "Adjektiv mit sein"],
+          "aussprache": ["Lange und kurze Vokale"],
+          "landeskunde": ["Events in Hamburg", "Jahreszeiten in D-A-CH"]
+        },
+        {
+          "id": "K4",
+          "title": "Guten Appetit!",
+          "pages": "44-53",
+          "topics": ["Planning shopping", "Shopping conversations", "Eating conversations", "Food preferences"],
+          "wortschatz": ["Mahlzeiten", "Lebensmittel", "Getränke", "Geschäfte"],
+          "grammatik": ["Akkusativ", "Verben mit Akkusativ", "Verben mögen und möchten", "Positionen im Satz"],
+          "aussprache": ["Umlaute ä, ö, ü"],
+          "strategie": ["Wörter ordnen und lernen", "mit W-Fragen Texte verstehen"]
+        },
+        {
+          "id": "K5",
+          "title": "Alltag und Familie",
+          "pages": "54-63",
+          "topics": ["Telling time", "Time expressions", "Family", "Making appointments by phone", "Apologizing for delays"],
+          "wortschatz": ["Tagesablauf", "Uhrzeiten", "Familie"],
+          "grammatik": ["Zeitangaben: am, um, von...bis", "Possessivartikel im Nominativ und Akkusativ", "Modalverben müssen, können, wollen", "Modalverben im Satz: Satzklammer"],
+          "aussprache": ["r im Wort und am Wortende"],
+          "strategie": ["Ein Telefongespräch vorbereiten"],
+          "landeskunde": ["Pünktlichkeit?"]
+        },
+        {
+          "id": "K6",
+          "title": "Zeit mit Freunden",
+          "pages": "64-73",
+          "topics": ["Free time", "Dates", "Birthdays", "Writing invitations", "Ordering food and drinks", "Events", "Radio tips"],
+          "wortschatz": ["Ordinalzahlen", "Freizeitaktivitäten", "Essen und Getränke", "Veranstaltungen"],
+          "grammatik": ["Datumsangaben: am...", "Trennbare Verben", "Personalpronomen im Akkusativ: mich, dich...", "Präposition für + Akkusativ", "Präteritum von haben und sein"],
+          "aussprache": ["ei, eu, au"],
+          "strategie": ["Beim Lesen und Hören wichtige Informationen verstehen"],
+          "landeskunde": ["Kneipen & Co in D-A-CH", "Veranstaltungen in D-A-CH"]
+        },
+        {
+          "id": "K7",
+          "title": "Arbeitsalltag",
+          "pages": "80-89",
+          "topics": ["Understanding blog posts", "Writing about daily work", "Workplace conversations", "Location information", "Describing processes", "Answering letters", "Small talk"],
+          "wortschatz": ["Daily activities", "Workplace vocabulary", "Ingredients", "Regional food (D-A-CH)"],
+          "grammatik": ["Prepositions of time/location", "Word order (inversion)", "Negation with doch", "Pronouns"],
+          "landeskunde": ["Regional specialties: Currywurst, Spätzle, Kaiserschmarrn, Zürcher Geschnetzeltes"]
+        },
+        {
+          "id": "K8",
+          "title": "Der Unfall / Beim Arzt",
+          "pages": "94-103",
+          "topics": ["Accident report", "Doctor visit", "Medical instructions", "Health symptoms"],
+          "wortschatz": ["Medical: Rezept, Salbe, Verband, Knie", "Symptoms: erkältet, Bauchschmerzen, Fieber", "Instructions: Medikamente, rauchen, duschen"],
+          "grammatik": ["Modalverb sollen", "Modalverben müssen und dürfen"],
+          "aussprache": []
+        },
+        {
+          "id": "K9",
+          "title": "Wohnen",
+          "pages": "104-113",
+          "topics": ["Describing apartments", "Housing preferences", "Invitations", "Expressing like/dislike"],
+          "wortschatz": ["Apartment description", "Furniture", "Rooms"],
+          "grammatik": ["sein + Adjektiv", "Wechselpräpositionen (in, an, auf, hinter, neben, über, unter, vor, zwischen) mit Akkusativ und Dativ"]
+        },
+        {
+          "id": "K10",
+          "title": "Kleidung",
+          "pages": "114-123",
+          "topics": ["Clothing", "Shopping for clothes", "Sizes", "Colors", "Fashion preferences"],
+          "wortschatz": ["Clothing items", "Colors", "Sizes", "Shopping vocabulary"],
+          "grammatik": ["Komparativ und Superlativ"]
+        },
+        {
+          "id": "K11",
+          "title": "Medien",
+          "pages": "124-133",
+          "topics": ["Media types", "Internet", "Phone", "Apps", "Digital communication"],
+          "wortschatz": ["Media vocabulary", "Technology", "Apps"],
+          "grammatik": ["Reflexive Verben"]
+        },
+        {
+          "id": "K12",
+          "title": "Reisen",
+          "pages": "134-153",
+          "topics": ["Travel", "Booking", "Hotel", "Airport", "Directions", "Postcard writing", "City sightseeing"],
+          "wortschatz": ["Transport", "Directions", "Sightseeing", "Accommodation"],
+          "grammatik": ["Nebensätze mit dass, weil, wenn", "Konjunktion denn"]
+        }
+      ],
+      "grammar_topics_complete": [
+        "Personalpronomen (ich, du, er/sie/es, wir, ihr, sie/Sie)",
+        "Verben und Personalpronomen",
+        "W-Frage und Ja-/Nein-Frage",
+        "Aussagesatz",
+        "Bestimmter Artikel: der, die, das",
+        "Unbestimmter Artikel: ein, eine",
+        "Negationsartikel: kein, keine",
+        "Nomen: Singular und Plural",
+        "Verben haben und sein",
+        "Unregelmäßige Verben",
+        "Imperativ mit Sie",
+        "Adjektiv mit sein",
+        "Akkusativ",
+        "Verben mögen und möchten",
+        "Positionen im Satz",
+        "Zeitangaben: am, um, von...bis",
+        "Possessivartikel im Nominativ und Akkusativ",
+        "Modalverben: müssen, können, wollen",
+        "Modalverben im Satz: Satzklammer",
+        "Ordinalzahlen",
+        "Trennbare Verben",
+        "Personalpronomen im Akkusativ: mich, dich...",
+        "Präposition für + Akkusativ",
+        "Präteritum von haben und sein",
+        "Wechselpräpositionen (in, an, auf...)",
+        "Modalverben: sollen, dürfen",
+        "Komparativ und Superlativ",
+        "Reflexive Verben",
+        "Nebensätze mit dass, weil, wenn",
+        "Konjunktion denn"
+      ],
+      "vocab_count": 800,
+      "special_features": [
+        "Netzwerk-WG storyline (recurring characters)",
+        "Plattform review sections (K1-6, K7-12)",
+        "Regional food culture (D-A-CH)",
+        "Pronunciation focus per chapter",
+        "Learning strategy tips",
+        "Cultural notes (Landeskunde)",
+        "Audio/video integration"
+      ]
+    }
+  }
+}

@@ -1,0 +1,111 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Primitives
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+    function isSignedIn() { return request.auth != null; }
+
+    function isValidProgress(data) {
+      return data.keys().hasAll(['xp', 'streak']) &&
+             data.xp is number &&
+             data.streak is number &&
+             (data.get('lastPracticeDate', '') is string || data.lastPracticeDate == null) &&
+             (data.get('currentLevel', 'A1') in ['A1', 'A2', 'B1', 'B2']) &&
+             (data.get('unlockedLessons', []) is list);
+    }
+
+    function isValidNote(data) {
+      return data.keys().hasAll(['text', 'tag', 'createdAt']) &&
+             data.text is string &&
+             data.tag in ['Grammar', 'Kosakata', 'Pengucapan', 'Umum'] &&
+             data.createdAt is number;
+    }
+
+    function isValidStudyPlan(data) {
+      return data.keys().hasAll(['tasks']) && data.tasks is list;
+    }
+
+    function isValidQuickNote(data) {
+      return data.keys().hasAll(['text', 'updatedAt']) &&
+             data.text is string &&
+             data.updatedAt is number;
+    }
+
+    function isValidMockTest(data) {
+      return data.keys().hasAll(['level', 'score', 'total', 'createdAt']) &&
+             data.level is string &&
+             data.score is number &&
+             data.total is number &&
+             data.createdAt is number;
+    }
+
+    function isValidUser(data) {
+      return data.keys().hasAll(['tier']) &&
+             data.tier in ['free', 'pro', 'master'];
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidUser(incoming()) && incoming().tier == 'free';
+      allow update: if false; // Tier upgrades handled via server
+    }
+
+    // Match progress
+    match /users/{userId}/progress/{progressId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      
+      allow create: if isSignedIn() && 
+                    request.auth.uid == userId && 
+                    isValidProgress(incoming()) &&
+                    progressId == 'main';
+                    
+      allow update: if isSignedIn() && 
+                    request.auth.uid == userId &&
+                    isValidProgress(incoming()) &&
+                    (
+                      incoming().diff(existing()).affectedKeys().hasOnly(['xp', 'streak', 'lastPracticeDate', 'currentLevel', 'unlockedLessons', 'vocab'])
+                    );
+                    
+      allow delete: if false;
+    }
+
+    // Match notes
+    match /users/{userId}/notes/{noteId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidNote(incoming());
+      allow update: if isSignedIn() && request.auth.uid == userId && isValidNote(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['text', 'tag', 'createdAt']);
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Match study plan
+    match /users/{userId}/studyplan/{planId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidStudyPlan(incoming());
+      allow update: if isSignedIn() && request.auth.uid == userId && isValidStudyPlan(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['tasks']);
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Match quick notes
+    match /users/{userId}/quicknote/{noteId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidQuickNote(incoming());
+      allow update: if isSignedIn() && request.auth.uid == userId && isValidQuickNote(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['text', 'updatedAt']);
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Match mock tests
+    match /users/{userId}/mocktests/{testId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+      allow create: if isSignedIn() && request.auth.uid == userId && isValidMockTest(incoming());
+      allow update: if false; // immutable
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+  }
+}

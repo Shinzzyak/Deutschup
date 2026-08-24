@@ -1,0 +1,141 @@
+{
+  "book": "Netzwerk neu A2 — Kursbuch (Klett Verlag, 2021)",
+  "analysis_date": "2026-06-18",
+  "source": "Web research + Klett documentation",
+  "level": "A2",
+  "type": "Kursbuch (course book)",
+  "total_pages": 180,
+  "total_chapters": 12,
+  "split": "A2.1 (K1-K6) + A2.2 (K7-K12)",
+  "chapter_list": [
+    {
+      "id": "K1", "title": "Und was machst du?",
+      "grammar": [
+        "Genitiv: Name + s",
+        "Wiederholung: Perfekt",
+        "Nebensatz mit weil",
+        "Possessive Pronomen im Dativ",
+        "doch in Ja/Nein-Fragen",
+        "Reflexive Verben"
+      ],
+      "topics": ["Alltag", "Freundschaft", "Gefühle"]
+    },
+    {
+      "id": "K2", "title": "Nach der Schulzeit",
+      "grammar": [
+        "Modalverben im Präteritum",
+        "Phonetik: Laut 'e'"
+      ],
+      "topics": ["Schulzeit", "Berufswahl", "Ausbildung"]
+    },
+    {
+      "id": "K3", "title": "Immer online?",
+      "grammar": [
+        "Vergleiche mit als und wie",
+        "Adjektivendungen nach bestimmten/unbestimmten Artikeln"
+      ],
+      "topics": ["Medien", "Internet", "Soziale Medien"]
+    },
+    {
+      "id": "K4", "title": "Arbeit und Beruf",
+      "grammar": [
+        "Nebensatz mit dass",
+        "Komparativ und Superlativ von Adjektiven"
+      ],
+      "topics": ["Arbeit", "Beruf", "Büro"]
+    },
+    {
+      "id": "K5", "title": "Was machen Sie beruflich?",
+      "grammar": [
+        "Nebensatz mit wenn",
+        "Positionsverben (stehen, sitzen, liegen)",
+        "Wechselpräpositionen Akkusativ und Dativ"
+      ],
+      "topics": ["Berufe", "Arbeitsplatz", "Kommunikation"]
+    },
+    {
+      "id": "K6", "title": "Freizeit und Hobby",
+      "grammar": [
+        "Infinitiv mit zu"
+      ],
+      "topics": ["Freizeit", "Hobbys", "Vereine"]
+    },
+    {
+      "id": "K7", "title": "Ganz schön mobil",
+      "grammar": [
+        "Lokale Präpositionen"
+      ],
+      "topics": ["Verkehr", "ÖPNV", "Orientierung"]
+    },
+    {
+      "id": "K8", "title": "Gelernt ist gelernt!",
+      "grammar": [
+        "Passiv Präsens"
+      ],
+      "topics": ["Bildung", "Sprachen", "Lernen"]
+    },
+    {
+      "id": "K9", "title": "Gesundheit",
+      "grammar": [
+        "Nebensatz mit ob"
+      ],
+      "topics": ["Gesundheit", "Arzt", "Körper"]
+    },
+    {
+      "id": "K10", "title": "Konsum",
+      "grammar": [
+        "Konjunktiv II mit würde"
+      ],
+      "topics": ["Einkaufen", "Preise", "Werbung"]
+    },
+    {
+      "id": "K11", "title": "Wie die Zeit vergeht!",
+      "grammar": [
+        "Temporale Präpositionen"
+      ],
+      "topics": ["Zeit", "Termine", "Feste"]
+    },
+    {
+      "id": "K12", "title": "Typisch, oder?",
+      "grammar": [
+        "Relativsätze im Nominativ"
+      ],
+      "topics": ["Kultur", "Stereotypen", "Alltag in D-A-CH"]
+    }
+  ],
+  "grammar_topics_complete": [
+    "Genitiv: Name + s",
+    "Perfekt (Wiederholung)",
+    "Nebensatz mit weil",
+    "Possessive Pronomen im Dativ",
+    "doch in Ja/Nein-Fragen",
+    "Reflexive Verben",
+    "Modalverben im Präteritum",
+    "Vergleiche mit als und wie",
+    "Adjektivendungen",
+    "Nebensatz mit dass",
+    "Komparativ und Superlativ",
+    "Nebensatz mit wenn",
+    "Positionsverben",
+    "Wechselpräpositionen (Akk/Dat)",
+    "Infinitiv mit zu",
+    "Lokale Präpositionen",
+    "Passiv Präsens",
+    "Nebensatz mit ob",
+    "Konjunktiv II mit würde",
+    "Temporale Präpositionen",
+    "Relativsätze im Nominativ"
+  ],
+  "vocab_count_estimate": 800,
+  "exam_prep": [
+    "Goethe-Zertifikat A2",
+    "telc Deutsch A2"
+  ],
+  "features": [
+    "A2.1 (K1-K6) + A2.2 (K7-K12) split",
+    "Authentic spoken language examples",
+    "Cultural topics D-A-CH",
+    "Exam preparation integrated",
+    "Video and audio content"
+  ]
+}

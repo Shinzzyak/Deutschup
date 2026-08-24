@@ -1,0 +1,27 @@
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.clerk.accounts.dev https://*.clerk.com https://clerk.sintec.my.id https://*.sintec.my.id https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co https://*.clerk.accounts.dev https://*.clerk.com https://clerk.sintec.my.id https://accounts.sintec.my.id https://*.sintec.my.id https://api.bayar.gg https://*.bayar.gg https://generativelanguage.googleapis.com wss://*.supabase.co; frame-src https://*.clerk.accounts.dev https://*.clerk.com https://clerk.sintec.my.id https://accounts.sintec.my.id https://challenges.cloudflare.com; base-uri 'self'; form-action 'self'
+
+# Cache policy for the SPA build output.
+# Vite emits content-hashed files into /assets, so they are safe to pin forever.
+# NOTE: Vary: Accept-Encoding added to stop gzip/brotli cache mismatch; CF Pages
+# may ignore Vary, so keep max-age short-ish for JS to avoid corrupt-cache locks.
+/assets/*.js
+  Cache-Control: public, max-age=86400, must-revalidate
+  Vary: Accept-Encoding
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Vary: Accept-Encoding
+
+# The SPA shell must never be cached, or a deploy keeps serving stale chunk refs.
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/index.html
+  Cache-Control: no-cache, no-store, must-revalidate
