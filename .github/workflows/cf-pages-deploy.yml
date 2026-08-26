@@ -32,6 +32,8 @@ jobs:
       VITE_APP_URL: ${{ secrets.VITE_APP_URL }}
       VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
       VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
       VITE_ADMIN_EMAIL: ${{ secrets.VITE_ADMIN_EMAIL }}
       CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -125,8 +127,9 @@ jobs:
                   'deploy to a preview branch instead.'
               )
           pk = (os.environ.get('VITE_CLERK_PUBLISHABLE_KEY') or '').strip()
-          sb_url = (os.environ.get('VITE_SUPABASE_URL') or '').strip()
+          sb_url = (os.environ.get('SUPABASE_URL') or os.environ.get('VITE_SUPABASE_URL') or '').strip()
           sb_anon = (os.environ.get('VITE_SUPABASE_ANON_KEY') or '').strip()
+          sb_service = (os.environ.get('SUPABASE_SERVICE_ROLE_KEY') or '').strip()
           issuer = fapi
           jwks = f'{fapi}/.well-known/jwks.json' if fapi else ''
 
@@ -174,6 +177,10 @@ jobs:
             plain['VITE_SUPABASE_URL'] = sb_url
           if sb_anon:
             plain['VITE_SUPABASE_ANON_KEY'] = sb_anon
+          if sb_service:
+            secrets['SUPABASE_SERVICE_ROLE_KEY'] = sb_service
+          if sb_url:
+            secrets['SUPABASE_URL'] = sb_url
 
           env_vars = {k: {'type': 'plain_text', 'value': v} for k, v in plain.items() if v}
           env_vars.update({k: {'type': 'secret_text', 'value': v} for k, v in secrets.items() if v})
@@ -199,8 +206,13 @@ jobs:
           )
           with urllib.request.urlopen(req2, timeout=20) as r:
             prod = (((json.load(r)['result'].get('deployment_configs') or {}).get('production') or {}).get('env_vars') or {})
-          need = ['APP_URL', 'AI_ENABLED', 'TEST_PAYMENT_MODE', 'CLERK_SECRET_KEY', 'SUPABASE_URL', 'BAYAR_GG_API_KEY', 'GEMINI_API_KEY']
+          need = ['APP_URL', 'AI_ENABLED', 'TEST_PAYMENT_MODE', 'CLERK_SECRET_KEY', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'GEMINI_API_KEY']
+          # Optional/grandfathered vars — warn but don't fail the deploy.
+          warn_if_missing = ['BAYAR_GG_API_KEY']
           missing = [k for k in need if k not in prod]
+          for k in warn_if_missing:
+              if k not in prod:
+                  print('warn_missing_optional', k)
           print('env_n', len(prod), 'AI_type', (prod.get('AI_ENABLED') or {}).get('type'), 'TEST_type', (prod.get('TEST_PAYMENT_MODE') or {}).get('type'))
           if missing:
             raise SystemExit(f'missing after restore: {missing}')
