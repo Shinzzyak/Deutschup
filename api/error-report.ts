@@ -21,11 +21,19 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     return res.status(400).json({ error: 'Invalid JSON' });
   }
 
-  const message = String(body.message || '').slice(0, 500);
-  const stack = String(body.stack || '').slice(0, 2000);
-  const url = String(body.url || '').slice(0, 300);
-  const ua = String(body.ua || '').slice(0, 300);
-  const kind = String(body.kind || 'window.error').slice(0, 40);
+  // Strip control chars + angle brackets before any of these touch the DB.
+  // Prevents stored XSS if log rows are ever rendered in an admin UI, and
+  // log-injection via CR/LF when tailing the table in a text viewer.
+  const sanitize = (s: string) =>
+    s
+      .replace(/[\u0000-\u001f\u007f]+/g, ' ') // control chars (CRLF, NUL, etc.)
+      .replace(/[<>]/g, '')                  // angle brackets
+      .trim();
+  const message = sanitize(String(body.message || '')).slice(0, 500);
+  const stack = sanitize(String(body.stack || '')).slice(0, 2000);
+  const url = sanitize(String(body.url || '')).slice(0, 300);
+  const ua = sanitize(String(body.ua || '')).slice(0, 300);
+  const kind = sanitize(String(body.kind || 'window.error')).slice(0, 40);
   if (!message && !stack) {
     return res.status(200).json({ ok: true }); // nothing useful, still 200
   }

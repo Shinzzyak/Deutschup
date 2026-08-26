@@ -476,7 +476,8 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
 
   const action = (req.query.action as string) || req.body?.action;
   if (!action || !HANDLERS[action]) {
-    return res.status(400).json({ error: `Invalid action. Valid: ${Object.keys(HANDLERS).join(', ')}` });
+    // Generic error — never enumerate the handler surface. Matches /api/db-proxy.
+    return res.status(400).json({ error: 'Invalid action' });
   }
 
   const identity = await getVerifiedIdentity(req);
