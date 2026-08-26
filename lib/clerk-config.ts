@@ -83,11 +83,17 @@ export function clerkVerifyOptions(): {
     authorizedParties?: string[];
   } = {};
 
-  if (CLERK_JWT_KEY && CLERK_JWT_KEY.includes('BEGIN PUBLIC KEY')) {
-    opts.jwtKey = CLERK_JWT_KEY;
-  } else if (CLERK_SECRET_KEY) {
+  // secretKey (Backend API) is the source of truth: it fetches the CURRENT JWKS
+  // for this Clerk instance from api.clerk.com. A stale CLERK_JWT_KEY PEM (left
+  // over from a pre-cutover instance) must NEVER override it — that is exactly
+  // the failure mode that broke verifyToken for every prod token (admin hidden +
+  // "Progres belum termuat"). jwtKey is only a networkless fallback when no
+  // secretKey is configured.
+  if (CLERK_SECRET_KEY) {
     opts.secretKey = CLERK_SECRET_KEY;
     if (CLERK_API_URL) opts.apiUrl = CLERK_API_URL;
+  } else if (CLERK_JWT_KEY && CLERK_JWT_KEY.includes('BEGIN PUBLIC KEY')) {
+    opts.jwtKey = CLERK_JWT_KEY;
   }
 
   opts.authorizedParties = [

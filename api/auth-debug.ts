@@ -1,27 +1,23 @@
 import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getVerifiedIdentity, getDb } from '../lib/api-utils.js';
-import crypto from 'node:crypto';
 
 // Debug endpoint: reports exactly why getVerifiedIdentity resolves or fails,
 // writing the reason to app_errors so the admin can read it without console.
 const REPORT = true;
 
-function pemJwk(pem: string): any {
-  try {
-    const key = crypto.createPublicKey(pem.trim());
-    const jwk = key.export({ format: 'jwk' });
-    return {
-      kty: (jwk as any).kty,
-      n_prefix: ((jwk as any).n || '').slice(0, 32),
-      e: (jwk as any).e,
-    };
-  } catch (e: any) {
-    return { error: e.message };
-  }
-}
-
 export default async function handler(req: ApiRequest, res: ApiResponse) {
-  const authHeader = req.headers['authorization'] || '';
+  // ⚠️ Debug endpoint — MUST be locked. It previously dumped process.env
+  // (public-key PEM previews, secret presence) to anyone with no auth, which is
+  // an info-disclosure vuln. Gate it behind an internal secret shared with the
+  // admin operator; never surface raw env contents again.
+  const debugSecret = (process.env.AUTH_DEBUG_SECRET || '').trim();
+  const supplied = (req.headers['x-auth-debug-secret'] || '').toString().trim();
+  if (!debugSecret || supplied !== debugSecret) {
+    return res.status(404).json({ error: 'Not Found' });
+  }
+
+  const authHeaderRaw = req.headers['authorization'];
+  const authHeader = Array.isArray(authHeaderRaw) ? authHeaderRaw[0] : (authHeaderRaw || '');
   const hasBearer = /^Bearer /i.test(authHeader);
   const token = hasBearer ? authHeader.replace(/^Bearer /i, '').trim() : '';
 
@@ -65,13 +61,10 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
       } else {
         detail.result = 'NULL';
         detail.message = 'getVerifiedIdentity returned null (token verification FAILED)';
+        // No raw env dumps anymore — only boolean presence flags (safe to log).
         detail.env = {
           hasJwtKey: !!(process.env.CLERK_JWT_KEY || '').trim(),
-          jwtKeyPreview: (process.env.CLERK_JWT_KEY || '').slice(0, 30),
           hasSecretKey: !!(process.env.CLERK_SECRET_KEY || '').trim(),
-          fapi: (process.env.CLERK_FAPI || '').trim(),
-          apiUrl: (process.env.CLERK_API_URL || '').trim(),
-          jwtKeyJwk: pemJwk((process.env.CLERK_JWT_KEY || '').trim()),
         };
       }
     } catch (e: any) {
