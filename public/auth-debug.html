@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>auth-debug runner</title>
+</head>
+<body>
+  <h1>auth-debug runner</h1>
+  <pre id="out">menjalankan...</pre>
+  <script type="module">
+    // Panggil endpoint auth-debug pake token Clerk dari __clerk_db_jwt (jika ada)
+    // atau minta session token lewat window.Clerk.
+    const out = document.getElementById('out');
+    async function run() {
+      try {
+        let token = null;
+
+        // Cara 1: Clerk API global
+        if (window.Clerk && window.Clerk.session) {
+          token = await window.Clerk.session.getToken();
+        }
+
+        // Cara 2: coba ambil dari __clerk_db_jwt
+        if (!token) {
+          try {
+            token = localStorage.getItem('__clerk_db_jwt');
+          } catch (e) {}
+        }
+
+        out.textContent = 'token length: ' + (token ? token.length : 'NULL');
+
+        const res = await fetch('/api/auth-debug', {
+          method: 'POST',
+          headers: token ? { Authorization: 'Bearer ' + token } : {},
+        });
+        const json = await res.json();
+        out.textContent = JSON.stringify(json, null, 2) + '\n\nHTTP ' + res.status;
+      } catch (e) {
+        out.textContent = 'ERROR: ' + e.message;
+      }
+    }
+    // tunggu Cecil / Clerk siap
+    setTimeout(run, 2500);
+  </script>
+</body>
+</html>
