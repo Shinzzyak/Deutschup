@@ -27,7 +27,7 @@ function Header() {
           <span className="font-serif text-xl font-bold text-brand-ink tracking-tight">DeutschUp</span>
         </Link>
         <div className="flex items-center space-x-4">
-          <Link to="/sign-in" className="text-ink-muted hover:text-brand-ink font-medium transition-colors text-sm hidden sm:inline-flex">
+          <Link to="/sign-in" className="flex items-center min-h-11 px-2 text-ink-muted hover:text-brand-ink font-medium transition-colors text-sm hidden sm:inline-flex">
             Masuk
           </Link>
           <Magnetic strength={6} glow>
@@ -69,15 +69,15 @@ function Footer() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-cream-subtle mb-3">Platform</p>
               <div className="space-y-2">
-                <a href="#fitur" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Fitur</a>
-                <a href="#roadmap" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Kurikulum</a>
+                <a href="#fitur" className="flex items-center min-h-11 text-sm text-cream-muted hover:text-primary-foreground transition-colors">Fitur</a>
+                <a href="#roadmap" className="flex items-center min-h-11 text-sm text-cream-muted hover:text-primary-foreground transition-colors">Kurikulum</a>
               </div>
             </div>
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-cream-subtle mb-3">Akun</p>
               <div className="space-y-2">
-                <Link to="/sign-in" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Masuk</Link>
-                <Link to="/sign-up" className="block text-sm text-cream-muted hover:text-primary-foreground transition-colors">Daftar</Link>
+                <Link to="/sign-in" className="flex items-center min-h-11 text-sm text-cream-muted hover:text-primary-foreground transition-colors">Masuk</Link>
+                <Link to="/sign-up" className="flex items-center min-h-11 text-sm text-cream-muted hover:text-primary-foreground transition-colors">Daftar</Link>
               </div>
             </div>
           </div>
