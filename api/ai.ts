@@ -529,7 +529,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     return res.status(result.status).json(result.data);
   } catch (error: any) {
     const { message: friendlyMessage, status: errorStatus } = getFriendlyError(error);
-    console.error(`[AI-ERROR] ${action}:`, error.message, error.stack);
-    return res.status(errorStatus).json({ error: friendlyMessage, debug: (error?.message || '').slice(0, 200), stack: (error?.stack || '').slice(0, 400) });
+    console.error(`[AI-ERROR] ${action}:`, error.message);
+    return res.status(errorStatus).json({ error: friendlyMessage });
   }
 }
