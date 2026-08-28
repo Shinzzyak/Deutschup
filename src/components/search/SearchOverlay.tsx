@@ -68,38 +68,38 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 z-50 bg-brand-ink/40 flex items-start justify-center overscroll-contain pt-[10vh] px-4"
+        className="fixed inset-0 z-50 bg-brand-ink/60 backdrop-blur-xs flex items-start justify-center overscroll-contain pt-4 sm:pt-[10vh] px-3 sm:px-4"
         onClick={onClose}
       >
         <motion.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
-          className="w-full max-w-xl overflow-hidden bg-surface-0 border border-brand-ink/20"
+          className="w-full max-w-xl overflow-hidden bg-surface-0 border border-brand-ink/20 shadow-2xl"
           onClick={e => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
           aria-label="Cari materi"
         >
           {/* Input */}
-          <div className="flex items-center gap-3 px-4 py-3 border-b border-brand-ink/10">
-            <Search className="w-5 h-5 text-ink-subtle shrink-0" />
+          <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-brand-ink/10 bg-brand-cream/30">
+            <Search className="w-4 h-4 text-ink-subtle shrink-0" />
             <label htmlFor="site-search" className="sr-only">Cari materi</label>
             <input
               id="site-search"
               ref={inputRef}
               type="text"
               placeholder="Cari kosakata, pelajaran, atau verba..."
-              className="flex-1 text-lg outline-none bg-transparent text-brand-ink placeholder:text-ink-subtle"
+              className="flex-1 text-sm md:text-base outline-none bg-transparent text-brand-ink placeholder:text-ink-subtle/70"
               value={query}
               onChange={e => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
             />
-            <kbd className="hidden md:inline-flex items-center gap-1 px-2 py-1 text-xs text-ink-subtle bg-surface-2 border border-brand-ink/10">
+            <kbd className="hidden md:inline-flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-mono text-ink-subtle bg-surface-2 border border-brand-ink/10">
               ESC
             </kbd>
-            <button onClick={onClose} className="md:hidden p-1" aria-label="Tutup pencarian">
-              <X className="w-5 h-5 text-ink-subtle" />
+            <button onClick={onClose} className="p-1 text-ink-subtle hover:text-brand-ink transition-colors" aria-label="Tutup pencarian">
+              <X className="w-4 h-4" />
             </button>
           </div>
 

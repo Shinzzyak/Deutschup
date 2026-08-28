@@ -51,14 +51,14 @@ const C = {
   accentSoft: [245, 230, 220] as [number, number, number],
 
   // Semantic (from oklch values)
-  success:    [34, 134, 58] as [number, number, number],
-  successSoft: [220, 252, 231] as [number, number, number],
-  warning:    [217, 119, 6] as [number, number, number],
-  warningSoft: [254, 243, 199] as [number, number, number],
-  danger:     [220, 38, 38] as [number, number, number],
-  dangerSoft: [254, 226, 226] as [number, number, number],
-  info:       [37, 99, 235] as [number, number, number],
-  infoSoft:   [219, 234, 254] as [number, number, number],
+  success:    [26, 107, 61] as [number, number, number],
+  successSoft: [240, 246, 242] as [number, number, number],
+  warning:    [184, 133, 76] as [number, number, number],
+  warningSoft: [250, 245, 238] as [number, number, number],
+  danger:     [139, 37, 0] as [number, number, number],
+  dangerSoft: [246, 232, 227] as [number, number, number],
+  info:       [10, 10, 10] as [number, number, number],
+  infoSoft:   [238, 234, 229] as [number, number, number],
 
   // Neutrals
   white:      [255, 255, 255] as [number, number, number],
@@ -182,7 +182,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   // Level badge (right, below date)
   const bx = W - M - 20, by = y + 5;
   doc.setFillColor(...C.ink);
-  doc.roundedRect(bx, by, 20, 11, 2.5, 2.5, 'F');
+  doc.rect(bx, by, 20, 11, 'F');
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(12);
   doc.setTextColor(...C.paper);
@@ -226,12 +226,12 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   pills.forEach((p, i) => {
     const px = M + i * (pillW + gap);
 
-    // Pill background with border
+    // Pill background with border (sharp 0px radius)
     doc.setFillColor(...p.bg);
-    doc.roundedRect(px, y, pillW, pillH, 4, 4, 'F');
-    doc.setDrawColor(...C.dividerLight);
-    doc.setLineWidth(0.2);
-    doc.roundedRect(px, y, pillW, pillH, 4, 4, 'S');
+    doc.rect(px, y, pillW, pillH, 'F');
+    doc.setDrawColor(...C.divider);
+    doc.setLineWidth(0.3);
+    doc.rect(px, y, pillW, pillH, 'S');
 
     // Colored dot indicator (emoji not supported by jsPDF helvetica)
     doc.setFillColor(...p.color);
@@ -270,10 +270,10 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   const cardH = padY + 8 + insights.length * lineH + padY;
 
   doc.setFillColor(...C.cream);
-  doc.roundedRect(M, y, CW, cardH, 4, 4, 'F');
-  doc.setDrawColor(...C.dividerLight);
-  doc.setLineWidth(0.2);
-  doc.roundedRect(M, y, CW, cardH, 4, 4, 'S');
+  doc.rect(M, y, CW, cardH, 'F');
+  doc.setDrawColor(...C.divider);
+  doc.setLineWidth(0.3);
+  doc.rect(M, y, CW, cardH, 'S');
 
   // Card header
   doc.setFont('helvetica', 'bold');
