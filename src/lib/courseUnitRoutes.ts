@@ -61,7 +61,10 @@ export function inferCourseUnitLevel(unit: Pick<LessonIndex, 'id' | 'level'>): s
 export function isCourseUnitRouteAvailable(unit: Pick<LessonIndex, 'id'>): boolean {
   if (UNRELEASED_UNIT_IDS.includes(unit.id)) return false;
   if (!isCheckpointUnit(unit)) return true;
-  return AVAILABLE_CHECKPOINT_IDS.has(unit.id);
+  // Route availability is structural, not network-dependent. The checkpoint
+  // screen owns its loading/error state; hiding its URL until DB hydration
+  // finishes creates a first-render dead link.
+  return courseIndex.some((candidate) => candidate.id === unit.id);
 }
 
 export function getCourseUnitRoute(unit: Pick<LessonIndex, 'id'>): string | null {

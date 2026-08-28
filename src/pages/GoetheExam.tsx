@@ -227,8 +227,8 @@ export default function GoetheExam() {
 
           {passed && (
             <div className="mb-6 border border-brand-green/25 border-l-4 border-l-brand-green bg-brand-green/10 p-3 text-left">
-              <p className="text-sm text-brand-ink">
-                Herzlichen Glückwunsch! Du hast bestanden! 🎉
+              <p className="text-sm font-bold text-brand-ink">
+                Herzlichen Glückwunsch! Du hast bestanden!
               </p>
               <p className="mt-1 text-sm text-ink-muted">Selamat, kamu lolos ambang 60%.</p>
             </div>
@@ -386,9 +386,12 @@ export default function GoetheExam() {
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-4 border border-brand-ink/12 border-l-4 border-l-brand-tan bg-brand-cream p-4"
                 >
-                  <p className="text-sm leading-relaxed text-brand-ink">
-                    💡 {currentQ.explanation}
-                  </p>
+                  <div className="flex items-start gap-2.5">
+                    <Brain className="mt-0.5 h-4 w-4 shrink-0 text-brand-rust" aria-hidden="true" />
+                    <p className="text-sm leading-relaxed text-brand-ink">
+                      {currentQ.explanation}
+                    </p>
+                  </div>
                 </motion.div>
               )}
             </AnimatePresence>

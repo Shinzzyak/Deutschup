@@ -15,15 +15,9 @@ const typeLabels = {
    (TopNav search button, Cmd/Ctrl+K, "/") — a chrome surface, so it may use
    glass per DESIGN-LANGUAGE.md Amandemen 1. Cleaned to brand tokens:
    - panel: bg-surface-0 (solid, not white-on-scrim) + hairline ink/20
-   - type chips: brand-toned, each with its own tint (measured AA)
+   - type labels: neutral, so category is carried by text instead of colored stickers
    - article plates: der/die/das same teaching colours as VocabTrainerDB
    - spacing: full steps only (p-2, gap-2, min-h-11 rows) */
-const typeColors = {
-  vocabulary: 'bg-[#e8eefb] text-[#1e40af]',
-  lesson: 'bg-[#e6f4ec] text-[#1a6b3d]',
-  verb: 'bg-[#f6e8e3] text-[#8b2500]',
-};
-
 export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -45,19 +39,6 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
   useEffect(() => {
     setSelectedIndex(0);
   }, [query]);
-
-  // Keyboard shortcuts
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        if (open) onClose();
-        else onClose(); // parent handles open
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [open, onClose]);
 
   const handleSelect = (item: SearchResult) => {
     addRecent(query || item.primary);
@@ -185,7 +166,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                               <p className="font-medium text-brand-ink truncate">{item.primary}</p>
                               <p className="text-sm text-ink-muted truncate">{item.secondary}</p>
                             </div>
-                            <span className={cn("text-xs font-medium px-2 py-1 ", typeColors[item.type])}>
+                            <span className="border border-brand-ink/20 px-2 py-1 text-xs font-medium text-ink-muted">
                               {typeLabels[item.type]}
                             </span>
                             <ArrowRight className="w-4 h-4 text-ink-subtle shrink-0" />

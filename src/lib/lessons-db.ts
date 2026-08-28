@@ -6,6 +6,7 @@
 // ponytail: simple module-level cache, no TTL — content is static after seed;
 // swap to SWR/stale-while-revalidate if curriculum ever becomes editable at runtime.
 import { supabase } from './supabase';
+import { fetchAllRows } from './supabasePagination';
 import type { Lesson, QuizQuestion, VocabWord, Dialogue, Level } from '../data/course';
 
 // ---- Row shapes (DB snake_case) ----
@@ -97,29 +98,31 @@ export async function getAllLessons(): Promise<Lesson[]> {
       // Single round-trip per resource, then merge in memory — keeps the old
       // `lesson.exercises`/`lesson.vocabulary` shape so consumers (notably
       // checkpointAdapter) work without touching their internals.
-      const [lessonsRes, exercisesRes, vocabRes] = await Promise.all([
-        supabase
+      const [lessonRows, exerciseRows, vocabRows] = await Promise.all([
+        fetchAllRows<LessonRow>((from, to) => supabase
           .from('curriculum_lessons')
-          .select('id, level_id, title, grammar_description, sentence_breakdowns, pronunciation_tips, cultural_notes, register_notes, indonesian_mistakes, can_do_goals, listening_simulation, dialogues'),
-        supabase
+          .select('id, level_id, title, grammar_description, sentence_breakdowns, pronunciation_tips, cultural_notes, register_notes, indonesian_mistakes, can_do_goals, listening_simulation, dialogues')
+          .range(from, to)),
+        fetchAllRows<ExerciseRow>((from, to) => supabase
           .from('curriculum_exercises')
           .select('lesson_id, question, options, correct_answer, sort_order')
-          .order('sort_order', { ascending: true }),
-        supabase
+          .order('sort_order', { ascending: true })
+          .range(from, to)),
+        fetchAllRows<VocabRow>((from, to) => supabase
           .from('curriculum_vocabulary')
           .select('id, word, article, translation, example_sentence, phonetic, level_id, lesson_id, sort_order')
-          .order('sort_order', { ascending: true }),
+          .order('sort_order', { ascending: true })
+          .range(from, to)),
       ]);
-      if (lessonsRes.error || !lessonsRes.data) return [];
 
       const exByLesson = new Map<string, QuizQuestion[]>();
-      for (const e of (exercisesRes.data || []) as (ExerciseRow & { lesson_id: string })[]) {
+      for (const e of exerciseRows) {
         const arr = exByLesson.get(e.lesson_id) || [];
         arr.push({ question: e.question, options: e.options, correctAnswer: e.correct_answer });
         exByLesson.set(e.lesson_id, arr);
       }
       const vocabByLesson = new Map<string, VocabWord[]>();
-      for (const v of (vocabRes.data || []) as (VocabRow & { lesson_id: string })[]) {
+      for (const v of vocabRows) {
         const arr = vocabByLesson.get(v.lesson_id) || [];
         arr.push({
           id: v.id, word: v.word,
@@ -132,7 +135,7 @@ export async function getAllLessons(): Promise<Lesson[]> {
         vocabByLesson.set(v.lesson_id, arr);
       }
 
-      const lessons = (lessonsRes.data as LessonRow[]).map((row) => {
+      const lessons = lessonRows.map((row) => {
         const lesson = rowToLesson(row);
         lesson.exercises = exByLesson.get(lesson.id);
         lesson.vocabulary = vocabByLesson.get(lesson.id);
@@ -140,7 +143,10 @@ export async function getAllLessons(): Promise<Lesson[]> {
       });
       lessons.forEach(l => lessonCache.set(l.id, l));
       return lessons;
-    })();
+    })().catch((error) => {
+      allLessonsPromise = null;
+      throw error;
+    });
   }
   return allLessonsPromise;
 }
@@ -185,12 +191,12 @@ export async function getLessonVocabulary(id: string): Promise<VocabWord[]> {
 export async function getAllVocab(): Promise<VocabWord[]> {
   if (!allVocabPromise) {
     allVocabPromise = (async () => {
-      const { data, error } = await supabase
+      const rows = await fetchAllRows<VocabRow>((from, to) => supabase
         .from('curriculum_vocabulary')
-        .select('id, word, article, translation, example_sentence, phonetic, level_id')
-        .order('sort_order', { ascending: true });
-      if (error || !data) return [];
-      return (data as VocabRow[]).map(v => ({
+        .select('id, lesson_id, word, article, translation, example_sentence, phonetic, level_id, sort_order')
+        .order('sort_order', { ascending: true })
+        .range(from, to));
+      return rows.map(v => ({
         id: v.id,
         word: v.word,
         article: v.article ?? undefined,
@@ -199,7 +205,10 @@ export async function getAllVocab(): Promise<VocabWord[]> {
         phonetic: v.phonetic ?? '',
         level: v.level_id as Level,
       }));
-    })();
+    })().catch((error) => {
+      allVocabPromise = null;
+      throw error;
+    });
   }
   return allVocabPromise;
 }

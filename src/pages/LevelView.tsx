@@ -17,11 +17,11 @@ import { getCourseUnitRoute, inferCourseUnitLevel, isCheckpointUnit } from '../l
 // the next step. Nothing on this page may promise a number the server won't pay.
 const XP_PER_LESSON_COMPLETE = 10;
 
-const levelMeta: Record<Level, { title: string; description: string; icon: string }> = {
-  A1: { title: 'Pemula A1', description: 'Dasar bahasa Jerman — salam, artikel, angka, kalimat sederhana.', icon: '🌱' },
-  A2: { title: 'Dasar A2', description: 'Kasus, modal verben, waktu lampau, preposisi lanjut.', icon: '📚' },
-  B1: { title: 'Menengah B1', description: 'Genitiv, relativas, konjunktiv II, passif, futur.', icon: '🎯' },
-  B2: { title: 'Mahir B2', description: 'Partizip, idiome, gaya ilmiah, persiapan ujian Goethe.', icon: '🏆' },
+const levelMeta: Record<Level, { title: string; description: string }> = {
+  A1: { title: 'Pemula A1', description: 'Dasar bahasa Jerman — salam, artikel, angka, kalimat sederhana.' },
+  A2: { title: 'Dasar A2', description: 'Kasus, modal verben, waktu lampau, preposisi lanjut.' },
+  B1: { title: 'Menengah B1', description: 'Genitiv, relativas, konjunktiv II, passif, futur.' },
+  B2: { title: 'Mahir B2', description: 'Partizip, idiome, gaya ilmiah, persiapan ujian Goethe.' },
 };
 
 const getEstimatedTime = (isCheckpoint: boolean) => (isCheckpoint ? '15–20 menit' : '8–12 menit');
@@ -163,7 +163,6 @@ export default function LevelView() {
         <div className="relative z-10 flex items-start justify-between gap-4">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3 mb-2">
-              <span className="text-3xl leading-none">{meta.icon}</span>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-serif text-3xl tracking-tight text-brand-cream">{levelId}</span>

@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../components/ui/dialog';
-import { AlertCircle, ArrowRight, CheckCircle2, Loader2, PlayCircle, Timer, XCircle } from 'lucide-react';
+import { AlertCircle, ArrowRight, CheckCircle2, Loader2, PlayCircle, Timer, XCircle, Trophy, Target } from 'lucide-react';
 import { cn } from '../lib/utils';
 import ReactMarkdown from 'react-markdown';
 import { authedFetch } from '../lib/auth-headers';
@@ -851,9 +851,9 @@ export default function MockTest() {
 /** Celebration mark for the result screen — score band, not a bare percentage. */
 function ScoreMark({ score, total }: { score: number; total: number }) {
   const ratio = total > 0 ? score / total : 0;
-  if (ratio > 0.8) return <span className="text-5xl">🏆</span>;
-  if (ratio >= 0.5) return <span className="text-5xl">👍</span>;
-  return <span className="text-5xl">💪</span>;
+  if (ratio > 0.8) return <Trophy className="h-12 w-12 text-brand-rust" aria-hidden="true" />;
+  if (ratio >= 0.5) return <CheckCircle2 className="h-12 w-12 text-brand-tan" aria-hidden="true" />;
+  return <Target className="h-12 w-12 text-brand-ink" aria-hidden="true" />;
 }
 
 function LeaveGuard({

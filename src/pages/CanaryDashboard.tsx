@@ -32,7 +32,7 @@ export default function CanaryDashboard() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
-            🔐 Auth Dashboard
+            Auth Dashboard
           </h1>
           <p className="text-muted-foreground mt-2">
             Clerk is now the default auth for ALL users
@@ -43,8 +43,8 @@ export default function CanaryDashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="bg-card border border-border p-4 text-card-foreground">
             <div className="text-sm text-muted-foreground">Clerk SDK</div>
-            <div className={`text-2xl font-bold ${status?.clerkEnabled ? 'text-[#1a6b3d]' : 'text-[#7a5200]'}`}>
-              {status?.clerkEnabled ? '✅ Enabled' : '⚠️ Not Configured'}
+            <div className={`text-2xl font-bold ${status?.clerkEnabled ? 'text-brand-ink' : 'text-brand-rust'}`}>
+              {status?.clerkEnabled ? 'Enabled' : 'Not Configured'}
             </div>
           </div>
           <div className="bg-card border border-border p-4 text-card-foreground">

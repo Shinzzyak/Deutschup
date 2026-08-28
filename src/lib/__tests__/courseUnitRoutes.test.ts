@@ -24,6 +24,12 @@ describe('courseUnitRoutes', () => {
     expect(getCourseUnitRoute({ id: 'a2-checkpoint-1' })).toBe('/checkpoint/a2-checkpoint-1');
   });
 
+  it('keeps checkpoint routes available while DB content is still loading', () => {
+    hydrateCourseUnitRoutesFromLessons([]);
+    expect(getCourseUnitRoute({ id: 'a1-checkpoint-1' })).toBe('/checkpoint/a1-checkpoint-1');
+    hydrateCourseUnitRoutesFromLessons(testLessons);
+  });
+
   // The regression this file used to enshrine: getCourseUnitRoute returned null
   // for a1-checkpoint-4, the LAST unit of A1 and the gate to A2. The learner saw
   // it as their next step and it led nowhere.
