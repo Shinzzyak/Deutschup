@@ -1,7 +1,8 @@
-import { useState, useMemo, useCallback } from 'react';
-import { allVocab } from '../../data/lessons';
+import { useState, useMemo, useCallback, useEffect } from 'react';
+import { getAllVocab } from '../../lib/lessons-db';
 import { verbDatabase } from '../../data/verbs';
 import { courseIndex } from '../../data/lessonIndex';
+import type { VocabWord } from '../../data/course';
 
 export interface SearchResult {
   id: string;
@@ -49,12 +50,20 @@ export function useSearch() {
     }
   });
 
+  // Vocabulary from DB (async — lesson vocab + level vocab groups)
+  const [vocab, setVocab] = useState<VocabWord[]>([]);
+  useEffect(() => {
+    let alive = true;
+    getAllVocab().then(v => { if (alive) setVocab(v); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+
   const index = useMemo(() => {
     const items: SearchResult[] = [];
     const seen = new Set<string>();
 
     // Vocabulary from lessons (richer data)
-    for (const v of allVocab) {
+    for (const v of vocab) {
       if (seen.has(v.word)) continue;
       seen.add(v.word);
       items.push({
@@ -93,7 +102,7 @@ export function useSearch() {
     }
 
     return items;
-  }, []);
+  }, [vocab]);
 
   const search = useCallback((query: string): SearchResult[] => {
     if (!query.trim()) return [];

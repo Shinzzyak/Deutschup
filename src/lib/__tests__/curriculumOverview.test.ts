@@ -1,11 +1,17 @@
 import { describe, expect, it } from 'vitest';
-import { courseData } from '../../data/lessons';
+import { testLessons } from './testLessonsFixture';
 import { courseIndex } from '../../data/lessonIndex';
 import { listResolvableCheckpointIds } from '../checkpointAdapter';
+import { hydrateCourseUnitRoutesFromLessons } from '../courseUnitRoutes';
 import { buildCurriculumOverview, inferUnitLevel } from '../curriculumOverview';
 
 const dbCounts = { A1: 1305, A2: 837, B1: 116, B2: 214 };
-const availableCheckpointIds = listResolvableCheckpointIds(courseData);
+
+// Offline snapshot: inject the fixture into the route-availability cache before
+// the overview assertions run.
+hydrateCourseUnitRoutesFromLessons(testLessons);
+
+const availableCheckpointIds = listResolvableCheckpointIds(testLessons);
 
 describe('curriculumOverview', () => {
   it('summarizes the full A1-B2 roadmap from the static curriculum index', () => {

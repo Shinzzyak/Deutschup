@@ -22,6 +22,28 @@ vi.mock('../../lib/supabase', () => ({
   },
 }));
 
+// Refactor A: CurriculumStudio resolves checkpoint availability via lessons-db
+// (getAllLessons). Mock the fetch layer with all 16 checkpoints so the studio's
+// readiness counters match the static course index offline.
+const ALL_CHECKPOINTS = ['a1', 'a2', 'b1', 'b2'].flatMap(prefix =>
+  [1, 2, 3, 4].map(n => ({
+    id: `${prefix}-checkpoint-${n}`,
+    level: prefix.toUpperCase(),
+    title: `Review ${prefix.toUpperCase()} ${n}`,
+    requiredScore: 0.7,
+    reviewLessons: ['a1-1'],
+    questions: [{ question: `Frage ${prefix}-${n}?`, options: ['A', 'B', 'C'], correctAnswer: 0 }],
+  })),
+);
+
+vi.mock('../../lib/lessons-db', () => ({
+  getAllLessons: async () => [
+    { id: 'a1-1', level: 'A1', title: 'Perkenalan & Salam' },
+    { id: 'a1-2', level: 'A1', title: 'Lektion 2' },
+    ...ALL_CHECKPOINTS,
+  ],
+}));
+
 import CurriculumStudio from '../CurriculumStudio';
 
 describe('CurriculumStudio', () => {

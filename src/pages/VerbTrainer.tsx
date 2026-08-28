@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Search,
   Check,
@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { verbDatabase, VerbConjugation } from '../data/verbs';
-import { allVocab } from '../data/lessons';
+import { getAllVocab } from '../lib/lessons-db';
 import type { VocabWord } from '../data/course';
 
 /* ------------------------------------------------------------------
@@ -188,6 +188,14 @@ export default function VerbTrainer() {
   const [checked, setChecked] = useState(false);
   const [score, setScore] = useState({ correct: 0, total: 0 });
   const [finished, setFinished] = useState(false);
+
+  // Dictionary vocab loads from the DB (lessons-db) — same index search uses.
+  const [allVocab, setAllVocab] = useState<VocabWord[]>([]);
+  useEffect(() => {
+    let alive = true;
+    getAllVocab().then(v => { if (alive) setAllVocab(v); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   const query = searchTerm.trim().toLowerCase();
 

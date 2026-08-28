@@ -2,7 +2,8 @@ import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
-import { courseData } from '../data/lessons';
+import { getAllLessons } from '../lib/lessons-db';
+import type { Lesson } from '../data/course';
 import { courseIndex } from '../data/lessonIndex';
 import { resolveCheckpointLesson } from '../lib/checkpointAdapter';
 import { getCourseUnitRoute, inferCourseUnitLevel, isCheckpointUnit } from '../lib/courseUnitRoutes';
@@ -18,7 +19,16 @@ export default function CheckpointView() {
   const { user } = useAuthStore();
   const { submitCheckpoint, checkpointProgress, loading, error: progressError, clearError } = useProgressStore();
 
-  const resolvedCheckpoint = resolveCheckpointLesson(courseData, id);
+  // Checkpoint content comes from the DB (lessons-db) — async load with a
+  // simple loading gate while the resolved checkpoint is being built.
+  const [allLessons, setAllLessons] = useState<Lesson[] | null>(null);
+  useEffect(() => {
+    let alive = true;
+    getAllLessons().then(l => { if (alive) setAllLessons(l); }).catch(() => { if (alive) setAllLessons([]); });
+    return () => { alive = false; };
+  }, []);
+
+  const resolvedCheckpoint = allLessons ? resolveCheckpointLesson(allLessons, id) : null;
   const checkpoint = resolvedCheckpoint?.lesson;
   const checkpointData = resolvedCheckpoint?.checkpoint;
 
@@ -42,7 +52,9 @@ export default function CheckpointView() {
 
   // Get review lessons
   const reviewLessonIds = checkpointData?.reviewLessons || [];
-  const reviewLessons = reviewLessonIds.map(lessonId => courseData.find(l => l.id === lessonId)).filter(Boolean);
+  const reviewLessons = reviewLessonIds
+    .map(lessonId => allLessons?.find(l => l.id === lessonId))
+    .filter((l): l is Lesson => Boolean(l));
 
   // Position on the level map — the learner should always know which of the
   // level's checkpoints this is, and what comes right after it.
@@ -71,7 +83,7 @@ export default function CheckpointView() {
     }
   }, [alreadyPassed, existingProgress]);
 
-  if (loading) {
+  if (loading || !allLessons) {
     return (
       <div className="max-w-3xl mx-auto px-4 sm:px-6 py-20 text-center">
         <Loader2 className="w-8 h-8 mx-auto animate-spin text-brand-rust" />

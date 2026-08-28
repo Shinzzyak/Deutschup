@@ -1,6 +1,7 @@
 import React, { isValidElement, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
-import { courseData } from '../data/lessons';
+import { findLesson, getLessonVocabulary, getLessonExercises, getAllLessons } from '../lib/lessons-db';
+import type { Lesson, VocabWord } from '../data/course';
 import { courseIndex } from '../data/lessonIndex';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
@@ -219,7 +220,50 @@ export default function LessonView() {
   // Only clock study time once access is granted.
   const { endSession } = useLessonTimer(access === 'allowed' ? id : undefined);
 
-  const lesson = courseData.find(l => l.id === id);
+  // Lesson content loads from the DB (lessons-db). findLesson covers content +
+  // grammar; exercises & vocabulary are fetched alongside and merged so the
+  // rest of the component keeps its original shape.
+  const [lesson, setLesson] = useState<Lesson | undefined>(undefined);
+  const [lessonsLoaded, setLessonsLoaded] = useState(false);
+  useEffect(() => {
+    let alive = true;
+    setLesson(undefined);
+    setLessonsLoaded(false);
+    (async () => {
+      try {
+        const [l, vocab, exercises] = await Promise.all([
+          findLesson(id || ''),
+          getLessonVocabulary(id || ''),
+          getLessonExercises(id || ''),
+        ]);
+        if (!alive) return;
+        if (l) {
+          setLesson({ ...l, vocabulary: vocab.length ? vocab : l.vocabulary, exercises: exercises.length ? exercises : l.exercises });
+        }
+      } finally {
+        if (alive) setLessonsLoaded(true);
+      }
+    })();
+    return () => { alive = false; };
+  }, [id]);
+
+  // "Ulas Kembali" shows vocab from the lessons this one reviews — load those
+  // review lessons once the current lesson is known.
+  const [reviewVocabIndex, setReviewVocabIndex] = useState<Map<string, Lesson>>(new Map());
+  useEffect(() => {
+    if (!lesson?.reviewLessons?.length) return;
+    let alive = true;
+    getAllLessons().then(all => {
+      if (!alive) return;
+      const map = new Map<string, Lesson>();
+      for (const rid of lesson.reviewLessons!) {
+        const hit = all.find(l => l.id === rid);
+        if (hit) map.set(rid, hit);
+      }
+      setReviewVocabIndex(map);
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, [lesson?.reviewLessons]);
 
   // Sequencing comes from courseIndex — the same ordered map LevelView renders,
   // so "Pelajaran 4 dari 26" and "Pelajaran berikutnya" agree with the level page.
@@ -334,6 +378,10 @@ export default function LessonView() {
         </Button>
       </LessonNotice>
     );
+  }
+
+  if (!lesson && !lessonsLoaded) {
+    return <LessonNotice icon={Loader2} spinning title="Membuka pelajaran" description="Kami sedang menyiapkan materi pelajaran ini." />;
   }
 
   if (!lesson) {
@@ -759,7 +807,7 @@ export default function LessonView() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-brand-ink/10 border border-brand-ink/10">
                 {lesson.reviewLessons.flatMap(reviewId => {
-                  const reviewLesson = courseData.find(l => l.id === reviewId);
+                  const reviewLesson = reviewVocabIndex.get(reviewId);
                   return reviewLesson?.vocabulary?.slice(0, 2) || [];
                 }).filter((v, i, a) => a.findIndex(t => t.id === v.id) === i).map((v) => (
                   <div key={`review-${v.id}`} className="flex flex-col gap-1 bg-white p-4">

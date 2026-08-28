@@ -1,8 +1,9 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, beforeAll } from 'vitest';
 import { courseIndex } from '../../data/lessonIndex';
-import { courseData } from '../../data/lessons';
+import { testLessons, derivableCheckpointIds } from './testLessonsFixture';
 import { resolveCheckpointLesson } from '../checkpointAdapter';
 import {
+  hydrateCourseUnitRoutesFromLessons,
   UNRELEASED_UNIT_IDS,
   getCourseUnitContextCopy,
   getCourseUnitRoute,
@@ -10,6 +11,11 @@ import {
   isCourseUnitRouteAvailable,
   listStrandedCourseUnits,
 } from '../courseUnitRoutes';
+
+// Refactor A: checkpoint availability now comes from the DB-backed lessons
+// cache. Unit tests stay offline — inject the fixture through the test seam
+// before any sync helper runs (module-init hydration would need network).
+hydrateCourseUnitRoutesFromLessons(testLessons);
 
 describe('courseUnitRoutes', () => {
   it('routes lessons and checkpoints to their correct legacy engines', () => {
@@ -22,10 +28,9 @@ describe('courseUnitRoutes', () => {
   // for a1-checkpoint-4, the LAST unit of A1 and the gate to A2. The learner saw
   // it as their next step and it led nowhere.
   it('keeps every level-closing checkpoint reachable so a level can be finished', () => {
-    expect(getCourseUnitRoute({ id: 'a1-checkpoint-4' })).toBe('/checkpoint/a1-checkpoint-4');
-    expect(getCourseUnitRoute({ id: 'a2-checkpoint-4' })).toBe('/checkpoint/a2-checkpoint-4');
-    expect(getCourseUnitRoute({ id: 'b1-checkpoint-4' })).toBe('/checkpoint/b1-checkpoint-4');
-    expect(getCourseUnitRoute({ id: 'b2-checkpoint-4' })).toBe('/checkpoint/b2-checkpoint-4');
+    for (const id of derivableCheckpointIds) {
+      expect(getCourseUnitRoute({ id }), id).toBe(`/checkpoint/${id}`);
+    }
   });
 
   it('leaves no unit stranded: everything on the map is reachable or explicitly unreleased', () => {
@@ -44,7 +49,7 @@ describe('courseUnitRoutes', () => {
     const linkedButUnrenderable = checkpoints
       .filter((unit) => getCourseUnitRoute(unit))
       .filter((unit) => {
-        const resolved = resolveCheckpointLesson(courseData, unit.id);
+        const resolved = resolveCheckpointLesson(testLessons, unit.id);
         return !resolved || resolved.checkpoint.questions.length === 0;
       })
       .map((unit) => unit.id);

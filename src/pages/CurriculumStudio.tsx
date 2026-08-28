@@ -14,11 +14,11 @@ import {
   Trophy,
 } from 'lucide-react';
 import { courseIndex } from '../data/lessonIndex';
-import { courseData } from '../data/lessons';
+import { listResolvableCheckpointIds } from '../lib/checkpointAdapter';
+import { getAllLessons } from '../lib/lessons-db';
 import { useProgressStore } from '../stores/progressStore';
 import { supabase } from '../lib/supabase';
 import { buildCurriculumOverview, type CurriculumUnit } from '../lib/curriculumOverview';
-import { listResolvableCheckpointIds } from '../lib/checkpointAdapter';
 import { LEVELS, type CefrLevel } from '../lib/vocabStats';
 import { cn } from '../lib/utils';
 
@@ -70,7 +70,14 @@ function FlagStripe({ className }: { className?: string }) {
 export default function CurriculumStudio() {
   const { currentLevel, completedLessons, unlockedLessons } = useProgressStore();
   const [dbLevelCounts, setDbLevelCounts] = useState<Partial<Record<CefrLevel, number>>>({});
-  const availableCheckpointIds = useMemo(() => listResolvableCheckpointIds(courseData), []);
+  const [availableCheckpointIds, setAvailableCheckpointIds] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    let alive = true;
+    getAllLessons().then(lessons => {
+      if (alive) setAvailableCheckpointIds(new Set(listResolvableCheckpointIds(lessons)));
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;

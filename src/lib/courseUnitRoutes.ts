@@ -1,8 +1,39 @@
-import { courseData } from '../data/lessons';
 import { courseIndex, type LessonIndex } from '../data/lessonIndex';
 import { listResolvableCheckpointIds } from './checkpointAdapter';
+import { getAllLessons } from './lessons-db';
+import type { Lesson } from '../data/course';
 
-const AVAILABLE_CHECKPOINT_IDS = new Set(listResolvableCheckpointIds(courseData));
+// ---- Module-level sync cache ----
+// AVAILABLE_CHECKPOINT_IDS was a compile-time constant in the lessons.ts era.
+// Content now lives in the DB, so it is built once from getAllLessons() (which
+// itself caches) and the sync helpers below read the local snapshot. Consumers
+// keep their synchronous signatures; the only cost is that checkpoint
+// availability resolves on the first module touch rather than at bundle time.
+let AVAILABLE_CHECKPOINT_IDS = new Set<string>();
+let lessonsHydrated = false;
+
+/** Test seam: build the availability snapshot from an in-memory lesson list
+ * instead of the DB. Also useful for offline unit tests (see
+ * src/lib/__tests__/courseUnitRoutes.test.ts). */
+export function hydrateCourseUnitRoutesFromLessons(lessons: Lesson[]): Set<string> {
+  lessonsHydrated = true;
+  AVAILABLE_CHECKPOINT_IDS = new Set(listResolvableCheckpointIds(lessons));
+  return AVAILABLE_CHECKPOINT_IDS;
+}
+
+/** Kick off the (cached) DB load that backs the sync helpers. Safe to call
+ * repeatedly; resolves with the checkpoint id set once lessons have loaded. */
+export function hydrateCourseUnitRoutes(): Promise<Set<string>> {
+  if (lessonsHydrated) return Promise.resolve(AVAILABLE_CHECKPOINT_IDS);
+  lessonsHydrated = true;
+  return getAllLessons().then(lessons => hydrateCourseUnitRoutesFromLessons(lessons))
+    .catch(() => AVAILABLE_CHECKPOINT_IDS);
+}
+
+// Fire-and-forget hydration on first import so the snapshot is usually ready
+// before the first render that needs it. Consumers that need a guarantee can
+// await hydrateCourseUnitRoutes() first.
+void hydrateCourseUnitRoutes();
 
 /**
  * Units that appear on the map but are deliberately NOT shipped yet.
