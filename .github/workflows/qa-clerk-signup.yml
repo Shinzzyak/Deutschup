@@ -1,0 +1,113 @@
+name: QA Clerk Signup
+# One-shot: provisions a QA account in the Clerk instance via Backend API
+# (sign-up UI is captcha-walled for automation), waits for the production
+# user.created webhook to provision identity/profile/users rows in Supabase,
+# then mints a sign-in ticket and exercises one authed /api/* read as proof.
+# CLERK_SECRET_KEY is read from repo Actions secrets — never printed.
+on:
+  workflow_dispatch:
+    inputs:
+      email:
+        description: "QA account email"
+        required: false
+        default: "qa.clerk.20260829@emalupe.com"
+      password:
+        description: "QA account password (Clerk requires 8+ chars)"
+        required: true
+
+jobs:
+  signup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Provision Clerk user + wait for webhook provisioning
+        env:
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          QA_EMAIL: ${{ inputs.email }}
+          QA_PASSWORD: ${{ inputs.password }}
+          SITE: https://deutschup.sintec.my.id
+        run: |
+          set -euo pipefail
+          node - <<'NODE'
+          const BASE = 'https://api.clerk.com/v1';
+          const SK = process.env.CLERK_SECRET_KEY;
+          const EMAIL = process.env.QA_EMAIL;
+          const PASSWORD = process.env.QA_PASSWORD;
+          const SITE = process.env.SITE;
+          const auth = { Authorization: `Bearer ${SK}` };
+
+          async function api(path, params) {
+            const res = await fetch(`${BASE}${path}`, {
+              method: 'POST',
+              headers: { ...auth, 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: new URLSearchParams(params || {}),
+            });
+            const body = await res.json();
+            if (!res.ok) throw new Error(`${path} ${res.status}: ${JSON.stringify(body).slice(0, 300)}`);
+            return body;
+          }
+          async function get(path) {
+            const res = await fetch(`${BASE}${path}`, { headers: auth });
+            if (!res.ok) throw new Error(`${path} ${res.status}`);
+            return res.json();
+          }
+          const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+          // 1. Create the user (bypasses captcha by design — Backend API is server-to-server)
+          const user = await api('/users/create', {
+            email_address: EMAIL,
+            password: PASSWORD,
+            username: `qa${Date.now().toString().slice(-8)}`,
+            first_name: 'QA',
+            last_name: 'Gefritz',
+          });
+          console.log('CREATED user_id=' + user.id);
+
+          // 2. Give the production webhook a moment, then prove end-to-end by
+          //    minting a sign-in ticket and calling the app's own authed API.
+          await sleep(5000);
+
+          // 3. Mint a sign-in token (ticket strategy) for E2E proof
+          const tok = await api(`/users/${user.id}/sign_in_tokens`, { expires_in_seconds: 3600 });
+          const ticket = tok.token || (tok.data && tok.data[0] && tok.data[0].token);
+          if (!ticket) throw new Error('no sign-in token: ' + JSON.stringify(tok).slice(0, 200));
+
+          // 4. Exchange ticket -> session via the frontend API (same origin as app)
+          const clerkBase = 'https://clerk.sintec.my.id/v1';
+          const fe = await fetch(`${clerkBase}/client/sign_ins?_is_native=true`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: new URLSearchParams({ strategy: 'ticket', ticket }),
+          });
+          const feBody = await fe.json();
+          if (!fe.ok) throw new Error('ticket exchange failed: ' + JSON.stringify(feBody).slice(0, 300));
+          const si = feBody.response || feBody;
+          if (!si || si.status !== 'complete') {
+            throw new Error('sign-in status=' + (si && si.status) + ' body=' + JSON.stringify(feBody).slice(0, 300));
+          }
+          const sess = si.created_session_id;
+          if (!sess) throw new Error('no created_session_id');
+          const jwtRes = await get(`/sessions/${sess}/token`);
+          const sessionJwt = jwtRes.jwt;
+          if (!sessionJwt) throw new Error('no session JWT minted');
+          console.log('SESSION minted OK (jwt withheld)');
+
+          // 5. E2E proof: hit the app's own authed API with the Clerk session
+          const proof = await fetch(`${SITE}/api/curriculum?action=get-all-content`, {
+            headers: { Authorization: `Bearer ${sessionJwt}` },
+          });
+          const proofBody = await proof.text();
+          console.log('E2E /api/curriculum status=' + proof.status);
+          if (proof.status !== 200) throw new Error('E2E proof failed: ' + proofBody.slice(0, 200));
+          const data = JSON.parse(proofBody);
+          const lessons = Array.isArray(data.lessons) ? data.lessons.length : (Array.isArray(data) ? data.length : Object.keys(data).length);
+          console.log('E2E PROOF OK — curriculum payload received (' + lessons + ' lessons)');
+          console.log('QA_EMAIL=' + EMAIL);
+          NODE
+
+      - name: Summary
+        run: |
+          echo "QA Clerk account provisioned via Backend API + webhook + ticket session."
+          echo "Email: ${{ inputs.email }}"
