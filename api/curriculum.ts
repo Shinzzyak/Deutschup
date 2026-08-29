@@ -80,6 +80,42 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         return res.json({ success: true });
       }
 
+      // GET /api/curriculum?action=get-lesson&lessonId=a1-1
+      // Full lesson content for the authed learning UI (exercises carry
+      // correct_answer — never expose via anon-readable RLS; F-1 fix).
+      case 'get-lesson': {
+        const lessonId = String(req.query.lessonId || '');
+        if (!lessonId) return res.status(400).json({ error: 'lessonId required' });
+        const [lessonsRes, exercisesRes] = await Promise.all([
+          supabase.from('curriculum_lessons').select('*').eq('id', lessonId).maybeSingle(),
+          supabase.from('curriculum_exercises').select('lesson_id, question, options, correct_answer, sort_order')
+            .eq('lesson_id', lessonId).order('sort_order', { ascending: true }),
+        ]);
+        if (lessonsRes.error) throw lessonsRes.error;
+        if (exercisesRes.error) throw exercisesRes.error;
+        return res.json({
+          lesson: lessonsRes.data,
+          exercises: exercisesRes.data || [],
+        });
+      }
+
+      // GET /api/curriculum?action=get-all-content
+      // One-shot payload for checkpoint derivation + review-lesson vocab index.
+      case 'get-all-content': {
+        const [lessonsRes, exercisesRes] = await Promise.all([
+          supabase.from('curriculum_lessons')
+            .select('id, level_id, title, grammar_description, sentence_breakdowns, pronunciation_tips, cultural_notes, register_notes, indonesian_mistakes, can_do_goals, listening_simulation, dialogues'),
+          supabase.from('curriculum_exercises').select('lesson_id, question, options, correct_answer, sort_order')
+            .order('sort_order', { ascending: true }),
+        ]);
+        if (lessonsRes.error) throw lessonsRes.error;
+        if (exercisesRes.error) throw exercisesRes.error;
+        return res.json({
+          lessons: lessonsRes.data || [],
+          exercises: exercisesRes.data || [],
+        });
+      }
+
       default:
         return res.status(400).json({ error: 'Invalid action' });
     }

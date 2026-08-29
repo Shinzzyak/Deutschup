@@ -7,6 +7,7 @@
 // swap to SWR/stale-while-revalidate if curriculum ever becomes editable at runtime.
 import { supabase } from './supabase';
 import { fetchAllRows } from './supabasePagination';
+import { authedFetch } from './auth-headers';
 import type { Lesson, QuizQuestion, VocabWord, Dialogue, Level } from '../data/course';
 
 // ---- Row shapes (DB snake_case) ----
@@ -74,19 +75,33 @@ function rowToLesson(row: LessonRow): Lesson {
 
 // ---- Public API (drop-in for courseData consumers) ----
 
-/** Find one lesson by id (was: courseData.find(l => l.id === id)). */
+// In-flight dedup: LessonView awaits findLesson + getLessonExercises in the
+// same tick — both must share one API round-trip, not double-fetch.
+const lessonInflight = new Map<string, Promise<Lesson | undefined>>();
+
+/** Fetch one lesson + its exercises via the Clerk-JWT-protected API function.
+ * Exercises carry correct_answer — anon-readable RLS on that table was revoked
+ * (F-1), so direct Supabase reads only work for non-sensitive tables. */
 export async function findLesson(id: string): Promise<Lesson | undefined> {
   const hit = lessonCache.get(id);
   if (hit) return hit;
-  const { data, error } = await supabase
-    .from('curriculum_lessons')
-    .select('id, level_id, title, grammar_description, sentence_breakdowns, pronunciation_tips, cultural_notes, register_notes, indonesian_mistakes, can_do_goals, listening_simulation, dialogues')
-    .eq('id', id)
-    .maybeSingle();
-  if (error || !data) return undefined;
-  const lesson = rowToLesson(data as LessonRow);
-  lessonCache.set(id, lesson);
-  return lesson;
+  let inflight = lessonInflight.get(id);
+  if (!inflight) {
+    inflight = (async () => {
+      const resp = await authedFetch(`/api/curriculum?action=get-lesson&lessonId=${encodeURIComponent(id)}`);
+      if (!resp.ok) return undefined;
+      const { lesson: row, exercises } = await resp.json();
+      if (!row) return undefined;
+      const lesson = rowToLesson(row as LessonRow);
+      lesson.exercises = ((exercises || []) as ExerciseRow[]).map(e => ({
+        question: e.question, options: e.options, correctAnswer: e.correct_answer,
+      }));
+      lessonCache.set(id, lesson);
+      return lesson;
+    })().finally(() => lessonInflight.delete(id));
+    lessonInflight.set(id, inflight);
+  }
+  return inflight;
 }
 
 /** All lessons (was: courseData array). Ordered by level, then sort order is not
@@ -95,25 +110,24 @@ export async function findLesson(id: string): Promise<Lesson | undefined> {
 export async function getAllLessons(): Promise<Lesson[]> {
   if (!allLessonsPromise) {
     allLessonsPromise = (async () => {
-      // Single round-trip per resource, then merge in memory — keeps the old
-      // `lesson.exercises`/`lesson.vocabulary` shape so consumers (notably
-      // checkpointAdapter) work without touching their internals.
-      const [lessonRows, exerciseRows, vocabRows] = await Promise.all([
-        fetchAllRows<LessonRow>((from, to) => supabase
-          .from('curriculum_lessons')
-          .select('id, level_id, title, grammar_description, sentence_breakdowns, pronunciation_tips, cultural_notes, register_notes, indonesian_mistakes, can_do_goals, listening_simulation, dialogues')
-          .range(from, to)),
-        fetchAllRows<ExerciseRow>((from, to) => supabase
-          .from('curriculum_exercises')
-          .select('lesson_id, question, options, correct_answer, sort_order')
-          .order('sort_order', { ascending: true })
-          .range(from, to)),
+      // Lessons + exercises come from the Clerk-JWT-protected API function
+      // (exercise rows carry correct_answer — F-1). Vocab is not sensitive and
+      // still reads direct. Single round-trip per resource, then merge in
+      // memory — keeps the old `lesson.exercises`/`lesson.vocabulary` shape so
+      // consumers (notably checkpointAdapter) work without touching internals.
+      const [contentRes, vocabRows] = await Promise.all([
+        (async () => {
+          const resp = await authedFetch('/api/curriculum?action=get-all-content');
+          if (!resp.ok) throw new Error(`get-all-content ${resp.status}`);
+          return resp.json() as Promise<{ lessons: LessonRow[]; exercises: ExerciseRow[] }>;
+        })(),
         fetchAllRows<VocabRow>((from, to) => supabase
           .from('curriculum_vocabulary')
           .select('id, word, article, translation, example_sentence, phonetic, level_id, lesson_id, sort_order')
           .order('sort_order', { ascending: true })
           .range(from, to)),
       ]);
+      const { lessonRows, exerciseRows } = { lessonRows: contentRes.lessons, exerciseRows: contentRes.exercises };
 
       const exByLesson = new Map<string, QuizQuestion[]>();
       for (const e of exerciseRows) {
@@ -153,17 +167,10 @@ export async function getAllLessons(): Promise<Lesson[]> {
 
 /** Exercises + miniQuiz for one lesson, merged in sort order (was: lesson.exercises). */
 export async function getLessonExercises(id: string): Promise<QuizQuestion[]> {
-  const { data, error } = await supabase
-    .from('curriculum_exercises')
-    .select('question, options, correct_answer, sort_order')
-    .eq('lesson_id', id)
-    .order('sort_order', { ascending: true });
-  if (error || !data) return [];
-  return (data as ExerciseRow[]).map(e => ({
-    question: e.question,
-    options: e.options,
-    correctAnswer: e.correct_answer,
-  }));
+  // Route through findLesson so the single API round-trip fills the cache for
+  // both calls (LessonView awaits findLesson + getLessonExercises together).
+  const lesson = await findLesson(id);
+  return lesson?.exercises ?? [];
 }
 
 /** Per-lesson vocabulary (was: lesson.vocabulary). */
