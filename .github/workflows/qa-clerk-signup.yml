@@ -56,7 +56,7 @@ jobs:
           const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
           // 1. Create the user (bypasses captcha by design — Backend API is server-to-server)
-          const user = await api('/users/create', {
+          const user = await api('/users', {
             email_address: EMAIL,
             password: PASSWORD,
             username: `qa${Date.now().toString().slice(-8)}`,
