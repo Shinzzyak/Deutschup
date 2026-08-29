@@ -23,6 +23,7 @@ export function ClerkProvider({ children }: ClerkProviderProps) {
   return (
     <BaseClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
+      clerkJSVersion="6"
       signInFallbackRedirectUrl={SIGN_IN_FALLBACK_REDIRECT_URL}
       signUpFallbackRedirectUrl={SIGN_UP_FALLBACK_REDIRECT_URL}
       afterSignOutUrl={SIGN_IN_FALLBACK_REDIRECT_URL}
