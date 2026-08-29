@@ -169,7 +169,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(...C.inkLight);
-  doc.text('Lernbericht — Belajar Bahasa Jerman', M + 22, y + 9);
+  doc.text('Lernbericht — Belajar Bahasa Jerman', M + 22, y + 11);
 
   // Date (right)
   const dateStr = new Date().toLocaleDateString('id-ID', {
@@ -233,9 +233,9 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
     doc.setLineWidth(0.3);
     doc.rect(px, y, pillW, pillH, 'S');
 
-    // Colored dot indicator (emoji not supported by jsPDF helvetica)
+    // Square status marker (radius-0 design language)
     doc.setFillColor(...p.color);
-    doc.circle(px + 5, y + 7, 2, 'F');
+    doc.rect(px + 3, y + 5, 4, 4, 'F');
 
     // Value — centered in top 50%
     doc.setFont('helvetica', 'bold');
@@ -287,9 +287,9 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
 
   insights.forEach((ins, i) => {
     const iy = y + padY + 14 + i * lineH;
-    // Colored dot
+    // Square bullet (radius-0)
     doc.setFillColor(...ins.color);
-    doc.circle(M + padX + 3, iy - 1.5, 1.5, 'F');
+    doc.rect(M + padX + 1.5, iy - 3, 3, 3, 'F');
     // Text
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8.5);
@@ -350,7 +350,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
       // Level header row
       const lColor = lc[level] || C.ink;
       doc.setFillColor(...lColor);
-      doc.roundedRect(M, y, 16, 8, 2, 2, 'F');
+      doc.rect(M, y, 16, 8, 'F');
       doc.setFont('helvetica', 'bold');
       doc.setFontSize(8);
       doc.setTextColor(...C.white);
@@ -366,18 +366,18 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
       const levelProgress = levelTotal > 0 ? lessons.length / levelTotal : 0;
       const barX = W - M - 40, barY = y + 2, barW = 40, barH = 4;
       doc.setFillColor(...C.cream);
-      doc.roundedRect(barX, barY, barW, barH, 1, 1, 'F');
+      doc.rect(barX, barY, barW, barH, 'F');
       doc.setFillColor(...lColor);
-      doc.roundedRect(barX, barY, barW * levelProgress, barH, 1, 1, 'F');
+      doc.rect(barX, barY, barW * levelProgress, barH, 'F');
 
       y += 12;
 
       for (const lesson of lessons.slice(0, 5)) {
         y = checkPage(doc, y, 265);
 
-        // Solid success bullet (no glyph)
+        // Square success marker (radius-0, no glyph)
         doc.setFillColor(...C.success);
-        doc.circle(M + 3, y - 1.5, 1.5, 'F');
+        doc.rect(M + 1.5, y - 3, 3, 3, 'F');
 
         // Title
         doc.setFont('helvetica', 'normal');
@@ -446,6 +446,8 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   } else {
     autoTable(doc, {
       startY: y,
+      margin: { left: M, right: M },
+      tableWidth: CW,
       head: [['#', 'Tanggal', 'Level', 'Skor', 'Hasil']],
       body: data.mockTests.map((t, i) => {
         const pct = Math.round((t.score / t.total) * 100);
@@ -512,10 +514,10 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
 
   const recCardH = 10 + recoms.length * 6 + 8;
   doc.setFillColor(...C.accentSoft);
-  doc.roundedRect(M, y, CW, recCardH, 4, 4, 'F');
+  doc.rect(M, y, CW, recCardH, 'F');
   doc.setDrawColor(...C.accent);
   doc.setLineWidth(0.3);
-  doc.roundedRect(M, y, CW, recCardH, 4, 4, 'S');
+  doc.rect(M, y, CW, recCardH, 'S');
 
   // Left accent bar
   doc.setFillColor(...C.accent);
@@ -532,7 +534,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   recoms.forEach((r, i) => {
     const ry = y + 14 + i * 6;
     doc.setFillColor(...C.accent);
-    doc.circle(M + 12, ry - 1.5, 1, 'F');
+    doc.rect(M + 11, ry - 2.5, 2, 2, 'F');
     doc.text(trunc(doc, r, CW - 25), M + 16, ry);
   });
 
