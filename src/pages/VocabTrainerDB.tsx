@@ -566,7 +566,7 @@ export default function VocabTrainerDB() {
         ) : activeTab === 'flashcard' ? (
           currentCard ? (
             <div className="space-y-3">
-              <div className="flex flex-wrap items-center justify-between gap-2 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-ink-subtle">
+              <div className="flex flex-wrap items-center justify-between gap-2 pb-1 text-[11px] font-bold uppercase tracking-[0.12em] text-ink-subtle tabular-nums">
                 <span>{formatNumber(dueCards.length)} kata menunggu</span>
                 <span>
                   {formatNumber(cardsReviewed)} selesai sesi ini · {progressPercent}% hafal
