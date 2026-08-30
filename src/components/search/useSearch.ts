@@ -17,28 +17,32 @@ export interface SearchResult {
 const RECENT_KEY = 'deutschup_recent_searches';
 const MAX_RECENT = 5;
 
-// Simple fuzzy match score
+// Normalize German umlauts so "ubung" finds "Übung"
+function normalizeGerman(s: string): string {
+  return s
+    .toLowerCase()
+    .replace(/ä/g, 'ae')
+    .replace(/ö/g, 'oe')
+    .replace(/ü/g, 'ue')
+    .replace(/ß/g, 'ss');
+}
+
 function fuzzyScore(query: string, target: string): number {
-  const q = query.toLowerCase();
-  const t = target.toLowerCase();
-  
+  const q = normalizeGerman(query);
+  const t = normalizeGerman(target);
+
   if (t === q) return 100;
   if (t.startsWith(q)) return 90;
   if (t.includes(q)) return 70;
-  
-  // Word boundary match
+
   const words = t.split(/\s+/);
   for (const word of words) {
     if (word.startsWith(q)) return 60;
     if (word.includes(q)) return 40;
   }
-  
-  // Character sequence match
-  let qi = 0;
-  for (let ti = 0; ti < t.length && qi < q.length; ti++) {
-    if (t[ti] === q[qi]) qi++;
-  }
-  return qi === q.length ? 30 : 0;
+
+  // ponytail: removed subsequence match (score 30) — too loose, matched unrelated words
+  return 0;
 }
 
 export function useSearch() {
@@ -73,7 +77,10 @@ export function useSearch() {
         secondary: v.translation,
         level: v.level,
         article: v.article,
-        route: `/vocab`,
+        // Deep-link: pre-fills the trainer's own search so the clicked word
+        // is immediately on screen instead of a generic /vocab page. Level
+        // comes along so cross-level words resolve on arrival.
+        route: `/vocab?q=${encodeURIComponent(v.word)}&level=${v.level}`,
       });
     }
 

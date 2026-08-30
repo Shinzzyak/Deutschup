@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router';
 
 const vocabRows = [
   {
@@ -48,7 +49,11 @@ import VocabTrainerDB from '../VocabTrainerDB';
 
 describe('VocabTrainerDB production copy', () => {
   it('renders learner-facing wording without backend or design-system jargon', async () => {
-    render(<VocabTrainerDB />);
+    render(
+      <MemoryRouter initialEntries={['/vocab']}>
+        <VocabTrainerDB />
+      </MemoryRouter>,
+    );
 
     await waitFor(() => expect(screen.getByRole('heading', { name: /^Latihan Kosakata$/i })).toBeInTheDocument());
 

@@ -167,7 +167,7 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                               <p className="text-sm text-ink-muted truncate">{item.secondary}</p>
                             </div>
                             <span className="border border-brand-ink/20 px-2 py-1 text-xs font-medium text-ink-muted">
-                              {typeLabels[item.type]}
+                              {item.level ? `${typeLabels[item.type]} · ${item.level}` : typeLabels[item.type]}
                             </span>
                             <ArrowRight className="w-4 h-4 text-ink-subtle shrink-0" />
                           </button>

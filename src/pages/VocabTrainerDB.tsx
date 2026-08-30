@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo, type ReactNode } from 'react';
+import { useSearchParams } from 'react-router';
 import { supabase } from '../lib/supabase';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
@@ -151,6 +152,23 @@ export default function VocabTrainerDB() {
   const [pronunciationLoading, setPronunciationLoading] = useState(false);
   const [pronunciation, setPronunciation] = useState<{ phonetic: string; tip: string } | null>(null);
   const [helperError, setHelperError] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Deep-link from global search (?q=...): land on the word directly.
+  // List tab (not flashcard) so the match is guaranteed visible; level param
+  // jumps first so the word's own level is loaded before the search paints.
+  useEffect(() => {
+    const q = searchParams.get('q');
+    if (!q) return;
+    const lvl = searchParams.get('level');
+    if (lvl && LEVELS.includes(lvl as CefrLevel) && lvl !== selectedLevel) {
+      setSelectedLevel(lvl as CefrLevel);
+    }
+    setSearchQuery(q);
+    setActiveTab('list');
+    setSearchParams({}, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs on ?q arrival only
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     if (user?.id) {
