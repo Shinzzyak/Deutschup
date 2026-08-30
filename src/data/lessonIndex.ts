@@ -201,7 +201,7 @@ export const courseIndex: LessonIndex[] = [
     "title": "Modal Verben (können, müssen, wollen, dürfen)",
     "canDoGoals": [
       "Menggunakan Modal Verben untuk mengekspresikan kemampuan, kewajiban, dan izin",
-      "Memahami struktur 'Satzklammer' — verba infinitif di akhir kalimat",
+      "Memahami struktur 'Satzklammer', verba infinitif di akhir kalimat",
       "Konjugasi Modal Verben di semua subjek (ich, du, er/sie/es, wir, ihr, sie/Sie)"
     ]
   },
@@ -391,7 +391,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "a2-7",
     "level": "A2",
-    "title": "Konjunktiv II — würde + Infinitiv",
+    "title": "Konjunktiv II: würde + Infinitiv",
     "canDoGoals": [
       "Membentuk Konjunktiv II dengan würde + infinitif",
       "Mengungkapkan permintaan sopan dan kemungkinan",
@@ -410,7 +410,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "a2-8",
     "level": "A2",
-    "title": "Konjunktiv II — sollte, müsste, könnte",
+    "title": "Konjunktiv II: sollte, müsste, könnte",
     "canDoGoals": [
       "Menggunakan sollte (seharusnya), müsste (seharusnya bisa), könnte (mungkin bisa)",
       "Membedakan nuances antara Konjunktiv II different modal verbs",
@@ -561,7 +561,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b1-3",
     "level": "B1",
-    "title": "Passiv (Lanjutan) — Vorgangspassiv & Zustandspassiv",
+    "title": "Passiv (Lanjutan): Vorgangspassiv & Zustandspassiv",
     "canDoGoals": [
       "Membedakan Vorgangspassiv (werden) dan Zustandspassiv (sein)",
       "Menggunakan Passiv dengan berbagai temporal (Präteritum, Perfekt)",
@@ -580,7 +580,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b1-4",
     "level": "B1",
-    "title": "Konjunktiv II (Lanjutan) — Indirekte Rede",
+    "title": "Konjunktiv II (Lanjutan): Indirekte Rede",
     "canDoGoals": [
       "Menggunakan Konjunktiv II untuk indirekte Rede (quotative subjunctive)",
       "Membedakan Konjunktiv I dan II dalam indirekte Rede",
@@ -590,7 +590,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b1-5",
     "level": "B1",
-    "title": "Relativsätze (Lanjutan) — Kompleks",
+    "title": "Relativsätze (Lanjutan): Kompleks",
     "canDoGoals": [
       "Menggunakan Relativsätze dengan Preposisi + Pronomen",
       "Menggunakan was untuk hal-hal umum dalam Relativsätze",
@@ -732,7 +732,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b2-2",
     "level": "B2",
-    "title": "Passiv — Vorgangspassiv & Zustandspassiv (Kompleks)",
+    "title": "Passiv: Vorgangspassiv & Zustandspassiv (Kompleks)",
     "canDoGoals": [
       "Membedakan Vorgangspassiv (werden) dan Zustandspassiv (sein)",
       "Menggunakan Passiv dengan berbagai temporal (Präteritum, Perfekt, Plusquamperfekt)",
@@ -742,7 +742,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b2-3",
     "level": "B2",
-    "title": "Nebensätze — Relativsätze, Konzessivsätze, Finalsätze",
+    "title": "Nebensätze: Relativsätze, Konzessivsätze, Finalsätze",
     "canDoGoals": [
       "Menggunakan Relativsätze dengan Preposisi + Pronomen",
       "Menggunakan Konzessivsätze (obwohl, obgleich, obzwar)",
@@ -781,7 +781,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b2-6",
     "level": "B2",
-    "title": "Wortbildung — Komposita (Zusammengesetzte Wörter)",
+    "title": "Wortbildung: Komposita (Zusammengesetzte Wörter)",
     "canDoGoals": [
       "Membentuk kata majemuk dari dua kata benda",
       "Menentukan gender kata majemuk (ikut kata terakhir)",
@@ -800,7 +800,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b2-7",
     "level": "B2",
-    "title": "Nebensätze — Kausalsätze, Konsekutivsätze, Temporalsätze",
+    "title": "Nebensätze: Kausalsätze, Konsekutivsätze, Temporalsätze",
     "canDoGoals": [
       "Menggunakan Kausalsätze (weil, da, denn)",
       "Menggunakan Konsekutivsätze (sodass, so...dass)",
@@ -820,7 +820,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b2-9",
     "level": "B2",
-    "title": "Konjunktionen — aber, sondern, sondern auch, außerdem, überdies",
+    "title": "Konjunktionen: aber, sondern, sondern auch, außerdem, überdies",
     "canDoGoals": [
       "Membedakan aber, sondern, sondern auch dalam kalimat",
       "Menggunakan additive Konjunktionen (außerdem, überdies, zudem)",
@@ -859,7 +859,7 @@ export const courseIndex: LessonIndex[] = [
   {
     "id": "b2-12",
     "level": "B2",
-    "title": "Verbmuster — Reflexiv, Reziprok, Passiv, unpersönlich",
+    "title": "Verbmuster: Reflexiv, Reziprok, Passiv, unpersönlich",
     "canDoGoals": [
       "Menggunakan Verben Reflexiv (sich) dalam konteks kompleks",
       "Menggunakan Verben Reziprok (sich) untuk aksi timbal balik",

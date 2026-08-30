@@ -206,7 +206,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 Apa tujuan belajarmu?
               </h2>
               <p className="mt-3 text-base text-ink-muted">
-                Pilih satu. Ini menentukan latihan mana yang kami buka lebih dulu — dan
+                Pilih satu. Ini menentukan latihan mana yang kami buka lebih dulu, dan
                 bisa kamu ubah kapan saja lewat halaman Profil.
               </p>
 

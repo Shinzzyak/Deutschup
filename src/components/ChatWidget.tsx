@@ -272,7 +272,7 @@ export default function ChatWidget() {
                       </div>
                       <p className="text-sm text-brand-ink">Ada yang mau ditanyakan?</p>
                       <p className="mx-auto mt-1 max-w-[16rem] text-xs leading-relaxed text-ink-muted">
-                        Tata bahasa, kosakata, atau minta contoh kalimat — jawabannya dalam bahasa Indonesia.
+                        Tata bahasa, kosakata, atau minta contoh kalimat. Jawabannya dalam bahasa Indonesia.
                       </p>
                     </div>
                   )}
