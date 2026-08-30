@@ -3,6 +3,7 @@
 // https://clerk.com/docs/guides/development/clerk-environment-variables
 
 import { ClerkProvider as BaseClerkProvider } from '@clerk/clerk-react';
+import * as UiPkg from '@clerk/ui';
 import {
   CLERK_PUBLISHABLE_KEY,
   isClerkEnabled,
@@ -24,6 +25,9 @@ export function ClerkProvider({ children }: ClerkProviderProps) {
     <BaseClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
       clerkJSVersion="6"
+      // clerk-js v6 loads UI components via load options: { ui: { ClerkUI } }.
+      // clerk-react 5.61.x forwards unknown props straight to Clerk.load().
+      {...({ ui: { ClerkUI: UiPkg.ui.ClerkUI } } as Record<string, unknown>)}
       signInFallbackRedirectUrl={SIGN_IN_FALLBACK_REDIRECT_URL}
       signUpFallbackRedirectUrl={SIGN_UP_FALLBACK_REDIRECT_URL}
       afterSignOutUrl={SIGN_IN_FALLBACK_REDIRECT_URL}
