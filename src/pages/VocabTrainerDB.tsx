@@ -168,9 +168,34 @@ export default function VocabTrainerDB() {
     fetchLevelCounts();
   }, []);
 
+  // --- client-side cache (localStorage) ---------------------------------
+  // Stale-while-revalidate: instant paint from cache, quiet refresh behind it.
+  const VOCAB_CACHE_PREFIX = 'du_vocab_cache_v2_';
+  const COUNTS_CACHE_KEY = 'du_vocab_counts_cache_v2';
+  const readCache = (key: string) => {
+    try {
+      const raw = localStorage.getItem(key);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || !Array.isArray(parsed.rows)) return null;
+      return parsed;
+    } catch {
+      return null;
+    }
+  };
+
   const fetchVocab = async (level: CefrLevel) => {
     setLoading(true);
     setLoadFailed(false);
+
+    // 1) instant paint from cache if available
+    const cached = readCache(VOCAB_CACHE_PREFIX + level);
+    if (cached) {
+      setDbVocab(cached.rows as VocabRow[]);
+      setLoading(false);
+    }
+
+    // 2) revalidate in background (or first cold fetch)
     try {
       const { data, error } = await supabase
         .from('curriculum_vocabulary')
@@ -179,11 +204,23 @@ export default function VocabTrainerDB() {
         .order('sort_order', { ascending: true });
 
       if (error) throw error;
-      setDbVocab((data || []) as VocabRow[]);
+      const rows = (data || []) as VocabRow[];
+      setDbVocab(rows);
+      try {
+        localStorage.setItem(
+          VOCAB_CACHE_PREFIX + level,
+          JSON.stringify({ ts: Date.now(), rows }),
+        );
+      } catch {
+        // ponytail: quota exceeded — Safari private mode / full storage. Cache miss silently next time.
+      }
     } catch (e) {
       console.error('Error fetching vocab:', e);
-      setDbVocab([]);
-      setLoadFailed(true);
+      if (!cached) {
+        setDbVocab([]);
+        setLoadFailed(true);
+      }
+      // cached path: keep stale rows on screen, network failed quietly
     } finally {
       setLoading(false);
     }
@@ -191,7 +228,22 @@ export default function VocabTrainerDB() {
 
   const fetchLevelCounts = async () => {
     setCountsLoading(true);
+    let painted = false;
     try {
+      // instant paint from counts cache
+      const rawCounts = localStorage.getItem(COUNTS_CACHE_KEY);
+      if (rawCounts) {
+        try {
+          const parsed = JSON.parse(rawCounts);
+          if (parsed && typeof parsed === 'object') {
+            setDbLevelCounts(parsed as Record<CefrLevel, number>);
+            setCountsLoading(false);
+            painted = true;
+          }
+        } catch {
+          // corrupt cache — fall through to network
+        }
+      }
       const entries = await Promise.all(
         LEVELS.map(async (level) => {
           const { count, error } = await supabase
@@ -203,12 +255,19 @@ export default function VocabTrainerDB() {
           return [level, count || 0] as const;
         }),
       );
-      setDbLevelCounts(Object.fromEntries(entries) as Record<CefrLevel, number>);
+      const next = Object.fromEntries(entries) as Record<CefrLevel, number>;
+      setDbLevelCounts(next);
+      try {
+        localStorage.setItem(COUNTS_CACHE_KEY, JSON.stringify(next));
+      } catch {
+        // quota — ignore, counts are tiny anyway
+      }
     } catch (e) {
       console.error('Error fetching vocab level counts:', e);
-    } finally {
-      setCountsLoading(false);
+      if (!painted) setCountsLoading(false);
+      return;
     }
+    setCountsLoading(false);
   };
 
   useEffect(() => { setListPage(1); }, [searchQuery, filter, sort, selectedLevel]);
