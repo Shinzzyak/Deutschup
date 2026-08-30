@@ -38,3 +38,4 @@ blob-report/
 .curriculum-analysis/books/
 playwright-report/
 second-brain/
+*.tsbuildinfo
