@@ -131,7 +131,7 @@ export default function FeatureGate({
       </Link>
 
       <p className="mt-3 text-xs text-ink-subtle">
-        Paket gratis tetap bisa dipakai selamanya — tidak ada masa coba yang habis.
+        Paket gratis tetap bisa dipakai selamanya, tidak ada masa coba yang habis.
       </p>
     </div>
   );

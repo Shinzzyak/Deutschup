@@ -239,7 +239,7 @@ export default function Pricing() {
         setNotice({
           variant: 'error',
           title: 'Halaman pembayaran sedang tidak bisa dibuka.',
-          body: 'Coba lagi beberapa menit lagi. Kalau tetap begini, hubungi kami lewat halaman Profil — belum ada biaya apa pun yang tercatat.',
+          body: 'Coba lagi beberapa menit lagi. Kalau tetap begini, hubungi kami lewat halaman Profil. Belum ada biaya apa pun yang tercatat.',
         });
         return;
       }
@@ -371,7 +371,7 @@ export default function Pricing() {
                   button is disabled while access is active, which matches. */}
               <p className="border-t border-brand-ink bg-brand-cream px-5 py-4 text-sm text-ink-muted">
                 Langganan <span className="font-bold text-brand-ink">tidak diperpanjang otomatis</span>.
-                Kalau mau lanjut, beli lagi setelah tanggal di atas lewat — setiap pembelian
+                Kalau mau lanjut, beli lagi setelah tanggal di atas lewat. Setiap pembelian
                 menghitung 30 hari baru sejak tanggal pembayaran, jadi tidak perlu buru-buru
                 membeli lebih awal.
               </p>

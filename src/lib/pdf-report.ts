@@ -96,7 +96,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFont('helvetica', 'bold'); doc.setFontSize(11); doc.setTextColor(...C.ink);
   doc.text(`Hallo, ${trunc(doc, data.userName, 90)}!`, M, y);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(8); doc.setTextColor(...C.inkLight);
-  doc.text('Dein Fortschritt auf einen Blick — progresmu dalam satu pandangan.', W - M, y, { align: 'right' });
+  doc.text('Dein Fortschritt auf einen Blick. Progresmu dalam satu pandangan.', W - M, y, { align: 'right' });
   y += 8;
 
   // ═══ HERO STATS (4 big tiles) ═══
@@ -225,7 +225,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFillColor(...C.accentSoft); doc.rect(M, y, CW, recH, 'F');
   doc.setFillColor(...C.accent);     doc.rect(M, y, 3, recH, 'F');
   doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5); doc.setTextColor(...C.accent);
-  doc.text('Empfehlung — Rekomendasi', M + 8, y + 7);
+  doc.text('Empfehlung. Rekomendasi', M + 8, y + 7);
   doc.setFont('helvetica', 'normal'); doc.setFontSize(7.8); doc.setTextColor(...C.inkLight);
   recList.forEach((r, i) => {
     doc.setFillColor(...C.accent); doc.rect(M + 9, y + 11.5 + i * 5.5 - 1.5, 1.8, 1.8, 'F');
@@ -236,7 +236,7 @@ export async function generateReportPDF(data: ReportData): Promise<Blob> {
   doc.setFillColor(...C.accent); doc.rect(0, 289, W, 1.5, 'F');
   doc.setFillColor(...C.ink);    doc.rect(0, 290.5, W, 6.5, 'F');
   doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5); doc.setTextColor(...C.inkMuted);
-  doc.text('DeutschUp — Belajar Bahasa Jerman Menyenangkan', M, 286);
+  doc.text('DeutschUp. Belajar Bahasa Jerman Menyenangkan', M, 286);
   brandMark(doc, W - M - 8, 285.5, 3);
 
   return doc.output('blob');

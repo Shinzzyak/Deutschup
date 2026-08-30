@@ -371,7 +371,7 @@ export default function LessonView() {
       <LessonNotice
         icon={AlertTriangle}
         title="Checkpoint belum tersedia"
-        description="Soal untuk checkpoint ini belum siap. Lanjutkan dulu ke pelajaran berikutnya — checkpoint-nya menyusul."
+        description="Soal untuk checkpoint ini belum siap. Lanjutkan dulu ke pelajaran berikutnya, checkpoint-nya menyusul."
       >
         <Button render={<Link to={`/level/${levelId}`} />} className="h-11 px-6 bg-brand-ink text-brand-cream hover:bg-brand-ink/90">
           Kembali ke peta level
