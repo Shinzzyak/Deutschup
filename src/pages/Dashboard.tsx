@@ -626,7 +626,7 @@ export default function Dashboard() {
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3 border-b border-brand-ink/10 pb-3">
           <div>
             <h2 id="perjalanan-heading" className="font-serif text-2xl text-brand-ink md:text-3xl">
-              Perjalanan belajarmu
+              Level belajarmu
             </h2>
             <p className="mt-1 text-sm text-ink-muted">
               Empat level, {TOTAL_UNITS} materi, {TOTAL_CHECKPOINTS} checkpoint.

@@ -94,7 +94,7 @@ export default function SocialProof() {
               {/* Bottom accent */}
               <div className="mt-8 border-t border-brand-ink/10 pt-6">
                 <p className="text-xs font-medium tracking-wider text-ink-subtle uppercase">
-                  Dirancang oleh pengembang yang memahami kebutuhan belajar bahasa Jerman.
+                  Setiap level mengikuti kerangka CEFR A1–B2.
                 </p>
               </div>
             </div>

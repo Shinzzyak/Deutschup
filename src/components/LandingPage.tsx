@@ -86,8 +86,13 @@ function Footer() {
         {/* Bottom bar — editorial divider */}
         <div className="border-t border-white/10 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-xs text-cream-subtle">© 2026 DeutschUp. Seluruh hak cipta dilindungi.</p>
-          <div className="flex items-center gap-1 text-xs text-cream-subtle">
-            <span>🇩🇪</span>
+          <div className="flex items-center gap-2 text-xs text-cream-subtle">
+            {/* German flag — same construction as the header logo */}
+            <div className="flex flex-col w-2.5 h-4" aria-hidden="true">
+              <div className="flex-1 bg-brand-cream/60" />
+              <div className="flex-1 bg-brand-rust" />
+              <div className="flex-1 bg-brand-tan" />
+            </div>
             <span>Deutsch lernen macht Spaß</span>
           </div>
         </div>

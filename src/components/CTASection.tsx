@@ -36,8 +36,9 @@ export default function CTASection() {
 
           {/* Giant headline */}
           <h2 className="mb-6 font-serif text-4xl leading-[1.05] tracking-tight text-brand-cream sm:text-5xl lg:text-6xl">
-            Siap Menguasai<br />
-            <span className="italic text-brand-tan">Bahasa Jerman?</span>
+            Mulai dari A1,
+            <br />
+            <span className="italic text-brand-tan">sampai B2.</span>
           </h2>
 
           <p className="mb-10 max-w-xl text-lg leading-relaxed font-light text-cream-muted">
