@@ -836,7 +836,7 @@ export default function AdminAI() {
   const modelOptionLabel = (model: Model) => {
     const label = model.display_name || model.name || model.id;
     const state = model.enabled ? 'aktif' : 'nonaktif, otomatis menyala saat dipilih';
-    return `${label} (${model.provider_id} — ${state})`;
+    return `${label} (${model.provider_id}, ${state})`;
   };
 
   // ── Custom provider CRUD ────────────────────────────────────────────────

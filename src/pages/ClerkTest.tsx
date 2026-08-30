@@ -69,7 +69,7 @@ export default function ClerkTest() {
       tests.push({
         label: 'Clerk ID Resolution',
         status: 'pending',
-        value: 'Skipped — no user ID',
+        value: 'Skipped, no user ID',
       });
     }
     setResults([...tests]);
