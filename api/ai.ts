@@ -25,7 +25,7 @@ function getFriendlyError(error: any): { message: string; status: number } {
   const status = String(error?.status || '');
   const message = error?.message || '';
   if (status === '429' || message.includes('RESOURCE_EXHAUSTED') || message.includes('rate limit')) {
-    return { message: 'Terlalu banyak permintaan. Herr Deutsch sedang istirahat sebentar. Coba lagi dalam 1-2 menit.', status: 429 };
+    return { message: 'Terlalu banyak permintaan. Herr Deutsch istirahat sebentar. Coba lagi dalam 1-2 menit.', status: 429 };
   }
   if (status === '503' || message.includes('UNAVAILABLE')) {
     return { message: 'Layanan sedang sibuk. Herr Deutsch akan segera kembali. Silakan coba lagi.', status: 503 };

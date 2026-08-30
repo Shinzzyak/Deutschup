@@ -238,7 +238,7 @@ export default function GoetheExam() {
               <p className="text-sm text-brand-ink">
                 Übung macht den Meister. Versuche es noch einmal!
               </p>
-              <p className="mt-1 text-sm text-ink-muted">Ambang lulus ada di 60% — ulangi levelnya, ya.</p>
+              <p className="mt-1 text-sm text-ink-muted">Ambang lulusnya 60%. Belum kena? Ulangi levelnya, ya.</p>
             </div>
           )}
 

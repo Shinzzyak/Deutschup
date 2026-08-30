@@ -43,7 +43,7 @@ export default function NotFound() {
 
       <p className="mt-5 max-w-xl text-lg leading-relaxed font-light text-ink-muted">
         Alamatnya mungkin salah ketik, atau halamannya sudah dipindahkan. Belajarmu
-        tidak terganggu — semua progres tetap tersimpan.
+        tidak terganggu dan semua progres tetap tersimpan.
       </p>
 
       {location.pathname && location.pathname !== '/' && (

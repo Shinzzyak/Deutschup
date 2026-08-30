@@ -18,7 +18,7 @@ import { getCourseUnitRoute, inferCourseUnitLevel, isCheckpointUnit } from '../l
 const XP_PER_LESSON_COMPLETE = 10;
 
 const levelMeta: Record<Level, { title: string; description: string }> = {
-  A1: { title: 'Pemula A1', description: 'Dasar bahasa Jerman — salam, artikel, angka, kalimat sederhana.' },
+  A1: { title: 'Pemula A1', description: 'Dasar bahasa Jerman: salam, artikel, angka, kalimat sederhana.' },
   A2: { title: 'Dasar A2', description: 'Kasus, modal verben, waktu lampau, preposisi lanjut.' },
   B1: { title: 'Menengah B1', description: 'Genitiv, relativas, konjunktiv II, passif, futur.' },
   B2: { title: 'Mahir B2', description: 'Partizip, idiome, gaya ilmiah, persiapan ujian Goethe.' },

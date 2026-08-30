@@ -491,7 +491,7 @@ export default function Dashboard() {
               </h1>
               <p className="mt-4 text-base text-cream-muted">
                 Catatanmu aman di server, hanya sambungannya yang bermasalah. Angka progres di halaman ini
-                sengaja dikosongkan supaya tidak menyesatkan.
+                sengaja dikosongkan biar tidak menyesatkan.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-4">
                 <Button
@@ -842,7 +842,7 @@ export default function Dashboard() {
               Laporan belajar
             </h2>
             <p className="mt-1 text-sm text-ink-muted">
-              Rekap progres, kosakata, dan hasil simulasi dalam satu berkas PDF — enak dibagikan ke guru atau
+              Rekap progres, kosakata, dan hasil simulasi dalam satu berkas PDF. Enak dibagikan ke guru atau
               lembaga kursus.
             </p>
           </div>

@@ -99,7 +99,7 @@ export default function CheckpointView() {
           <AlertTriangle className="w-8 h-8 mx-auto mb-5 text-brand-rust" />
           <h1 className="font-serif text-2xl text-brand-ink">Checkpoint belum tersedia</h1>
           <p className="mt-2 text-ink-muted">
-            Soal untuk checkpoint ini belum siap. Lanjutkan dulu ke pelajaran berikutnya — checkpoint-nya menyusul.
+            Soal untuk checkpoint ini belum siap. Lanjutkan dulu ke pelajaran berikutnya, checkpoint-nya menyusul.
           </p>
           <div className="mt-6">
             <Button

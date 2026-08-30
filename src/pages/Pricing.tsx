@@ -103,7 +103,7 @@ const FREE_FEATURES = [
 
 const PRO_FEATURES = [
   'Herr Deutsch tanpa batas pesan',
-  'Simulasi ujian tanpa batas — ulang sepuasnya',
+  'Simulasi ujian tanpa batas, ulang sepuasnya',
   'Laporan belajar dalam PDF',
   'Seluruh materi A1, A2, B1, dan B2',
   'Semua latihan yang ada di paket gratis',

@@ -90,7 +90,7 @@ export default function Koreksi() {
       const explanation = typeof data?.explanation === 'string' ? data.explanation.trim() : '';
       if (!explanation) {
         setFailure({
-          message: 'Jawaban dari Herr Deutsch datang tidak lengkap, jadi tidak kami tampilkan agar tidak menyesatkan. Coba kirim kalimatnya sekali lagi.',
+          message: 'Jawaban dari Herr Deutsch datang tidak lengkap, jadi tidak kami tampilkan. Coba kirim kalimatnya sekali lagi.',
           isQuota: false,
           resetLabel: null,
         });
@@ -105,7 +105,7 @@ export default function Koreksi() {
     } catch (e) {
       console.error('[KOREKSI] request failed:', e);
       setFailure({
-        message: 'Koneksi ke Herr Deutsch terputus. Periksa jaringanmu, lalu coba lagi — kalimatmu masih ada di kotak tulis.',
+        message: 'Koneksi ke Herr Deutsch terputus. Periksa jaringanmu, lalu coba lagi. Kalimatmu masih ada di kotak tulis.',
         isQuota: false,
         resetLabel: null,
       });
@@ -136,7 +136,7 @@ export default function Koreksi() {
           lalu menjelaskan alasannya dalam bahasa Indonesia.
         </p>
         <p className="mt-3 text-sm text-ink-subtle">
-          Gratis untuk semua pengguna — tidak ada jatah harian. Cukup beri jeda sebentar antar pemeriksaan.
+          Gratis untuk semua pengguna, tanpa jatah harian. Cukup beri jeda sebentar antar pemeriksaan.
         </p>
       </div>
 
@@ -170,7 +170,7 @@ export default function Koreksi() {
         <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
           <p id="sentence-counter" className={cn('text-sm', tooLong ? 'font-bold text-brand-rust' : 'text-ink-subtle')}>
             {tooLong
-              ? `Kepanjangan — kurangi ${input.length - MAX_CHARS} huruf lagi (maksimal ${MAX_CHARS}).`
+              ? `Kepanjangan. Kurangi ${input.length - MAX_CHARS} huruf lagi (maksimal ${MAX_CHARS}).`
               : `${input.length} / ${MAX_CHARS} huruf`}
           </p>
           <p className="text-sm text-ink-subtle">

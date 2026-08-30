@@ -494,7 +494,7 @@ export default function LessonView() {
           isCorrect,
           feedback: isCorrect
             ? 'Tepat sekali. Pola ini sudah kamu kuasai.'
-            : 'Belum tepat — tidak apa-apa, ini bagian dari belajar.',
+            : 'Belum tepat. Tidak apa-apa, ini bagian dari belajar.',
           correctAnswer: isCorrect ? undefined : currentQuestion.correctAnswerStr,
           reason: isCorrect ? undefined : currentQuestion.hint,
         });
@@ -509,7 +509,7 @@ export default function LessonView() {
         const isCorrect = data?.isCorrect === true;
         setCheckResult({
           isCorrect,
-          feedback: isCorrect ? 'Tepat sekali.' : 'Belum tepat — tidak apa-apa, ini bagian dari belajar.',
+          feedback: isCorrect ? 'Tepat sekali.' : 'Belum tepat. Tidak apa-apa, ini bagian dari belajar.',
           reason: typeof data?.feedback === 'string' && data.feedback.trim()
             ? data.feedback
             : currentQuestion.hint,
@@ -866,7 +866,7 @@ export default function LessonView() {
                 <p className="mb-6 text-center text-ink-muted">
                   {correctCount === answerLog.length || answerLog.length === 0
                     ? 'Rapi. Lanjutkan selagi ingatannya masih hangat.'
-                    : 'Bagian yang belum tepat akan muncul lagi di pelajaran berikutnya — santai saja.'}
+                    : 'Bagian yang belum tepat akan muncul lagi di pelajaran berikutnya, santai saja.'}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Button variant="outline" className="h-11 px-6" onClick={() => navigate(`/level/${levelId}`)}>

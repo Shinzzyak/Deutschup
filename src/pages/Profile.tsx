@@ -194,7 +194,7 @@ export default function Profile() {
       setNotice({
         variant: 'error',
         title: 'Fotonya belum berhasil diunggah.',
-        body: 'Coba lagi sebentar lagi. Kalau tetap gagal, lewati saja — foto profil tidak memengaruhi progres belajarmu.',
+        body: 'Coba lagi sebentar lagi. Kalau tetap gagal, lewati saja, karena foto profil tidak memengaruhi progres belajarmu.',
       });
     } finally {
       setUploadingAvatar(false);
@@ -451,7 +451,7 @@ export default function Profile() {
                   . Ganti kapan saja.
                 </>
               ) : (
-                'Pilih satu tujuan, dan kami tunjukkan latihan mana yang paling cocok dijadikan titik mulai.'
+                'Pilih satu tujuan, nanti kami tunjukkan latihan mana yang paling cocok dijadikan titik mulai.'
               )}
             </p>
 

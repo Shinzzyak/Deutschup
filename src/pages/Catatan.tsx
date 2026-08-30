@@ -92,7 +92,7 @@ export default function Catatan() {
     await addNote(user.id, newNote.trim(), newNoteTag);
     // The store swallows its own errors, so success is inferred from the slice.
     if (useLearningStore.getState().notes.length === countBefore) {
-      setNoteError('Catatanmu belum tersimpan. Coba tekan Tambah sekali lagi — teksnya masih ada di kotak tulis.');
+      setNoteError('Catatanmu belum tersimpan. Coba tekan Tambah sekali lagi, teksnya masih ada di kotak tulis.');
       return;
     }
     setNewNote('');
@@ -105,7 +105,7 @@ export default function Catatan() {
     setNoteError(null);
     await deleteNote(user.id, noteId);
     if (useLearningStore.getState().notes.some(n => n.id === noteId)) {
-      setNoteError('Catatan itu belum terhapus. Coba lagi sebentar lagi, ya.');
+      setNoteError('Catatanmu belum terhapus. Coba lagi sebentar lagi, ya.');
     }
   };
 

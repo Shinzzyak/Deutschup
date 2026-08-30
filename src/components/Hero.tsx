@@ -155,7 +155,7 @@ export default function Hero() {
                 <div className="mb-6 flex items-center justify-between border-b border-brand-ink/10 pb-4">
                   <div>
                     <p className="font-serif text-lg font-bold text-brand-ink">Herr Deutsch</p>
-                    <p className="text-xs tracking-wider text-ink-subtle uppercase">Tutor AI — Online</p>
+                    <p className="text-xs tracking-wider text-ink-subtle uppercase">Tutor AI, online</p>
                   </div>
                   <span className="relative flex h-3 w-3" aria-hidden="true">
                     {!shouldReduceMotion && (

@@ -66,7 +66,7 @@ export const GOALS: LearningGoal[] = [
     icon: MessageCircle,
     startPath: '/verbs',
     startLabel: 'Latihan Kata Kerja',
-    startReason: 'Kata kerja adalah tulang punggung kalimat lisan — kuasai ini dulu, ngobrol jadi jauh lebih lancar.',
+    startReason: 'Kata kerja adalah tulang punggung kalimat lisan. Kuasai ini dulu, ngobrol jadi jauh lebih lancar.',
   },
   {
     id: 'career',
@@ -75,16 +75,16 @@ export const GOALS: LearningGoal[] = [
     icon: Briefcase,
     startPath: '/koreksi',
     startLabel: 'Koreksi Tulisan',
-    startReason: 'Tulis email atau paragraf pendek, lalu biarkan dikoreksi — itu keterampilan yang paling cepat terpakai di kantor.',
+    startReason: 'Tulis email atau paragraf pendek, lalu biarkan dikoreksi. Itu keterampilan yang paling cepat terpakai di kantor.',
   },
   {
     id: 'travel',
-    label: 'Perjalanan',
+    label: 'Liburan',
     desc: 'Bepergian ke Jerman atau Austria',
     icon: Plane,
     startPath: '/vocab',
     startLabel: 'Latihan Kosakata',
-    startReason: 'Mulai dari kosakata harian — itu yang paling sering kamu pakai di jalan.',
+    startReason: 'Mulai dari kosakata harian. Itu yang paling sering kepakai di jalan.',
   },
 ];
 
@@ -166,7 +166,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
               </h1>
 
               <p className="mt-6 text-lg leading-relaxed font-light text-ink-muted">
-                Satu pertanyaan saja, lalu kami antarkan kamu ke latihan yang paling
+                Satu pertanyaan saja, nanti kami antarkan kamu ke latihan yang paling
                 cocok. Kurang dari setengah menit.
               </p>
 
@@ -273,7 +273,7 @@ export default function OnboardingFlow({ onComplete }: { onComplete: () => void 
                 <p className="text-sm leading-relaxed text-ink-muted">
                   Materi selalu dimulai dari <span className="font-bold text-brand-ink">A1</span>.
                   Kalau dasarmu sudah kuat, checkpoint tiap unit bisa kamu lewati cepat dan
-                  level berikutnya langsung terbuka — jadi kamu tidak akan tertahan lama.
+                  level berikutnya langsung terbuka, jadi kamu tidak akan tertahan lama.
                 </p>
               </div>
 
