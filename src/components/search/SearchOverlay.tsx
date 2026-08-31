@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Search, X, Clock, ArrowRight } from 'lucide-react';
+import { Search, X, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useSearch, SearchResult } from './useSearch';
 import { cn } from '../../lib/utils';
@@ -75,14 +75,14 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
-          className="w-full max-w-xl overflow-hidden bg-surface-0 border border-brand-ink/20 shadow-2xl"
+          className="w-full max-w-xl overflow-hidden bg-surface-0 border border-brand-ink/20"
           onClick={e => e.stopPropagation()}
           role="dialog"
           aria-modal="true"
           aria-label="Cari materi"
         >
           {/* Input */}
-          <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-brand-ink/10 bg-brand-cream/30">
+          <div className="flex items-center gap-2.5 px-3.5 py-2.5 border-b border-brand-ink/10">
             <Search className="w-4 h-4 text-ink-subtle shrink-0" />
             <label htmlFor="site-search" className="sr-only">Cari materi</label>
             <input
@@ -166,10 +166,11 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
                               <p className="font-medium text-brand-ink truncate">{item.primary}</p>
                               <p className="text-sm text-ink-muted truncate">{item.secondary}</p>
                             </div>
-                            <span className="border border-brand-ink/20 px-2 py-1 text-xs font-medium text-ink-muted">
-                              {item.level ? `${typeLabels[item.type]} · ${item.level}` : typeLabels[item.type]}
-                            </span>
-                            <ArrowRight className="w-4 h-4 text-ink-subtle shrink-0" />
+                            {item.level && (
+                              <span className="px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-subtle bg-surface-2">
+                                {item.level}
+                              </span>
+                            )}
                           </button>
                         );
                       })}

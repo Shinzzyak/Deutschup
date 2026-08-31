@@ -292,7 +292,15 @@ export default function VocabTrainerDB() {
 
   const filteredVocab = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
-    let result = [...dbVocab];
+    // Dedupe: DB has 201 word+level duplicate groups (e.g. "der Kaffee" ×4 in A1).
+    // Keep first occurrence per word — the overlay already dedupes; the list must too.
+    const seen = new Set<string>();
+    let result = dbVocab.filter((v) => {
+      const key = v.word;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
 
     if (query) {
       result = result.filter((v) =>
