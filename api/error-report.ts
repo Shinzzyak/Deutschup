@@ -1,5 +1,6 @@
 import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getDb } from '../lib/api-utils.js';
+import { notifyDiscord } from './webhook-notify.js';
 
 // Public fire-and-forget error report endpoint.
 // No auth: captures browser crashes from any device. Rate-limited by size + count.
@@ -88,6 +89,21 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
     });
   } catch (e: any) {
     console.error('[error-report] insert failed:', e?.message);
+  }
+
+  // Discord admin notification (fire-and-forget via waitUntil bridge).
+  try {
+    await notifyDiscord({
+      title: '🔴 App Error',
+      description: message.slice(0, 300),
+      fields: [
+        { name: 'Kind', value: kind, inline: true },
+        { name: 'URL', value: (url || '-').slice(0, 120), inline: true },
+      ],
+      color: 'error',
+    });
+  } catch (e: any) {
+    console.error('[error-report] discord notify failed:', e?.message);
   }
 
   return res.status(200).json({ ok: true });
