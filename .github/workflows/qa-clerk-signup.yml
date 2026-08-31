@@ -55,31 +55,46 @@ jobs:
           }
           const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-          // 1. Create the user (bypasses captcha by design — Backend API is server-to-server)
-          const user = await api('/users', {
-            email_address: EMAIL,
-            password: PASSWORD,
-            username: `qa${Date.now().toString().slice(-8)}`,
-            first_name: 'QA',
-            last_name: 'Gefritz',
-          });
-          console.log('CREATED user_id=' + user.id);
+          // 1. Create the user (bypasses captcha by design — Backend API is server-to-server).
+          //    Reuse path: 422 = user already exists → look the id up and continue.
+          let user;
+          try {
+            user = await api('/users', {
+              email_address: EMAIL,
+              password: PASSWORD,
+              username: `qa${Date.now().toString().slice(-8)}`,
+              first_name: 'QA',
+              last_name: 'Gefritz',
+            });
+            console.log('CREATED user_id=' + user.id);
+          } catch (e) {
+            if (!/422/.test(String(e.message))) throw e;
+            const found = await get(`/users?email_address=${encodeURIComponent(EMAIL)}&limit=1`);
+            user = (found.data || [])[0];
+            if (!user) throw new Error('422 but user not found: ' + e.message);
+            console.log('REUSED existing user_id=' + user.id + ' (create returned 422)');
+          }
 
           // 2. Give the production webhook a moment, then prove end-to-end by
           //    minting a sign-in ticket and calling the app's own authed API.
           await sleep(5000);
 
-          // 3. Mint a sign-in token (ticket strategy) for E2E proof
+          // 3. Mint sign-in tokens (ticket strategy). First one is PRINTED for
+          //    out-of-band browser QA (valid 1h); second proves the E2E exchange.
           const tok = await api(`/users/${user.id}/sign_in_tokens`, { expires_in_seconds: 3600 });
           const ticket = tok.token || (tok.data && tok.data[0] && tok.data[0].token);
           if (!ticket) throw new Error('no sign-in token: ' + JSON.stringify(tok).slice(0, 200));
+          console.log('TICKET=' + ticket);
+          const tok2 = await api(`/users/${user.id}/sign_in_tokens`, { expires_in_seconds: 3600 });
+          const ticket2 = tok2.token || (tok2.data && tok2.data[0] && tok2.data[0].token);
+          if (!ticket2) throw new Error('no second sign-in token');
 
           // 4. Exchange ticket -> session via the frontend API (same origin as app)
           const clerkBase = 'https://clerk.sintec.my.id/v1';
           const fe = await fetch(`${clerkBase}/client/sign_ins?_is_native=true`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ strategy: 'ticket', ticket }),
+            body: new URLSearchParams({ strategy: 'ticket', ticket: ticket2 }),
           });
           const feBody = await fe.json();
           if (!fe.ok) throw new Error('ticket exchange failed: ' + JSON.stringify(feBody).slice(0, 300));
