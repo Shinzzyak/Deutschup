@@ -235,10 +235,10 @@ function MatchingBoard({ exercise, state, onChange, disabled, checked }: {
   }, [exercise]);
 
   const pairedLefts = new Set(state.map(([l]) => l));
-  const pairedRights = new Set(state.map(([, r]) => r));
 
   const commitPair = (right: string) => {
     if (!selectedLeft || disabled) return;
+    if (state.some(([l]) => l === selectedLeft)) return;
     onChange([...state, [selectedLeft, right]]);
     setSelectedLeft(null);
   };
@@ -279,25 +279,38 @@ function MatchingBoard({ exercise, state, onChange, disabled, checked }: {
             );
           })}
         </div>
-        {/* Right column — shuffled pool, items hide once paired */}
+        {/* Right column — rotated pool, items hide once paired. Duplicated
+            right values (e.g. "formal" twice) are hidden one instance per
+            committed pair, counted — never by value-set. Keys are pool indexes:
+            values collide when the same label appears twice. */}
         <div className="bg-white">
-          {rightPool.map((right) => {
-            if (pairedRights.has(right)) return null;
-            return (
-              <button
-                key={right}
-                disabled={disabled || !selectedLeft}
-                onClick={() => commitPair(right)}
-                className={cn(
-                  'w-full min-h-11 border-b border-brand-ink/10 p-3 text-left text-base transition-colors last:border-b-0',
-                  selectedLeft ? 'text-brand-ink hover:bg-brand-cream' : 'text-ink-subtle',
-                  disabled && 'cursor-default',
-                )}
-              >
-                {right}
-              </button>
-            );
-          })}
+          {(() => {
+            const usedCount = new Map<string, number>();
+            for (const [, r] of state) usedCount.set(r, (usedCount.get(r) ?? 0) + 1);
+            const hiddenCount = new Map<string, number>();
+            return rightPool.map((right, idx) => {
+              const used = usedCount.get(right) ?? 0;
+              const hidden = hiddenCount.get(right) ?? 0;
+              if (hidden < used) {
+                hiddenCount.set(right, hidden + 1);
+                return null;
+              }
+              return (
+                <button
+                  key={`r${idx}`}
+                  disabled={disabled || !selectedLeft}
+                  onClick={() => commitPair(right)}
+                  className={cn(
+                    'w-full min-h-11 border-b border-brand-ink/10 p-3 text-left text-base transition-colors last:border-b-0',
+                    selectedLeft ? 'text-brand-ink hover:bg-brand-cream' : 'text-ink-subtle',
+                    disabled && 'cursor-default',
+                  )}
+                >
+                  {right}
+                </button>
+              );
+            });
+          })()}
         </div>
       </div>
       <p className="mt-2 text-xs text-ink-subtle" aria-live="polite">
