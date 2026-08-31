@@ -38,20 +38,27 @@ jobs:
           const SITE = process.env.SITE;
           const auth = { Authorization: `Bearer ${SK}` };
 
+          function parseClerk(raw) {
+            try { return JSON.parse(raw); } catch {}
+            const s = raw.indexOf('{'), t = raw.lastIndexOf('}');
+            if (s >= 0 && t > s) { try { return JSON.parse(raw.slice(s, t + 1)); } catch {} }
+            return { _raw: raw.slice(0, 300) };
+          }
           async function api(path, params) {
             const res = await fetch(`${BASE}${path}`, {
               method: 'POST',
               headers: { ...auth, 'Content-Type': 'application/x-www-form-urlencoded' },
               body: new URLSearchParams(params || {}),
             });
-            const body = await res.json();
+            const body = parseClerk(await res.text());
             if (!res.ok) throw new Error(`${path} ${res.status}: ${JSON.stringify(body).slice(0, 300)}`);
             return body;
           }
           async function get(path) {
             const res = await fetch(`${BASE}${path}`, { headers: auth });
+            const body = parseClerk(await res.text());
             if (!res.ok) throw new Error(`${path} ${res.status}`);
-            return res.json();
+            return body;
           }
           const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -97,7 +104,7 @@ jobs:
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: new URLSearchParams({ strategy: 'ticket', ticket: ticket2 }),
           });
-          const feBody = await fe.json();
+          const feBody = parseClerk(await fe.text());
           if (!fe.ok) throw new Error('ticket exchange failed: ' + JSON.stringify(feBody).slice(0, 300));
           const si = feBody.response || feBody;
           if (!si || si.status !== 'complete') {
