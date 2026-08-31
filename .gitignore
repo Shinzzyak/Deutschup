@@ -41,3 +41,7 @@ second-brain/
 *.tsbuildinfo
 __pycache__/
 *.pyc
+scripts/check-logs*.sh
+scripts/investigation*.sh
+scripts/investigate.py
+.audit-report-*.md
