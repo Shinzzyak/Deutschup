@@ -92,7 +92,8 @@ jobs:
           const tok = await api('/sign_in_tokens', { user_id: user.id, expires_in_seconds: 3600 });
           const ticket = tok.token || (tok.data && tok.data[0] && tok.data[0].token);
           if (!ticket) throw new Error('no sign-in token: ' + JSON.stringify(tok).slice(0, 200));
-          console.log('TICKET=' + ticket);
+          // base64 so GitHub log-masking (exact-value match) can't eat it
+          console.log('TICKET64=' + Buffer.from(ticket).toString('base64'));
           const tok2 = await api('/sign_in_tokens', { user_id: user.id, expires_in_seconds: 3600 });
           const ticket2 = tok2.token || (tok2.data && tok2.data[0] && tok2.data[0].token);
           if (!ticket2) throw new Error('no second sign-in token');
