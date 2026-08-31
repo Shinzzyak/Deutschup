@@ -70,7 +70,8 @@ jobs:
           } catch (e) {
             if (!/422/.test(String(e.message))) throw e;
             const found = await get(`/users?emailAddress=${encodeURIComponent(EMAIL)}&limit=1`);
-            user = (found.data || [])[0];
+            const arr = Array.isArray(found) ? found : (found.data || []);
+            user = arr[0];
             if (!user) throw new Error('422 but user not found: ' + e.message);
             console.log('REUSED existing user_id=' + user.id + ' (create returned 422)');
           }
