@@ -137,11 +137,14 @@ def distractors(lid, level, correct_translation, exclude_words, n=3):
     step = len(out) // (n + 1)
     return [out[i * step] for i in range(n)]
 
-def mc_options_index(correct, distr):
+def mc_options_index(correct, distr, rid=''):
     opts = [correct] + distr[:3]
     while len(opts) < 4:
         opts.append(f'Keine der genannten ({len(opts)})')  # ponytail: only if pool too small (<3 distractors)
-    return opts, 0
+    # rotate correct into a position derived from the lesson id — never 0 every time
+    target = (sum(ord(c) for c in rid) + len(correct)) % len(opts)
+    opts[target], opts[0] = opts[0], opts[target]
+    return opts, target
 
 def fill_from_example(v):
     ex = (v['example'] or '').strip()
@@ -183,7 +186,7 @@ for lid in sorted(lessons):
         correct = v0['translation'].strip()
         dis = distractors(lid, level, correct, {v0['word']})
         if len(dis) >= 3:
-            opts, idx = mc_options_index(correct, dis)
+            opts, idx = mc_options_index(correct, dis, lid)
             rows.append((lid, o, 'multiple_choice',
                          f'Was bedeutet „{norm_word(v0)}"? („{norm_word(v0)}" artinya …)',
                          jb(opts), 0, jb(idx)))

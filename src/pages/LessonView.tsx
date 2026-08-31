@@ -29,8 +29,8 @@ import { getCourseUnitRoute, isCheckpointUnit, inferCourseUnitLevel } from '../l
 // ============================================================
 const XP_PER_CORRECT_ANSWER = 10;
 const XP_PER_LESSON_COMPLETE = 10;
-/** V2 quiz length — DB-authored sets run up to 6 (legacy AI fallback stays 3). */
-const MAX_QUESTIONS_PER_LESSON_V2 = 6;
+/** V2 quiz length — DB-authored sets run up to 8 (6 typed v2 + legacy grammar MC). */
+const MAX_QUESTIONS_PER_LESSON_V2 = 8;
 /** Small chip above the question so the learner knows the format. */
 const TYPE_LABELS: Record<string, string> = {
   multiple_choice: 'Pilihan ganda',
