@@ -69,7 +69,7 @@ jobs:
             console.log('CREATED user_id=' + user.id);
           } catch (e) {
             if (!/422/.test(String(e.message))) throw e;
-            const found = await get(`/users?email_address=${encodeURIComponent(EMAIL)}&limit=1`);
+            const found = await get(`/users?emailAddress=${encodeURIComponent(EMAIL)}&limit=1`);
             user = (found.data || [])[0];
             if (!user) throw new Error('422 but user not found: ' + e.message);
             console.log('REUSED existing user_id=' + user.id + ' (create returned 422)');
