@@ -7,6 +7,24 @@ import LearningRoadmap from './LearningRoadmap';
 import SocialProof from './SocialProof';
 import CTASection from './CTASection';
 import { motion } from 'motion/react';
+import { GoogleOneTap } from '@clerk/clerk-react';
+import { useAuthStore } from '../stores/authStore';
+import { isClerkEnabled } from '../lib/clerk/config';
+import { clerkAppearance } from '../lib/clerk/appearance';
+
+// Google One Tap for signed-out landing visitors — one-click sign-in/sign-up
+// without leaving the page. Guarded so dev (no Clerk key) never crashes.
+function OneTapGuest() {
+  const { user } = useAuthStore();
+  if (!isClerkEnabled() || user) return null;
+  return (
+    <GoogleOneTap
+      appearance={clerkAppearance}
+      cancelOnTapOutside
+      itpSupport
+    />
+  );
+}
 
 function Header() {
   return (
@@ -108,6 +126,7 @@ export default function LandingPage() {
         Langsung ke konten utama
       </a>
       <Header />
+      <OneTapGuest />
       <main id="main-content">
         <Hero />
         <ProductShowcase />
