@@ -71,6 +71,11 @@ function pathName(params: any, request: Request): string[] {
 
 export const onRequest: PagesFunction = async (context) => {
   const { request, params, env } = context;
+  // register waitUntil so fire-and-forget work (Discord notifications) survives
+  try {
+    const { setWaitUntil } = await import('../../lib/worker-ctx');
+    setWaitUntil((p) => (context as any).waitUntil?.(p));
+  } catch { /* ignore */ }
   // inject Pages env into process.env for legacy handlers
   try {
     const g: any = globalThis as any;

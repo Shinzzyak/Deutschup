@@ -49,6 +49,7 @@ jobs:
       CLERK_API_URL: ${{ secrets.VITE_CLERK_API_URL }}
       CLERK_JWT_KEY: ${{ secrets.CLERK_JWT_KEY }}
       ADMIN_EMAIL: ${{ secrets.VITE_ADMIN_EMAIL }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
     steps:
       - uses: actions/checkout@v4
 
@@ -181,6 +182,9 @@ jobs:
             secrets['SUPABASE_SERVICE_ROLE_KEY'] = sb_service
           if sb_url:
             secrets['SUPABASE_URL'] = sb_url
+          discord = (os.environ.get('DISCORD_WEBHOOK_URL') or '').strip()
+          if discord:
+            secrets['DISCORD_WEBHOOK_URL'] = discord
 
           env_vars = {k: {'type': 'plain_text', 'value': v} for k, v in plain.items() if v}
           env_vars.update({k: {'type': 'secret_text', 'value': v} for k, v in secrets.items() if v})

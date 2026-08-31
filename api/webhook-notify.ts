@@ -6,6 +6,7 @@
 
 import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { isVerifiedAdmin } from '../lib/api-utils.js';
+import { reportBackground } from '../lib/worker-ctx.js';
 
 type WebhookField = { name: string; value: string; inline?: boolean };
 
@@ -44,6 +45,12 @@ const COLOR_MAP: Record<string, number> = {
 const WEBHOOK_TIMEOUT_MS = 5000;
 
 export async function notifyDiscord(opts: NotifyOptions): Promise<{ ok: boolean; status?: number; error?: string }> {
+  const p = doNotify(opts);
+  reportBackground(p);
+  return p;
+}
+
+async function doNotify(opts: NotifyOptions): Promise<{ ok: boolean; status?: number; error?: string }> {
   const url = opts.url || process.env.DISCORD_WEBHOOK_URL;
   if (!url) {
     return { ok: false, error: 'DISCORD_WEBHOOK_URL not configured' };
