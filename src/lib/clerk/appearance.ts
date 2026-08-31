@@ -30,10 +30,13 @@ export const clerkAppearance = {
   elements: {
     // Card
     rootBox: 'w-full',
-    card: 'bg-surface-1! border border-brand-ink/20! rounded-none! shadow-none! p-6!',
+    card: 'bg-surface-1! border-[1px]! border-brand-ink/20! rounded-none! shadow-none! p-6!',
     headerTitle: 'text-ink! text-xl! font-bold! tracking-tight! font-sans!',
     headerSubtitle: 'text-ink-muted! text-sm! mt-1!',
     socialButtonsBlockButtonText: 'text-ink! text-sm! font-semibold!',
+    socialButtonsBlockButton:
+      'bg-white! border-[1px]! border-brand-ink/20! rounded-none! shadow-none! min-h-11! ' +
+      'hover:bg-surface-2! transition-colors!',
     dividerText: 'text-ink-subtle! text-[11px]! uppercase! tracking-widest!',
     dividerLine: 'bg-brand-ink/10!',
     formFieldLabel: 'text-ink! text-xs! font-semibold! uppercase! tracking-widest!',
