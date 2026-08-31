@@ -9,6 +9,9 @@ import { supabase } from './supabase';
 import { fetchAllRows } from './supabasePagination';
 import { authedFetch } from './auth-headers';
 import type { Lesson, QuizQuestion, VocabWord, Dialogue, Level } from '../data/course';
+import type { ExerciseRow2 } from './lessons-db-types';
+import { rowToExerciseV2 } from './exercise-mapper';
+import type { ExerciseV2 } from './exercise-types';
 
 // ---- Row shapes (DB snake_case) ----
 
@@ -50,6 +53,8 @@ interface VocabRow {
 // ---- Caches ----
 
 const lessonCache = new Map<string, Lesson>();
+/** Typed (v2) exercises per lesson — filled by findLesson's single round-trip. */
+const exercisesV2Cache = new Map<string, ExerciseV2[]>();
 let allLessonsPromise: Promise<Lesson[]> | null = null;
 let allVocabPromise: Promise<VocabWord[]> | null = null;
 
@@ -93,9 +98,14 @@ export async function findLesson(id: string): Promise<Lesson | undefined> {
       const { lesson: row, exercises } = await resp.json();
       if (!row) return undefined;
       const lesson = rowToLesson(row as LessonRow);
-      lesson.exercises = ((exercises || []) as ExerciseRow[]).map(e => ({
+      const rows = (exercises || []) as ExerciseRow2[];
+      lesson.exercises = rows.map(e => ({
         question: e.question, options: e.options, correctAnswer: e.correct_answer,
       }));
+      // Typed exercises (all six types). Legacy MC rows map through the same
+      // rowToExerciseV2 path, so one source of truth serves both consumers.
+      const v2 = rows.map(rowToExerciseV2).filter(Boolean) as ExerciseV2[];
+      exercisesV2Cache.set(id, v2);
       lessonCache.set(id, lesson);
       return lesson;
     })().finally(() => lessonInflight.delete(id));
@@ -171,6 +181,13 @@ export async function getLessonExercises(id: string): Promise<QuizQuestion[]> {
   // both calls (LessonView awaits findLesson + getLessonExercises together).
   const lesson = await findLesson(id);
   return lesson?.exercises ?? [];
+}
+
+/** Typed exercises (all six types) for one lesson. Same round-trip as
+ * findLesson — the v2 cache is filled there. Empty for legacy lessons. */
+export async function getLessonExercisesV2(id: string): Promise<ExerciseV2[]> {
+  await findLesson(id);
+  return exercisesV2Cache.get(id) ?? [];
 }
 
 /** Per-lesson vocabulary (was: lesson.vocabulary). */

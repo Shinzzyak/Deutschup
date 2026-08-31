@@ -88,7 +88,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         if (!lessonId) return res.status(400).json({ error: 'lessonId required' });
         const [lessonsRes, exercisesRes] = await Promise.all([
           supabase.from('curriculum_lessons').select('*').eq('id', lessonId).maybeSingle(),
-          supabase.from('curriculum_exercises').select('lesson_id, question, options, correct_answer, sort_order')
+          supabase.from('curriculum_exercises').select('lesson_id, question, options, correct_answer, sort_order, exercise_type, answer')
             .eq('lesson_id', lessonId).order('sort_order', { ascending: true }),
         ]);
         if (lessonsRes.error) throw lessonsRes.error;
@@ -105,7 +105,7 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
         const [lessonsRes, exercisesRes] = await Promise.all([
           supabase.from('curriculum_lessons')
             .select('id, level_id, title, grammar_description, sentence_breakdowns, pronunciation_tips, cultural_notes, register_notes, indonesian_mistakes, can_do_goals, listening_simulation, dialogues'),
-          supabase.from('curriculum_exercises').select('lesson_id, question, options, correct_answer, sort_order')
+          supabase.from('curriculum_exercises').select('lesson_id, question, options, correct_answer, sort_order, exercise_type, answer')
             .order('sort_order', { ascending: true }),
         ]);
         if (lessonsRes.error) throw lessonsRes.error;

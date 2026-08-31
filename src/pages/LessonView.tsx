@@ -1,7 +1,9 @@
 import React, { isValidElement, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate, Link } from 'react-router';
-import { findLesson, getLessonVocabulary, getLessonExercises, getAllLessons } from '../lib/lessons-db';
+import { findLesson, getLessonVocabulary, getLessonExercises, getAllLessons, getLessonExercisesV2 } from '../lib/lessons-db';
 import type { Lesson, VocabWord } from '../data/course';
+import type { ExerciseV2, MatchingExerciseV2 } from '../lib/exercise-types';
+import { gradeChoice, gradeTextAnswer, gradeMatching, matchingAnswerKey } from '../lib/exercise-grading';
 import { courseIndex } from '../data/lessonIndex';
 import { useProgressStore } from '../stores/progressStore';
 import { useAuthStore } from '../stores/authStore';
@@ -27,6 +29,17 @@ import { getCourseUnitRoute, isCheckpointUnit, inferCourseUnitLevel } from '../l
 // ============================================================
 const XP_PER_CORRECT_ANSWER = 10;
 const XP_PER_LESSON_COMPLETE = 10;
+/** V2 quiz length — DB-authored sets run up to 6 (legacy AI fallback stays 3). */
+const MAX_QUESTIONS_PER_LESSON_V2 = 6;
+/** Small chip above the question so the learner knows the format. */
+const TYPE_LABELS: Record<string, string> = {
+  multiple_choice: 'Pilihan ganda',
+  true_false: 'Benar / Salah',
+  short_answer: 'Isian singkat',
+  fill_blank: 'Lengkapi kalimat',
+  matching: 'Jodohkan',
+  essay: 'Uraian',
+};
 
 // The @tailwindcss/typography plugin is not installed in this project, so the
 // `prose` classes that used to wrap every markdown block styled nothing at all —
@@ -202,6 +215,117 @@ function articleChipClass(article: string): string {
   return 'bg-brand-tan text-brand-ink';                              //  7.52:1
 }
 
+/** Matching board: left items fixed in order, right pool deterministically
+ *  rotated (never identity for k≥2, stable across re-renders). Learner taps a
+ *  left item then its match; committed pairs appear as removable chips.
+ *  Remount per question via key — local selection resets automatically. */
+function MatchingBoard({ exercise, state, onChange, disabled, checked }: {
+  exercise: MatchingExerciseV2;
+  state: Array<[string, string]>;
+  onChange: (pairs: Array<[string, string]>) => void;
+  disabled: boolean;
+  checked: boolean;
+}) {
+  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
+
+  const rightPool = useMemo(() => {
+    const rights = exercise.pairs.map(([, r]) => r);
+    const half = Math.floor(rights.length / 2);
+    return rights.slice(half).concat(rights.slice(0, half));
+  }, [exercise]);
+
+  const pairedLefts = new Set(state.map(([l]) => l));
+  const pairedRights = new Set(state.map(([, r]) => r));
+
+  const commitPair = (right: string) => {
+    if (!selectedLeft || disabled) return;
+    onChange([...state, [selectedLeft, right]]);
+    setSelectedLeft(null);
+  };
+  const unpair = (left: string) => {
+    if (disabled) return;
+    onChange(state.filter(([l]) => l !== left));
+  };
+
+  return (
+    <div>
+      <div className="grid grid-cols-2 gap-px border border-brand-ink/10 bg-brand-ink/10">
+        {/* Left column — tap to select, then tap a right item */}
+        <div className="bg-white">
+          {exercise.pairs.map(([left]) => {
+            const pairedWith = state.find(([l]) => l === left)?.[1];
+            const isSelected = selectedLeft === left;
+            const wrongPair = checked && pairedWith && exercise.pairs.find(([l]) => l === left)?.[1] !== pairedWith;
+            return (
+              <button
+                key={left}
+                disabled={disabled || !!pairedWith}
+                onClick={() => setSelectedLeft(isSelected ? null : left)}
+                className={cn(
+                  'w-full min-h-11 border-b border-brand-ink/10 p-3 text-left text-base transition-colors last:border-b-0',
+                  pairedWith
+                    ? wrongPair
+                      ? 'bg-brand-rust/8 text-brand-rust font-semibold'
+                      : 'bg-brand-green/8 text-[#1a6b3d] font-semibold'
+                    : isSelected
+                      ? 'bg-brand-cream font-semibold shadow-[inset_3px_0_0_0_var(--brand-ink)]'
+                      : 'text-brand-ink hover:bg-brand-cream',
+                  disabled && 'cursor-default',
+                )}
+              >
+                {left}
+                {pairedWith && <span className="block text-sm font-normal">{pairedWith}</span>}
+              </button>
+            );
+          })}
+        </div>
+        {/* Right column — shuffled pool, items hide once paired */}
+        <div className="bg-white">
+          {rightPool.map((right) => {
+            if (pairedRights.has(right)) return null;
+            return (
+              <button
+                key={right}
+                disabled={disabled || !selectedLeft}
+                onClick={() => commitPair(right)}
+                className={cn(
+                  'w-full min-h-11 border-b border-brand-ink/10 p-3 text-left text-base transition-colors last:border-b-0',
+                  selectedLeft ? 'text-brand-ink hover:bg-brand-cream' : 'text-ink-subtle',
+                  disabled && 'cursor-default',
+                )}
+              >
+                {right}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <p className="mt-2 text-xs text-ink-subtle" aria-live="polite">
+        {state.length < exercise.pairs.length
+          ? selectedLeft
+            ? 'Sekarang pilih pasangannya di kolom kanan.'
+            : 'Ketuk item di kiri, lalu ketuk pasangannya di kanan.'
+          : 'Semua pasangan terisi — cek jawabanmu.'}
+      </p>
+      {state.length > 0 && !checked && (
+        <div className="mt-3 flex flex-wrap gap-2">
+          {state.map(([left, right]) => (
+            <button
+              key={left}
+              disabled={disabled}
+              onClick={() => unpair(left)}
+              className="inline-flex items-center gap-1.5 border border-brand-ink/20 bg-white px-2 py-1 text-xs text-ink-muted hover:text-brand-rust"
+              aria-label={`Lepas pasangan ${left}`}
+            >
+              {left} → {right} <span aria-hidden="true">✕</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function LessonView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -229,17 +353,22 @@ export default function LessonView() {
     let alive = true;
     setLesson(undefined);
     setLessonsLoaded(false);
+    setExercisesV2([]);
+    setCurrentV2Index(0);
+    setV2Started(false);
     (async () => {
       try {
-        const [l, vocab, exercises] = await Promise.all([
+        const [l, vocab, exercises, exercisesV2] = await Promise.all([
           findLesson(id || ''),
           getLessonVocabulary(id || ''),
           getLessonExercises(id || ''),
+          getLessonExercisesV2(id || ''),
         ]);
         if (!alive) return;
         if (l) {
           setLesson({ ...l, vocabulary: vocab.length ? vocab : l.vocabulary, exercises: exercises.length ? exercises : l.exercises });
         }
+        if (alive) setExercisesV2(exercisesV2.slice(0, MAX_QUESTIONS_PER_LESSON_V2));
       } finally {
         if (alive) setLessonsLoaded(true);
       }
@@ -330,6 +459,14 @@ export default function LessonView() {
   const [exercisesError, setExercisesError] = useState<string | null>(null);
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
 
+  // Typed v2 exercises (true_false / short_answer / fill_blank / matching /
+  // essay). When non-empty the quiz renders v2; legacy MC-only flow stays as
+  // the fallback for lessons without seeded v2 content.
+  const [exercisesV2, setExercisesV2] = useState<ExerciseV2[]>([]);
+  const [currentV2Index, setCurrentV2Index] = useState(0);
+  /** Gates the v2 quiz behind the "Mulai latihan" intro, mirroring legacy flow. */
+  const [v2Started, setV2Started] = useState(false);
+
   // Answer state
   const [selectedAnswer, setSelectedAnswer] = useState<string>("");
   const [isAnswerChecked, setIsAnswerChecked] = useState(false);
@@ -338,6 +475,8 @@ export default function LessonView() {
   const [advancing, setAdvancing] = useState(false);
   /** One entry per answered question — drives the score on the finish screen. */
   const [answerLog, setAnswerLog] = useState<boolean[]>([]);
+  /** Matching exercise: learner-built [left, right] pairs (right chosen from the shuffled pool). */
+  const [matchingState, setMatchingState] = useState<Array<[string, string]>>([]);
   /** Question indexes already paid for, so a retry can never double-grant XP. */
   const awardedQuestions = useRef<Set<number>>(new Set());
 
@@ -443,6 +582,10 @@ export default function LessonView() {
   const startQuiz = async () => {
     setActiveTab('latihan');
     setExercisesError(null);
+    setCurrentV2Index(0);
+    setV2Started(true);
+    // Seeded v2 content — skip the legacy/AI fallback entirely.
+    if (exercisesV2.length > 0) return;
     if (exercises.length > 0) return;
 
     const authored = (lesson.questions?.length ? lesson.questions : lesson.exercises) || [];
@@ -482,7 +625,82 @@ export default function LessonView() {
   };
 
   const handleCheckAnswer = async () => {
-    if (!selectedAnswer.trim()) return;
+    // Matching pairs its own answer state; every other type needs text/selection.
+    const v2Matching = exercisesV2.length > 0 && exercisesV2[currentV2Index]?.type === 'matching';
+    if (!v2Matching && !selectedAnswer.trim()) return;
+
+    // ── V2 typed exercises ──
+    if (exercisesV2.length > 0) {
+      const currentV2 = exercisesV2[currentV2Index];
+
+      // Essay: graded by the AI endpoint (same contract as the legacy free_text).
+      if (currentV2.type === 'essay') {
+        setCheckingAnswer(true);
+        try {
+          const resp = await authedFetch('/api/ai?action=check-answer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: currentV2.question, answer: selectedAnswer, level: lesson?.level }),
+          });
+          if (!resp.ok) throw new Error(`check-answer ${resp.status}`);
+          const data = await resp.json();
+          const isCorrect = data?.isCorrect === true;
+          setCheckResult({
+            isCorrect,
+            feedback: isCorrect ? 'Tepat sekali.' : 'Belum tepat. Tidak apa-apa, ini bagian dari belajar.',
+            reason: typeof data?.feedback === 'string' && data.feedback.trim() ? data.feedback : currentV2.hint,
+            correctedSentence: typeof data?.correctedSentence === 'string' && data.correctedSentence.trim()
+              ? data.correctedSentence
+              : undefined,
+          });
+        } catch (e) {
+          console.error('[LESSON] essay check failed:', e);
+          setCheckResult({
+            isCorrect: false,
+            feedback: 'Jawabanmu belum bisa diperiksa',
+            reason: 'Sambungan ke pemeriksa jawaban sedang tersendat. Coba tekan "Cek Jawaban" sekali lagi.',
+          });
+        } finally {
+          setCheckingAnswer(false);
+          setIsAnswerChecked(true);
+        }
+        return;
+      }
+
+      // Deterministic types: pure local grading, no AI round-trip.
+      let isCorrect = false;
+      let correctAnswer: string | undefined;
+
+      switch (currentV2.type) {
+        case 'multiple_choice':
+        case 'true_false':
+          isCorrect = gradeChoice(selectedAnswer, currentV2.options, currentV2.correctAnswer);
+          correctAnswer = isCorrect ? undefined : currentV2.options[currentV2.correctAnswer];
+          break;
+        case 'short_answer':
+        case 'fill_blank':
+          isCorrect = gradeTextAnswer(selectedAnswer, currentV2.accepted);
+          correctAnswer = isCorrect ? undefined : currentV2.accepted[0];
+          break;
+        case 'matching':
+          isCorrect = gradeMatching(matchingState, currentV2.pairs);
+          if (!isCorrect) {
+            correctAnswer = matchingAnswerKey(currentV2.pairs);
+          }
+          break;
+      }
+
+      setCheckResult({
+        isCorrect,
+        feedback: isCorrect
+          ? 'Tepat sekali. Pola ini sudah kamu kuasai.'
+          : 'Belum tepat. Tidak apa-apa, ini bagian dari belajar.',
+        correctAnswer,
+        reason: isCorrect ? undefined : currentV2.hint,
+      });
+      setIsAnswerChecked(true);
+      return;
+    }
 
     const currentQuestion = exercises[currentQuizIndex];
     setCheckingAnswer(true);
@@ -538,11 +756,25 @@ export default function LessonView() {
     if (advancing) return;
     setAdvancing(true);
     try {
-      if (wasCorrect && user && !awardedQuestions.current.has(currentQuizIndex)) {
-        awardedQuestions.current.add(currentQuizIndex);
+      if (wasCorrect && user && !awardedQuestions.current.has(exercisesV2.length > 0 ? currentV2Index : currentQuizIndex)) {
+        awardedQuestions.current.add(exercisesV2.length > 0 ? currentV2Index : currentQuizIndex);
         await addXp(user.id, XP_PER_CORRECT_ANSWER);
       }
       setAnswerLog(prev => [...prev, wasCorrect]);
+
+      if (exercisesV2.length > 0) {
+        // V2 flow has its own index + per-question answer reset.
+        if (currentV2Index < exercisesV2.length - 1) {
+          setCurrentV2Index(prev => prev + 1);
+          setSelectedAnswer('');
+          setMatchingState([]);
+          setIsAnswerChecked(false);
+          setCheckResult(null);
+        } else {
+          await finishLesson();
+        }
+        return;
+      }
 
       if (currentQuizIndex < exercises.length - 1) {
         setCurrentQuizIndex(prev => prev + 1);
@@ -562,6 +794,9 @@ export default function LessonView() {
     setSelectedAnswer("");
     setIsAnswerChecked(false);
     setCheckResult(null);
+    // Matching rebuilds its pairs from scratch on retry — stale wrong pairs
+    // would be unfixable without an unpair UI.
+    if (exercisesV2[currentV2Index]?.type === 'matching') setMatchingState([]);
   };
 
   const finishLesson = async () => {
@@ -579,10 +814,15 @@ export default function LessonView() {
   };
 
   const currentQuestion = exercises.length > 0 ? exercises[currentQuizIndex] : null;
+  // V2 quiz takes priority when seeded; legacy MC flow stays the fallback.
+  const currentV2 = exercisesV2.length > 0 ? exercisesV2[currentV2Index] : null;
+  const quizIndex = currentV2 ? currentV2Index : currentQuizIndex;
+  const totalQuiz = currentV2 ? exercisesV2.length : exercises.length;
+  const answeredSoFar = Math.min(quizIndex, totalQuiz);
+  const matchingComplete = currentV2?.type === 'matching' && matchingState.length === currentV2.pairs.length;
   const correctCount = answerLog.filter(Boolean).length;
   const earnedXp = correctCount * XP_PER_CORRECT_ANSWER + XP_PER_LESSON_COMPLETE;
   const positionLabel = position > 0 ? `Pelajaran ${position} dari ${totalLessons}` : 'Pelajaran';
-  const answeredSoFar = Math.min(currentQuizIndex, exercises.length);
 
   const tabClass = (tab: 'materi' | 'latihan') => cn(
     'px-4 py-3 text-sm font-semibold tracking-wide transition-colors',
@@ -904,6 +1144,156 @@ export default function LessonView() {
                 </Button>
               </div>
             </div>
+          ) : currentV2 && v2Started ? (
+            <div className="border border-brand-ink/12 bg-white">
+              {/* Quiz meta — shared layout with the legacy branch */}
+              <div className="flex items-center justify-between border-b border-brand-ink/10 bg-brand-cream px-5 py-3">
+                <span className="text-xs font-bold uppercase tracking-[0.16em] text-ink-subtle">
+                  Soal {currentV2Index + 1} dari {exercisesV2.length}
+                </span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-[0.16em] text-brand-rust">
+                  <Star className="w-3.5 h-3.5" /> +{XP_PER_CORRECT_ANSWER} XP
+                </span>
+              </div>
+              <div className="flex gap-px" aria-hidden="true">
+                {exercisesV2.map((_, i) => (
+                  <span key={i} className={cn('h-1 flex-1', i < answeredSoFar ? 'bg-brand-rust' : 'bg-brand-ink/12')} />
+                ))}
+              </div>
+
+              <div className="p-6 md:p-8">
+                <span className="mb-3 inline-block border border-brand-ink/20 bg-brand-cream px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.16em] text-ink-subtle">
+                  {TYPE_LABELS[currentV2.type] ?? currentV2.type}
+                </span>
+                <h2 className="font-serif text-2xl leading-snug text-brand-ink mb-7">{currentV2.question}</h2>
+
+                {currentV2.type === 'multiple_choice' || currentV2.type === 'true_false' ? (
+                  <div className="space-y-px bg-brand-ink/10 border border-brand-ink/10">
+                    {currentV2.options.map((opt) => {
+                      const isSelected = selectedAnswer === opt;
+                      const isCorrectOption = isAnswerChecked && opt === currentV2.options[currentV2.correctAnswer];
+                      const isWrongOption = isAnswerChecked && isSelected && !checkResult?.isCorrect;
+                      return (
+                        <button
+                          key={opt}
+                          disabled={isAnswerChecked || checkingAnswer}
+                          onClick={() => setSelectedAnswer(opt)}
+                          className={cn(
+                            'w-full text-left p-4 text-lg transition-colors',
+                            'bg-white text-brand-ink hover:bg-brand-cream',
+                            isSelected && !isAnswerChecked && 'bg-brand-cream font-semibold shadow-[inset_3px_0_0_0_var(--brand-ink)]',
+                            // #1a6b3d on green/8 = 5.94:1
+                            isCorrectOption && 'bg-brand-green/8 text-[#1a6b3d] font-semibold shadow-[inset_3px_0_0_0_#1a6b3d]',
+                            // brand-rust on rust/8 = 7.77:1
+                            isWrongOption && 'bg-brand-rust/8 text-brand-rust font-semibold shadow-[inset_3px_0_0_0_var(--brand-rust)]'
+                          )}
+                          aria-label={`Jawaban: ${opt}`}
+                        >
+                          <span className="flex items-center justify-between gap-3">
+                            <span>{opt}</span>
+                            {isCorrectOption && <CheckCircle2 className="w-5 h-5 shrink-0" />}
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : currentV2.type === 'matching' ? (
+                  <MatchingBoard
+                    key={currentV2Index}
+                    exercise={currentV2}
+                    state={matchingState}
+                    onChange={setMatchingState}
+                    disabled={isAnswerChecked || checkingAnswer}
+                    checked={isAnswerChecked}
+                  />
+                ) : (
+                  <>
+                    <label htmlFor="lesson-answer" className="sr-only">Jawaban dalam bahasa Jerman</label>
+                    <textarea
+                      id="lesson-answer"
+                      name="lesson-answer"
+                      disabled={isAnswerChecked || checkingAnswer}
+                      value={selectedAnswer}
+                      onChange={(e) => setSelectedAnswer(e.target.value)}
+                      placeholder={currentV2.type === 'fill_blank'
+                        ? 'Isi bagian yang kosong (___) saja...'
+                        : currentV2.type === 'essay'
+                          ? 'Tulis jawabanmu beberapa kalimat...'
+                          : 'Tulis jawabanmu dalam bahasa Jerman di sini...'}
+                      className="block w-full min-h-[120px] resize-none bg-white p-4 text-lg text-brand-ink placeholder:text-ink-subtle focus:outline-none focus:bg-brand-cream"
+                    />
+                  </>
+                )}
+
+                {currentV2.hint && !isAnswerChecked && (
+                  <p className="mt-3 text-sm text-ink-subtle">Petunjuk: {currentV2.hint}</p>
+                )}
+
+                {isAnswerChecked && checkResult && (
+                  <div
+                    role="status"
+                    aria-live="polite"
+                    className={cn(
+                      'mt-6 border-l-4 p-5',
+                      checkResult.isCorrect
+                        ? 'border-l-[#1a6b3d] bg-brand-green/8'
+                        : 'border-l-brand-rust bg-brand-rust/8'
+                    )}
+                  >
+                    <p className={cn('font-serif text-lg', checkResult.isCorrect ? 'text-[#1a6b3d]' : 'text-brand-rust')}>
+                      {checkResult.feedback}
+                    </p>
+                    {checkResult.correctAnswer && (
+                      <p className="mt-2 text-brand-ink">
+                        Jawaban yang benar: <span className="font-bold">{checkResult.correctAnswer}</span>
+                      </p>
+                    )}
+                    {checkResult.reason && (
+                      <p className="mt-2 text-ink-muted">{checkResult.reason}</p>
+                    )}
+                    {checkResult.correctedSentence && (
+                      <div className="mt-4 border border-brand-ink/12 bg-white p-4">
+                        <span className="block text-xs font-bold uppercase tracking-[0.16em] text-ink-subtle mb-1">
+                          Kalimat yang lebih tepat
+                        </span>
+                        <p className="text-lg font-bold text-brand-ink">{checkResult.correctedSentence}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <div className="mt-8 border-t border-brand-ink/10 pt-6">
+                  {!isAnswerChecked ? (
+                    <Button
+                      className="w-full h-14 text-base font-bold bg-brand-rust text-brand-cream hover:bg-brand-rust/90"
+                      disabled={currentV2.type === 'matching'
+                        ? !matchingComplete || checkingAnswer
+                        : !selectedAnswer.trim() || checkingAnswer}
+                      onClick={handleCheckAnswer}
+                    >
+                      {checkingAnswer ? <><Loader2 className="w-5 h-5 mr-3 animate-spin" /> Memeriksa...</> : 'Cek jawaban'}
+                    </Button>
+                  ) : (
+                    <div className="flex flex-col sm:flex-row gap-3">
+                      {!checkResult?.isCorrect && (
+                        <Button variant="outline" className="h-14 flex-1 text-base font-bold" onClick={retryQuestion}>
+                          Coba soal ini lagi
+                        </Button>
+                      )}
+                      <Button
+                        className="h-14 flex-1 text-base font-bold bg-brand-ink text-brand-cream hover:bg-brand-ink/90"
+                        disabled={advancing}
+                        onClick={() => advance(checkResult?.isCorrect === true)}
+                      >
+                        {advancing ? <><Loader2 className="w-5 h-5 mr-3 animate-spin" /> Menyimpan...</>
+                          : currentV2Index < exercisesV2.length - 1 ? 'Soal berikutnya' : 'Selesaikan pelajaran'}
+                        {!advancing && <ChevronRight className="w-4 h-4 ml-2" />}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           ) : currentQuestion ? (
             <div className="border border-brand-ink/12 bg-white">
               {/* Quiz meta */}
@@ -1043,8 +1433,10 @@ export default function LessonView() {
               <Target className="w-8 h-8 mx-auto mb-5 text-brand-rust" />
               <h2 className="font-serif text-2xl text-brand-ink">Siap berlatih?</h2>
               <p className="mt-2 text-ink-muted">
-                Tiga soal singkat untuk memastikan materinya benar-benar nempel.
-                Setiap jawaban benar bernilai {XP_PER_CORRECT_ANSWER} XP.
+                {exercisesV2.length > 0
+                  ? `${exercisesV2.length} soal beragam — pilihan ganda, benar/salah, isian, sampai soal jodohkan.`
+                  : 'Tiga soal singkat untuk memastikan materinya benar-benar nempel.'}
+                {' '}Setiap jawaban benar bernilai {XP_PER_CORRECT_ANSWER} XP.
               </p>
               <Button onClick={startQuiz} className="mt-6 h-12 px-8 bg-brand-rust text-brand-cream hover:bg-brand-rust/90">
                 Mulai latihan <ChevronRight className="w-4 h-4 ml-2" />
