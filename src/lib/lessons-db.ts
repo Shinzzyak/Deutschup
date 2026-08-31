@@ -102,10 +102,26 @@ export async function findLesson(id: string): Promise<Lesson | undefined> {
       lesson.exercises = rows.map(e => ({
         question: e.question, options: e.options, correctAnswer: e.correct_answer,
       }));
-      // Typed exercises (all six types). Legacy MC rows map through the same
-      // rowToExerciseV2 path, so one source of truth serves both consumers.
-      const v2 = rows.map(rowToExerciseV2).filter(Boolean) as ExerciseV2[];
-      exercisesV2Cache.set(id, v2);
+      // Typed v2 pool: authored v2 rows take priority, then legacy MC rows fill
+      // the remaining slots — seeded lessons keep their mixed types, legacy-only
+      // lessons upgrade from the 3-question AI fallback to a full 6-question MC
+      // quiz. Legacy MC still feeds checkpoint pools via lesson.exercises.
+      const V2_QUIZ_CAP = 6;
+      const typed = rows.map(rowToExerciseV2).filter(Boolean) as ExerciseV2[];
+      const legacyMc = rows
+        .filter(r => (r.exercise_type ?? 'multiple_choice') === 'multiple_choice' && (r.answer === null || r.answer === undefined))
+        .map(r => ({
+          type: 'multiple_choice' as const, order: r.sort_order ?? 0, question: r.question,
+          options: r.options, correctAnswer: r.correct_answer,
+        }))
+        .filter(e => e.options.length >= 2 && e.correctAnswer >= 0 && e.correctAnswer < e.options.length);
+      const selected = typed.slice(0, V2_QUIZ_CAP);
+      for (const le of legacyMc) {
+        if (selected.length >= V2_QUIZ_CAP) break;
+        if (!selected.some(t => t.order === le.order && t.question === le.question)) selected.push(le);
+      }
+      const pool = selected.sort((a, b) => a.order - b.order);
+      exercisesV2Cache.set(id, pool);
       lessonCache.set(id, lesson);
       return lesson;
     })().finally(() => lessonInflight.delete(id));

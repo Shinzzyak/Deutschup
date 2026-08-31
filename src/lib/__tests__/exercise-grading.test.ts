@@ -67,12 +67,15 @@ const baseRow = (over: Partial<ExerciseRow2>): ExerciseRow2 => ({
 });
 
 describe('rowToExerciseV2', () => {
-  it('maps a legacy MC row (answer null)', () => {
-    const ex = rowToExerciseV2(baseRow({ exercise_type: 'multiple_choice', options: ['A', 'B'], correct_answer: 1, answer: null }));
+  it('maps a v2 MC row (answer = correct index as jsonb number)', () => {
+    const ex = rowToExerciseV2(baseRow({ exercise_type: 'multiple_choice', options: ['A', 'B'], correct_answer: 1, answer: 1 }));
     expect(ex).toEqual({ type: 'multiple_choice', order: 0, question: 'Q?', options: ['A', 'B'], correctAnswer: 1 });
   });
-  it('rejects MC with out-of-range index', () => {
-    expect(rowToExerciseV2(baseRow({ exercise_type: 'multiple_choice', options: ['A'], correct_answer: 5, answer: null }))).toBeNull();
+  it('returns null for a legacy MC row (answer null — legacy flow serves it)', () => {
+    expect(rowToExerciseV2(baseRow({ exercise_type: 'multiple_choice', options: ['A', 'B'], correct_answer: 1, answer: null }))).toBeNull();
+  });
+  it('rejects v2 MC with out-of-range index', () => {
+    expect(rowToExerciseV2(baseRow({ exercise_type: 'multiple_choice', options: ['A', 'B'], correct_answer: 5, answer: 5 }))).toBeNull();
   });
   it('maps true_false with boolean answer', () => {
     const ex = rowToExerciseV2(baseRow({ exercise_type: 'true_false', question: 'Berlin ist in Deutschland.', answer: true }));
@@ -111,9 +114,8 @@ describe('rowToExerciseV2', () => {
     expect(rowToExerciseV2(baseRow({ exercise_type: 'essay', question: 'Beschreibe deinen Tag.', answer: null })))
       .toMatchObject({ type: 'essay' });
   });
-  it('falls back to MC for unknown types with valid options', () => {
-    const ex = rowToExerciseV2(baseRow({ exercise_type: 'quiz', options: ['A', 'B'], correct_answer: 0, answer: null }));
-    expect(ex).toMatchObject({ type: 'multiple_choice', correctAnswer: 0 });
+  it('returns null for unknown types (legacy-only, served by legacy flow)', () => {
+    expect(rowToExerciseV2(baseRow({ exercise_type: 'quiz', options: ['A', 'B'], correct_answer: 0, answer: null }))).toBeNull();
   });
   it('rejects empty questions', () => {
     expect(rowToExerciseV2(baseRow({ question: '   ' }))).toBeNull();

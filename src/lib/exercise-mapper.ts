@@ -1,6 +1,8 @@
-// DB row (snake_case) → typed ExerciseV2. Legacy rows (answer jsonb 'null' +
-// non-MC exercise_type in legacy 'quiz'/'multiple_choice' semantics) still
-// resolve as multiple_choice via correct_answer index.
+// DB row (snake_case) → typed ExerciseV2.
+// Legacy MC rows (exercise_type='multiple_choice', answer jsonb null) return
+// null here — they are served by the legacy QuizQuestion flow
+// (lesson.exercises) and must not duplicate into the v2 list.
+// A v2 MC row marks itself with answer = correct index (jsonb number).
 import type { ExerciseRow2 } from './lessons-db-types';
 import type { ExerciseV2, ExerciseType } from './exercise-types';
 
@@ -12,7 +14,8 @@ export function rowToExerciseV2(row: ExerciseRow2): ExerciseV2 | null {
   const order = typeof row.sort_order === 'number' ? row.sort_order : 0;
   const hint = typeof row.hint === 'string' && row.hint.trim() ? row.hint : undefined;
 
-  const rawType = KNOWN.includes(row.exercise_type as ExerciseType) ? row.exercise_type as ExerciseType : 'multiple_choice';
+  const rawType = KNOWN.includes(row.exercise_type as ExerciseType) ? row.exercise_type as ExerciseType : null;
+  if (!rawType) return null; // unknown/legacy type → legacy flow only
   const answer = row.answer ?? null;
 
   switch (rawType) {
@@ -44,13 +47,13 @@ export function rowToExerciseV2(row: ExerciseRow2): ExerciseV2 | null {
     }
     case 'essay':
       return { type: 'essay', order, question, hint };
-    case 'multiple_choice':
-    default: {
+    case 'multiple_choice': {
+      // Legacy rows carry answer === null (jsonb 'null') — served by the legacy
+      // flow; a v2 MC row stores its correct index as a jsonb number.
+      if (typeof answer !== 'number') return null;
       const options = Array.isArray(row.options) ? row.options.filter((o): o is string => typeof o === 'string') : [];
-      if (options.length < 2) return null;
-      const idx = row.correct_answer;
-      if (typeof idx !== 'number' || idx < 0 || idx >= options.length) return null;
-      return { type: 'multiple_choice', order, question, hint, options, correctAnswer: idx };
+      if (options.length < 2 || answer < 0 || answer >= options.length) return null;
+      return { type: 'multiple_choice', order, question, hint, options, correctAnswer: answer };
     }
   }
 }
