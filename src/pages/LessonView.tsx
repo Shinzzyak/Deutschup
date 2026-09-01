@@ -982,6 +982,40 @@ export default function LessonView() {
             </Section>
           )}
 
+          {lesson.sentenceBreakdowns && lesson.sentenceBreakdowns.length > 0 && (
+            <Section icon={Brain} title="Anatomi Kalimat">
+              <ul className="space-y-3">
+                {lesson.sentenceBreakdowns.map((s, idx) => (
+                  <li key={idx} className="border-l-2 border-brand-ink/15 pl-4 text-base text-ink-muted">{s}</li>
+                ))}
+              </ul>
+            </Section>
+          )}
+
+          {lesson.dialogues && lesson.dialogues.length > 0 && (
+            <Section icon={MessageSquare} title="Gespräch — Contoh Percakapan">
+              <div className="space-y-4">
+                {lesson.dialogues.map((line, idx) => (
+                  <div key={idx} className="border-l-2 border-brand-ink/15 pl-4">
+                    {line.personA && (
+                      <p className="text-brand-ink">
+                        <span className="font-bold text-ink-subtle mr-2">A</span>{line.personA}
+                      </p>
+                    )}
+                    {line.personB && (
+                      <p className="text-brand-ink">
+                        <span className="font-bold text-ink-subtle mr-2">B</span>{line.personB}
+                      </p>
+                    )}
+                    {line.translation && (
+                      <p className="mt-1 text-sm italic text-ink-subtle">{line.translation}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </Section>
+          )}
+
           {lesson.listeningSimulation && (
             <Section icon={Headphones} title="Transkrip Simulasi Mendengarkan">
               <div className="space-y-4">
