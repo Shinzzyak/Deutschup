@@ -3,6 +3,11 @@
 // https://clerk.com/docs/guides/development/clerk-environment-variables
 
 import { ClerkProvider as BaseClerkProvider } from '@clerk/clerk-react';
+// ⚠️ LOAD-BEARING: `ui: { ClerkUI }` registers @clerk/ui web components in
+// clerk-js v6. Without it, <SignIn/> and <GoogleOneTap/> throw
+// "Clerk was not loaded with Ui components" → auth fully dead.
+// Removal regression 2026-09-01 (guest + sign-in crash). DO NOT REMOVE.
+import * as UiPkg from '@clerk/ui';
 import {
   CLERK_PUBLISHABLE_KEY,
   isClerkEnabled,
@@ -24,6 +29,8 @@ export function ClerkProvider({ children }: ClerkProviderProps) {
     <BaseClerkProvider
       publishableKey={CLERK_PUBLISHABLE_KEY}
       clerkJSVersion="6"
+      // ⚠️ LOAD-BEARING (see import note): registers @clerk/ui components in clerk-js v6.
+      {...({ ui: { ClerkUI: UiPkg.ui.ClerkUI } } as Record<string, unknown>)}
       signInFallbackRedirectUrl={SIGN_IN_FALLBACK_REDIRECT_URL}
       signUpFallbackRedirectUrl={SIGN_UP_FALLBACK_REDIRECT_URL}
       afterSignOutUrl={SIGN_IN_FALLBACK_REDIRECT_URL}

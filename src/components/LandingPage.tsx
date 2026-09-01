@@ -7,11 +7,24 @@ import LearningRoadmap from './LearningRoadmap';
 import SocialProof from './SocialProof';
 import CTASection from './CTASection';
 import { motion } from 'motion/react';
+import { GoogleOneTap } from '@clerk/clerk-react';
 import { useAuthStore } from '../stores/authStore';
+import { isClerkEnabled } from '../lib/clerk/config';
+import { clerkAppearance } from '../lib/clerk/appearance';
 
-// Google One Tap was removed: clerk-js now loads without UI components
-// (since @clerk/ui uninstall) and OneTap.open() would crash the landing page.
-// Google OAuth stays available via the SignIn card's social buttons.
+// Google One Tap for signed-out landing visitors — one-click sign-in/sign-up
+// without leaving the page. Requires @clerk/ui (loaded via ClerkProvider).
+function OneTapGuest() {
+  const { user } = useAuthStore();
+  if (!isClerkEnabled() || user) return null;
+  return (
+    <GoogleOneTap
+      appearance={clerkAppearance}
+      cancelOnTapOutside
+      itpSupport
+    />
+  );
+}
 
 function Header() {
   return (

@@ -3,7 +3,7 @@
 // get a one-click prompt; the SignIn card is the fallback for everyone else.
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import { SignIn } from '@clerk/clerk-react';
+import { SignIn, GoogleOneTap } from '@clerk/clerk-react';
 import { useAuthStore } from '../stores/authStore';
 import { clerkAppearance } from '../lib/clerk/appearance';
 import { AuthPage, AuthLoader } from './AuthShell';
@@ -28,6 +28,11 @@ export default function ClerkSignIn() {
       title="Masuk ke DeutschUp"
       subtitle="Lanjutkan perjalanan Bahasa Jermanmu."
     >
+      <GoogleOneTap
+        appearance={clerkAppearance}
+        cancelOnTapOutside
+        itpSupport
+      />
       <SignIn
         routing="path"
         path="/sign-in"
