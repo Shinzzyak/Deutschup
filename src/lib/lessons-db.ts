@@ -105,10 +105,11 @@ export async function findLesson(id: string): Promise<Lesson | undefined> {
       // Typed v2 pool: authored v2 rows take priority, then legacy MC rows fill
       // the remaining slots — seeded lessons keep their mixed types, legacy-only
       // lessons upgrade from the 3-question AI fallback to a full quiz.
-      // Cap 8 = 6 typed v2 + 2 legacy grammar MC (book order: grammar first,
-      // sort_order 1-7 sorts ahead of v2's 100+). Legacy MC still feeds
-      // checkpoint pools via lesson.exercises.
-      const V2_QUIZ_CAP = 8;
+      // Cap 10 = 8 typed v2 (6 seeded + book-sourced fill_blank@60/matching@61)
+      // + 2 legacy grammar MC (book order: grammar first, sort_order 1-7 sorts
+      // ahead of v2's 100+). Legacy MC still feeds checkpoint pools via
+      // lesson.exercises. User rule: legacy grammar + v2 GABUNG, never replaced.
+      const V2_QUIZ_CAP = 10;
       const typed = rows.map(rowToExerciseV2).filter(Boolean) as ExerciseV2[];
       const legacyMc = rows
         .filter(r => (r.exercise_type ?? 'multiple_choice') === 'multiple_choice' && (r.answer === null || r.answer === undefined))

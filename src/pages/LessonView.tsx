@@ -29,8 +29,9 @@ import { getCourseUnitRoute, isCheckpointUnit, inferCourseUnitLevel } from '../l
 // ============================================================
 const XP_PER_CORRECT_ANSWER = 10;
 const XP_PER_LESSON_COMPLETE = 10;
-/** V2 quiz length — DB-authored sets run up to 8 (6 typed v2 + legacy grammar MC). */
-const MAX_QUESTIONS_PER_LESSON_V2 = 8;
+/** V2 quiz length — DB-authored sets run up to 10 (8 typed v2 incl. book-sourced
+ * fill_blank@60/matching@61 + 2 legacy grammar MC; user rule: gabung, jangan replace). */
+const MAX_QUESTIONS_PER_LESSON_V2 = 10;
 /** Small chip above the question so the learner knows the format. */
 const TYPE_LABELS: Record<string, string> = {
   multiple_choice: 'Pilihan ganda',
