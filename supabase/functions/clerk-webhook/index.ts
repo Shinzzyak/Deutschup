@@ -206,7 +206,10 @@ async function handleUserCreated(
       id: identity,
       full_name: fullName,
       avatar_url: user.image_url,
-      role: user.public_metadata?.role || "user",
+      // Security: role is NEVER read from public_metadata — attacker-controlled
+      // if the webhook signing secret leaks (it did: public git history, 2026-07
+      // docs). Single admin = ADMIN_EMAIL, provisioned via SQL directly.
+      role: "user",
     },
     { onConflict: "id" }
   );
@@ -256,13 +259,12 @@ async function handleUserUpdated(
     return { success: false, error: "User not found" };
   }
 
-  // Update profile
+  // Update profile (role NEVER touched — admin via SQL only, see handleUserCreated)
   const { error: updateError } = await supabase
     .from("profiles")
     .update({
       full_name: fullName,
       avatar_url: user.image_url,
-      role: user.public_metadata?.role || "user",
     })
     .eq("id", internalId);
 
