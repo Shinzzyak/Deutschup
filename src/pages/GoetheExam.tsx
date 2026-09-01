@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { goetheExamQuestions, examLevels } from '../data/goethe-exam-questions';
 import { extendedExamQuestions } from '../data/goethe-exam-extended';
+import { bookExamQuestions } from '../data/goethe-exam-book';
 import { Button } from '../components/ui/button';
 import { Progress } from '../components/ui/progress';
 import { ErrorState } from '../components/ui/error-state';
@@ -45,7 +46,7 @@ export default function GoetheExam() {
   const [answered, setAnswered] = useState<Record<string, string>>({});
   const [examComplete, setExamComplete] = useState(false);
 
-  const allQuestions = useMemo(() => [...goetheExamQuestions, ...extendedExamQuestions], []);
+  const allQuestions = useMemo(() => [...goetheExamQuestions, ...extendedExamQuestions, ...bookExamQuestions], []);
 
   const filteredQuestions = useMemo(() => {
     if (!selectedLevel) return [];
