@@ -56,8 +56,20 @@ ESSAY = {
  'a2-12': 'Schreibe über dein Studium: Worüber freust du dich? Worauf wartest du? (Tentang kuliahmu: pakai pronominaladverbien.)',
  'a2-13': 'Ich glaube, dass ... Schreibe vier Sätze über deine Pläne und Hoffnungen. (Kepercayaan & harapanmu dengan nebensatz.)',
  'a2-14': 'Welche deutsche Gewohnheit findest du interessant? Und welche indonesische? (Adat Jerman mana yang menarik? Dan Indonesia?)',
- 'a2-15': 'Rückblick: Was konntest du am Anfang nicht und jetzt gut? (Kilas balik: apa yang dulu sulit dan sekarang bisa?)',
+ 'a2-15': 'A2-Wiederholung: Was kannst du jetzt gut — und was willst du noch üben? Schreibe drei Sätze. (Review A2: apa yang sekarang bisa kamu kuasai dan apa yang masih mau dilatih? 3 kalimat.)',
  'b1-1': 'Erkläre mit dem Genitiv: die Bedeutung von drei Wörtern aus dieser Lektion. (Jelaskan 3 kata leksikon ini pakai genitiv.)',
+ 'b1-14': 'Schreibe über deine Traumreise: Wohin? Mit wem? Was machst du dort? (Tulis rencana liburan impianmu: ke mana, dengan siapa, apa yang kamu lakukan.)',
+ 'b1-15': 'Ein gekauftes Gerät ist kaputt. Schreibe die Reklamation an den Laden. (Alat belianmu rusak: tulis komplain ke toko — apa masalahnya, apa yang kamu minta.)',
+ 'b1-16': 'Beschreibe eine große Veränderung in deinem Leben und wie du dich daran gewöhnt hast. (Ceritakan satu perubahan besar hidupmu dan bagaimana kamu beradaptasi.)',
+ 'b1-17': 'Schreibe ein kurzes Anschreiben für einen Nebenjob. (Tulis surat pengantar singkat untuk kerja sampingan: siapa kamu, kenapa cocok, kapan bisa mulai.)',
+ 'b1-18': 'Was tut deine Stadt/familie für die Umwelt — und was kannst du besser machen? (Apa yang sudah dilakukan untuk lingkungan, dan apa yang bisa kamu perbaiki?)',
+ 'b1-19': 'Wie sieht dein Leben in 10 Jahren aus? Schreibe mit Futur I und Hoffnungen. (Bagaimana hidupmu 10 tahun lagi? Tulis dengan futur I dan harapan.)',
+ 'b1-20': 'Erzähle von einem Streit und wie ihr euch wieder vertragen habt. (Ceritakan satu pertengkaran dan bagaimana kalian berdamai.)',
+ 'b1-21': 'Was machst du für deine Gesundheit — und was solltest du ändern? (Apa yang kamu lakukan untuk kesehatan, dan apa yang harusnya diubah?)',
+ 'b1-22': 'Empfiehl ein Buch/einen Film mit Begründung. (Rekomendasikan buku/film beserta alasannya — kenapa menarik, untuk siapa.)',
+ 'b1-23': 'Deine Nachbarn machen nachts Musik. Schreibe einen höflichen Zettel. (Tetangga musikkan malam: tulis memo sopan di pintu — masalah + usulan solusi.)',
+ 'b1-24': 'Vergleiche das Leben in der Stadt und auf dem Land. (Bandingkan hidup kota vs desa: keuntungan & kerugian masing-masing.)',
+ 'b1-25': 'Was würdest du mit 10.000 Euro machen? Begründe deine Prioritäten. (Kalau dapat 10.000 euro, apa yang kamu lakukan? Jelaskan prioritasnya.)',
  'b1-2': 'Beschreibe eine Person, die dich inspiriert. Benutze Relativsätze. (Orang yang menginspirasi, pakai relativsätze.)',
  'b1-3': 'Was würdest du machen, wenn du einen Monat frei hättest? (Apa yang akan kamu lakukan bila punya satu bulan libur?)',
  'b1-4': 'Wie wird Recycling in deiner Stadt organisiert? Schreibe im Passiv. (Bagaimana daur ulang di kotamu? Pakai passiv.)',
@@ -173,12 +185,18 @@ def accepted_forms(v):
 rows = []  # (lesson_id, sort_order, exercise_type, question, options, correct_answer, answer)
 LEVEL_OF = lambda lid: lid.split('-')[0]
 
+# Skip lessons that already have v2 rows (any row with a non-null typed answer)
+# — makes the generator idempotent across re-runs / incremental runs.
+_done = {r[0] for r in q("SELECT DISTINCT lesson_id FROM curriculum_exercises WHERE answer::text <> 'null';")}
+
 for lid in sorted(lessons):
     level = LEVEL_OF(lid)
     lv = vocab.get(lid, [])
     title = lessons[lid]['title']
     if lid == 'a1-1':
         continue  # pilot already seeded
+    if lid in _done:
+        continue  # v2 already seeded
     o = 100  # start beyond any legacy/pilot sort_order
     if len(lv) >= 4:
         v0, v1, v2_, v3 = lv[0], lv[1], lv[2], lv[3]
