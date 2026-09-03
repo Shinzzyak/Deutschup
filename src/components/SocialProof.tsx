@@ -25,12 +25,6 @@ export default function SocialProof() {
         <div className="grid items-start gap-12 lg:grid-cols-2 lg:gap-20">
           {/* Left — editorial quote/testimonial style */}
           <Reveal>
-            <div className="mb-6 flex items-center gap-3">
-              <div className="h-px w-12 bg-brand-ink" />
-              <span className="text-xs font-bold tracking-[0.2em] text-ink-muted uppercase">
-                Mengapa DeutschUp
-              </span>
-            </div>
             <h2 className="mb-6 font-serif text-4xl leading-[1.05] tracking-tight text-brand-ink sm:text-5xl">
               Materi dan latihan untuk{' '}
               <span className="italic text-brand-rust">belajar terarah</span>
@@ -75,10 +69,6 @@ export default function SocialProof() {
           {/* Right — editorial stat block */}
           <Reveal y={28} delay={0.2} className="lg:pt-12">
             <div className="border-2 border-brand-ink p-8 md:p-10">
-              <p className="mb-6 text-xs font-bold tracking-[0.2em] text-ink-subtle uppercase">
-                Metode Pembelajaran
-              </p>
-
               <div className="space-y-6">
                 {method.map((item) => (
                   <div key={item.num} className="flex gap-4">

@@ -53,12 +53,6 @@ export default function LearningRoadmap() {
       <div className="mx-auto max-w-[1400px] px-6 sm:px-10 lg:px-16">
         {/* Section header */}
         <Reveal y={0} className="mb-16 md:mb-24">
-          <div className="mb-6 flex items-center gap-3">
-            <div className="h-px w-12 bg-brand-ink" />
-            <span className="text-xs font-bold tracking-[0.2em] text-ink-muted uppercase">
-              Kurikulum
-            </span>
-          </div>
           <h2 className="max-w-3xl font-serif text-4xl leading-[1.05] tracking-tight text-brand-ink sm:text-5xl lg:text-6xl">
             Kurikulum{' '}
             <span className="italic text-brand-rust">Bahasa Jerman</span>

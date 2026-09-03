@@ -103,12 +103,6 @@ export default function ProductShowcase() {
           transition={{ duration: 0.6, ease: EASE }}
           className="mb-16 md:mb-24"
         >
-          <div className="mb-6 flex items-center gap-3">
-            <div className="h-px w-12 bg-brand-tan" />
-            <span className="text-xs font-bold tracking-[0.2em] text-brand-tan uppercase">
-              Fitur Unggulan
-            </span>
-          </div>
           <h2 className="max-w-3xl font-serif text-4xl leading-[1.05] tracking-tight text-brand-cream sm:text-5xl lg:text-6xl">
             Semua yang Dibutuhkan untuk{' '}
             <span className="italic text-brand-tan">Belajar Bahasa Jerman</span>
