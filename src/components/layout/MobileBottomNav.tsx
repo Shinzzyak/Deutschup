@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useAuthStore } from '../../stores/authStore';
-import SearchOverlay from '../search/SearchOverlay';
 import {
   Home,
   Trophy,
@@ -9,17 +7,16 @@ import {
   Sparkles,
   User,
   ShieldCheck,
-  Search,
 } from 'lucide-react';
 
 const navigation = [
   { name: 'Beranda', href: '/', icon: Home },
   { name: 'Kurikulum', href: '/curriculum', icon: Trophy },
   { name: 'Vocab', href: '/vocab', icon: BrainCircuit },
-  { name: 'Cari', href: '#search', icon: Search, action: 'search' },
   { name: 'Simulasi', href: '/simulasi', icon: Sparkles },
+  { name: 'Goethe', href: '/goethe', icon: Trophy },
   { name: 'Profil', href: '/profile', icon: User },
-] as const;
+];
 
 // flex-1 + min-w-0 keeps 7 items (6 + Admin) inside a 320px viewport instead of
 // pushing the row wider than the screen; the label truncates rather than wraps.
@@ -29,7 +26,6 @@ const itemClass =
 export default function MobileBottomNav() {
   const location = useLocation();
   const { profileData } = useAuthStore();
-  const [searchOpen, setSearchOpen] = useState(false);
 
   function isActive(href: string) {
     if (href === '/') return location.pathname === '/';
@@ -42,33 +38,13 @@ export default function MobileBottomNav() {
   const adminActive = location.pathname.startsWith('/admin');
 
   return (
-    <>
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <nav
-        className="glass-nav fixed right-0 bottom-0 left-0 z-50 lg:hidden"
-        aria-label="Navigasi mobile"
-      >
-        <div className="flex items-stretch justify-around px-1 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
-          {navigation.map((item) => {
-            if ('action' in item && item.action === 'search') {
-              return (
-                <button
-                  key={item.name}
-                  type="button"
-                  onClick={() => setSearchOpen(true)}
-                  aria-label="Cari materi"
-                  className={`${itemClass} text-ink-muted active:text-brand-ink`}
-                >
-                  <div className="relative">
-                    <item.icon className="h-5 w-5 stroke-[1.8]" />
-                  </div>
-                  <span className="w-full truncate text-center text-[10px] leading-none font-medium">
-                    {item.name}
-                  </span>
-                </button>
-              );
-            }
-            const active = isActive(item.href);
+    <nav
+      className="glass-nav fixed right-0 bottom-0 left-0 z-50 lg:hidden"
+      aria-label="Navigasi mobile"
+    >
+      <div className="flex items-stretch justify-around px-1 pt-1.5 pb-[calc(0.375rem+env(safe-area-inset-bottom))]">
+        {navigation.map((item) => {
+          const active = isActive(item.href);
           return (
             <Link
               key={item.name}
@@ -117,8 +93,7 @@ export default function MobileBottomNav() {
             </span>
           </Link>
         )}
-          </div>
-        </nav>
-    </>
+      </div>
+    </nav>
   );
 }

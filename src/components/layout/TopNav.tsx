@@ -2,9 +2,8 @@ import { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
 import { useAuthStore } from '../../stores/authStore';
 import { useProgressStore } from '../../stores/progressStore';
-import SearchOverlay from '../search/SearchOverlay';
 import {
-  Search, LogOut, Flame, Zap, ShieldCheck, User, ChevronDown,
+  LogOut, Flame, Zap, ShieldCheck, User, ChevronDown,
   BookOpen, Trophy, BrainCircuit, Sparkles, CreditCard, BarChart3,
 } from 'lucide-react';
 
@@ -21,7 +20,6 @@ export default function TopNav() {
   const { user, logout, profileData } = useAuthStore();
   const location = useLocation();
   const [showUserMenu, setShowUserMenu] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   const streak = useProgressStore((s) => s.streak);
@@ -53,24 +51,8 @@ export default function TopNav() {
     return location.pathname.startsWith(href.split('?')[0]);
   }
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setSearchOpen(prev => !prev);
-      } else if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) {
-        e.preventDefault();
-        setSearchOpen(true);
-      }
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, []);
-
   return (
-    <>
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
-      <nav className="glass-nav sticky top-0 z-50" aria-label="Navigasi utama">
+    <nav className="glass-nav sticky top-0 z-50" aria-label="Navigasi utama">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-10">
           <div className="flex items-center justify-between h-14">
             {/* Logo */}
@@ -122,17 +104,6 @@ export default function TopNav() {
 
             {/* Right section */}
             <div className="flex items-center gap-1.5">
-              <button
-                onClick={() => setSearchOpen(true)}
-                className="hidden h-7 items-center gap-1.5 border border-brand-ink/15 px-2.5 text-brand-ink transition-colors hover:bg-brand-ink/5 sm:flex"
-                aria-label="Cari materi"
-                aria-keyshortcuts="Control+K"
-              >
-                <Search className="h-3.5 w-3.5" aria-hidden="true" />
-                <span className="hidden text-xs font-bold text-ink-muted md:inline">Cari</span>
-                <kbd className="hidden font-mono text-[10px] text-ink-subtle lg:inline">Ctrl K</kbd>
-              </button>
-
               {/* brand-tan is the accent for dark surfaces; on .glass-nav
                   (#f8f4f1 composite) it measured 2.42:1, under the 3:1 floor
                   for graphics. brand-rust is 8.15:1 on the same surface. */}
@@ -186,6 +157,5 @@ export default function TopNav() {
           </div>
         </div>
       </nav>
-    </>
   );
 }
