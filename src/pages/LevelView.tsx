@@ -24,7 +24,7 @@ const levelMeta: Record<Level, { title: string; description: string }> = {
   B2: { title: 'Mahir B2', description: 'Partizip, idiome, gaya ilmiah, persiapan ujian Goethe.' },
 };
 
-const getEstimatedTime = (isCheckpoint: boolean) => (isCheckpoint ? '15–20 menit' : '8–12 menit');
+const getEstimatedTime = (isCheckpoint: boolean) => (isCheckpoint ? '15-20 menit' : '8-12 menit');
 
 function ProgressRing({ percent, size = 80, strokeWidth = 6, className }: { percent: number; size?: number; strokeWidth?: number; className?: string }) {
   const radius = (size - strokeWidth) / 2;

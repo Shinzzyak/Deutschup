@@ -124,10 +124,13 @@ export default function TopNav() {
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setSearchOpen(true)}
-                className="flex h-11 w-11 items-center justify-center text-brand-ink transition-colors hover:bg-brand-ink/10"
+                className="hidden h-7 items-center gap-1.5 border border-brand-ink/15 px-2.5 text-brand-ink transition-colors hover:bg-brand-ink/5 sm:flex"
                 aria-label="Cari materi"
+                aria-keyshortcuts="Control+K"
               >
-                <Search className="h-5 w-5" />
+                <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                <span className="hidden text-xs font-bold text-ink-muted md:inline">Cari</span>
+                <kbd className="hidden font-mono text-[10px] text-ink-subtle lg:inline">Ctrl K</kbd>
               </button>
 
               {/* brand-tan is the accent for dark surfaces; on .glass-nav

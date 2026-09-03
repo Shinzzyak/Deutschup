@@ -492,7 +492,7 @@ export default function VocabTrainerDB() {
                 )}
               >
                 {countsLoading
-                  ? '—'
+                  ? '·'
                   : isActive
                     ? `${formatNumber(count)} · ${levelProgress.knownPercent}%`
                     : `${formatNumber(count)} kata`}
@@ -591,8 +591,8 @@ export default function VocabTrainerDB() {
             <span className={cn(EYEBROW, 'text-ink-subtle')}>Urutkan</span>
             <select className={FIELD} value={sort} onChange={(e) => setSort(e.target.value as SortType)}>
               <option value="default">Urutan materi</option>
-              <option value="german">Jerman A–Z</option>
-              <option value="indonesian">Indonesia A–Z</option>
+              <option value="german">Jerman A-Z</option>
+              <option value="indonesian">Indonesia A-Z</option>
             </select>
           </label>
         </div>

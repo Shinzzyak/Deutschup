@@ -575,13 +575,13 @@ export default function Pricing() {
                         {order.id}
                       </td>
                       <td className="border-b border-brand-ink/10 px-5 py-4 text-sm whitespace-nowrap text-ink-muted">
-                        {formatDate(order.paid_at || order.created_at) || '—'}
+                        {formatDate(order.paid_at || order.created_at) || '-'}
                       </td>
                       <td className="border-b border-brand-ink/10 px-5 py-4 text-sm font-bold whitespace-nowrap text-brand-ink">
                         Rp {(order.amount || 0).toLocaleString('id-ID')}
                       </td>
                       <td className="border-b border-brand-ink/10 px-5 py-4 text-sm text-ink-muted uppercase">
-                        {order.payment_method || '—'}
+                        {order.payment_method || '-'}
                       </td>
                       <td className="border-b border-brand-ink/10 px-5 py-4">
                         <span className="inline-flex items-center gap-1.5 bg-brand-green px-2.5 py-1 text-xs font-bold text-brand-ink">

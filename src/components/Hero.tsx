@@ -133,12 +133,12 @@ export default function Hero() {
               {...childProps}
             >
               <span>Tutor AI</span>
-              <span className="text-brand-rust">—</span>
+              <span className="h-3 w-px bg-brand-ink/25" aria-hidden="true" />
               <span>Simulasi ujian</span>
-              <span className="text-brand-rust">—</span>
+              <span className="h-3 w-px bg-brand-ink/25" aria-hidden="true" />
               <span>Progres belajar</span>
-              <span className="text-brand-rust">—</span>
-              <span>Kurikulum A1–B2</span>
+              <span className="h-3 w-px bg-brand-ink/25" aria-hidden="true" />
+              <span>Kurikulum A1-B2</span>
             </motion.div>
           </motion.div>
 

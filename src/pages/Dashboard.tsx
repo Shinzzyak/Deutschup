@@ -597,19 +597,19 @@ export default function Dashboard() {
           <StatCell
             icon={Flame}
             label="Streak"
-            value={loadFailed ? '—' : `${streak}`}
+            value={loadFailed ? '-' : `${streak}`}
             hint={loadFailed ? 'Belum bisa dimuat' : `Rekor ${bestStreak} hari`}
           />
           <StatCell
             icon={Zap}
             label="XP"
-            value={loadFailed ? '—' : nf.format(xp)}
+            value={loadFailed ? '-' : nf.format(xp)}
             hint={loadFailed ? 'Belum bisa dimuat' : 'Total sejak awal'}
           />
           <StatCell
             icon={CheckCircle2}
             label="Materi selesai"
-            value={loadFailed ? '—' : `${completedLessons.length}`}
+            value={loadFailed ? '-' : `${completedLessons.length}`}
             hint={loadFailed ? 'Belum bisa dimuat' : `dari ${TOTAL_UNITS} materi`}
           />
           <StatCell
@@ -683,13 +683,13 @@ export default function Dashboard() {
                           label={`Progres level ${row.id}: ${row.doneLessons} dari ${row.lessonCount} pelajaran`}
                         />
                         <span className="shrink-0 text-xs font-bold text-ink-muted tabular-nums">
-                          {loadFailed ? '—' : `${row.doneLessons}/${row.lessonCount}`}
+                          {loadFailed ? '-' : `${row.doneLessons}/${row.lessonCount}`}
                         </span>
                       </div>
                       <p className="mt-2 text-xs text-ink-muted">
                         {row.lessonCount} pelajaran
                         {row.checkpointCount > 0 &&
-                          ` • ${loadFailed ? '—' : row.passedCheckpoints}/${row.checkpointCount} checkpoint lulus`}
+                          ` • ${loadFailed ? '-' : row.passedCheckpoints}/${row.checkpointCount} checkpoint lulus`}
                       </p>
                     </>
                   )}
@@ -744,7 +744,7 @@ export default function Dashboard() {
             </div>
             <p className="mt-2 text-xl font-bold text-brand-ink">
               {studyTime.status === 'loading' && 'Menghitung…'}
-              {studyTime.status === 'error' && '—'}
+              {studyTime.status === 'error' && '-'}
               {studyTime.status === 'ready' && formatStudyTime(studyTime.seconds)}
             </p>
             {studyTime.status === 'error' && <p className="mt-1 text-xs text-ink-muted">Belum bisa dimuat</p>}
@@ -756,7 +756,7 @@ export default function Dashboard() {
               <span className="text-[11px] font-bold tracking-[0.14em] uppercase">Checkpoint lulus</span>
             </div>
             <p className="mt-2 text-xl font-bold text-brand-ink">
-              {loadFailed ? '—' : `${checkpointStats.passed} dari ${checkpointStats.total}`}
+              {loadFailed ? '-' : `${checkpointStats.passed} dari ${checkpointStats.total}`}
             </p>
             {loadFailed && <p className="mt-1 text-xs text-ink-muted">Belum bisa dimuat</p>}
           </div>
@@ -766,7 +766,7 @@ export default function Dashboard() {
               <Target className="h-4 w-4" aria-hidden="true" />
               <span className="text-[11px] font-bold tracking-[0.14em] uppercase">Rata-rata simulasi</span>
             </div>
-            <p className="mt-2 text-xl font-bold text-brand-ink">{averageScore === null ? '—' : `${averageScore}%`}</p>
+            <p className="mt-2 text-xl font-bold text-brand-ink">{averageScore === null ? '-' : `${averageScore}%`}</p>
             {averageScore === null && (
               <Link to="/simulasi" className="mt-1 inline-block text-xs font-semibold text-brand-rust underline-offset-4 hover:underline">
                 Belum pernah ikut simulasi
@@ -781,7 +781,7 @@ export default function Dashboard() {
             </div>
             <p className="mt-2 text-xl font-bold text-brand-ink">
               {levelWords.status === 'loading' && 'Memuat…'}
-              {levelWords.status === 'error' && '—'}
+              {levelWords.status === 'error' && '-'}
               {levelWords.status === 'ready' && `${nf.format(levelWords.count)} kata`}
             </p>
             {levelWords.status === 'error' ? (

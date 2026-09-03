@@ -360,7 +360,7 @@ export default function Profile() {
                   Berlaku sampai
                 </dt>
                 <dd className="mt-1 font-serif text-lg text-brand-ink">
-                  {adminAccess ? 'Tanpa batas' : activePro ? expiryLabel || 'Tidak tercatat' : '—'}
+                  {adminAccess ? 'Tanpa batas' : activePro ? expiryLabel || 'Tidak tercatat' : '-'}
                 </dd>
                 {activePro && !adminAccess && (
                   <dd className="mt-1 text-xs text-ink-muted">

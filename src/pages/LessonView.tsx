@@ -319,7 +319,7 @@ function MatchingBoard({ exercise, state, onChange, disabled, checked }: {
           ? selectedLeft
             ? 'Sekarang pilih pasangannya di kolom kanan.'
             : 'Ketuk item di kiri, lalu ketuk pasangannya di kanan.'
-          : 'Semua pasangan terisi — cek jawabanmu.'}
+          : 'Semua pasangan terisi. Cek jawabanmu.'}
       </p>
       {state.length > 0 && !checked && (
         <div className="mt-3 flex flex-wrap gap-2">
