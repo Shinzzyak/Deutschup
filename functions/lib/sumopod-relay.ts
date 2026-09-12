@@ -71,15 +71,31 @@ export async function mirrorToBot(
 
   let botStatus = 0;
   let error = '';
+  let botBody = '';
   try {
     const r = await fetch(botCallbackUrl(env), { method: 'POST', headers, body: raw });
     botStatus = r.status;
+    if (botStatus !== 200) {
+      botBody = (await r.text()).slice(0, 200);
+      console.error('[sumopod-relay] bot rejected callback', botStatus, botBody);
+    }
   } catch (e: any) {
     error = e?.message || 'bot unreachable';
+    console.error('[sumopod-relay] bot unreachable', error);
   }
 
+  // A non-200 from the bot is the interesting case: the gateway always gets a
+  // 200 from us, so without echoing the upstream status a broken hop looks like
+  // a silent success from the dashboard. Body is echoed only on failure, and
+  // truncated — it is the bot's own JSON, never a credential.
   return new Response(
-    JSON.stringify({ ok: true, relayed: true, bot_status: botStatus, error: error || undefined }),
+    JSON.stringify({
+      ok: true,
+      relayed: true,
+      bot_status: botStatus,
+      ...(error ? { error } : {}),
+      ...(botBody ? { bot_body: botBody } : {}),
+    }),
     { status: 200, headers: { 'content-type': 'application/json' } },
   );
 }

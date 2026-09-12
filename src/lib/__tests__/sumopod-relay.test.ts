@@ -134,14 +134,19 @@ describe('mirrorToBot', () => {
       throw new Error('connect ECONNREFUSED');
     });
     const res = await mirrorToBot(botPayload('VRB-abc'), req({}), null);
+    const out = await res.json();
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ ok: true, relayed: true, bot_status: 0 });
+    expect(out).toMatchObject({ ok: true, relayed: true, bot_status: 0 });
+    expect(out.error).toContain('ECONNREFUSED');
   });
 
   it('surfaces a non-200 from the bot without failing the gateway', async () => {
     vi.stubGlobal('fetch', async () => new Response('{"ok":false}', { status: 401 }));
     const res = await mirrorToBot(botPayload('VRB-abc'), req({}), null);
     expect(res.status).toBe(200);
-    expect(await res.json()).toMatchObject({ relayed: true, bot_status: 401 });
+    // the upstream status AND body must survive, or a broken hop reads as success
+    expect(await res.json()).toMatchObject({
+      relayed: true, bot_status: 401, bot_body: '{"ok":false}',
+    });
   });
 });
