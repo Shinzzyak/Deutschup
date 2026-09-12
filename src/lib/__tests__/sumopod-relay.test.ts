@@ -80,8 +80,12 @@ describe('isBotOrder', () => {
 });
 
 describe('botCallbackUrl', () => {
-  it('defaults to the delivery bot listener', () => {
-    expect(botCallbackUrl(null)).toContain('/sumopod/callback');
+  it('defaults to the delivery bot listener over TLS', () => {
+    const url = botCallbackUrl(null);
+    expect(url).toContain('/sumopod/callback');
+    // The hop carries the webhook token, so it must be encrypted.
+    expect(new URL(url).protocol).toBe('https:');
+    expect(new URL(url).hostname).toBe('bot.sintec.my.id');
   });
 
   it('never defaults to a bare IP — Workers answer those with 1003', () => {

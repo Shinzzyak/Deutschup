@@ -19,17 +19,20 @@ export const BOT_ORDER_PREFIX = 'VRB-';
  * to bare IPs with `error code: 1003` (Direct IP Access Not Allowed), so
  * `http://150.109.12.245/...` fails inside the Worker even though it answers
  * fine from a normal client. Verified: the literal returned 403/1003 while the
- * same host over wildcard DNS returned 200.
+ * same host over a hostname returned 200.
  *
- * Override with BOT_CALLBACK_URL (Pages env) once a first-party subdomain is
- * pointed at the VPS; the interim host is wildcard DNS, which resolves straight
- * to the VPS with no Cloudflare in the path.
+ * `bot.sintec.my.id` is a DNS-only (grey cloud) A record pointing straight at the
+ * VPS, with Caddy terminating TLS using a Let's Encrypt cert. Do NOT flip that
+ * record to proxied: Cloudflare's edge would then sit between the relay and the
+ * bot, and the Worker would be calling an origin by IP.
+ *
+ * Override with BOT_CALLBACK_URL (Pages env) if the host ever moves.
  */
 export function botCallbackUrl(env?: Record<string, unknown> | null): string {
   const override = env && env.BOT_CALLBACK_URL;
   return typeof override === 'string' && override
     ? override
-    : 'http://150.109.12.245.sslip.io/sumopod/callback';
+    : 'https://bot.sintec.my.id/sumopod/callback';
 }
 
 /**
