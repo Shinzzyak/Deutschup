@@ -12,11 +12,24 @@
 /** Order ids the delivery bot generates. See pelerproxy/services/fulfillment.py. */
 export const BOT_ORDER_PREFIX = 'VRB-';
 
+/**
+ * Where the bot's listener lives.
+ *
+ * MUST be a hostname, never an IP literal: Cloudflare Workers refuse subrequests
+ * to bare IPs with `error code: 1003` (Direct IP Access Not Allowed), so
+ * `http://150.109.12.245/...` fails inside the Worker even though it answers
+ * fine from a normal client. Verified: the literal returned 403/1003 while the
+ * same host over wildcard DNS returned 200.
+ *
+ * Override with BOT_CALLBACK_URL (Pages env) once a first-party subdomain is
+ * pointed at the VPS; the interim host is wildcard DNS, which resolves straight
+ * to the VPS with no Cloudflare in the path.
+ */
 export function botCallbackUrl(env?: Record<string, unknown> | null): string {
   const override = env && env.BOT_CALLBACK_URL;
   return typeof override === 'string' && override
     ? override
-    : 'http://150.109.12.245/sumopod/callback';
+    : 'http://150.109.12.245.sslip.io/sumopod/callback';
 }
 
 /**

@@ -75,7 +75,13 @@ describe('isBotOrder', () => {
 
 describe('botCallbackUrl', () => {
   it('defaults to the delivery bot listener', () => {
-    expect(botCallbackUrl(null)).toBe('http://150.109.12.245/sumopod/callback');
+    expect(botCallbackUrl(null)).toContain('/sumopod/callback');
+  });
+
+  it('never defaults to a bare IP — Workers answer those with 1003', () => {
+    // Cloudflare Workers refuse subrequests to IP literals. A regression here
+    // is invisible from a normal client and only shows up in production.
+    expect(botCallbackUrl(null)).not.toMatch(/^https?:\/\/\d+\.\d+\.\d+\.\d+/);
   });
 
   it('honours an env override', () => {
@@ -85,7 +91,7 @@ describe('botCallbackUrl', () => {
   });
 
   it('ignores a non-string override', () => {
-    expect(botCallbackUrl({ BOT_CALLBACK_URL: 42 })).toContain('150.109.12.245');
+    expect(botCallbackUrl({ BOT_CALLBACK_URL: 42 })).toContain('/sumopod/callback');
   });
 });
 
