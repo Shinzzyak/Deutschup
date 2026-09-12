@@ -1,6 +1,7 @@
 // @ts-nocheck
 // Cloudflare Pages Function catch-all for /api/*
 import { runApiHandler } from '../lib/http-adapter';
+import { isBotOrder, mirrorToBot } from '../lib/sumopod-relay';
 import type { ApiHandler } from '../../lib/http-types';
 
 import ping from '../../api/ping';
@@ -98,6 +99,19 @@ export const onRequest: PagesFunction = async (context) => {
   }
 
   const handler = ROUTES[name];
+
+  // SumoPod fan-out. This merchant account has one webhook_url and it points at
+  // Deutschup's payment handler; the delivery bot charges through the same
+  // account, so its callbacks land here too. Claim the bot's and mirror them
+  // onward; everything else continues to the identical handler with the
+  // identical request object. The check reads the parsed order_id, and the
+  // original request is only cloned, never consumed, so the existing callback
+  // path is unchanged.
+  if (name === 'payment') {
+    const raw = await request.clone().text();
+    if (isBotOrder(raw)) return mirrorToBot(raw, request, env);
+  }
+
   if (!handler) {
     // Not an API route — fall through to static assets (SPA shell, _redirects).
     // With _routes.json including /*, every pathname reaches this function;
