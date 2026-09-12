@@ -65,6 +65,23 @@ const FORWARD_HEADERS = [
 ];
 
 /**
+ * The SumoPod project's stored webhook URL posts to `/api/payment/callback`,
+ * but the payment handler dispatches on the `?action=` query. That mismatch is
+ * why every gateway delivery has been answered 404 "Payment endpoint not found"
+ * and no Deutschup payment ever settled from a callback.
+ *
+ * Return the equivalent URL that reaches the real handler, or null when the
+ * request already carries an action and needs no help.
+ */
+export function callbackAliasUrl(requestUrl: string, parts: string[]): string | null {
+  if ((parts[1] || '').toLowerCase() !== 'callback') return null;
+  const url = new URL(requestUrl);
+  if (url.searchParams.has('action')) return null;
+  url.searchParams.set('action', 'callback');
+  return url.toString();
+}
+
+/**
  * POST the callback to the bot and answer the gateway.
  *
  * Always returns 200. This endpoint's delivery record is shared with

@@ -6,7 +6,13 @@
 // original path. Wrong in one direction drops the bot's paid orders; wrong in
 // the other breaks Deutschup's payments.
 import { describe, expect, it, vi, afterEach } from 'vitest';
-import { BOT_ORDER_PREFIX, botCallbackUrl, isBotOrder, mirrorToBot } from '../../../functions/lib/sumopod-relay';
+import {
+  BOT_ORDER_PREFIX,
+  botCallbackUrl,
+  callbackAliasUrl,
+  isBotOrder,
+  mirrorToBot,
+} from '../../../functions/lib/sumopod-relay';
 
 const botPayload = (orderId: string) =>
   JSON.stringify({
@@ -157,5 +163,38 @@ describe('mirrorToBot', () => {
     expect(await res.json()).toMatchObject({
       relayed: true, bot_status: 401, bot_body: '{"ok":false}',
     });
+  });
+});
+
+describe('callbackAliasUrl', () => {
+  const base = 'https://deutschup.sintec.my.id/api/payment/callback';
+
+  it('aliases the path the gateway is configured with onto ?action=', () => {
+    const out = callbackAliasUrl(base, ['payment', 'callback']);
+    expect(out).toContain('action=callback');
+    expect(new URL(out!).searchParams.get('action')).toBe('callback');
+  });
+
+  it('leaves an already-correct callback alone', () => {
+    const ok = 'https://deutschup.sintec.my.id/api/payment?action=callback';
+    expect(callbackAliasUrl(ok, ['payment'])).toBeNull();
+  });
+
+  it('does not touch other payment actions', () => {
+    expect(callbackAliasUrl(base, ['payment', 'create'])).toBeNull();
+    expect(callbackAliasUrl(base, ['payment'])).toBeNull();
+  });
+
+  it('does not invent an action when one is already supplied', () => {
+    const other = 'https://deutschup.sintec.my.id/api/payment/callback?action=create';
+    expect(callbackAliasUrl(other, ['payment', 'callback'])).toBeNull();
+  });
+
+  it('is case-insensitive about the segment', () => {
+    expect(callbackAliasUrl(base, ['payment', 'CALLBACK'])).toContain('action=callback');
+  });
+
+  it('tolerates a missing segment', () => {
+    expect(callbackAliasUrl(base, [])).toBeNull();
   });
 });

@@ -1,7 +1,7 @@
 // @ts-nocheck
 // Cloudflare Pages Function catch-all for /api/*
 import { runApiHandler } from '../lib/http-adapter';
-import { isBotOrder, mirrorToBot } from '../lib/sumopod-relay';
+import { callbackAliasUrl, isBotOrder, mirrorToBot } from '../lib/sumopod-relay';
 import type { ApiHandler } from '../../lib/http-types';
 
 import ping from '../../api/ping';
@@ -103,13 +103,26 @@ export const onRequest: PagesFunction = async (context) => {
   // SumoPod fan-out. This merchant account has one webhook_url and it points at
   // Deutschup's payment handler; the delivery bot charges through the same
   // account, so its callbacks land here too. Claim the bot's and mirror them
-  // onward; everything else continues to the identical handler with the
-  // identical request object. The check reads the parsed order_id, and the
-  // original request is only cloned, never consumed, so the existing callback
-  // path is unchanged.
+  // onward; everything else continues to the payment handler with the identical
+  // request object. The check reads the parsed order_id, so a Deutschup order
+  // whose description merely quotes the prefix cannot be hijacked. The original
+  // request is only cloned, never consumed.
+  let reqToRun = request;
+  let partsToRun = parts;
   if (name === 'payment') {
     const raw = await request.clone().text();
     if (isBotOrder(raw)) return mirrorToBot(raw, request, env);
+
+    // Same handler, reached by the path the gateway is already configured with.
+    const alias = callbackAliasUrl(request.url, parts);
+    if (alias) {
+      reqToRun = new Request(alias, {
+        method: request.method,
+        headers: request.headers,
+        body: raw,
+      });
+      partsToRun = ['payment'];
+    }
   }
 
   if (!handler) {
@@ -128,7 +141,7 @@ export const onRequest: PagesFunction = async (context) => {
   }
 
   try {
-    const res = await runApiHandler(handler, request, parts.slice(1));
+    const res = await runApiHandler(handler, reqToRun, partsToRun.slice(1));
     const headers = new Headers(res.headers);
     const cors = corsHeaders(request.headers.get('Origin'));
     for (const [k, v] of Object.entries(cors)) headers.set(k, v as string);
