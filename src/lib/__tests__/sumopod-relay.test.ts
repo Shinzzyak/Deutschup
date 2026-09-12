@@ -81,7 +81,10 @@ describe('botCallbackUrl', () => {
   it('never defaults to a bare IP — Workers answer those with 1003', () => {
     // Cloudflare Workers refuse subrequests to IP literals. A regression here
     // is invisible from a normal client and only shows up in production.
-    expect(botCallbackUrl(null)).not.toMatch(/^https?:\/\/\d+\.\d+\.\d+\.\d+/);
+    // Parse the hostname rather than pattern-match the string: wildcard-DNS
+    // hosts legitimately begin with the address.
+    const host = new URL(botCallbackUrl(null)).hostname;
+    expect(host).not.toMatch(/^\d{1,3}(\.\d{1,3}){3}$/);
   });
 
   it('honours an env override', () => {
