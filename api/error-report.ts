@@ -1,6 +1,7 @@
 import type { ApiRequest, ApiResponse } from '../lib/http-types.js';
 import { getDb } from '../lib/api-utils.js';
 import { notifyDiscord } from './webhook-notify.js';
+import { classifyNoise, isAppFaultKind } from '../lib/error-noise-filter.js';
 
 // Public fire-and-forget error report endpoint.
 // No auth: captures browser crashes from any device. Rate-limited by size + count.
@@ -37,6 +38,49 @@ export default async function handler(req: ApiRequest, res: ApiResponse) {
   const kind = sanitize(String(body.kind || 'window.error')).slice(0, 40);
   if (!message && !stack) {
     return res.status(200).json({ ok: true }); // nothing useful, still 200
+  }
+
+  // === NOISE CLASSIFICATION (see lib/error-noise-filter.ts) ===
+  //
+  // Third-party scripts blocked by adblockers (Cloudflare Web Analytics beacon,
+  // and anything else outside our bundle) fire a window.error + a
+  // script-load-error pair on every affected page load. Both used to reach
+  // Discord as a red "App Error", which is how a handful of real events looked
+  // like a flood. Noise is dropped HERE — before the DB insert and before the
+  // notify — so it never lands anywhere.
+  //
+  // The disambiguator for the locationless `file:?:?` signature is whether this
+  // page load ALSO reported that the app never booted. A blocked beacon and a
+  // white screen produce identical window.error payloads; only mount-timeout /
+  // ErrorBoundary / chunk-load evidence tells them apart.
+  //
+  // ponytail: 60s window keyed on (ip, url) instead of a real page-load id —
+  // the reporters send all their events within milliseconds of each other, so
+  // the window only needs to be wider than the burst. Add a session id to the
+  // reporter payloads if a future case needs exact grouping.
+  let hasRealAppFault = isAppFaultKind(kind);
+  if (!hasRealAppFault) {
+    try {
+      const windowStart = new Date(Date.now() - 60_000).toISOString();
+      const { count } = await getDb()
+        .from('app_errors')
+        .select('*', { count: 'exact', head: true })
+        .eq('url', url)
+        .gte('created_at', windowStart)
+        .in('kind', ['mount-timeout', 'error-boundary', 'unhandledrejection']);
+      hasRealAppFault = (count || 0) > 0;
+    } catch (e: any) {
+      // Fail OPEN: if we cannot tell, treat the report as actionable. Losing a
+      // real crash alert is far worse than one extra Discord message.
+      hasRealAppFault = true;
+      console.error('[error-report] app-fault probe failed:', e?.message);
+    }
+  }
+
+  const verdict = classifyNoise(kind, message, stack, { hasRealAppFault });
+  if (verdict.noise) {
+    // 200 + ok: the client's fire-and-forget sender must see success either way.
+    return res.status(200).json({ ok: true, filtered: verdict.reason });
   }
 
   // Rate limit: DB-backed per-IP (60 req / 60s). In-memory maps don't work on
