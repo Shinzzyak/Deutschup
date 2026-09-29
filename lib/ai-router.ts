@@ -578,7 +578,14 @@ async function createCustomProviderClient(model: ModelConfig): Promise<AIProvide
       const response = await fetch(chatUrl, {
         method: 'POST',
         headers: buildHeaders(),
-        body: JSON.stringify({ model: model.model_id || model.name, messages, temperature: model.config?.temperature ?? 0.7 }),
+        // stream:false is LOAD-BEARING. The router streams (text/event-stream)
+        // whenever this field is absent, then `response.json()` below throws on
+        // the first `data: ` line → every JSON action (check-answer,
+        // vocab-examples, koreksi-kalimat, generate-exercises) 500s with
+        // "Herr Deutsch mengalami gangguan teknis". Measured 2026-09-29 against
+        // the live router: absent → 2 of 4 runs came back SSE; explicit false →
+        // 4 of 4 application/json.
+        body: JSON.stringify({ model: model.model_id || model.name, messages, temperature: model.config?.temperature ?? 0.7, stream: false }),
       });
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
