@@ -600,21 +600,62 @@ async function createCustomProviderClient(model: ModelConfig): Promise<AIProvide
 /**
  * Parse a model's JSON answer without trusting that it is bare JSON.
  *
- * Models wrap JSON in a markdown fence (` ```json … ``` `) often enough to be a
- * production failure mode, not a curiosity: measured 2026-09-29 on the live
- * router, 1 of 3 runs of the same prompt returned a fenced array. `JSON.parse`
- * throws on the backtick and the whole action 500s as "gangguan teknis" even
- * though the model answered correctly.
+ * Two production failures on 2026-09-29 motivated this (both logged in
+ * `ai_usage_log` as `Unexpected token '`'` / `Unexpected non-whitespace
+ * character after JSON` → vocab-examples 500s while the model answered fine):
+ *   - 1 of 3 live runs wrapped the array in a ```json fence;
+ *   - another run emitted JSON followed by trailing prose.
  *
- * ponytail: fence-stripping only. A model that emits prose around the JSON
- * still fails — add balanced-brace extraction when a real case shows up.
+ * ponytail: first-balanced-value scan. It does not validate what follows the
+ * extracted value and it cannot repair a truncated answer — those need a
+ * provider-side retry, not more parsing here.
  */
 function parseModelJson(content: unknown): any {
   const raw = typeof content === 'string' ? content.trim() : '';
   if (!raw) return {};
-  // Strip a leading ```json / ``` fence and its closing fence.
-  const fenced = raw.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
-  return JSON.parse(fenced ? fenced[1] : raw);
+
+  // 1. Bare JSON — the happy path, fast.
+  try { return JSON.parse(raw); } catch { /* fall through */ }
+
+  // 2. Markdown fence, anywhere in the text (models add prose around them).
+  const fenced = raw.match(/```(?:json)?\s*([\s\S]*?)\s*```/i);
+  if (fenced) {
+    try { return JSON.parse(fenced[1].trim()); } catch { /* fall through */ }
+  }
+
+  // 3. First balanced array/object, skipping any leading prose.
+  const start = raw.search(/[[{]/);
+  if (start >= 0) {
+    const slice = firstBalancedValue(raw, start);
+    if (slice) return JSON.parse(slice);
+  }
+  // Nothing worked: let JSON.parse produce the honest error for the caller.
+  return JSON.parse(raw);
+}
+
+/** Return the substring from `start` to the close of its matching bracket. */
+function firstBalancedValue(text: string, start: number): string | null {
+  const open = text[start];
+  const close = open === '[' ? ']' : '}';
+  let depth = 0;
+  let inStr = false;
+  let esc = false;
+  for (let i = start; i < text.length; i++) {
+    const ch = text[i];
+    if (inStr) {
+      if (esc) esc = false;
+      else if (ch === '\\') esc = true;
+      else if (ch === '"') inStr = false;
+      continue;
+    }
+    if (ch === '"') inStr = true;
+    else if (ch === open || (open === '{' && ch === '[')) depth++;
+    else if (ch === close || (open === '{' && ch === ']')) {
+      depth--;
+      if (depth === 0) return text.slice(start, i + 1);
+    }
+  }
+  return null;
 }
 
 // Client factory by provider ID

@@ -151,4 +151,25 @@ describe('REG-016: custom provider requests are non-streaming', () => {
     const out = await client.generateJson('x', { type: 'OBJECT' } as any);
     expect(out).toEqual({ isCorrect: false });
   });
+
+
+  // Third shape seen live: JSON with prose after it (09:40:33 —
+  // "Unexpected non-whitespace character after JSON at position 73").
+  it('generateJson() tolerates prose around the JSON', async () => {
+    const cases = [
+      'Berikut hasilnya: ' + '[{"german":"Der Tisch.","indonesian":"Meja itu."}]' + ' Semoga membantu!',
+      '```json\n{"isCorrect":true,"feedback":"benar"}\n```\n\nCatatan: sudah dicek.',
+      '{"phonetic":"SHTRAYKH","tip":"Panjang"}\nSemoga berhasil.',
+    ];
+    for (const content of cases) {
+      vi.stubGlobal('fetch', async (_url: string, init?: RequestInit) => {
+        sentBodies.push(JSON.parse(String(init?.body)));
+        return jsonResponse(content);
+      });
+      const client = await makeClient();
+      const out = await client.generateJson('x', { type: 'OBJECT' } as any);
+      expect(out).toBeTruthy();
+      expect(typeof out).toBe('object');
+    }
+  });
 });
