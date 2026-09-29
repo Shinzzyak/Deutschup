@@ -1,5 +1,5 @@
 import { useState, useMemo, useCallback } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import {
   CheckCircle2, XCircle, ArrowRight, RotateCcw,
   Trophy, Target, Brain, Sprout, BookOpen, Library, GraduationCap,
@@ -38,6 +38,7 @@ const typeStyleMap: Record<string, { label: string; icon: string }> = {
 };
 
 export default function GoetheExam() {
+  const reduceMotion = useReducedMotion();
   const [selectedLevel, setSelectedLevel] = useState<Level | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
@@ -135,8 +136,8 @@ export default function GoetheExam() {
               <motion.button
                 type="button"
                 key={level.id}
-                whileHover={{ x: 3 }}
-                whileTap={{ x: 0 }}
+                whileHover={reduceMotion ? undefined : { x: 3 }}
+                whileTap={reduceMotion ? undefined : { x: 0 }}
                 onClick={() => setSelectedLevel(level.id as Level)}
                 className={cn(
                   "group grid w-full grid-cols-[2.5rem_1fr_auto] items-center gap-4 border-l-4 border-l-brand-rust bg-white px-5 py-5 text-left transition-colors hover:bg-brand-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-rust focus-visible:ring-inset sm:grid-cols-[3rem_1fr_auto_auto] sm:px-7",
@@ -180,8 +181,8 @@ export default function GoetheExam() {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="border border-brand-ink/12 bg-white p-8 text-center">
           <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
+            initial={reduceMotion ? false : { scale: 0.8, opacity: 0 }}
+            animate={reduceMotion ? undefined : { scale: 1, opacity: 1 }}
             transition={{ type: 'spring', stiffness: 200, damping: 15 }}
             className="mb-6"
           >
@@ -305,9 +306,9 @@ export default function GoetheExam() {
       <AnimatePresence mode="wait">
         <motion.div
           key={currentQ.id}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+          initial={reduceMotion ? false : { opacity: 0, x: 20 }}
+          animate={reduceMotion ? undefined : { opacity: 1, x: 0 }}
+          exit={reduceMotion ? undefined : { opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
         >
           <div className="mb-6 border border-brand-ink/12 bg-white p-6">
@@ -339,8 +340,8 @@ export default function GoetheExam() {
                 return (
                   <motion.button
                     key={i}
-                    whileHover={!showResult ? { scale: 1.01 } : {}}
-                    whileTap={!showResult ? { scale: 0.99 } : {}}
+                    whileHover={!showResult && !reduceMotion ? { scale: 1.01 } : {}}
+                    whileTap={!showResult && !reduceMotion ? { scale: 0.99 } : {}}
                     onClick={() => handleAnswer(option)}
                     disabled={showResult}
                     role="radio"
@@ -383,8 +384,8 @@ export default function GoetheExam() {
             <AnimatePresence>
               {showResult && currentQ.explanation && (
                 <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
+                  initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+                  animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
                   className="mt-4 border border-brand-ink/12 border-l-4 border-l-brand-tan bg-brand-cream p-4"
                 >
                   <div className="flex items-start gap-2.5">
@@ -404,8 +405,8 @@ export default function GoetheExam() {
       <AnimatePresence>
         {showResult && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
           >
             <Button
               onClick={nextQuestion}

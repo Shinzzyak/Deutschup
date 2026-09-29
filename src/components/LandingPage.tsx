@@ -6,7 +6,7 @@ import ProductShowcase from './ProductShowcase';
 import LearningRoadmap from './LearningRoadmap';
 import SocialProof from './SocialProof';
 import CTASection from './CTASection';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { GoogleOneTap } from '@clerk/clerk-react';
 import { useAuthStore } from '../stores/authStore';
 import { isClerkEnabled } from '../lib/clerk/config';
@@ -27,10 +27,11 @@ function OneTapGuest() {
 }
 
 function Header() {
+  const reduceMotion = useReducedMotion();
   return (
     <motion.header
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={reduceMotion ? false : { opacity: 0 }}
+      animate={reduceMotion ? undefined : { opacity: 1 }}
       transition={{ duration: 0.5 }}
       className="w-full glass-nav sticky top-0 z-50"
     >

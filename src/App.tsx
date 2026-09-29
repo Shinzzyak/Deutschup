@@ -5,13 +5,13 @@ import { useAuthStore } from './stores/authStore';
 import { useAuth } from '@clerk/clerk-react';
 import { captureRoute } from './stores/debugStore';
 import { Loader2 } from 'lucide-react';
-import { AnimatePresence, motion } from 'motion/react';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
+import ProgressRail from './components/ProgressRail';
 import { ClerkProvider } from './lib/clerk';
 import { isClerkEnabled } from './lib/clerk/canary';
 import { useAuthSync } from './hooks/useAuthSync';
 import ClerkSignIn from './pages/ClerkSignIn';
 import ClerkSignUp from './pages/ClerkSignUp';
-import LandingPage from './components/LandingPage';
 import TopNav from './components/layout/TopNav';
 import MobileBottomNav from './components/layout/MobileBottomNav';
 import DesktopSidebar from './components/layout/DesktopSidebar';
@@ -37,6 +37,12 @@ const ClerkTest = lazy(() => import('./pages/ClerkTest'));
 const CanaryDashboard = lazy(() => import('./pages/CanaryDashboard'));
 const GoetheExam = lazy(() => import('./pages/GoetheExam'));
 const DebugAuth = lazy(() => import('./pages/DebugAuth'));
+// Landing page is code-split so the dashboard never downloads it — but "/" is the
+// default route, so the chunk request is warmed at module eval instead of waiting
+// for React to mount and match the route. Removes the split's round-trip penalty.
+const landingLoader = () => import('./components/LandingPage');
+void landingLoader();
+const LandingPage = lazy(landingLoader);
 import ChatWidget from './components/ChatWidget';
 import DebugOverlay from './components/DebugOverlay';
 import QuickNoteWidget from './components/QuickNoteWidget';
@@ -91,6 +97,9 @@ function RequireAdmin({ children }: { children: React.ReactNode }) {
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { user } = useAuthStore();
+  // The desktop column scrolls itself (`overflow-y-auto`); the mobile column
+  // lets the window scroll. ProgressRail tracks whichever one actually moves.
+  const desktopScrollRef = useRef<HTMLElement | null>(null);
   console.log('[LAYOUT] mount:', { hasUser: !!user, userId: user?.id?.substring(0, 8) });
 
   return (
@@ -108,9 +117,11 @@ function Layout({ children }: { children: React.ReactNode }) {
         <div className="flex flex-1 overflow-hidden">
           <DesktopSidebar />
           <main
+            ref={desktopScrollRef}
             className="flex-1 overflow-y-auto px-6 py-6"
             id="main-content-desktop"
           >
+            <ProgressRail containerRef={desktopScrollRef} />
             <div className="max-w-5xl mx-auto">
               {children}
             </div>
@@ -125,6 +136,7 @@ function Layout({ children }: { children: React.ReactNode }) {
           className="flex-1 px-4 py-6 pb-[calc(8rem+env(safe-area-inset-bottom))]"
           id="main-content-mobile"
         >
+          <ProgressRail containerRef={null} />
           <div className="max-w-5xl mx-auto">
             {children}
           </div>
@@ -181,13 +193,19 @@ function AnimatedRoutes() {
 }
 
 function PageWrapper({ children }: { children: React.ReactNode }) {
+  // Route transitions move the whole page. With prefers-reduced-motion on, the
+  // swap must be instant — a full-screen slide is exactly the vestibular trigger
+  // the media query exists to remove.
+  const reduceMotion = useReducedMotion();
+  const spinner = <div className="flex justify-center py-20"><Loader2 className="h-8 w-8 animate-spin text-brand-rust" /></div>;
+  if (reduceMotion) return <Suspense fallback={spinner}>{children}</Suspense>;
   return (
-    <Suspense fallback={<div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-brand-rust" /></div>}>
+    <Suspense fallback={spinner}>
       <motion.div
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -15 }}
-        transition={{ duration: 0.3 }}
+        exit={{ opacity: 0, y: -15, transition: { duration: 0.15, ease: 'easeIn' } }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
       >
         {children}
       </motion.div>
@@ -198,7 +216,7 @@ function PageWrapper({ children }: { children: React.ReactNode }) {
 function PublicRoutes() {
   return (
     <Routes>
-      <Route path="/" element={<LandingPage />} />
+      <Route path="/" element={<Suspense fallback={null}><LandingPage /></Suspense>} />
       <Route path="/pricing" element={<Pricing />} />
       <Route path="/sign-in/*" element={<ClerkSignIn />} />
       <Route path="/sign-up/*" element={<ClerkSignUp />} />

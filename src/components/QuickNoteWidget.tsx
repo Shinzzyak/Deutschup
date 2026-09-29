@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Check, Edit3, Loader2, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useAuthStore } from '../stores/authStore';
 import { useLearningStore } from '../stores/learningStore';
 
@@ -38,6 +38,7 @@ function writeDraft(uid: string, text: string) {
 }
 
 export default function QuickNoteWidget() {
+  const reduceMotion = useReducedMotion();
   const [isOpen, setIsOpen] = useState(false);
   const { user } = useAuthStore();
   const { quickNote, saveQuickNote, fetchData } = useLearningStore();
@@ -168,9 +169,9 @@ export default function QuickNoteWidget() {
             {isOpen && (
               <motion.div
                 ref={panelRef}
-                initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                initial={reduceMotion ? false : { opacity: 0, scale: 0.9, y: 10 }}
+                animate={reduceMotion ? undefined : { opacity: 1, scale: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
                 className="fixed z-[99999] flex flex-col overflow-hidden overscroll-contain border border-brand-ink/15 bg-white shadow-[0_20px_60px_-30px_rgba(10,10,10,0.55)]"
                 role="dialog"

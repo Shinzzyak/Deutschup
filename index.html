@@ -15,6 +15,13 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/site.webmanifest" />
+    <!-- Critical fonts: preloaded so text does not wait on CSS parse + @font-face
+         discovery (measured: first woff2 request started at 270 ms after HTML,
+         328 ms for DM Serif, both strictly after index.css arrived). Only the
+         three faces the first paint needs; the latin-ext pair loads on demand. -->
+    <link rel="preload" href="/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/dm-serif-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/dm-serif-latin-italic.woff2" as="font" type="font/woff2" crossorigin />
     <title>DeutschUp — Belajar Bahasa Jerman</title>
     <link rel="canonical" href="https://deutschup.sintec.my.id/" />
     <script type="application/ld+json">

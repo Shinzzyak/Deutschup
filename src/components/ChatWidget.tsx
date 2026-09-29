@@ -2,7 +2,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router';
 import { AlertCircle, ArrowRight, Bot, Loader2, Lock, Send, X } from 'lucide-react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { useAuthStore } from '../stores/authStore';
 import { useProgressStore } from '../stores/progressStore';
 import { isUserPro } from '../lib/subscription';
@@ -71,6 +71,7 @@ function messageFromResponse(status: number, payload: any): string {
 }
 
 export default function ChatWidget() {
+  const reduceMotion = useReducedMotion();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -217,9 +218,9 @@ export default function ChatWidget() {
                 role="dialog"
                 aria-modal="true"
                 aria-label="Chat dengan Herr Deutsch"
-                initial={{ opacity: 0, scale: 0.9, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 10 }}
+                initial={reduceMotion ? false : { opacity: 0, scale: 0.9, y: 10 }}
+                animate={reduceMotion ? undefined : { opacity: 1, scale: 1, y: 0 }}
+                exit={reduceMotion ? undefined : { opacity: 0, scale: 0.9, y: 10 }}
                 transition={{ duration: 0.15, ease: 'easeOut' }}
                 className="fixed z-[99999] flex flex-col overflow-hidden overscroll-contain border border-brand-ink/15 bg-white shadow-[0_20px_60px_-30px_rgba(10,10,10,0.55)]"
                 style={{

@@ -107,7 +107,7 @@ export default function Hero() {
               <Magnetic glow strength={10}>
                 <Button
                   render={<Link to="/sign-up" />}
-                  className="group h-auto bg-brand-ink px-10 py-6 text-base font-bold tracking-wide text-brand-cream transition-colors hover:bg-brand-rust"
+                  className="group h-auto bg-brand-ink px-10 py-6 text-base font-bold tracking-wide text-brand-cream transition-[color,background-color,transform] duration-150 hover:bg-brand-rust active:scale-[0.98]"
                 >
                   Mulai Gratis
                   <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />

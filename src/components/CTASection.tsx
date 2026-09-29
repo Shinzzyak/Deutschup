@@ -56,7 +56,7 @@ export default function CTASection() {
             </Button>
             <a
               href="#fitur"
-              className="inline-flex items-center justify-center border border-brand-cream/30 px-10 py-6 text-base font-semibold text-brand-cream transition-colors hover:border-brand-cream/60 hover:bg-brand-cream/10"
+              className="inline-flex items-center justify-center border border-brand-cream/30 px-10 py-6 text-base font-semibold text-brand-cream transition-[color,border-color,background-color,transform] hover:border-brand-cream/60 hover:bg-brand-cream/10 active:scale-[0.98]"
             >
               Pelajari Lebih Lanjut
             </a>

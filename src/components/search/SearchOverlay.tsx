@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
+import { motion, AnimatePresence, useReducedMotion } from 'motion/react';
 import { Search, X, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useSearch, SearchResult } from './useSearch';
@@ -19,6 +19,7 @@ const typeLabels = {
    - article plates: der/die/das same teaching colours as VocabTrainerDB
    - spacing: full steps only (p-2, gap-2, min-h-11 rows) */
 export default function SearchOverlay({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const reduceMotion = useReducedMotion();
   const [query, setQuery] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -65,16 +66,16 @@ export default function SearchOverlay({ open, onClose }: { open: boolean; onClos
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+        initial={reduceMotion ? false : { opacity: 0 }}
+        animate={reduceMotion ? undefined : { opacity: 1 }}
+        exit={reduceMotion ? undefined : { opacity: 0 }}
         className="fixed inset-0 z-50 bg-brand-ink/60 backdrop-blur-xs flex items-start justify-center overscroll-contain pt-4 sm:pt-[10vh] px-3 sm:px-4"
         onClick={onClose}
       >
         <motion.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -6 }}
+          initial={reduceMotion ? false : { opacity: 0, y: -8 }}
+          animate={reduceMotion ? undefined : { opacity: 1, y: 0 }}
+          exit={reduceMotion ? undefined : { opacity: 0, y: -6 }}
           className="w-full max-w-xl overflow-hidden bg-surface-0 border border-brand-ink/20"
           onClick={e => e.stopPropagation()}
           role="dialog"

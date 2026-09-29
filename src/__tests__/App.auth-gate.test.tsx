@@ -36,6 +36,10 @@ vi.mock('motion/react', () => ({
   motion: {
     div: ({ children, ...props }: React.HTMLAttributes<HTMLDivElement>) => <div {...props}>{children}</div>,
   },
+  // App now calls this in PageWrapper. Real consumers animate; tests want the
+  // static branch, so report "reduce motion" as false and keep rendering the
+  // motion.div above through the same mock.
+  useReducedMotion: () => false,
 }));
 
 vi.mock('../components/LandingPage', () => ({
