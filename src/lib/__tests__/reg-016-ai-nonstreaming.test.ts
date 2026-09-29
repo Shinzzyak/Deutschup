@@ -126,4 +126,29 @@ describe('REG-016: custom provider requests are non-streaming', () => {
     const r = jsonResponse(sse, 'text/event-stream');
     await expect(r.json()).rejects.toThrow();
   });
+
+  // Second production failure on the same endpoint, found 2026-09-29 right
+  // after the stream fix deployed: 1 of 3 live runs returned the array wrapped
+  // in a ```json fence, JSON.parse threw on the backtick, and vocab-examples
+  // 500'd even though the model answered correctly.
+  it('generateJson() unwraps a markdown-fenced answer', async () => {
+    const fenced = '```json\n[{"german":"Das ist ein Wort.","indonesian":"Ini sebuah kata."}]\n```';
+    vi.stubGlobal('fetch', async (_url: string, init?: RequestInit) => {
+      sentBodies.push(JSON.parse(String(init?.body)));
+      return jsonResponse(fenced);
+    });
+    const client = await makeClient();
+    const out = await client.generateJson('x', { type: 'ARRAY' } as any);
+    expect(out).toEqual([{ german: 'Das ist ein Wort.', indonesian: 'Ini sebuah kata.' }]);
+  });
+
+  it('generateJson() unwraps a bare ``` fence too', async () => {
+    vi.stubGlobal('fetch', async (_url: string, init?: RequestInit) => {
+      sentBodies.push(JSON.parse(String(init?.body)));
+      return jsonResponse('```\n{"isCorrect":false}\n```');
+    });
+    const client = await makeClient();
+    const out = await client.generateJson('x', { type: 'OBJECT' } as any);
+    expect(out).toEqual({ isCorrect: false });
+  });
 });

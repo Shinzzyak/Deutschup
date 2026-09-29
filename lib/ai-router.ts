@@ -592,9 +592,29 @@ async function createCustomProviderClient(model: ModelConfig): Promise<AIProvide
         throw new Error(err.error?.message || `Custom provider error: ${response.status}`);
       }
       const data = await response.json();
-      return JSON.parse(data.choices?.[0]?.message?.content || '{}');
+      return parseModelJson(data.choices?.[0]?.message?.content);
     }
   };
+}
+
+/**
+ * Parse a model's JSON answer without trusting that it is bare JSON.
+ *
+ * Models wrap JSON in a markdown fence (` ```json … ``` `) often enough to be a
+ * production failure mode, not a curiosity: measured 2026-09-29 on the live
+ * router, 1 of 3 runs of the same prompt returned a fenced array. `JSON.parse`
+ * throws on the backtick and the whole action 500s as "gangguan teknis" even
+ * though the model answered correctly.
+ *
+ * ponytail: fence-stripping only. A model that emits prose around the JSON
+ * still fails — add balanced-brace extraction when a real case shows up.
+ */
+function parseModelJson(content: unknown): any {
+  const raw = typeof content === 'string' ? content.trim() : '';
+  if (!raw) return {};
+  // Strip a leading ```json / ``` fence and its closing fence.
+  const fenced = raw.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+  return JSON.parse(fenced ? fenced[1] : raw);
 }
 
 // Client factory by provider ID
